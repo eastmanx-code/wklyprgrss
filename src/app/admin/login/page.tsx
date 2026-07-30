@@ -10,7 +10,7 @@ export default async function AdminLoginPage() {
   if ((await getSession())?.role === "admin") redirect("/admin");
 
   return (
-    <main>
+    <main className="mx-auto max-w-md">
       <BackLink href="/">Leader sign in</BackLink>
 
       <header className="mt-4 mb-8">

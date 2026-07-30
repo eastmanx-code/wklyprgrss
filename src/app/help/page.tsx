@@ -14,7 +14,7 @@ export default async function HelpPage() {
   const isAdmin = session?.role === "admin";
 
   return (
-    <main>
+    <main className="rise mx-auto max-w-2xl">
       <BackLink href={session ? (isAdmin ? "/admin" : "/venue") : "/"}>
         {session ? (isAdmin ? "All venues" : "My items") : "Sign in"}
       </BackLink>

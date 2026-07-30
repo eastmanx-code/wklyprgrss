@@ -52,7 +52,7 @@ export default async function BoardPage() {
         ownVenueId={ownVenueId}
       />
 
-      <ul className="space-y-2">
+      <ul className="stagger space-y-2">
         {rows.map((row) => (
           <li
             key={row.venue.id}
@@ -61,7 +61,7 @@ export default async function BoardPage() {
           >
             <Link
               href={`/board/${row.venue.id}`}
-              className="panel flex items-center gap-3 px-4 py-3 transition-opacity active:opacity-70"
+              className="panel panel-link flex items-center gap-3 px-4 py-3"
             >
               <span className="w-14 shrink-0 font-mono text-sm font-medium">
                 {row.venue.code}

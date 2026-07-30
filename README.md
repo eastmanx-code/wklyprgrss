@@ -32,7 +32,7 @@ on the server.
 | `DEADLINE_DAY` | `0`=Sun … `6`=Sat, Pacific |
 | `DEADLINE_HOUR` | `0`–`23`, Pacific |
 
-Thursday 4pm Pacific is `DEADLINE_DAY=4`, `DEADLINE_HOUR=16`.
+Thursday 3pm Pacific is `DEADLINE_DAY=4`, `DEADLINE_HOUR=15`.
 
 **4. Seed the venues.**
 

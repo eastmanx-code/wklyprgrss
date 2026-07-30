@@ -24,6 +24,39 @@ function Term({ label, children }: { label: string; children: React.ReactNode })
   );
 }
 
+/**
+ * The short version, for the sign-in dialog. Deliberately fits on a phone
+ * without scrolling — anything that needs scrolling belongs on /help, not in a
+ * modal someone has to get past to start work.
+ */
+export function HowToSummary({
+  target,
+  deadlineLabel,
+}: {
+  target: number;
+  deadlineLabel: string;
+}) {
+  return (
+    <>
+      <p className="note leading-relaxed">
+        By {deadlineLabel}, all {target} items need a <strong>new photo</strong>{" "}
+        and a <strong>new comment</strong>. Nothing carries forward.
+      </p>
+
+      <ol className="mt-4 space-y-2">
+        <Step n={1}>Tap a card and take the photo.</Step>
+        <Step n={2}>Say if it&apos;s done or needs one more cycle.</Step>
+        <Step n={3}>Your name, and whoever helped.</Step>
+        <Step n={4}>Write what changed. Never blank.</Step>
+      </ol>
+
+      <p className="label mt-4 leading-relaxed">
+        Full instructions any time under &ldquo;How to&rdquo;.
+      </p>
+    </>
+  );
+}
+
 export function LeaderGuide({
   target,
   deadlineLabel,

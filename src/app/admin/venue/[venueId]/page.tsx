@@ -121,7 +121,7 @@ export default async function AdminVenuePage({
           ) : null}
         </div>
 
-        <ul className="grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
+        <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
             {activeItems.map((item) => {
               const submission = latestThisWeek.get(item.id);
               const url = submission

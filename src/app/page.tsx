@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { LeaderGuide } from "@/components/HowToUse";
+import { HowToDialog } from "@/components/HowToDialog";
+import { HowToSummary } from "@/components/HowToUse";
 import { LeaderLoginForm } from "@/components/LeaderLoginForm";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getVenues } from "@/lib/status";
@@ -19,7 +20,9 @@ export default async function HomePage() {
   const deadlineLabel = formatDeadline(currentWeekStart());
 
   return (
-    <main>
+    // Reading width: mono runs wide, and a 1100px line of instructions is
+    // unreadable. Boards get the full container; prose does not.
+    <main className="rise mx-auto max-w-2xl">
       <header className="mb-8">
         <p className="label">Weekly Walkthrough</p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight">
@@ -39,15 +42,17 @@ export default async function HomePage() {
         </Link>
       </p>
 
-      {/* The instructions live on the sign-in screen, not behind it — this is
-          where someone is most likely to not know what they're doing. */}
-      <section className="mt-10">
-        <h2 className="label mb-3">How to use this</h2>
-        <LeaderGuide
-          target={WEEKLY_ITEM_TARGET}
-          deadlineLabel={deadlineLabel}
-        />
-      </section>
+      {/* Instructions as an acknowledged dialog: it opens itself the first
+          time on a device, so nobody starts uploading without seeing the rule,
+          and stays one tap away afterwards. */}
+      <div className="mt-4">
+        <HowToDialog>
+          <HowToSummary
+            target={WEEKLY_ITEM_TARGET}
+            deadlineLabel={deadlineLabel}
+          />
+        </HowToDialog>
+      </div>
     </main>
   );
 }

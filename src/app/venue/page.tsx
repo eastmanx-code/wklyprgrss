@@ -62,7 +62,7 @@ export default async function VenuePage() {
 
       {/* Always ten tiles. A venue with four items set up should read as six
           slots missing, not as a short but complete-looking board. */}
-      <ul className="grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
+      <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
           {board.items.map((item) => {
             const latest = board.latest.get(item.id);
             const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
@@ -72,7 +72,7 @@ export default async function VenuePage() {
               <li key={item.id}>
                 <Link
                   href={`/venue/item/${item.id}`}
-                  className="panel flex h-full flex-col p-3 transition-opacity active:opacity-70"
+                  className="panel panel-link flex h-full flex-col p-3"
                 >
                   {thumb ? (
                     <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">

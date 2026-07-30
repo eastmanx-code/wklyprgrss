@@ -54,7 +54,7 @@ export default async function ItemPage({
   const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
 
   return (
-    <main>
+    <main className="mx-auto max-w-2xl">
       <BackLink href="/venue">All items</BackLink>
 
       <header className="mt-4 mb-6">

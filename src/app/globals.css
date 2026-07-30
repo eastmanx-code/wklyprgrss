@@ -101,12 +101,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Prevent iOS Safari zooming the page when a field is focused. */
+/* Prevent iOS Safari zooming the page when a field is focused. Only real text
+   fields need this — including `button` here would sit outside @layer and beat
+   .btn / .btn-ghost's own font-size, silently inflating every button. */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
 input,
 textarea,
 select,
 button {
-  font-size: 16px;
   font-family: inherit;
 }
 
@@ -124,6 +131,149 @@ h3 {
 /* Mono body copy needs a little more line height to stay readable. */
 p {
   line-height: 1.55;
+}
+
+/* Motion. Deliberately small: a short rise on entry, a little feedback on
+   press. Everything sits inside prefers-reduced-motion so it simply doesn't
+   exist for anyone who has asked for stillness. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ww-rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .rise {
+    animation: ww-rise 0.34s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  /* Grid tiles arrive in sequence rather than all at once — reads as the
+     board filling in. Capped at ten because that's the week. */
+  .stagger > * {
+    animation: ww-rise 0.34s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger > *:nth-child(2) { animation-delay: 25ms; }
+  .stagger > *:nth-child(3) { animation-delay: 50ms; }
+  .stagger > *:nth-child(4) { animation-delay: 75ms; }
+  .stagger > *:nth-child(5) { animation-delay: 100ms; }
+  .stagger > *:nth-child(6) { animation-delay: 125ms; }
+  .stagger > *:nth-child(7) { animation-delay: 150ms; }
+  .stagger > *:nth-child(8) { animation-delay: 175ms; }
+  .stagger > *:nth-child(9) { animation-delay: 200ms; }
+  .stagger > *:nth-child(n + 10) { animation-delay: 225ms; }
+
+  /* Empty photo wells drift their dot field very slowly, so a slot waiting to
+     be filled reads as alive rather than broken. One cell per 8s. */
+  @keyframes ww-dot-drift {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 12px 12px;
+    }
+  }
+
+  .dotfield {
+    animation: ww-dot-drift 8s linear infinite;
+  }
+
+  /* Progress pills resolve left to right, like the grid filling in. */
+  @keyframes ww-fill {
+    from {
+      opacity: 0;
+      transform: scaleX(0.2);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .fill-in > * {
+    transform-origin: left center;
+    animation: ww-fill 0.4s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+  .fill-in > *:nth-child(1) { animation-delay: 0ms; }
+  .fill-in > *:nth-child(2) { animation-delay: 30ms; }
+  .fill-in > *:nth-child(3) { animation-delay: 60ms; }
+  .fill-in > *:nth-child(4) { animation-delay: 90ms; }
+  .fill-in > *:nth-child(5) { animation-delay: 120ms; }
+  .fill-in > *:nth-child(6) { animation-delay: 150ms; }
+  .fill-in > *:nth-child(7) { animation-delay: 180ms; }
+  .fill-in > *:nth-child(8) { animation-delay: 210ms; }
+  .fill-in > *:nth-child(9) { animation-delay: 240ms; }
+  .fill-in > *:nth-child(n + 10) { animation-delay: 270ms; }
+
+  /* The company bar grows to its value instead of appearing at it. */
+  @keyframes ww-grow {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .grow-bar {
+    transform-origin: left center;
+    animation: ww-grow 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  /* The dialog fades up rather than snapping in. */
+  @keyframes ww-dialog-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes ww-backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .ww-dialog[open] {
+    animation: ww-dialog-in 0.28s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  }
+
+  .ww-dialog[open]::backdrop {
+    animation: ww-backdrop-in 0.28s ease both;
+  }
+
+  /* Press feedback. Cheap, and makes a phone feel responsive. */
+  .btn:active:not(:disabled),
+  .btn-ghost:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  .panel-link {
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .panel-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  }
+
+  .panel-link:active {
+    transform: translateY(0) scale(0.99);
+  }
 }
 
 @layer components {
@@ -256,6 +406,27 @@ p {
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-size: 13px;
+  }
+
+  /* Centred, sized to its content. No max-height and no scroll: if it doesn't
+     fit, the content is wrong for a modal. */
+  .ww-dialog {
+    width: min(30rem, calc(100vw - 2rem));
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 24px;
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .ww-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+  }
+
+  .ww-dialog-body {
+    padding: 1.5rem;
   }
 
   /* Status pills. Monochrome by design; FAIL is the one place colour earns
