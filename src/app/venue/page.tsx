@@ -2,12 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { WeekProgress } from "@/components/WeekProgress";
-import {
-  DonePill,
-  EmptySlot,
-  PhotoPlaceholder,
-  emptySlots,
-} from "@/components/ui";
+import { AddItemSlot } from "@/components/admin/AddItemSlot";
+import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
@@ -104,8 +100,14 @@ export default async function VenuePage() {
             );
           })}
 
+          {/* A venue owns its own list — same control the admin has. Only
+              approving stays admin-only. */}
           {emptySlots(board.items.length, WEEKLY_ITEM_TARGET).map((slot) => (
-            <EmptySlot key={`slot-${slot}`} index={slot} />
+            <AddItemSlot
+              key={`slot-${slot}`}
+              venueId={venue.id}
+              index={slot}
+            />
           ))}
         </ul>
 

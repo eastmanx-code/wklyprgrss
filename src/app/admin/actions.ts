@@ -15,6 +15,27 @@ async function isAdmin(): Promise<boolean> {
   return (await getSession())?.role === "admin";
 }
 
+/**
+ * Item management is open to the venue itself as well as the admin — a venue
+ * owns its own list. Approving is the one thing that stays admin-only, so it
+ * keeps using isAdmin().
+ */
+async function canManage(venueId: string): Promise<boolean> {
+  const session = await getSession();
+  if (session?.role === "admin") return true;
+  return session?.role === "leader" && session.venueId === venueId;
+}
+
+/** The venue an item belongs to, for permission checks. */
+async function venueOfItem(itemId: string): Promise<string | null> {
+  const { data } = await db()
+    .from("items")
+    .select("venue_id")
+    .eq("id", itemId)
+    .maybeSingle();
+  return (data as { venue_id: string } | null)?.venue_id ?? null;
+}
+
 function refresh(venueId: string) {
   revalidatePath("/admin");
   revalidatePath(`/admin/venue/${venueId}`);
@@ -49,11 +70,10 @@ export async function addItem(
   _prev: AdminState,
   formData: FormData,
 ): Promise<AdminState> {
-  if (!(await isAdmin())) return { error: "Not signed in." };
-
   const venueId = String(formData.get("venueId") ?? "");
   const title = String(formData.get("title") ?? "").trim();
   if (!venueId) return { error: "Missing venue." };
+  if (!(await canManage(venueId))) return { error: "Not signed in." };
   if (!title) return { error: "Give the item a title." };
   if (title.length > MAX_TITLE_LENGTH) return { error: "That title is too long." };
 
@@ -71,11 +91,12 @@ export async function renameItem(
   _prev: AdminState,
   formData: FormData,
 ): Promise<AdminState> {
-  if (!(await isAdmin())) return { error: "Not signed in." };
-
   const itemId = String(formData.get("itemId") ?? "");
   const venueId = String(formData.get("venueId") ?? "");
   const title = String(formData.get("title") ?? "").trim();
+  // Check against the item's real venue, not the one the form claims.
+  const owner = await venueOfItem(itemId);
+  if (!owner || !(await canManage(owner))) return { error: "Not signed in." };
   if (!title) return { error: "Title can't be empty." };
   if (title.length > MAX_TITLE_LENGTH) return { error: "That title is too long." };
 
@@ -88,11 +109,12 @@ export async function renameItem(
 
 /** Deactivating hides the item going forward and keeps all of its history. */
 export async function setItemActive(formData: FormData) {
-  if (!(await isAdmin())) return;
-
   const itemId = String(formData.get("itemId") ?? "");
   const venueId = String(formData.get("venueId") ?? "");
   const active = String(formData.get("active") ?? "") === "true";
+
+  const owner = await venueOfItem(itemId);
+  if (!owner || !(await canManage(owner))) return;
 
   await db().from("items").update({ active }).eq("id", itemId);
   await normalizePositions(await itemsFor(venueId));
@@ -100,11 +122,12 @@ export async function setItemActive(formData: FormData) {
 }
 
 export async function moveItem(formData: FormData) {
-  if (!(await isAdmin())) return;
-
   const itemId = String(formData.get("itemId") ?? "");
   const venueId = String(formData.get("venueId") ?? "");
   const direction = String(formData.get("direction") ?? "");
+
+  const owner = await venueOfItem(itemId);
+  if (!owner || !(await canManage(owner))) return;
 
   const items = await itemsFor(venueId);
   const index = items.findIndex((item) => item.id === itemId);

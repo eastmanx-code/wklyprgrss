@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 
+import { setItemActive } from "@/app/admin/actions";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
+import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { Attribution, BackLink, DonePill, PurgedPhoto } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
@@ -59,9 +61,15 @@ export default async function ItemPage({
 
       <header className="mt-4 mb-6">
         <p className="label">Item</p>
-        <h1 className="mt-2 text-2xl font-medium tracking-tight">
-          {item.title}
-        </h1>
+        {/* The venue owns its own list, so the title is editable here rather
+            than only from the admin screens. */}
+        <div className="mt-2">
+          <RenameItemForm
+            itemId={item.id}
+            venueId={item.venue_id}
+            title={item.title}
+          />
+        </div>
         <div className="mt-3">
           {sentBack ? (
             <span className="pill pill-fail">Redo</span>
@@ -123,6 +131,20 @@ export default async function ItemPage({
       ) : null}
 
       <PhotoSubmitForm itemId={item.id} />
+
+      <section className="mt-8">
+        <form action={setItemActive}>
+          <input type="hidden" name="itemId" value={item.id} />
+          <input type="hidden" name="venueId" value={item.venue_id} />
+          <input type="hidden" name="active" value="false" />
+          <button type="submit" className="btn-ghost">
+            Retire this item
+          </button>
+        </form>
+        <p className="label mt-2">
+          Stops it counting from next week. History is kept.
+        </p>
+      </section>
 
       <section className="mt-10">
         <h2 className="label mb-3">History · newest first</h2>
