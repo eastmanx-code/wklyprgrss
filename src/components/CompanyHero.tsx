@@ -1,9 +1,11 @@
+import { Card } from "./Card";
 import { Clock, Countdown, Weather } from "./DashLive";
 import { Dial } from "./Dial";
-import { formatFinish } from "@/lib/week";
-import type { WeekStatus } from "@/lib/types";
+import { Trend } from "./Trend";
+import { WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { formatFinish, formatWeekStart } from "@/lib/week";
 
-/** A number that carries itself, with the label kept quiet underneath it. */
+/** Label above, number below — the number is the thing, the label names it. */
 function Stat({
   label,
   value,
@@ -15,20 +17,24 @@ function Stat({
 }) {
   return (
     <div>
-      <p className={`font-mono text-4xl leading-none tabular-nums ${tone}`}>
+      <p className="label">{label}</p>
+      <p
+        className={`mt-2 font-mono text-3xl leading-none tabular-nums ${tone}`}
+      >
         {value}
       </p>
-      <p className="label mt-2">{label}</p>
     </div>
   );
 }
 
 /**
- * The company's week: one dial, a few numbers, and every venue as a dot.
+ * The company's week as a grid of contained metrics, each in the form that
+ * suits it: a radial for the one headline proportion, a curve for the trend,
+ * plain numerals for counts, a list for the venues.
  *
- * Kept to those three things on purpose. An earlier pass had a half-dial, four
- * small rings and a stack of bars all on one screen, which turned a glanceable
- * page into an instrument cluster.
+ * Every card says what it measures. A dashboard of bare numbers gets read as
+ * whatever the viewer assumes, and "failing" in particular needs to state what
+ * it counts before anyone acts on it.
  */
 export function CompanyHero({
   percent,
@@ -37,10 +43,11 @@ export function CompanyHero({
   passing,
   pending,
   failing,
-  statuses,
+  setup,
   deadlineLabel,
   deadlineMs,
   finishes,
+  history,
 }: {
   percent: number;
   itemsDone: number;
@@ -48,78 +55,103 @@ export function CompanyHero({
   passing: number;
   pending: number;
   failing: number;
-  statuses: WeekStatus[];
+  setup: number;
   deadlineLabel: string;
   deadlineMs: number;
   finishes: { code: string; at: string }[];
+  history: { weekStart: string; percent: number }[];
 }) {
   const first = finishes[0];
   const last = finishes[finishes.length - 1];
 
   return (
-    <>
-      <section className="mb-8 grid items-center gap-8 sm:grid-cols-[auto_minmax(0,1fr)]">
-        <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
+    <div className="mb-3 grid gap-3 sm:grid-cols-3">
+      <Card
+        title="Completion"
+        hint={`A new photo and a new comment on all ${WEEKLY_ITEM_TARGET} items, every week. Last week’s don’t carry over.`}
+      >
+        <div className="flex h-full items-center justify-center">
+          <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
+        </div>
+      </Card>
 
-        <div className="space-y-8">
-          <Stat
-            label="Time left"
-            value={<Countdown deadlineMs={deadlineMs} />}
-          />
-          <div className="grid grid-cols-3 gap-4">
-            <Stat label="Passing" value={passing} />
-            <Stat label="Pending" value={pending} />
-            <Stat
-              label="Failing"
-              value={failing}
-              tone={failing ? "text-fail" : ""}
+      {history.length > 1 ? (
+        <Card
+          title="Completion by week"
+          hint="The last eight weeks on a fixed 0–100 scale, so a bad week looks like one."
+          className="sm:col-span-2"
+        >
+          <div className="flex h-full flex-col justify-end">
+            <Trend
+              points={history}
+              labelLeft={formatWeekStart(history[0].weekStart)}
+              labelRight="This week"
             />
           </div>
-        </div>
-      </section>
-
-      <div className="mb-8 flex flex-wrap gap-1.5">
-        {statuses.map((status, index) => (
-          <span
-            key={index}
-            className={`h-3 w-3 rounded-full ${
-              status === "PASS"
-                ? "bg-ink"
-                : status === "FAIL"
-                  ? "bg-fail"
-                  : "bg-ink/15"
-            }`}
-            title={status}
-          />
-        ))}
-      </div>
-
-      {/* Who got it in early and who cut it fine — the part people actually
-          compete over. Only shown once someone has finished. */}
-      {first ? (
-        <dl className="mb-8 grid grid-cols-2 gap-6">
-          <div>
-            <dt className="label">First in</dt>
-            <dd className="mt-2 font-mono text-lg">
-              {first.code}
-              <span className="text-muted"> · {formatFinish(first.at)}</span>
-            </dd>
-          </div>
-          {last && last.code !== first.code ? (
-            <div>
-              <dt className="label">Last in</dt>
-              <dd className="mt-2 font-mono text-lg">
-                {last.code}
-                <span className="text-muted"> · {formatFinish(last.at)}</span>
-              </dd>
-            </div>
-          ) : null}
-        </dl>
+        </Card>
       ) : null}
 
-      <p className="label mb-8">
-        Due {deadlineLabel} · <Clock /> · <Weather />
-      </p>
-    </>
+      <Card
+        title="Where venues stand"
+        hint={`Passing has all ${WEEKLY_ITEM_TARGET} done this week. Failing reached the deadline without them. Not set up has no items yet, so it has nothing to miss.`}
+        className="sm:col-span-2"
+      >
+        <div
+          className={`grid gap-6 ${
+            setup ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"
+          }`}
+        >
+          <Stat label="Passing" value={passing} />
+          <Stat label="Pending" value={pending} />
+          <Stat
+            label="Failing"
+            value={failing}
+            tone={failing ? "text-fail" : ""}
+          />
+          {setup ? <Stat label="Not set up" value={setup} /> : null}
+        </div>
+      </Card>
+
+      <Card title="Deadline" hint={deadlineLabel}>
+        <p className="font-mono text-3xl leading-none tabular-nums">
+          <Countdown deadlineMs={deadlineMs} />
+        </p>
+        <p className="label mt-4">
+          <Clock />
+        </p>
+        <p className="label mt-1">
+          <Weather />
+        </p>
+      </Card>
+
+      {/* Hidden until someone has finished — an empty card teaches nothing and
+          takes the same room. */}
+      {first ? (
+        <Card
+          title="Turnaround"
+          hint={`When a venue’s ${WEEKLY_ITEM_TARGET}th photo landed. Earliest and latest of those who finished.`}
+          className="sm:col-span-3"
+        >
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <p className="label">First in</p>
+              <p className="mt-2 font-mono text-lg">
+                {first.code}
+                <span className="text-muted"> · {formatFinish(first.at)}</span>
+              </p>
+            </div>
+            {last && last.code !== first.code ? (
+              <div>
+                <p className="label">Last in</p>
+                <p className="mt-2 font-mono text-lg">
+                  {last.code}
+                  <span className="text-muted"> · {formatFinish(last.at)}</span>
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </Card>
+      ) : null}
+    </div>
   );
 }

@@ -59,7 +59,12 @@ export type Submission = {
 export type ReviewState = "pending" | "approved" | "sent_back";
 export type ProgressState = "done" | "another_cycle";
 
-export type WeekStatus = "PASS" | "PENDING" | "FAIL";
+/**
+ * SETUP is not a grade. A venue with no items configured hasn't failed its
+ * walkthrough — it has never been given one, and painting it red buries the
+ * venues that genuinely missed.
+ */
+export type WeekStatus = "PASS" | "PENDING" | "FAIL" | "SETUP";
 
 export type VenueWeekSummary = {
   venue: VenueSummary;

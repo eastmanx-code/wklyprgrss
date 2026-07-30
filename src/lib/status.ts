@@ -19,6 +19,9 @@ import {
 /**
  * How far back a fail streak may reach. Also bounds the dashboard query.
  */
+/** How many weeks the trend line shows. Must not exceed the query window. */
+const HISTORY_WEEKS = 8;
+
 const STREAK_LOOKBACK_WEEKS = 26;
 
 /**
@@ -113,11 +116,13 @@ export function doneItemIdsFrom(submissions: Submission[]): Set<string> {
  */
 export function statusFor(
   doneCount: number,
-  _activeCount: number,
+  activeCount: number,
   weekStart: string,
   now: Date,
 ): WeekStatus {
   if (doneCount >= WEEKLY_ITEM_TARGET) return "PASS";
+  // Nothing to walk means nothing to miss.
+  if (activeCount === 0) return "SETUP";
   return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
 }
 
@@ -197,6 +202,8 @@ export type Dashboard = {
   venuesUnderConfigured: string[];
   /** Who reached ten this week, earliest first. */
   finishes: { code: string; at: string }[];
+  /** Company completion for each of the last few weeks, oldest first. */
+  history: { weekStart: string; percent: number }[];
 };
 
 /**
@@ -334,10 +341,12 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     };
   });
 
+  // Worst first, then the ones needing setup, then everything on track.
   const statusRank: Record<WeekStatus, number> = {
     FAIL: 0,
-    PENDING: 1,
-    PASS: 2,
+    SETUP: 1,
+    PENDING: 2,
+    PASS: 3,
   };
   rows.sort((a, b) => {
     if (statusRank[a.status] !== statusRank[b.status]) {
@@ -355,6 +364,18 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     rows,
     itemsDone: rows.reduce((sum, row) => sum + row.doneCount, 0),
     itemsTarget: rows.length * WEEKLY_ITEM_TARGET,
+    history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
+      const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
+      let done = 0;
+      for (const weeks of doneByVenueWeek.values()) {
+        done += weeks.get(week)?.size ?? 0;
+      }
+      const target = venues.length * WEEKLY_ITEM_TARGET;
+      return {
+        weekStart: week,
+        percent: target ? Math.round((done / target) * 100) : 0,
+      };
+    }),
     finishes: rows
       .map((row) => ({
         code: row.venue.code,

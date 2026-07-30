@@ -1,71 +1,88 @@
 import Link from "next/link";
 
-import { DotStrip, StatusPill } from "./ui";
+import { Card } from "./Card";
+import { VenueJumpBar } from "./ui";
+
+import { WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { formatFinish } from "@/lib/week";
 import type { VenueWeekSummary } from "@/lib/types";
 
 /**
- * The all-venues list, shared by the board and the admin page.
+ * The all-venues list: code, a thin bar, and the count.
  *
- * The two pages are the same view of the same week — the only difference is
+ * A bar per venue rather than ten circles per venue — twenty-seven venues is
+ * 270 circles, which is a texture, not a reading. Circles are kept for the
+ * leader's own page, where there are only ten of them.
+ *
+ * The two pages are the same view of the same week; the only difference is
  * where a row leads: the board to a read-only venue, admin to the screen with
- * approve and send-back on it. Keeping one component means they can't drift.
+ * approve and send-back on it.
  */
 export function VenueRows({
   rows,
   hrefPrefix,
   ownVenueId = null,
+  finishedAt = {},
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
+  /** venue code -> when it reached ten, for the venues that got there. */
+  finishedAt?: Record<string, string>;
 }) {
   return (
-    <>
-      <div className="mb-2 flex items-center gap-3 px-2">
-        <span className="label w-14">Venue</span>
-        <span className="label flex-1">Progress</span>
-        <span className="label w-16 text-right">Streak</span>
-      </div>
+    <Card
+      title="Every venue"
+      hint={`Bar is photos done out of ${WEEKLY_ITEM_TARGET}. Right-hand column shows the finish time, or the count and any run of missed weeks.`}
+    >
+      <VenueJumpBar
+        venues={rows.map((row) => row.venue)}
+        ownVenueId={ownVenueId ?? undefined}
+      />
 
-      <ul className="stagger space-y-2">
-        {rows.map((row) => (
-          <li
-            key={row.venue.id}
-            id={`venue-${row.venue.code}`}
-            className="scroll-mt-4"
-          >
-            <Link
-              href={`${hrefPrefix}${row.venue.id}`}
-              className="panel panel-link flex items-center gap-3 px-4 py-3"
+      <ul className="stagger">
+        {rows.map((row) => {
+          const finished = finishedAt[row.venue.code];
+          const percent = (row.doneCount / WEEKLY_ITEM_TARGET) * 100;
+
+          return (
+            <li
+              key={row.venue.id}
+              id={`venue-${row.venue.code}`}
+              className="border-ink/10 scroll-mt-4 border-b last:border-0"
             >
-              <span className="w-14 shrink-0 font-mono text-sm font-medium">
-                {row.venue.code}
-              </span>
-
-              <span className="flex min-w-0 flex-1 flex-col gap-2">
-                <span className="flex items-center gap-2">
-                  <StatusPill status={row.status} />
-                  <span className="label">{row.doneCount}/10</span>
-                  {row.venue.id === ownVenueId ? (
-                    <span className="label">· you</span>
-                  ) : null}
+              <Link
+                href={`${hrefPrefix}${row.venue.id}`}
+                className="hover:bg-ink/5 -mx-2 flex items-center gap-4 rounded-lg px-2 py-3 transition-colors"
+              >
+                <span className="w-14 shrink-0 font-mono text-sm font-medium">
+                  {row.venue.code}
                 </span>
-                <DotStrip done={row.doneCount} total={row.activeCount} />
-              </span>
 
-              <span className="w-16 shrink-0 text-right">
-                {row.failStreak > 0 ? (
-                  <span className="text-fail font-mono text-sm tabular-nums">
-                    {row.failStreak}w
-                  </span>
-                ) : (
-                  <span className="label">—</span>
-                )}
-              </span>
-            </Link>
-          </li>
-        ))}
+                <span className="bg-ink/10 h-1.5 min-w-0 flex-1 overflow-hidden rounded-full">
+                  <span
+                    className={`block h-full rounded-full ${
+                      row.status === "FAIL" ? "bg-fail" : "bg-ink"
+                    }`}
+                    style={{ width: `${percent}%` }}
+                  />
+                </span>
+
+                <span className="label w-32 shrink-0 text-right">
+                  {row.status === "SETUP"
+                    ? "Not set up"
+                    : finished
+                      ? formatFinish(finished)
+                      : row.failStreak > 0
+                        ? `${row.doneCount}/${WEEKLY_ITEM_TARGET} · ${row.failStreak}w`
+                        : `${row.doneCount}/${WEEKLY_ITEM_TARGET}`}
+                  {row.venue.id === ownVenueId ? " · you" : ""}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
-    </>
+    </Card>
   );
 }

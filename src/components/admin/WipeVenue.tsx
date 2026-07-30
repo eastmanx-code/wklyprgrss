@@ -67,7 +67,7 @@ export function WipeVenue({
         <form action={wipeVenue}>
           <input type="hidden" name="venueId" value={venueId} />
           <input type="hidden" name="confirm" value="WIPE" />
-          <button type="submit" className="btn bg-fail text-white">
+          <button type="submit" className="btn bg-fail text-on-fail">
             Yes — wipe {venueCode}
           </button>
         </form>

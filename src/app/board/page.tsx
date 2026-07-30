@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { CompanyHero } from "@/components/CompanyHero";
 import { VenueRows } from "@/components/VenueRows";
-import { VenueJumpBar } from "@/components/ui";
 import { getSession } from "@/lib/session";
 import { getDashboard } from "@/lib/status";
 import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
@@ -14,12 +13,13 @@ export default async function BoardPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const { weekStart, rows, itemsDone, itemsTarget, finishes } =
+  const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
     await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   const passing = rows.filter((row) => row.status === "PASS").length;
   const failing = rows.filter((row) => row.status === "FAIL").length;
-  const pending = rows.length - passing - failing;
+  const setup = rows.filter((row) => row.status === "SETUP").length;
+  const pendingCount = rows.filter((row) => row.status === "PENDING").length;
   const percent = itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0;
 
   return (
@@ -44,20 +44,21 @@ export default async function BoardPage() {
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
         passing={passing}
-        pending={pending}
+        pending={pendingCount}
         failing={failing}
-        statuses={rows.map((row) => row.status)}
+        setup={setup}
         deadlineLabel={formatDeadline(weekStart)}
         deadlineMs={deadlineFor(weekStart).getTime()}
         finishes={finishes}
+        history={history}
       />
 
-      <VenueJumpBar
-        venues={rows.map((row) => row.venue)}
+      <VenueRows
+        rows={rows}
+        hrefPrefix="/board/"
         ownVenueId={ownVenueId}
+        finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
       />
-
-      <VenueRows rows={rows} hrefPrefix="/board/" ownVenueId={ownVenueId} />
     </main>
   );
 }

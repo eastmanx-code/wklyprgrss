@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { CompanyHero } from "@/components/CompanyHero";
 import { VenueRows } from "@/components/VenueRows";
-import { VenueJumpBar } from "@/components/ui";
 import { getSession } from "@/lib/session";
 import { getDashboard } from "@/lib/status";
 import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
@@ -18,16 +17,12 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   if ((await getSession())?.role !== "admin") redirect("/admin/login");
 
-  const {
-    weekStart,
-    rows,
-    itemsDone,
-    itemsTarget,
-    venuesUnderConfigured,
-    finishes,
-  } = await getDashboard();
+  const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
+    await getDashboard();
   const passing = rows.filter((row) => row.status === "PASS").length;
   const failing = rows.filter((row) => row.status === "FAIL").length;
+  const setup = rows.filter((row) => row.status === "SETUP").length;
+  const pendingCount = rows.filter((row) => row.status === "PENDING").length;
 
   return (
     <main>
@@ -53,29 +48,20 @@ export default async function AdminDashboardPage() {
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
         passing={passing}
-        pending={rows.length - passing - failing}
+        pending={pendingCount}
         failing={failing}
-        statuses={rows.map((row) => row.status)}
+        setup={setup}
         deadlineLabel={formatDeadline(weekStart)}
         deadlineMs={deadlineFor(weekStart).getTime()}
         finishes={finishes}
+        history={history}
       />
 
-      {venuesUnderConfigured.length > 0 ? (
-        <div className="panel-quiet mb-3">
-          <p className="label">Setup incomplete</p>
-          <p className="note mt-2">
-            {`${venuesUnderConfigured.length} of ${rows.length} venues don't have 10 items yet`}
-          </p>
-          <p className="label mt-2 leading-relaxed">
-            {venuesUnderConfigured.join(" · ")}
-          </p>
-        </div>
-      ) : null}
-
-      <VenueJumpBar venues={rows.map((row) => row.venue)} />
-
-      <VenueRows rows={rows} hrefPrefix="/admin/venue/" />
+      <VenueRows
+        rows={rows}
+        hrefPrefix="/admin/venue/"
+        finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
+      />
     </main>
   );
 }

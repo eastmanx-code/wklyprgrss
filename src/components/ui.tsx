@@ -7,7 +7,9 @@ export function StatusPill({ status }: { status: WeekStatus }) {
       ? "pill pill-done"
       : status === "FAIL"
         ? "pill pill-fail"
-        : "pill pill-pending";
+        : status === "SETUP"
+          ? "pill pill-rolling"
+          : "pill pill-pending";
   return <span className={className}>{status}</span>;
 }
 
