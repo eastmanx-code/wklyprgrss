@@ -390,9 +390,9 @@ export default async function AdminVenuePage({
         </section>
 
         {/* Last, and masked: the least-used control shouldn't sit in the most
-            prominent spot, and a PIN on screen is a PIN over a shoulder. */}
+            prominent spot, and a PIN on screen is a PIN over a shoulder. The
+            form carries its own label, so no heading here. */}
         <section className="mt-8">
-          <h2 className="label mb-3">Venue PIN</h2>
           <VenuePinForm venueId={venue.id} pin={venue.pin} />
         </section>
       </details>
