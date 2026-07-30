@@ -25,6 +25,7 @@ export function WeekProgress({
   done,
   total,
   status,
+  configured,
   deadlineMs,
   deadlineLabel,
   weekLabel,
@@ -32,6 +33,8 @@ export function WeekProgress({
   done: number;
   total: number;
   status: WeekStatus;
+  /** How many items exist. Fewer than the target means the week can't pass. */
+  configured: number;
   deadlineMs: number;
   deadlineLabel: string;
   weekLabel: string;
@@ -45,14 +48,20 @@ export function WeekProgress({
     return () => clearInterval(id);
   }, [deadlineMs]);
 
-  const complete = total > 0 && done >= total;
+  const complete = done >= total;
   const missed = status === "FAIL";
+  // The rule is ten fresh items. Fewer than ten set up and the week cannot
+  // pass no matter how many photos go in, so say so rather than letting the
+  // meter imply otherwise.
+  const shortOfItems = configured < total;
 
   const headline = complete
     ? "All clear"
     : missed
       ? "Week missed"
-      : `${total - done} left to go`;
+      : shortOfItems && done >= configured
+        ? `Set up ${total - configured} more`
+        : `${total - done} left to go`;
 
   return (
     <section className="panel mb-5">
@@ -86,9 +95,23 @@ export function WeekProgress({
 
       <p className="label mt-3">
         {complete
-          ? `Every item has a photo and comment · due ${deadlineLabel}`
+          ? `All ${total} have a fresh photo and comment · due ${deadlineLabel}`
           : `Photo + comment on all ${total} · due ${deadlineLabel}`}
       </p>
+
+      {/* Spell out the gate rather than leaving people to infer it. */}
+      {shortOfItems ? (
+        <p className={`note mt-3 leading-relaxed ${missed ? "text-fail" : ""}`}>
+          Only {configured} of {total} items are set up. A week can&apos;t pass
+          with fewer than {total} — add the rest from any empty slot below.
+        </p>
+      ) : !complete ? (
+        <p className={`note mt-3 leading-relaxed ${missed ? "text-fail" : ""}`}>
+          {missed
+            ? `Missed: ${total - done} item${total - done === 1 ? "" : "s"} had no fresh photo and comment by the deadline.`
+            : `${total - done} still to go. Every one needs a new photo and a new comment.`}
+        </p>
+      ) : null}
     </section>
   );
 }

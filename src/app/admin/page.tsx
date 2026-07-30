@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
                 <span className="flex items-center gap-2">
                   <StatusPill status={row.status} />
                   <span className="label">
-                    {row.doneCount}/{row.activeCount}
+                    {row.doneCount}/10
                   </span>
                 </span>
                 <DotStrip done={row.doneCount} total={row.activeCount} />

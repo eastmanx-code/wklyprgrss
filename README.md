@@ -30,7 +30,7 @@ on the server.
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only. Never expose to the browser. |
-| `ADMIN_PIN` | PIN for the admin screens. 6 digits, matching venue PINs. |
+| `ADMIN_PIN` | Admin PIN, 6 digits. Comma-separate for more than one. |
 | `DEADLINE_DAY` | `0`=Sun … `6`=Sat, Pacific |
 | `DEADLINE_HOUR` | `0`–`23`, Pacific |
 

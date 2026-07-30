@@ -108,17 +108,18 @@ export function doneItemIdsFrom(submissions: Submission[]): Set<string> {
 }
 
 /**
- * An item is DONE for a week once it has a surviving submission in that week.
+ * A venue passes by getting a fresh photo and comment on all ten items — not
+ * on however many happen to be configured. A venue with one item set up and
+ * one photo in is not "all clear"; it owes nine more, and an incomplete list
+ * is itself a failure to set the week up.
  */
 export function statusFor(
   doneCount: number,
-  activeCount: number,
+  _activeCount: number,
   weekStart: string,
   now: Date,
 ): WeekStatus {
-  // A venue with no items configured yet has nothing to pass or fail.
-  if (activeCount === 0) return "PENDING";
-  if (doneCount >= activeCount) return "PASS";
+  if (doneCount >= WEEKLY_ITEM_TARGET) return "PASS";
   return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
 }
 

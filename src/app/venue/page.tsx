@@ -43,7 +43,8 @@ export default async function VenuePage() {
 
       <WeekProgress
         done={board.doneItemIds.size}
-        total={board.items.length}
+        total={WEEKLY_ITEM_TARGET}
+        configured={board.items.length}
         status={board.status}
         deadlineMs={deadlineFor(board.weekStart).getTime()}
         deadlineLabel={formatDeadline(board.weekStart)}

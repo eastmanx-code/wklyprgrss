@@ -81,7 +81,7 @@ export default async function BoardVenuePage({
         <div className="mt-3 flex items-center gap-2">
           <StatusPill status={status} />
           <span className="label">
-            {doneThisWeek.size}/{items.length} · week of{" "}
+            {doneThisWeek.size}/{WEEKLY_ITEM_TARGET} · week of{" "}
             {formatWeekStart(weekStart)}
           </span>
         </div>

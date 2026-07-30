@@ -71,7 +71,7 @@ export default async function BoardPage() {
                 <span className="flex items-center gap-2">
                   <StatusPill status={row.status} />
                   <span className="label">
-                    {row.doneCount}/{row.activeCount}
+                    {row.doneCount}/10
                   </span>
                   {row.venue.id === ownVenueId ? (
                     <span className="label">· you</span>

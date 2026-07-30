@@ -22,7 +22,15 @@ function requiredInt(name: string, min: number, max: number): number {
 export const SUPABASE_URL = () => required("NEXT_PUBLIC_SUPABASE_URL");
 export const SUPABASE_SERVICE_ROLE_KEY = () =>
   required("SUPABASE_SERVICE_ROLE_KEY");
-export const ADMIN_PIN = () => required("ADMIN_PIN");
+/**
+ * One or more admin PINs, comma-separated — so a test code can be issued and
+ * revoked without disturbing the real one.
+ */
+export const ADMIN_PINS = (): string[] =>
+  required("ADMIN_PIN")
+    .split(",")
+    .map((pin) => pin.trim())
+    .filter(Boolean);
 
 /** 0 = Sunday .. 6 = Saturday, Pacific. */
 export const DEADLINE_DAY = () => requiredInt("DEADLINE_DAY", 0, 6);

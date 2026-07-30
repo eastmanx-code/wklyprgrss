@@ -98,7 +98,7 @@ export default async function AdminVenuePage({
         <div className="mt-3 flex items-center gap-2">
           <StatusPill status={status} />
           <span className="label">
-            {activeDone}/{activeItems.length} this week ·{" "}
+            {activeDone}/{WEEKLY_ITEM_TARGET} this week ·{" "}
             {formatWeekStart(weekStart)}
           </span>
         </div>

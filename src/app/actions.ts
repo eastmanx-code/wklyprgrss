@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { ADMIN_PIN } from "@/lib/env";
+import { ADMIN_PINS } from "@/lib/env";
 import {
   endSession,
   pinMatches,
@@ -38,7 +38,12 @@ export async function adminLogin(
   formData: FormData,
 ): Promise<FormState> {
   const pin = String(formData.get("pin") ?? "");
-  if (!pin || !pinMatches(pin, ADMIN_PIN())) return { error: GENERIC_ERROR };
+  // Every candidate is compared, so timing doesn't reveal which one matched.
+  const matched = ADMIN_PINS().reduce(
+    (found, candidate) => pinMatches(pin, candidate) || found,
+    false,
+  );
+  if (!pin || !matched) return { error: GENERIC_ERROR };
 
   await startAdminSession();
   redirect("/admin");
