@@ -20,7 +20,11 @@ import {
   getVenue,
   statusFor,
 } from "@/lib/status";
-import { currentWeekStart, formatWeekStart } from "@/lib/week";
+import {
+  currentWeekStart,
+  formatLastUpload,
+  formatWeekStart,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +117,11 @@ export default async function BoardVenuePage({
 
                 <p className="caps mt-3 text-xs leading-snug font-medium">
                   {item.title}
+                </p>
+                <p className="label mt-1">
+                  {latest
+                    ? `Last photo · ${formatLastUpload(latest.created_at)}`
+                    : "No photo yet"}
                 </p>
 
                 {latest ? (

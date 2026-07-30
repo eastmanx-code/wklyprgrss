@@ -12,7 +12,12 @@ import {
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
-import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
+import {
+  deadlineFor,
+  formatDeadline,
+  formatLastUpload,
+  formatWeekStart,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +91,11 @@ export default async function VenuePage() {
                       {item.title}
                     </p>
                   </div>
+                  <p className="label mt-1">
+                    {latest
+                      ? `Last photo · ${formatLastUpload(latest.created_at)}`
+                      : "No photo yet"}
+                  </p>
                   <div className="mt-2">
                     {board.sentBackItemIds.has(item.id) ? (
                       <span className="pill pill-fail">Redo</span>

@@ -154,3 +154,25 @@ const timestampFormatter = new Intl.DateTimeFormat("en-US", {
 export function formatTimestamp(iso: string): string {
   return `${timestampFormatter.format(new Date(iso))} PT`;
 }
+
+const shortDateFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: TZ,
+  month: "short",
+  day: "numeric",
+});
+
+/**
+ * "Jul 24 · 6d" — when the last photo landed, and how stale that is. The age
+ * is what makes a neglected item obvious at a glance.
+ */
+export function formatLastUpload(iso: string, now: Date = new Date()): string {
+  const uploaded = new Date(iso);
+  const days = Math.max(
+    0,
+    Math.floor((now.getTime() - uploaded.getTime()) / DAY_MS),
+  );
+  const date = shortDateFormatter.format(uploaded);
+  if (days === 0) return `${date} · today`;
+  if (days === 1) return `${date} · 1d`;
+  return `${date} · ${days}d`;
+}

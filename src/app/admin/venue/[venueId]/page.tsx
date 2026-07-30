@@ -30,7 +30,12 @@ import {
   latestByItem,
   statusFor,
 } from "@/lib/status";
-import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
+import {
+  currentWeekStart,
+  formatLastUpload,
+  formatTimestamp,
+  formatWeekStart,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -122,6 +127,9 @@ export default async function AdminVenuePage({
               const url = submission
                 ? photos.get(submission.photo_url)
                 : undefined;
+              // Falls back to the last-ever upload, so a stale item still says
+              // how long it has been neglected rather than just "nothing yet".
+              const lastEver = byItem.get(item.id)?.[0];
 
               return (
                 <li key={item.id} className="panel flex flex-col p-3">
@@ -147,6 +155,11 @@ export default async function AdminVenuePage({
 
                   <p className="caps mt-3 text-xs leading-snug font-medium">
                     {item.title}
+                  </p>
+                  <p className="label mt-1">
+                    {lastEver
+                      ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
+                      : "No photo yet"}
                   </p>
 
                   {submission ? (
