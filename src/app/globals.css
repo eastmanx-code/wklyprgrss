@@ -193,12 +193,12 @@ p {
   .pill {
     display: inline-flex;
     align-items: center;
-    height: 22px;
-    padding: 0 0.6rem;
+    height: 17px;
+    padding: 0 0.45rem;
     border-radius: 999px;
     font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-size: 9px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
   }
@@ -216,5 +216,12 @@ p {
   .pill-fail {
     background: var(--color-fail);
     color: #fff;
+  }
+
+  /* Submitted, counts for the week, but the leader says it isn't finished. */
+  .pill-rolling {
+    background: transparent;
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
   }
 }

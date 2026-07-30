@@ -78,7 +78,7 @@ export async function getSubmissionsForItems(
     let query = db()
       .from("submissions")
       .select(
-        "id, item_id, week_start, photo_url, comment, author, assisted_by, review, reviewed_at, created_at",
+        "id, item_id, week_start, photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
       )
       .in("item_id", itemIds);
     if (weekStart) query = query.eq("week_start", weekStart);
@@ -140,6 +140,8 @@ export type LeaderBoard = {
   doneItemIds: Set<string>;
   /** Items the admin sent back — the leader has to redo these. */
   sentBackItemIds: Set<string>;
+  /** Items the leader flagged as needing another cycle. */
+  rollingItemIds: Set<string>;
   latest: Map<string, Submission>;
   status: WeekStatus;
 };
@@ -167,11 +169,18 @@ export async function getLeaderBoard(
       .map((s) => s.item_id),
   );
 
+  const rollingItemIds = new Set(
+    [...latestByItem(thisWeek).values()]
+      .filter((s) => s.review !== "sent_back" && s.progress === "another_cycle")
+      .map((s) => s.item_id),
+  );
+
   return {
     weekStart,
     items,
     doneItemIds,
     sentBackItemIds,
+    rollingItemIds,
     latest: latestByItem(allSubmissions),
     status: statusFor(doneItemIds.size, items.length, weekStart, now),
   };

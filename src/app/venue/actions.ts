@@ -29,8 +29,12 @@ export async function submitItem(
   const author = String(formData.get("author") ?? "").trim();
   const assistedRaw = String(formData.get("assistedBy") ?? "").trim();
   const assistedBy = assistedRaw || null;
+  const progress = String(formData.get("progress") ?? "");
   const photo = formData.get("photo");
 
+  if (progress !== "done" && progress !== "another_cycle") {
+    return { error: "Say whether this is done or needs another cycle." };
+  }
   if (!author) return { error: "Say who wrote this update." };
   if (author.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
   if (assistedBy && assistedBy.length > MAX_NAME_LENGTH) {
@@ -83,6 +87,7 @@ export async function submitItem(
     comment,
     author,
     assisted_by: assistedBy,
+    progress,
   });
 
   if (insertError) {

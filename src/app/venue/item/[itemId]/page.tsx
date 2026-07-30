@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
-import { Attribution, BackLink, DonePill } from "@/components/ui";
+import { Attribution, BackLink, DonePill, PurgedPhoto } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { getSubmissionsForItems } from "@/lib/status";
@@ -82,15 +82,19 @@ export default async function ItemPage({
                       {formatTimestamp(submission.created_at)}
                     </p>
                   </div>
-                  <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+                  <div className="mt-3">
                     {url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={url}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    ) : null}
+                      <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <PurgedPhoto aspect="wide" />
+                    )}
                   </div>
                   <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
                     {submission.comment}

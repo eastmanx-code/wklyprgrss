@@ -87,6 +87,9 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
   const [typedAuthor, setTypedAuthor] = useState<string | null>(null);
   const author = typedAuthor ?? savedAuthor;
   const [assistedBy, setAssistedBy] = useState("");
+  const [progress, setProgress] = useState<"done" | "another_cycle" | null>(
+    null,
+  );
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const previewRef = useRef<string | null>(null);
@@ -122,7 +125,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!photo || !comment.trim() || !author.trim()) return;
+    if (!photo || !comment.trim() || !author.trim() || !progress) return;
 
     try {
       localStorage.setItem(AUTHOR_KEY, author.trim());
@@ -137,12 +140,16 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
     data.set("comment", comment);
     data.set("author", author);
     data.set("assistedBy", assistedBy);
+    data.set("progress", progress);
     data.set("photo", photo, photo.name);
     formAction(data);
   }
 
   const ready =
-    Boolean(photo) && comment.trim().length > 0 && author.trim().length > 0;
+    Boolean(photo) &&
+    comment.trim().length > 0 &&
+    author.trim().length > 0 &&
+    progress !== null;
   const busy = pending || processing;
   const error = localError ?? state.error;
 
@@ -173,6 +180,38 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
 
         {photo ? (
           <p className="label">Ready · {formatKb(photo.size)}. Tap to retake.</p>
+        ) : null}
+      </div>
+
+      {/* The leader decides this, not the admin. Nothing can be approved until
+          they've said the work is actually finished. */}
+      <div className="space-y-2">
+        <span className="label">Where is this at? (required)</span>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={() => setProgress("done")}
+            aria-pressed={progress === "done"}
+            className={progress === "done" ? "btn" : "btn-ghost"}
+            disabled={busy}
+          >
+            This is done
+          </button>
+          <button
+            type="button"
+            onClick={() => setProgress("another_cycle")}
+            aria-pressed={progress === "another_cycle"}
+            className={progress === "another_cycle" ? "btn" : "btn-ghost"}
+            disabled={busy}
+          >
+            One more cycle
+          </button>
+        </div>
+        {progress === "another_cycle" ? (
+          <p className="label">
+            Still counts for this week. It stays open and can&apos;t be
+            approved until it&apos;s done.
+          </p>
         ) : null}
       </div>
 

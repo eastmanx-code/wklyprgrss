@@ -34,7 +34,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 pt-8 pb-20">
+        {/* Phone-first, but leaders and admin both use laptops — let the grids
+            breathe on a wide screen instead of pinning everything to a column. */}
+        <div className="mx-auto min-h-dvh w-full max-w-3xl px-4 pt-8 pb-20 lg:max-w-6xl lg:px-8">
           {children}
         </div>
       </body>

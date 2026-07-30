@@ -131,6 +131,17 @@ export async function reviewSubmission(formData: FormData) {
   const review = String(formData.get("review") ?? "");
   if (!["pending", "approved", "sent_back"].includes(review)) return;
 
+  // Enforced on the server too, not just by hiding the button: the leader has
+  // to declare the work done before it can be approved.
+  if (review === "approved") {
+    const { data: submission } = await db()
+      .from("submissions")
+      .select("progress")
+      .eq("id", submissionId)
+      .maybeSingle();
+    if (!submission || submission.progress !== "done") return;
+  }
+
   await db()
     .from("submissions")
     .update({ review, reviewed_at: new Date().toISOString() })
@@ -151,12 +162,14 @@ export async function approveAllForVenue(formData: FormData) {
   const itemIds = items.map((item) => item.id);
   if (itemIds.length === 0) return;
 
+  // Only sweeps up work the leaders have declared done.
   await db()
     .from("submissions")
     .update({ review: "approved", reviewed_at: new Date().toISOString() })
     .in("item_id", itemIds)
     .eq("week_start", weekStart)
-    .eq("review", "pending");
+    .eq("review", "pending")
+    .eq("progress", "done");
 
   refresh(venueId);
 }

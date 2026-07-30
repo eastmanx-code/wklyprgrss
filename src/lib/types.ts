@@ -26,6 +26,11 @@ export type Submission = {
   week_start: string;
   /** Storage object path inside the private `photos` bucket, not a public URL. */
   photo_url: string;
+  /**
+   * When the image file was cleared from storage. The row itself is never
+   * deleted — status, streaks and reports are computed from rows, not photos.
+   */
+  photo_purged_at: string | null;
   comment: string;
   /** Who wrote this update. Required. */
   author: string;
@@ -37,10 +42,17 @@ export type Submission = {
    */
   review: ReviewState;
   reviewed_at: string | null;
+  /**
+   * What the leader says about the work itself. `another_cycle` still counts
+   * as this week's update — they showed up — but the task isn't finished, and
+   * the admin cannot approve it.
+   */
+  progress: ProgressState;
   created_at: string;
 };
 
 export type ReviewState = "pending" | "approved" | "sent_back";
+export type ProgressState = "done" | "another_cycle";
 
 export type WeekStatus = "PASS" | "PENDING" | "FAIL";
 

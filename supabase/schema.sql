@@ -28,6 +28,10 @@ create table submissions (
   review text not null default 'pending'
     check (review in ('pending', 'approved', 'sent_back')),
   reviewed_at timestamptz,
+  -- What the leader says: finished, or needs another cycle. Only 'done' work
+  -- can be approved.
+  progress text not null default 'done'
+    check (progress in ('done', 'another_cycle')),
   created_at timestamptz default now()
 );
 

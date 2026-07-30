@@ -53,8 +53,9 @@ export default async function AdminVenuePage({
 
   // Newest surviving submission per item — the one under review.
   const latestThisWeek = latestByItem(thisWeek);
+  // Only work the leader has called done is actually reviewable.
   const awaitingReview = [...latestThisWeek.values()].filter(
-    (s) => s.review === "pending",
+    (s) => s.review === "pending" && s.progress === "done",
   ).length;
   const activeDone = activeItems.filter((item) =>
     doneThisWeek.has(item.id),
@@ -154,8 +155,16 @@ export default async function AdminVenuePage({
                         assistedBy={submission.assisted_by}
                       />
 
+                      {submission.progress === "another_cycle" ? (
+                        <p className="label mt-2">
+                          Leader says: one more cycle
+                        </p>
+                      ) : null}
+
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {submission.review !== "approved" ? (
+                        {/* Can't approve work the leader hasn't called done. */}
+                        {submission.review !== "approved" &&
+                        submission.progress === "done" ? (
                           <form action={reviewSubmission}>
                             <input
                               type="hidden"

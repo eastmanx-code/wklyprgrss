@@ -64,6 +64,16 @@ for (const table of ["venues", "items", "submissions"]) {
   );
 }
 
+// Progress column (added by supabase/004_progress.sql).
+{
+  const { error } = await db.from("submissions").select("progress").limit(1);
+  record(
+    !error,
+    "submissions.progress",
+    error ? "missing — run supabase/004_progress.sql" : "present",
+  );
+}
+
 // Storage bucket.
 const { data: buckets, error: bucketError } = await db.storage.listBuckets();
 if (bucketError) {

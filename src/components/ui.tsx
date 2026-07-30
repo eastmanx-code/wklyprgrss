@@ -150,8 +150,10 @@ export function CompanyRollup({
  */
 export function PhotoPlaceholder({
   aspect = "square",
+  label = "Task photo needed",
 }: {
   aspect?: "square" | "wide";
+  label?: string;
 }) {
   return (
     <div
@@ -160,10 +162,18 @@ export function PhotoPlaceholder({
       }`}
     >
       <span className="label text-ink bg-paper rounded-full px-3 py-1.5 text-center shadow-[0_0_0_4px_var(--color-paper)]">
-        Task photo needed
+        {label}
       </span>
     </div>
   );
+}
+
+/**
+ * A photo that has aged out of storage. The record of the work survives — this
+ * only means the image file was cleared.
+ */
+export function PurgedPhoto({ aspect = "square" }: { aspect?: "square" | "wide" }) {
+  return <PhotoPlaceholder aspect={aspect} label="Photo cleared" />;
 }
 
 export function ReviewPill({ review }: { review: ReviewState }) {

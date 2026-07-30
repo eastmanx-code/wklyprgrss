@@ -5,6 +5,7 @@ import {
   BackLink,
   DonePill,
   PhotoPlaceholder,
+  PurgedPhoto,
   StatusPill,
 } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
@@ -78,7 +79,7 @@ export default async function BoardVenuePage({
       {items.length === 0 ? (
         <p className="text-sm text-muted">No items set up yet.</p>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {items.map((item) => {
             const history = byItem.get(item.id) ?? [];
             const latest = history[0];
@@ -96,6 +97,8 @@ export default async function BoardVenuePage({
                         className="h-full w-full object-cover"
                       />
                     </div>
+                  ) : latest?.photo_purged_at ? (
+                    <PurgedPhoto />
                   ) : (
                     <PhotoPlaceholder />
                   )}

@@ -55,7 +55,7 @@ export default async function VenuePage() {
           No items set up for this venue yet. Your admin adds them.
         </EmptyNote>
       ) : (
-        <ul className="grid grid-cols-2 gap-3">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {board.items.map((item) => {
             const latest = board.latest.get(item.id);
             const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
@@ -87,6 +87,8 @@ export default async function VenuePage() {
                   <div className="mt-2">
                     {board.sentBackItemIds.has(item.id) ? (
                       <span className="pill pill-fail">Redo</span>
+                    ) : board.rollingItemIds.has(item.id) ? (
+                      <span className="pill pill-rolling">Rolling</span>
                     ) : (
                       <DonePill done={done} />
                     )}
