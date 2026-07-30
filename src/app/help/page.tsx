@@ -1,4 +1,4 @@
-import { AdminGuide, LeaderGuide } from "@/components/HowToUse";
+import { LeaderGuide } from "@/components/HowToUse";
 import { BackLink } from "@/components/ui";
 import { APP_NAME } from "@/lib/app";
 import { getSession } from "@/lib/session";
@@ -11,7 +11,8 @@ export default async function HelpPage() {
   const session = await getSession();
 
   const deadlineLabel = formatDeadline(currentWeekStart());
-  // Signed out, show the leader guide — that's who reaches this cold.
+  // One guide, for the people doing the uploading. There is a single admin and
+  // he doesn't need a manual — but he does need to see what staff are told.
   const isAdmin = session?.role === "admin";
 
   return (
@@ -27,14 +28,7 @@ export default async function HelpPage() {
         </h1>
       </header>
 
-      {isAdmin ? (
-        <AdminGuide deadlineLabel={deadlineLabel} />
-      ) : (
-        <LeaderGuide
-          target={WEEKLY_ITEM_TARGET}
-          deadlineLabel={deadlineLabel}
-        />
-      )}
+      <LeaderGuide target={WEEKLY_ITEM_TARGET} deadlineLabel={deadlineLabel} />
     </main>
   );
 }
