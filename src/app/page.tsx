@@ -14,9 +14,9 @@ export const dynamic = "force-dynamic";
 /** Small labelled tile, like the readouts under a weather hero. */
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="panel p-4">
+    <div className="panel px-5 py-4">
       <p className="label">{label}</p>
-      <p className="mt-2 font-mono text-2xl tabular-nums">{value}</p>
+      <p className="mt-1 font-mono text-2xl tabular-nums">{value}</p>
     </div>
   );
 }
@@ -47,24 +47,24 @@ export default async function HomePage() {
 
       {/* Hero: the one number that matters, with the context beside it. */}
       <section className="mb-3 flex gap-3">
-        <div className="bg-ink text-paper flex aspect-square w-[44%] shrink-0 flex-col items-center justify-center rounded-full">
+        <div className="bg-ink text-paper flex aspect-square w-[38%] shrink-0 flex-col items-center justify-center rounded-full">
           <span className="font-mono text-5xl leading-none tabular-nums">
             {percent}%
           </span>
-          <span className="label mt-2 opacity-70">
+          <span className="label mt-1 opacity-70">
             {itemsDone}/{itemsTarget} photos
           </span>
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <div className="panel flex-1 rounded-full px-5 py-4">
+          <div className="panel flex flex-1 flex-col justify-center rounded-full px-6 py-3">
             <p className="label">Venues finished</p>
             <p className="mt-1 font-mono text-xl tabular-nums">
               {passing}
               <span className="text-muted">/{rows.length}</span>
             </p>
           </div>
-          <div className="panel flex-1 rounded-full px-5 py-4">
+          <div className="panel flex flex-1 flex-col justify-center rounded-full px-6 py-3">
             <p className="label">Due</p>
             <p className="mt-1 font-mono text-xs leading-snug">
               {deadlineLabel}
@@ -74,13 +74,13 @@ export default async function HomePage() {
       </section>
 
       {/* One segment per venue, unlabelled. */}
-      <section className="panel mb-3 p-4">
-        <p className="label mb-3">All {rows.length} venues</p>
+      <section className="panel mb-3 px-5 py-4">
+        <p className="label mb-2">All {rows.length} venues</p>
         <div className="flex gap-[3px]" aria-hidden>
           {rows.map((row) => (
             <span
               key={row.venue.id}
-              className={`h-[10px] flex-1 rounded-full ${
+              className={`h-[7px] flex-1 rounded-full ${
                 row.status === "PASS"
                   ? "bg-ink"
                   : row.status === "FAIL"
