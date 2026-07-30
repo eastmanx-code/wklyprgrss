@@ -203,17 +203,26 @@ p {
     cursor: default;
   }
 
+  /* Admin controls sit next to 17px pills — the full-size button is scaled for
+     a leader's primary action on a phone, not for a dense review grid. */
+  .btn-sm {
+    min-height: 30px;
+    padding: 0 0.85rem;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
   .btn-ghost {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 40px;
-    padding: 0 1rem;
+    min-height: 32px;
+    padding: 0 0.85rem;
     border-radius: 999px;
     background: var(--color-panel);
     color: var(--color-ink);
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;

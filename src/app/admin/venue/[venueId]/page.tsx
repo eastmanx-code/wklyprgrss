@@ -102,7 +102,7 @@ export default async function AdminVenuePage({
             <form action={approveAllForVenue}>
               <input type="hidden" name="venueId" value={venue.id} />
               <input type="hidden" name="weekStart" value={weekStart} />
-              <button type="submit" className="btn">
+              <button type="submit" className="btn btn-sm">
                 Approve all
               </button>
             </form>

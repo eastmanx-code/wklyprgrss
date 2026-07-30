@@ -33,6 +33,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // The theme script stamps data-theme before hydration, so <html> is
+      // deliberately different from what the server rendered.
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
