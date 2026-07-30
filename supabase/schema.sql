@@ -24,6 +24,10 @@ create table submissions (
   -- Who wrote this update, and who helped with the work.
   author text not null,
   assisted_by text,
+  -- Admin review. 'sent_back' stops it counting towards the week.
+  review text not null default 'pending'
+    check (review in ('pending', 'approved', 'sent_back')),
+  reviewed_at timestamptz,
   created_at timestamptz default now()
 );
 

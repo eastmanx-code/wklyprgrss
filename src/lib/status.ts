@@ -78,7 +78,7 @@ export async function getSubmissionsForItems(
     let query = db()
       .from("submissions")
       .select(
-        "id, item_id, week_start, photo_url, comment, author, assisted_by, created_at",
+        "id, item_id, week_start, photo_url, comment, author, assisted_by, review, reviewed_at, created_at",
       )
       .in("item_id", itemIds);
     if (weekStart) query = query.eq("week_start", weekStart);
@@ -92,9 +92,23 @@ export async function getSubmissionsForItems(
 }
 
 /**
- * An item is DONE for a week once any submission exists for it in that week.
- * Photo and comment are both NOT NULL at the DB level, so a row's existence is
- * sufficient evidence.
+ * A submission counts towards the week unless it has been sent back. Photo and
+ * comment are both NOT NULL at the DB level, so a surviving row is sufficient
+ * evidence that both were given.
+ */
+export function countsAsDone(submission: {
+  review: Submission["review"];
+}): boolean {
+  return submission.review !== "sent_back";
+}
+
+/** Item ids that are genuinely done, ignoring anything sent back. */
+export function doneItemIdsFrom(submissions: Submission[]): Set<string> {
+  return new Set(submissions.filter(countsAsDone).map((s) => s.item_id));
+}
+
+/**
+ * An item is DONE for a week once it has a surviving submission in that week.
  */
 export function statusFor(
   doneCount: number,
@@ -124,6 +138,8 @@ export type LeaderBoard = {
   weekStart: string;
   items: Item[];
   doneItemIds: Set<string>;
+  /** Items the admin sent back — the leader has to redo these. */
+  sentBackItemIds: Set<string>;
   latest: Map<string, Submission>;
   status: WeekStatus;
 };
@@ -142,11 +158,20 @@ export async function getLeaderBoard(
     getSubmissionsForItems(itemIds, weekStart),
   ]);
 
-  const doneItemIds = new Set(thisWeek.map((s) => s.item_id));
+  const doneItemIds = doneItemIdsFrom(thisWeek);
+
+  // Sent back only matters when nothing newer has replaced it.
+  const sentBackItemIds = new Set(
+    [...latestByItem(thisWeek).values()]
+      .filter((s) => s.review === "sent_back")
+      .map((s) => s.item_id),
+  );
+
   return {
     weekStart,
     items,
     doneItemIds,
+    sentBackItemIds,
     latest: latestByItem(allSubmissions),
     status: statusFor(doneItemIds.size, items.length, weekStart, now),
   };
@@ -200,12 +225,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     );
   }
 
+  // Sent-back submissions are filtered in SQL so they never count anywhere.
   const submissions = await selectAll<Pick<Submission, "item_id" | "week_start">>(
     (from, to) =>
       db()
         .from("submissions")
         .select("item_id, week_start")
         .gte("week_start", earliestWeek)
+        .neq("review", "sent_back")
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
         data: Pick<Submission, "item_id" | "week_start">[] | null;

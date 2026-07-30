@@ -118,6 +118,49 @@ export async function moveItem(formData: FormData) {
   refresh(venueId);
 }
 
+/**
+ * Approve or send back a single submission. Sending one back stops it counting
+ * towards the week, so the item goes back to PENDING and the leader must redo
+ * it — that is what gives review teeth.
+ */
+export async function reviewSubmission(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const submissionId = String(formData.get("submissionId") ?? "");
+  const venueId = String(formData.get("venueId") ?? "");
+  const review = String(formData.get("review") ?? "");
+  if (!["pending", "approved", "sent_back"].includes(review)) return;
+
+  await db()
+    .from("submissions")
+    .update({ review, reviewed_at: new Date().toISOString() })
+    .eq("id", submissionId);
+
+  refresh(venueId);
+}
+
+/** Approve everything still pending for this venue's current week, in one go. */
+export async function approveAllForVenue(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const weekStart = String(formData.get("weekStart") ?? "");
+  if (!venueId || !weekStart) return;
+
+  const items = await itemsFor(venueId);
+  const itemIds = items.map((item) => item.id);
+  if (itemIds.length === 0) return;
+
+  await db()
+    .from("submissions")
+    .update({ review: "approved", reviewed_at: new Date().toISOString() })
+    .in("item_id", itemIds)
+    .eq("week_start", weekStart)
+    .eq("review", "pending");
+
+  refresh(venueId);
+}
+
 export async function updateVenuePin(
   _prev: AdminState,
   formData: FormData,

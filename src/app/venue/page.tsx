@@ -85,7 +85,11 @@ export default async function VenuePage() {
                     </p>
                   </div>
                   <div className="mt-2">
-                    <DonePill done={done} />
+                    {board.sentBackItemIds.has(item.id) ? (
+                      <span className="pill pill-fail">Redo</span>
+                    ) : (
+                      <DonePill done={done} />
+                    )}
                   </div>
                 </Link>
               </li>

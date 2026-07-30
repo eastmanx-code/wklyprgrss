@@ -10,6 +10,7 @@ import {
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
+  doneItemIdsFrom,
   getItems,
   getSubmissionsForItems,
   getVenue,
@@ -39,8 +40,8 @@ export default async function BoardVenuePage({
   const photos = await signedUrls(submissions.map((s) => s.photo_url));
 
   const weekStart = currentWeekStart();
-  const doneThisWeek = new Set(
-    submissions.filter((s) => s.week_start === weekStart).map((s) => s.item_id),
+  const doneThisWeek = doneItemIdsFrom(
+    submissions.filter((s) => s.week_start === weekStart),
   );
   const status = statusFor(
     doneThisWeek.size,

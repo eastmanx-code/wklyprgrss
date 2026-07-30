@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { WeekStatus } from "@/lib/types";
+import type { ReviewState, WeekStatus } from "@/lib/types";
 
 export function StatusPill({ status }: { status: WeekStatus }) {
   const className =
@@ -164,6 +164,16 @@ export function PhotoPlaceholder({
       </span>
     </div>
   );
+}
+
+export function ReviewPill({ review }: { review: ReviewState }) {
+  if (review === "approved") {
+    return <span className="pill pill-done">Approved</span>;
+  }
+  if (review === "sent_back") {
+    return <span className="pill pill-fail">Sent back</span>;
+  }
+  return <span className="pill pill-pending">Needs review</span>;
 }
 
 /** Byline for a submission: who wrote it, and who helped. */

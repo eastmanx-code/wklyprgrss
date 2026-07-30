@@ -31,8 +31,16 @@ export type Submission = {
   author: string;
   /** Who else worked on it. Optional. */
   assisted_by: string | null;
+  /**
+   * Admin review state. `sent_back` means the item is not finished — it stops
+   * counting as done for the week, so the leader has to redo it.
+   */
+  review: ReviewState;
+  reviewed_at: string | null;
   created_at: string;
 };
+
+export type ReviewState = "pending" | "approved" | "sent_back";
 
 export type WeekStatus = "PASS" | "PENDING" | "FAIL";
 

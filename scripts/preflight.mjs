@@ -51,6 +51,19 @@ for (const table of ["venues", "items", "submissions"]) {
   );
 }
 
+// Review columns (added by supabase/003_review.sql).
+{
+  const { error } = await db
+    .from("submissions")
+    .select("review, reviewed_at")
+    .limit(1);
+  record(
+    !error,
+    "submissions.review + reviewed_at",
+    error ? "missing — run supabase/003_review.sql" : "present",
+  );
+}
+
 // Storage bucket.
 const { data: buckets, error: bucketError } = await db.storage.listBuckets();
 if (bucketError) {

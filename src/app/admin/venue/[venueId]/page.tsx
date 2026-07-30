@@ -1,16 +1,30 @@
 import { notFound, redirect } from "next/navigation";
 
-import { moveItem, setItemActive } from "@/app/admin/actions";
+import {
+  approveAllForVenue,
+  moveItem,
+  reviewSubmission,
+  setItemActive,
+} from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
-import { Attribution, BackLink, DonePill, StatusPill } from "@/components/ui";
+import {
+  Attribution,
+  BackLink,
+  DonePill,
+  PhotoPlaceholder,
+  ReviewPill,
+  StatusPill,
+} from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
+  doneItemIdsFrom,
   getItems,
   getSubmissionsForItems,
   getVenue,
+  latestByItem,
   statusFor,
 } from "@/lib/status";
 import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
@@ -34,11 +48,14 @@ export default async function AdminVenuePage({
   const photos = await signedUrls(submissions.map((s) => s.photo_url));
 
   const weekStart = currentWeekStart();
-  const doneThisWeek = new Set(
-    submissions
-      .filter((s) => s.week_start === weekStart)
-      .map((s) => s.item_id),
-  );
+  const thisWeek = submissions.filter((s) => s.week_start === weekStart);
+  const doneThisWeek = doneItemIdsFrom(thisWeek);
+
+  // Newest surviving submission per item — the one under review.
+  const latestThisWeek = latestByItem(thisWeek);
+  const awaitingReview = [...latestThisWeek.values()].filter(
+    (s) => s.review === "pending",
+  ).length;
   const activeDone = activeItems.filter((item) =>
     doneThisWeek.has(item.id),
   ).length;
@@ -73,6 +90,127 @@ export default async function AdminVenuePage({
           </span>
         </div>
       </header>
+
+      {/* This week at a glance: see it, approve it, or send it back. */}
+      <section className="mb-8">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="label">
+            This week · {awaitingReview} awaiting review
+          </h2>
+          {awaitingReview > 0 ? (
+            <form action={approveAllForVenue}>
+              <input type="hidden" name="venueId" value={venue.id} />
+              <input type="hidden" name="weekStart" value={weekStart} />
+              <button type="submit" className="btn">
+                Approve all
+              </button>
+            </form>
+          ) : null}
+        </div>
+
+        {activeItems.length === 0 ? (
+          <p className="note text-muted">No items yet.</p>
+        ) : (
+          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {activeItems.map((item) => {
+              const submission = latestThisWeek.get(item.id);
+              const url = submission
+                ? photos.get(submission.photo_url)
+                : undefined;
+
+              return (
+                <li key={item.id} className="panel p-3">
+                  <div className="relative">
+                    {url ? (
+                      <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <PhotoPlaceholder />
+                    )}
+                    {submission ? (
+                      <span className="absolute top-2 right-2">
+                        <ReviewPill review={submission.review} />
+                      </span>
+                    ) : null}
+                  </div>
+
+                  <p className="caps mt-3 text-xs leading-snug font-medium">
+                    {item.title}
+                  </p>
+
+                  {submission ? (
+                    <>
+                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
+                        {submission.comment}
+                      </p>
+                      <Attribution
+                        author={submission.author}
+                        assistedBy={submission.assisted_by}
+                      />
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {submission.review !== "approved" ? (
+                          <form action={reviewSubmission}>
+                            <input
+                              type="hidden"
+                              name="submissionId"
+                              value={submission.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="venueId"
+                              value={venue.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="review"
+                              value="approved"
+                            />
+                            <button type="submit" className="btn-ghost">
+                              Approve
+                            </button>
+                          </form>
+                        ) : null}
+
+                        {submission.review !== "sent_back" ? (
+                          <form action={reviewSubmission}>
+                            <input
+                              type="hidden"
+                              name="submissionId"
+                              value={submission.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="venueId"
+                              value={venue.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="review"
+                              value="sent_back"
+                            />
+                            <button type="submit" className="btn-ghost">
+                              Send back
+                            </button>
+                          </form>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="label mt-2">Nothing submitted yet</p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
       <div className="space-y-3">
         <VenuePinForm venueId={venue.id} pin={venue.pin} />
