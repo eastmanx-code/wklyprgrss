@@ -1,0 +1,252 @@
+import "server-only";
+
+import { db, selectAll } from "./supabase";
+import type { Item, Submission, Venue, VenueWeekSummary, WeekStatus } from "./types";
+import {
+  currentWeekStart,
+  isDeadlinePassed,
+  mostRecentCompletedWeek,
+  shiftWeeks,
+} from "./week";
+
+/**
+ * How far back a fail streak may reach. Also bounds the dashboard query.
+ */
+const STREAK_LOOKBACK_WEEKS = 26;
+
+export async function getVenues(): Promise<Venue[]> {
+  const { data, error } = await db()
+    .from("venues")
+    .select("id, code, name, pin")
+    .order("code");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Venue[];
+}
+
+export async function getVenue(venueId: string): Promise<Venue | null> {
+  const { data, error } = await db()
+    .from("venues")
+    .select("id, code, name, pin")
+    .eq("id", venueId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data as Venue) ?? null;
+}
+
+export async function getItems(
+  venueId: string,
+  { includeInactive = false } = {},
+): Promise<Item[]> {
+  let query = db()
+    .from("items")
+    .select("id, venue_id, title, position, active")
+    .eq("venue_id", venueId);
+  if (!includeInactive) query = query.eq("active", true);
+
+  const { data, error } = await query
+    .order("position")
+    .order("title");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Item[];
+}
+
+export async function getSubmissionsForItems(
+  itemIds: string[],
+  weekStart?: string,
+): Promise<Submission[]> {
+  if (itemIds.length === 0) return [];
+  return selectAll<Submission>((from, to) => {
+    let query = db()
+      .from("submissions")
+      .select("id, item_id, week_start, photo_url, comment, created_at")
+      .in("item_id", itemIds);
+    if (weekStart) query = query.eq("week_start", weekStart);
+    return query
+      .order("created_at", { ascending: false })
+      .range(from, to) as unknown as PromiseLike<{
+      data: Submission[] | null;
+      error: { message: string } | null;
+    }>;
+  });
+}
+
+/**
+ * An item is DONE for a week once any submission exists for it in that week.
+ * Photo and comment are both NOT NULL at the DB level, so a row's existence is
+ * sufficient evidence.
+ */
+export function statusFor(
+  doneCount: number,
+  activeCount: number,
+  weekStart: string,
+  now: Date,
+): WeekStatus {
+  // A venue with no items configured yet has nothing to pass or fail.
+  if (activeCount === 0) return "PENDING";
+  if (doneCount >= activeCount) return "PASS";
+  return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
+}
+
+/** Latest submission per item, newest first. */
+export function latestByItem(
+  submissions: Submission[],
+): Map<string, Submission> {
+  const latest = new Map<string, Submission>();
+  for (const s of submissions) {
+    const existing = latest.get(s.item_id);
+    if (!existing || s.created_at > existing.created_at) latest.set(s.item_id, s);
+  }
+  return latest;
+}
+
+export type LeaderBoard = {
+  weekStart: string;
+  items: Item[];
+  doneItemIds: Set<string>;
+  latest: Map<string, Submission>;
+  status: WeekStatus;
+};
+
+export async function getLeaderBoard(
+  venueId: string,
+  now: Date = new Date(),
+): Promise<LeaderBoard> {
+  const weekStart = currentWeekStart(now);
+  const items = await getItems(venueId);
+  const itemIds = items.map((i) => i.id);
+
+  // Latest photo per card comes from all history; DONE comes from this week.
+  const [allSubmissions, thisWeek] = await Promise.all([
+    getSubmissionsForItems(itemIds),
+    getSubmissionsForItems(itemIds, weekStart),
+  ]);
+
+  const doneItemIds = new Set(thisWeek.map((s) => s.item_id));
+  return {
+    weekStart,
+    items,
+    doneItemIds,
+    latest: latestByItem(allSubmissions),
+    status: statusFor(doneItemIds.size, items.length, weekStart, now),
+  };
+}
+
+export type Dashboard = {
+  weekStart: string;
+  rows: VenueWeekSummary[];
+};
+
+/**
+ * One pass over every venue: this week's completion plus the fail streak.
+ *
+ * Streaks count back from the most recent week whose deadline has passed, and
+ * stop at the venue's first-ever submission — weeks before a venue started
+ * using the app are "no data", not failures. Historical weeks are scored
+ * against the venue's *current* active items, which is the only definition the
+ * schema supports.
+ */
+export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
+  const weekStart = currentWeekStart(now);
+  const completedWeek = mostRecentCompletedWeek(now);
+  const earliestWeek = shiftWeeks(completedWeek, -(STREAK_LOOKBACK_WEEKS - 1));
+
+  const venues = await getVenues();
+
+  const activeItems = await selectAll<Item>((from, to) =>
+    db()
+      .from("items")
+      .select("id, venue_id, title, position, active")
+      .eq("active", true)
+      .order("id")
+      .range(from, to) as unknown as PromiseLike<{
+      data: Item[] | null;
+      error: { message: string } | null;
+    }>,
+  );
+
+  const itemToVenue = new Map(activeItems.map((i) => [i.id, i.venue_id]));
+  const activeCountByVenue = new Map<string, number>();
+  for (const item of activeItems) {
+    activeCountByVenue.set(
+      item.venue_id,
+      (activeCountByVenue.get(item.venue_id) ?? 0) + 1,
+    );
+  }
+
+  const submissions = await selectAll<Pick<Submission, "item_id" | "week_start">>(
+    (from, to) =>
+      db()
+        .from("submissions")
+        .select("item_id, week_start")
+        .gte("week_start", earliestWeek)
+        .order("week_start")
+        .range(from, to) as unknown as PromiseLike<{
+        data: Pick<Submission, "item_id" | "week_start">[] | null;
+        error: { message: string } | null;
+      }>,
+  );
+
+  // venueId -> weekStart -> set of done item ids
+  const doneByVenueWeek = new Map<string, Map<string, Set<string>>>();
+  const firstWeekByVenue = new Map<string, string>();
+
+  for (const s of submissions) {
+    const venueId = itemToVenue.get(s.item_id);
+    if (!venueId) continue; // submission against a deactivated item
+    let weeks = doneByVenueWeek.get(venueId);
+    if (!weeks) {
+      weeks = new Map();
+      doneByVenueWeek.set(venueId, weeks);
+    }
+    let set = weeks.get(s.week_start);
+    if (!set) {
+      set = new Set();
+      weeks.set(s.week_start, set);
+    }
+    set.add(s.item_id);
+
+    const first = firstWeekByVenue.get(venueId);
+    if (!first || s.week_start < first) firstWeekByVenue.set(venueId, s.week_start);
+  }
+
+  const rows: VenueWeekSummary[] = venues.map((venue) => {
+    const activeCount = activeCountByVenue.get(venue.id) ?? 0;
+    const weeks = doneByVenueWeek.get(venue.id);
+    const doneCount = weeks?.get(weekStart)?.size ?? 0;
+
+    let failStreak = 0;
+    const firstWeek = firstWeekByVenue.get(venue.id);
+    if (firstWeek && activeCount > 0) {
+      let week = completedWeek;
+      for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+        if (week < firstWeek) break;
+        const done = weeks?.get(week)?.size ?? 0;
+        if (statusFor(done, activeCount, week, now) !== "FAIL") break;
+        failStreak += 1;
+        week = shiftWeeks(week, -1);
+      }
+    }
+
+    return {
+      venue,
+      doneCount,
+      activeCount,
+      status: statusFor(doneCount, activeCount, weekStart, now),
+      failStreak,
+    };
+  });
+
+  const statusRank: Record<WeekStatus, number> = { FAIL: 0, PENDING: 1, PASS: 2 };
+  rows.sort((a, b) => {
+    if (statusRank[a.status] !== statusRank[b.status]) {
+      return statusRank[a.status] - statusRank[b.status];
+    }
+    const ratioA = a.activeCount ? a.doneCount / a.activeCount : 0;
+    const ratioB = b.activeCount ? b.doneCount / b.activeCount : 0;
+    if (ratioA !== ratioB) return ratioA - ratioB;
+    if (a.failStreak !== b.failStreak) return b.failStreak - a.failStreak;
+    return a.venue.code.localeCompare(b.venue.code);
+  });
+
+  return { weekStart, rows };
+}
