@@ -91,7 +91,14 @@ function readSavedAuthor(): string {
 /** Empty on the server, so the first client render matches and hydration is clean. */
 const noSavedAuthor = () => "";
 
-export function PhotoSubmitForm({ itemId }: { itemId: string }) {
+export function PhotoSubmitForm({
+  itemId,
+  currentPhotoUrl = null,
+}: {
+  itemId: string;
+  /** This week's photo, if one is already in. Shown so the well isn't empty. */
+  currentPhotoUrl?: string | null;
+}) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(submitItem, initialState);
   const [uploading, setUploading] = useState(false);
@@ -292,10 +299,21 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
             onChange={handlePick}
             disabled={busy}
           />
-          <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-panel">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={preview} alt="" className="h-full w-full object-cover" />
+          <div className="bg-panel relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
+            {preview || currentPhotoUrl ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={preview ?? currentPhotoUrl ?? ""}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+                {!preview ? (
+                  <span className="label text-ink bg-paper absolute bottom-3 rounded-full px-3 py-1.5">
+                    This week&apos;s · tap to replace
+                  </span>
+                ) : null}
+              </>
             ) : (
               <span className="label">
                 {processing ? "Processing…" : "Tap to take or choose a photo"}

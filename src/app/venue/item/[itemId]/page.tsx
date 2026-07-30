@@ -130,7 +130,12 @@ export default async function ItemPage({
         </section>
       ) : null}
 
-      <PhotoSubmitForm itemId={item.id} />
+      <PhotoSubmitForm
+        itemId={item.id}
+        currentPhotoUrl={
+          current && !sentBack ? (photos.get(current.photo_url) ?? null) : null
+        }
+      />
 
       <section className="mt-8">
         <form action={setItemActive}>
