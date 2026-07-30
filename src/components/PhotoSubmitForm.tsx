@@ -57,14 +57,27 @@ const initialState: SubmitState = { error: null };
 
 const AUTHOR_KEY = "ww_author";
 
+/**
+ * How long a remembered name stays valid. Long enough to cover one person
+ * doing all ten items in a sitting; short enough that the next shift on a
+ * shared venue iPad starts blank instead of quietly filing work under whoever
+ * used it last.
+ */
+const AUTHOR_TTL_MS = 8 * 60 * 60 * 1000;
+
 /** Never changes mid-session, so there is nothing to subscribe to. */
 const subscribeToNothing = () => () => {};
 
 function readSavedAuthor(): string {
   try {
-    return localStorage.getItem(AUTHOR_KEY) ?? "";
+    const raw = localStorage.getItem(AUTHOR_KEY);
+    if (!raw) return "";
+    const saved = JSON.parse(raw) as { name?: string; at?: number };
+    if (!saved?.name || typeof saved.at !== "number") return "";
+    if (Date.now() - saved.at > AUTHOR_TTL_MS) return "";
+    return saved.name;
   } catch {
-    // Private browsing or storage disabled.
+    // Storage disabled, or an older plain-string value — start blank.
     return "";
   }
 }
@@ -152,7 +165,10 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
     if (!photo || !comment.trim() || !author.trim() || !progress) return;
 
     try {
-      localStorage.setItem(AUTHOR_KEY, author.trim());
+      localStorage.setItem(
+        AUTHOR_KEY,
+        JSON.stringify({ name: author.trim(), at: Date.now() }),
+      );
     } catch {
       // Not important enough to block the submission.
     }
@@ -290,6 +306,15 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
           onChange={(event) => setTypedAuthor(event.target.value)}
           disabled={busy}
         />
+        {author && typedAuthor === null ? (
+          <button
+            type="button"
+            className="label hover:text-ink"
+            onClick={() => setTypedAuthor("")}
+          >
+            Not {author}? Tap to change
+          </button>
+        ) : null}
       </div>
 
       <div className="space-y-2">
