@@ -21,6 +21,9 @@ create table submissions (
   week_start date not null,
   photo_url text not null,
   comment text not null,
+  -- Who wrote this update, and who helped with the work.
+  author text not null,
+  assisted_by text,
   created_at timestamptz default now()
 );
 

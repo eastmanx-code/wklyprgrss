@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 import { submitItem, type SubmitState } from "@/app/venue/actions";
 
@@ -49,11 +55,38 @@ function formatKb(bytes: number): string {
 
 const initialState: SubmitState = { error: null };
 
+const AUTHOR_KEY = "ww_author";
+
+/** Never changes mid-session, so there is nothing to subscribe to. */
+const subscribeToNothing = () => () => {};
+
+function readSavedAuthor(): string {
+  try {
+    return localStorage.getItem(AUTHOR_KEY) ?? "";
+  } catch {
+    // Private browsing or storage disabled.
+    return "";
+  }
+}
+
+/** Empty on the server, so the first client render matches and hydration is clean. */
+const noSavedAuthor = () => "";
+
 export function PhotoSubmitForm({ itemId }: { itemId: string }) {
   const [state, formAction, pending] = useActionState(submitItem, initialState);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [comment, setComment] = useState("");
+  // Ten items a week is a lot of retyping, so the name is remembered. `null`
+  // means untouched — fall back to whatever was saved last time.
+  const savedAuthor = useSyncExternalStore(
+    subscribeToNothing,
+    readSavedAuthor,
+    noSavedAuthor,
+  );
+  const [typedAuthor, setTypedAuthor] = useState<string | null>(null);
+  const author = typedAuthor ?? savedAuthor;
+  const [assistedBy, setAssistedBy] = useState("");
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const previewRef = useRef<string | null>(null);
@@ -63,6 +96,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
     };
   }, []);
+
 
   async function handlePick(event: React.ChangeEvent<HTMLInputElement>) {
     const original = event.target.files?.[0];
@@ -88,18 +122,27 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!photo || !comment.trim()) return;
+    if (!photo || !comment.trim() || !author.trim()) return;
+
+    try {
+      localStorage.setItem(AUTHOR_KEY, author.trim());
+    } catch {
+      // Not important enough to block the submission.
+    }
 
     // Build the payload by hand so we upload the compressed JPEG, never the
     // multi-megabyte original the file input is holding.
     const data = new FormData();
     data.set("itemId", itemId);
     data.set("comment", comment);
+    data.set("author", author);
+    data.set("assistedBy", assistedBy);
     data.set("photo", photo, photo.name);
     formAction(data);
   }
 
-  const ready = Boolean(photo) && comment.trim().length > 0;
+  const ready =
+    Boolean(photo) && comment.trim().length > 0 && author.trim().length > 0;
   const busy = pending || processing;
   const error = localError ?? state.error;
 
@@ -134,8 +177,39 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
       </div>
 
       <div className="space-y-2">
+        <label className="label" htmlFor="author">
+          Who wrote this (required)
+        </label>
+        <input
+          id="author"
+          name="author"
+          className="field"
+          placeholder="Your name"
+          autoComplete="name"
+          value={author}
+          onChange={(event) => setTypedAuthor(event.target.value)}
+          disabled={busy}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label className="label" htmlFor="assistedBy">
+          Who assisted (optional)
+        </label>
+        <input
+          id="assistedBy"
+          name="assistedBy"
+          className="field"
+          placeholder="Anyone who helped"
+          value={assistedBy}
+          onChange={(event) => setAssistedBy(event.target.value)}
+          disabled={busy}
+        />
+      </div>
+
+      <div className="space-y-2">
         <label className="label" htmlFor="comment">
-          Comment (required)
+          Comment on progress (required)
         </label>
         <textarea
           id="comment"

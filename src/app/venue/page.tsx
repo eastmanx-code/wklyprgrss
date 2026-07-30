@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { logout } from "@/app/actions";
 import { WeekProgress } from "@/components/WeekProgress";
-import { DonePill, EmptyNote } from "@/components/ui";
+import { DonePill, EmptyNote, PhotoPlaceholder } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { getLeaderBoard, getVenue } from "@/lib/status";
@@ -67,22 +67,20 @@ export default async function VenuePage() {
                   href={`/venue/item/${item.id}`}
                   className="panel block h-full p-3 transition-opacity active:opacity-70"
                 >
-                  <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
-                    {thumb ? (
-                      // eslint-disable-next-line @next/next/no-img-element
+                  {thumb ? (
+                    <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={thumb}
                         alt=""
                         className="h-full w-full object-cover"
                       />
-                    ) : (
-                      <span className="label absolute inset-0 flex items-center justify-center">
-                        No photo
-                      </span>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <PhotoPlaceholder />
+                  )}
                   <div className="mt-3 flex items-start justify-between gap-2">
-                    <p className="text-sm leading-snug font-medium">
+                    <p className="caps text-sm leading-snug font-medium">
                       {item.title}
                     </p>
                   </div>

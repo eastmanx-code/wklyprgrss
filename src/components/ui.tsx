@@ -83,18 +83,20 @@ export function VenueJumpBar({
 /** Company-wide completion across every venue's active items. */
 export function CompanyRollup({
   itemsDone,
-  itemsTotal,
+  itemsTarget,
   venuesPassing,
   venuesTotal,
   statuses,
 }: {
   itemsDone: number;
-  itemsTotal: number;
+  itemsTarget: number;
   venuesPassing: number;
   venuesTotal: number;
   statuses: WeekStatus[];
 }) {
-  const percent = itemsTotal ? Math.round((itemsDone / itemsTotal) * 100) : 0;
+  const percent = itemsTarget
+    ? Math.round((itemsDone / itemsTarget) * 100)
+    : 0;
 
   return (
     <section className="panel mb-5">
@@ -120,7 +122,7 @@ export function CompanyRollup({
       </div>
 
       <p className="label mt-3">
-        {itemsDone} of {itemsTotal} items done
+        {itemsDone} of {itemsTarget} items done
       </p>
 
       {/* One segment per venue, in the same order as the list below. */}
@@ -139,6 +141,44 @@ export function CompanyRollup({
         ))}
       </div>
     </section>
+  );
+}
+
+/**
+ * Stands in wherever a photo is missing. A labelled dot field reads as a slot
+ * still waiting to be filled, rather than as a broken or empty card.
+ */
+export function PhotoPlaceholder({
+  aspect = "square",
+}: {
+  aspect?: "square" | "wide";
+}) {
+  return (
+    <div
+      className={`dotfield relative flex items-center justify-center overflow-hidden rounded-xl ${
+        aspect === "square" ? "aspect-square" : "aspect-[4/3]"
+      }`}
+    >
+      <span className="label text-ink bg-paper rounded-full px-3 py-1.5 text-center shadow-[0_0_0_4px_var(--color-paper)]">
+        Task photo needed
+      </span>
+    </div>
+  );
+}
+
+/** Byline for a submission: who wrote it, and who helped. */
+export function Attribution({
+  author,
+  assistedBy,
+}: {
+  author: string;
+  assistedBy: string | null;
+}) {
+  return (
+    <p className="label mt-2">
+      By {author || "—"}
+      {assistedBy ? ` · assisted by ${assistedBy}` : ""}
+    </p>
   );
 }
 
@@ -178,7 +218,7 @@ export function BackLink({ href, children }: { href: string; children: string })
 export function EmptyNote({ children }: { children: React.ReactNode }) {
   return (
     <div className="panel-quiet text-center">
-      <p className="text-sm text-muted">{children}</p>
+      <p className="note text-muted">{children}</p>
     </div>
   );
 }

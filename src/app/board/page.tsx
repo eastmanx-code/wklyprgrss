@@ -17,11 +17,9 @@ export default async function BoardPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const { weekStart, rows } = await getDashboard();
+  const { weekStart, rows, itemsDone, itemsTarget } = await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   const passing = rows.filter((row) => row.status === "PASS").length;
-  const itemsDone = rows.reduce((sum, row) => sum + row.doneCount, 0);
-  const itemsTotal = rows.reduce((sum, row) => sum + row.activeCount, 0);
 
   return (
     <main>
@@ -43,7 +41,7 @@ export default async function BoardPage() {
 
       <CompanyRollup
         itemsDone={itemsDone}
-        itemsTotal={itemsTotal}
+        itemsTarget={itemsTarget}
         venuesPassing={passing}
         venuesTotal={rows.length}
         statuses={rows.map((row) => row.status)}

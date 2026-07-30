@@ -1,7 +1,14 @@
 import "server-only";
 
 import { db, selectAll } from "./supabase";
-import type { Item, Submission, Venue, VenueWeekSummary, WeekStatus } from "./types";
+import type {
+  Item,
+  Submission,
+  Venue,
+  VenueSummary,
+  VenueWeekSummary,
+  WeekStatus,
+} from "./types";
 import {
   currentWeekStart,
   isDeadlinePassed,
@@ -14,15 +21,27 @@ import {
  */
 const STREAK_LOOKBACK_WEEKS = 26;
 
-export async function getVenues(): Promise<Venue[]> {
+/**
+ * What every venue owes each week. Company completion is measured against this
+ * rather than against however many items happen to be configured — a venue with
+ * only 3 items set up still owes 10, and that gap should be visible, not
+ * silently divided away.
+ */
+export const WEEKLY_ITEM_TARGET = 10;
+
+/** Venue list without PINs — safe for the dropdown, the board and the dashboard. */
+export async function getVenues(): Promise<VenueSummary[]> {
   const { data, error } = await db()
     .from("venues")
-    .select("id, code, name, pin")
+    .select("id, code, name")
     .order("code");
   if (error) throw new Error(error.message);
-  return (data ?? []) as Venue[];
+  return (data ?? []) as VenueSummary[];
 }
 
+/**
+ * Includes the PIN. Only the login check and the admin venue screen call this.
+ */
 export async function getVenue(venueId: string): Promise<Venue | null> {
   const { data, error } = await db()
     .from("venues")
@@ -58,7 +77,9 @@ export async function getSubmissionsForItems(
   return selectAll<Submission>((from, to) => {
     let query = db()
       .from("submissions")
-      .select("id, item_id, week_start, photo_url, comment, created_at")
+      .select(
+        "id, item_id, week_start, photo_url, comment, author, assisted_by, created_at",
+      )
       .in("item_id", itemIds);
     if (weekStart) query = query.eq("week_start", weekStart);
     return query
@@ -134,6 +155,12 @@ export async function getLeaderBoard(
 export type Dashboard = {
   weekStart: string;
   rows: VenueWeekSummary[];
+  /** Total items done across every venue this week. */
+  itemsDone: number;
+  /** venues × WEEKLY_ITEM_TARGET — the real weekly obligation. */
+  itemsTarget: number;
+  /** Venues that don't have the full 10 items configured yet. */
+  venuesUnderConfigured: string[];
 };
 
 /**
@@ -248,5 +275,13 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     return a.venue.code.localeCompare(b.venue.code);
   });
 
-  return { weekStart, rows };
+  return {
+    weekStart,
+    rows,
+    itemsDone: rows.reduce((sum, row) => sum + row.doneCount, 0),
+    itemsTarget: rows.length * WEEKLY_ITEM_TARGET,
+    venuesUnderConfigured: rows
+      .filter((row) => row.activeCount < WEEKLY_ITEM_TARGET)
+      .map((row) => row.venue.code),
+  };
 }

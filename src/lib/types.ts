@@ -5,6 +5,13 @@ export type Venue = {
   pin: string;
 };
 
+/**
+ * A venue without its PIN. Everything except the admin venue screen and the
+ * login check uses this, so the PIN is never even read out of the database for
+ * screens that have no business showing it.
+ */
+export type VenueSummary = Pick<Venue, "id" | "code" | "name">;
+
 export type Item = {
   id: string;
   venue_id: string;
@@ -20,13 +27,17 @@ export type Submission = {
   /** Storage object path inside the private `photos` bucket, not a public URL. */
   photo_url: string;
   comment: string;
+  /** Who wrote this update. Required. */
+  author: string;
+  /** Who else worked on it. Optional. */
+  assisted_by: string | null;
   created_at: string;
 };
 
 export type WeekStatus = "PASS" | "PENDING" | "FAIL";
 
 export type VenueWeekSummary = {
-  venue: Venue;
+  venue: VenueSummary;
   doneCount: number;
   activeCount: number;
   status: WeekStatus;

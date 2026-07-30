@@ -4,7 +4,7 @@ import { moveItem, setItemActive } from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
-import { BackLink, DonePill, StatusPill } from "@/components/ui";
+import { Attribution, BackLink, DonePill, StatusPill } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
@@ -179,18 +179,22 @@ export default async function AdminVenuePage({
                                 </p>
                               </div>
                               {url ? (
-                                <div className="mt-3 overflow-hidden rounded-xl bg-surface">
+                                <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
                                   {/* eslint-disable-next-line @next/next/no-img-element */}
                                   <img
                                     src={url}
                                     alt=""
-                                    className="w-full object-cover"
+                                    className="h-full w-full object-cover"
                                   />
                                 </div>
                               ) : null}
                               <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
                                 {submission.comment}
                               </p>
+                              <Attribution
+                                author={submission.author}
+                                assistedBy={submission.assisted_by}
+                              />
                             </li>
                           );
                         })}

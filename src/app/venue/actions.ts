@@ -13,6 +13,7 @@ export type SubmitState = { error: string | null };
 
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 const MAX_COMMENT_LENGTH = 2000;
+const MAX_NAME_LENGTH = 120;
 
 export async function submitItem(
   _prev: SubmitState,
@@ -25,8 +26,16 @@ export async function submitItem(
 
   const itemId = String(formData.get("itemId") ?? "");
   const comment = String(formData.get("comment") ?? "").trim();
+  const author = String(formData.get("author") ?? "").trim();
+  const assistedRaw = String(formData.get("assistedBy") ?? "").trim();
+  const assistedBy = assistedRaw || null;
   const photo = formData.get("photo");
 
+  if (!author) return { error: "Say who wrote this update." };
+  if (author.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
+  if (assistedBy && assistedBy.length > MAX_NAME_LENGTH) {
+    return { error: "That assisted-by list is too long." };
+  }
   if (!comment) return { error: "A comment is required." };
   if (comment.length > MAX_COMMENT_LENGTH) {
     return { error: "That comment is too long." };
@@ -72,6 +81,8 @@ export async function submitItem(
     week_start: weekStart,
     photo_url: path,
     comment,
+    author,
+    assisted_by: assistedBy,
   });
 
   if (insertError) {

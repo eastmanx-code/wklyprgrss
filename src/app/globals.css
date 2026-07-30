@@ -25,9 +25,23 @@ html {
 }
 
 body {
-  background: var(--color-paper);
+  /* Dot grid ground, like the Figma canvas the board is replacing. Panels sit
+     on top as solid white, so the grid reads as the surface underneath. */
+  background-color: var(--color-paper);
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.11) 1px,
+    transparent 1px
+  );
+  background-size: 16px 16px;
+  background-position: center top;
   color: var(--color-ink);
-  font-family: var(--font-sans);
+  /* Monospace throughout — the whole interface reads as one technical
+     document, matching the labels and the dot grid. */
+  font-family: var(--font-mono);
+  /* Uppercase everywhere, comments included. Display only: what people type is
+     stored verbatim, so this is reversible. */
+  text-transform: uppercase;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -40,7 +54,36 @@ button {
   font-family: inherit;
 }
 
+/* Uppercase is the house style. Headings, controls and short helper lines all
+   set in caps; the one exception is leaders' own comments, which stay in the
+   case they typed them — see .copy below. */
+h1,
+h2,
+h3 {
+  text-transform: uppercase;
+  /* Mono runs wide; pull it back so headings stay compact. */
+  letter-spacing: -0.02em;
+}
+
+/* Mono body copy needs a little more line height to stay readable. */
+p {
+  line-height: 1.55;
+}
+
 @layer components {
+  /* Item titles, venue names, and other short display strings. */
+  .caps {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Short helper and status lines. */
+  .note {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 13px;
+  }
+
   /* Small tracked mono caption — the modernist plate label. */
   .label {
     font-family: var(--font-mono);
@@ -57,6 +100,19 @@ button {
     padding: 1.25rem;
   }
 
+  /* Empty photo wells: a denser dot field so a missing photo still reads as a
+     deliberate slot rather than a blank hole. */
+  .dotfield {
+    background-color: var(--color-panel);
+    background-image: radial-gradient(
+      circle,
+      rgba(0, 0, 0, 0.18) 1.5px,
+      transparent 1.5px
+    );
+    background-size: 12px 12px;
+    background-position: center;
+  }
+
   .panel-quiet {
     background: var(--color-panel);
     border-radius: 20px;
@@ -69,12 +125,14 @@ button {
     justify-content: center;
     gap: 0.5rem;
     min-height: 48px;
-    padding: 0 1.25rem;
+    padding: 0 1.5rem;
     border-radius: 999px;
     background: var(--color-ink);
     color: var(--color-paper);
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     border: none;
     cursor: pointer;
     transition: opacity 0.15s ease;
@@ -95,8 +153,10 @@ button {
     border-radius: 999px;
     background: var(--color-panel);
     color: var(--color-ink);
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     border: none;
     cursor: pointer;
   }
@@ -123,6 +183,9 @@ button {
 
   .field::placeholder {
     color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 13px;
   }
 
   /* Status pills. Monochrome by design; FAIL is the one place colour earns

@@ -12,9 +12,8 @@ export default async function HomePage() {
   if (session?.role === "leader") redirect("/venue");
   if (session?.role === "admin") redirect("/admin");
 
-  const venues = await getVenues();
-  // Strip PINs before anything crosses to the client.
-  const options = venues.map(({ id, code, name }) => ({ id, code, name }));
+  // getVenues never selects the PIN column, so there is nothing to strip.
+  const options = await getVenues();
 
   return (
     <main>

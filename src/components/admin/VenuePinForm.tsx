@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { updateVenuePin, type AdminState } from "@/app/admin/actions";
 
@@ -17,9 +17,13 @@ export function VenuePinForm({
     updateVenuePin,
     initialState,
   );
+  // Hidden by default so the PIN isn't sitting on screen over someone's
+  // shoulder. Reveal it deliberately when you need to read it out.
+  const [revealed, setRevealed] = useState(false);
 
   return (
     <form action={formAction} className="panel space-y-3">
+      <input type="hidden" name="venueId" value={venueId} />
       <label className="label" htmlFor="venue-pin">
         Venue PIN
       </label>
@@ -27,14 +31,23 @@ export function VenuePinForm({
         <input
           id="venue-pin"
           name="pin"
+          type={revealed ? "text" : "password"}
           className="field font-mono tracking-[0.3em]"
           defaultValue={pin}
           inputMode="numeric"
           pattern="\d{6}"
           maxLength={6}
+          autoComplete="off"
           disabled={pending}
         />
-        <input type="hidden" name="venueId" value={venueId} />
+        <button
+          type="button"
+          className="btn-ghost shrink-0"
+          onClick={() => setRevealed((value) => !value)}
+          aria-pressed={revealed}
+        >
+          {revealed ? "Hide" : "Show"}
+        </button>
         <button type="submit" className="btn shrink-0" disabled={pending}>
           {pending ? "Saving…" : "Save"}
         </button>

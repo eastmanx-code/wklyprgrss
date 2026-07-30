@@ -1,6 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 
-import { BackLink, DonePill, StatusPill } from "@/components/ui";
+import {
+  Attribution,
+  BackLink,
+  DonePill,
+  PhotoPlaceholder,
+  StatusPill,
+} from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
@@ -9,7 +15,7 @@ import {
   getVenue,
   statusFor,
 } from "@/lib/status";
-import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
+import { currentWeekStart, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -71,36 +77,45 @@ export default async function BoardVenuePage({
       {items.length === 0 ? (
         <p className="text-sm text-muted">No items set up yet.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {items.map((item) => {
             const history = byItem.get(item.id) ?? [];
             const latest = history[0];
             const latestUrl = latest ? photos.get(latest.photo_url) : undefined;
 
             return (
-              <li key={item.id} className="panel">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="font-medium">{item.title}</p>
-                  <DonePill done={doneThisWeek.has(item.id)} />
+              <li key={item.id} className="panel p-3">
+                <div className="relative">
+                  {latestUrl ? (
+                    <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={latestUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <PhotoPlaceholder />
+                  )}
+                  <span className="absolute top-2 right-2">
+                    <DonePill done={doneThisWeek.has(item.id)} />
+                  </span>
                 </div>
 
-                {latestUrl ? (
-                  <div className="mt-3 overflow-hidden rounded-xl bg-panel">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={latestUrl} alt="" className="w-full object-cover" />
-                  </div>
-                ) : (
-                  <p className="mt-3 text-sm text-muted">Nothing yet.</p>
-                )}
+                <p className="caps mt-3 text-xs leading-snug font-medium">
+                  {item.title}
+                </p>
 
                 {latest ? (
                   <>
-                    <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                    <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
                       {latest.comment}
                     </p>
-                    <p className="label mt-2">
-                      {formatTimestamp(latest.created_at)}
-                    </p>
+                    <Attribution
+                      author={latest.author}
+                      assistedBy={latest.assisted_by}
+                    />
                   </>
                 ) : null}
 
@@ -118,18 +133,22 @@ export default async function BoardVenuePage({
                               Week of {formatWeekStart(submission.week_start)}
                             </p>
                             {url ? (
-                              <div className="mt-3 overflow-hidden rounded-xl bg-surface">
+                              <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                   src={url}
                                   alt=""
-                                  className="w-full object-cover"
+                                  className="h-full w-full object-cover"
                                 />
                               </div>
                             ) : null}
                             <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
                               {submission.comment}
                             </p>
+                            <Attribution
+                              author={submission.author}
+                              assistedBy={submission.assisted_by}
+                            />
                           </li>
                         );
                       })}

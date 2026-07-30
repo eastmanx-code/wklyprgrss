@@ -17,11 +17,10 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   if ((await getSession())?.role !== "admin") redirect("/admin/login");
 
-  const { weekStart, rows } = await getDashboard();
+  const { weekStart, rows, itemsDone, itemsTarget, venuesUnderConfigured } =
+    await getDashboard();
   const passing = rows.filter((row) => row.status === "PASS").length;
   const failing = rows.filter((row) => row.status === "FAIL").length;
-  const itemsDone = rows.reduce((sum, row) => sum + row.doneCount, 0);
-  const itemsTotal = rows.reduce((sum, row) => sum + row.activeCount, 0);
 
   return (
     <main>
@@ -42,11 +41,23 @@ export default async function AdminDashboardPage() {
 
       <CompanyRollup
         itemsDone={itemsDone}
-        itemsTotal={itemsTotal}
+        itemsTarget={itemsTarget}
         venuesPassing={passing}
         venuesTotal={rows.length}
         statuses={rows.map((row) => row.status)}
       />
+
+      {venuesUnderConfigured.length > 0 ? (
+        <div className="panel-quiet mb-5">
+          <p className="label">Setup incomplete</p>
+          <p className="note mt-2">
+            {`${venuesUnderConfigured.length} of ${rows.length} venues don't have 10 items yet`}
+          </p>
+          <p className="label mt-2 leading-relaxed">
+            {venuesUnderConfigured.join(" · ")}
+          </p>
+        </div>
+      ) : null}
 
       {failing > 0 ? (
         <p className="label mb-5 text-fail">
