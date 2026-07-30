@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { CompanyHero } from "@/components/CompanyHero";
 import {
-  CompanyRollup,
   DotStrip,
   StatusPill,
   VenueJumpBar,
@@ -40,12 +40,15 @@ export default async function AdminDashboardPage() {
         </div>
       </header>
 
-      <CompanyRollup
+      <CompanyHero
+        percent={itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0}
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
-        venuesPassing={passing}
-        venuesTotal={rows.length}
+        passing={passing}
+        pending={rows.length - passing - failing}
+        failing={failing}
         statuses={rows.map((row) => row.status)}
+        deadlineLabel={formatDeadline(weekStart)}
       />
 
       {venuesUnderConfigured.length > 0 ? (
@@ -66,6 +69,17 @@ export default async function AdminDashboardPage() {
           this week
         </p>
       ) : null}
+
+      {/* Rarely used, so collapsed — but near the top, because buried under
+          twenty-seven venue rows it may as well not exist. */}
+      <details className="mb-5">
+        <summary className="label cursor-pointer select-none">
+          Admin codes · {(adminPins ?? []).length} extra
+        </summary>
+        <div className="mt-3">
+          <AdminPins pins={(adminPins ?? []) as AdminPin[]} />
+        </div>
+      </details>
 
       <VenueJumpBar venues={rows.map((row) => row.venue)} />
 
@@ -113,11 +127,6 @@ export default async function AdminDashboardPage() {
           </li>
         ))}
       </ul>
-
-      <section className="mt-10">
-        <h2 className="label mb-3">Admin codes</h2>
-        <AdminPins pins={(adminPins ?? []) as AdminPin[]} />
-      </section>
 
       <p className="mt-8 text-center">
         <Link href="/board" className="label hover:text-ink">
