@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AdminLoginForm } from "@/components/AdminLoginForm";
-import { BackLink } from "@/components/ui";
 import { APP_NAME } from "@/lib/app";
 import { getSession } from "@/lib/session";
 
@@ -14,14 +14,20 @@ export default async function AdminLoginPage() {
     // Centred like the leader sign-in: a small form stranded at the top of an
     // empty screen reads as unfinished.
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
-      <BackLink href="/">Leader sign in</BackLink>
-
-      <header className="mt-4 mb-8 text-center">
+      <header className="mb-8 text-center">
         <p className="label">{APP_NAME}</p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight">Admin</h1>
       </header>
 
       <AdminLoginForm />
+
+      {/* Below the card, centred — above the title it hangs off to one side
+          and breaks the column everything else lines up on. */}
+      <p className="mt-6 text-center">
+        <Link href="/" className="label hover:text-ink">
+          ← Leader sign in
+        </Link>
+      </p>
     </main>
   );
 }
