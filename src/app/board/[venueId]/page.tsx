@@ -79,7 +79,7 @@ export default async function BoardVenuePage({
       {items.length === 0 ? (
         <p className="text-sm text-muted">No items set up yet.</p>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
           {items.map((item) => {
             const history = byItem.get(item.id) ?? [];
             const latest = history[0];

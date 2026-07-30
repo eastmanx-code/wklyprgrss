@@ -112,7 +112,7 @@ export default async function AdminVenuePage({
         {activeItems.length === 0 ? (
           <p className="note text-muted">No items yet.</p>
         ) : (
-          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
             {activeItems.map((item) => {
               const submission = latestThisWeek.get(item.id);
               const url = submission

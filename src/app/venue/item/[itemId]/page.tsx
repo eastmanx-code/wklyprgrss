@@ -36,7 +36,13 @@ export default async function ItemPage({
   const photos = await signedUrls(submissions.map((s) => s.photo_url));
 
   const weekStart = currentWeekStart();
-  const doneThisWeek = submissions.some((s) => s.week_start === weekStart);
+  const thisWeek = submissions.filter((s) => s.week_start === weekStart);
+  // Newest submission decides the state — same rule as the grid, so the two
+  // screens can never disagree.
+  const current = thisWeek[0];
+  const sentBack = current?.review === "sent_back";
+  const rolling = !sentBack && current?.progress === "another_cycle";
+  const doneThisWeek = Boolean(current) && !sentBack;
 
   return (
     <main>
@@ -48,15 +54,34 @@ export default async function ItemPage({
           {item.title}
         </h1>
         <div className="mt-3">
-          <DonePill done={doneThisWeek} />
+          {sentBack ? (
+            <span className="pill pill-fail">Redo</span>
+          ) : rolling ? (
+            <span className="pill pill-rolling">Rolling</span>
+          ) : (
+            <DonePill done={doneThisWeek} />
+          )}
         </div>
       </header>
 
-      {doneThisWeek ? (
+      {sentBack ? (
         <div className="panel-quiet mb-5">
-          <p className="text-sm">
+          <p className="note">
+            Sent back by the admin. Submit a new photo and comment to clear it.
+          </p>
+        </div>
+      ) : rolling ? (
+        <div className="panel-quiet mb-5">
+          <p className="note">
+            Counted for the week of {formatWeekStart(weekStart)}, but marked as
+            needing another cycle. It stays open until someone marks it done.
+          </p>
+        </div>
+      ) : doneThisWeek ? (
+        <div className="panel-quiet mb-5">
+          <p className="note">
             Done for the week of {formatWeekStart(weekStart)}. Submitting again
-            adds another entry to the history — nothing is overwritten.
+            adds another entry — nothing is overwritten.
           </p>
         </div>
       ) : null}

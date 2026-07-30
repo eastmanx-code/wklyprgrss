@@ -83,12 +83,16 @@ for (const item of items ?? []) {
 }
 
 const done = new Map(); // `${venueId}|${week}` -> Set(itemId)
+const firstWeek = new Map(); // venueId -> earliest week seen
 for (const s of subs ?? []) {
   const venueId = itemVenue.get(s.item_id);
   if (!venueId) continue;
   const key = `${venueId}|${s.week_start}`;
   if (!done.has(key)) done.set(key, new Set());
   done.get(key).add(s.item_id);
+
+  const seen = firstWeek.get(venueId);
+  if (!seen || s.week_start < seen) firstWeek.set(venueId, s.week_start);
 }
 
 const rows = [["week_start", "venue", "done", "active", "target", "status"]];
@@ -96,14 +100,19 @@ for (const week of weeks) {
   for (const venue of venues ?? []) {
     const active = activeCount.get(venue.id) ?? 0;
     const count = done.get(`${venue.id}|${week}`)?.size ?? 0;
+    // Weeks before a venue's first-ever submission are "no data", not
+    // failures — same rule the app uses for fail streaks.
+    const started = firstWeek.get(venue.id);
     const status =
       active === 0
         ? "NO_ITEMS"
-        : count >= active
-          ? "PASS"
-          : deadlinePassed(week)
-            ? "FAIL"
-            : "PENDING";
+        : !started || week < started
+          ? "NO_DATA"
+          : count >= active
+            ? "PASS"
+            : deadlinePassed(week)
+              ? "FAIL"
+              : "PENDING";
     rows.push([week, venue.code, count, active, TARGET, status]);
   }
 }
