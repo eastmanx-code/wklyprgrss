@@ -142,6 +142,7 @@ export default async function ItemPage({
           <input type="hidden" name="itemId" value={item.id} />
           <input type="hidden" name="venueId" value={item.venue_id} />
           <input type="hidden" name="active" value="false" />
+          <input type="hidden" name="redirectTo" value="/venue" />
           <button type="submit" className="btn-ghost">
             Retire this item
           </button>

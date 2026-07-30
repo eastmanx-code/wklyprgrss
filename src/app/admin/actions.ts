@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -119,6 +120,11 @@ export async function setItemActive(formData: FormData) {
   await db().from("items").update({ active }).eq("id", itemId);
   await normalizePositions(await itemsFor(venueId));
   refresh(venueId);
+
+  // Retiring from the item's own page leaves you standing on a page that now
+  // correctly 404s, so the caller can ask to be taken somewhere real.
+  const redirectTo = String(formData.get("redirectTo") ?? "");
+  if (redirectTo.startsWith("/")) redirect(redirectTo);
 }
 
 export async function moveItem(formData: FormData) {
