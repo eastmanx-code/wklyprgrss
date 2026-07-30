@@ -8,7 +8,13 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { submitItem, type SubmitState } from "@/app/venue/actions";
+import { useRouter } from "next/navigation";
+
+import {
+  createUploadTargets,
+  submitItem,
+  type SubmitState,
+} from "@/app/venue/actions";
 
 const MAX_EDGE = 1600;
 const TARGET_BYTES = 300 * 1024;
@@ -86,7 +92,9 @@ function readSavedAuthor(): string {
 const noSavedAuthor = () => "";
 
 export function PhotoSubmitForm({ itemId }: { itemId: string }) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(submitItem, initialState);
+  const [uploading, setUploading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [beforePhoto, setBeforePhoto] = useState<File | null>(null);
@@ -116,6 +124,12 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
       if (beforePreviewRef.current) URL.revokeObjectURL(beforePreviewRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    // Pure navigation, not state — the action reports success and the client
+    // moves, so a redirect thrown from the action can't blank the screen.
+    if (state.ok) router.push("/venue");
+  }, [state.ok, router]);
 
 
   async function handleBeforePick(event: React.ChangeEvent<HTMLInputElement>) {
@@ -160,7 +174,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
     }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!photo || !comment.trim() || !author.trim() || !progress) return;
 
@@ -173,17 +187,52 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
       // Not important enough to block the submission.
     }
 
-    // Build the payload by hand so we upload the compressed JPEG, never the
-    // multi-megabyte original the file input is holding.
-    const data = new FormData();
-    data.set("itemId", itemId);
-    data.set("comment", comment);
-    data.set("author", author);
-    data.set("assistedBy", assistedBy);
-    data.set("progress", progress);
-    data.set("photo", photo, photo.name);
-    if (beforePhoto) data.set("beforePhoto", beforePhoto, beforePhoto.name);
-    formAction(data);
+    setLocalError(null);
+    setUploading(true);
+    try {
+      // Photos go straight to storage; the action only ever carries text.
+      const targets = await createUploadTargets(itemId, Boolean(beforePhoto));
+      if (targets.error || !targets.after) {
+        setLocalError(targets.error ?? "Couldn't start the upload.");
+        return;
+      }
+
+      const put = async (target: { signedUrl: string }, file: File) => {
+        const response = await fetch(target.signedUrl, {
+          method: "PUT",
+          headers: { "content-type": "image/jpeg" },
+          body: file,
+        });
+        if (!response.ok) {
+          throw new Error(`Upload failed (${response.status})`);
+        }
+      };
+
+      await put(targets.after, photo);
+      if (beforePhoto && targets.before) await put(targets.before, beforePhoto);
+
+      const data = new FormData();
+      data.set("itemId", itemId);
+      data.set("comment", comment);
+      data.set("author", author);
+      data.set("assistedBy", assistedBy);
+      data.set("progress", progress);
+      data.set("photoPath", targets.after.path);
+      if (beforePhoto && targets.before) {
+        data.set("beforePhotoPath", targets.before.path);
+      }
+      formAction(data);
+    } catch (error) {
+      // Surface it in the form rather than throwing to the error screen, which
+      // tells the person nothing and loses everything they typed.
+      setLocalError(
+        error instanceof Error
+          ? `Couldn't upload that photo. ${error.message}`
+          : "Couldn't upload that photo. Check your signal and try again.",
+      );
+    } finally {
+      setUploading(false);
+    }
   }
 
   const ready =
@@ -191,7 +240,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
     comment.trim().length > 0 &&
     author.trim().length > 0 &&
     progress !== null;
-  const busy = pending || processing;
+  const busy = pending || processing || uploading;
   const error = localError ?? state.error;
 
   return (
@@ -355,7 +404,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
       ) : null}
 
       <button type="submit" className="btn w-full" disabled={!ready || busy}>
-        {pending ? "Submitting…" : "Submit this week"}
+        {uploading ? "Uploading…" : pending ? "Saving…" : "Submit this week"}
       </button>
     </form>
   );
