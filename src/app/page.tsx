@@ -22,7 +22,9 @@ export default async function HomePage() {
   return (
     // Reading width: mono runs wide, and a 1100px line of instructions is
     // unreadable. Boards get the full container; prose does not.
-    <main className="rise mx-auto max-w-2xl">
+    // Centred vertically: on a laptop the form otherwise sits at the top with
+    // a screen of dead space under it.
+    <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-2xl flex-col justify-center">
       <header className="mb-8">
         <p className="label">Weekly Walkthrough</p>
         <h1 className="mt-2 text-3xl font-medium tracking-tight">

@@ -80,12 +80,18 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
 
           {children}
 
+          {/* Name the consequence, so "I understand" refers to something
+              specific rather than being a polite dismiss button. */}
+          <p className="note mt-5 leading-relaxed">
+            Missing a photo or a comment fails that item for the week.
+          </p>
+
           <button
             type="button"
-            className="btn mt-6 w-full"
+            className="btn mt-4 w-full"
             onClick={acknowledge}
           >
-            I understand
+            I understand the weekly rule
           </button>
         </div>
       </dialog>

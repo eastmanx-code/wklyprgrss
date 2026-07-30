@@ -117,6 +117,17 @@ button {
   font-family: inherit;
 }
 
+/* Form controls don't inherit text-transform reliably — <option> in
+   particular ignores it from an ancestor — so state it on them directly.
+   Display only: values are stored exactly as typed. */
+input,
+textarea,
+select,
+option,
+button {
+  text-transform: uppercase;
+}
+
 /* Uppercase is the house style. Headings, controls and short helper lines all
    set in caps; the one exception is leaders' own comments, which stay in the
    case they typed them — see .copy below. */
