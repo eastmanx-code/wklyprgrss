@@ -33,7 +33,7 @@ export function VenueRows({
   return (
     <Card
       title="Every venue"
-      hint={`Bar is photos done out of ${WEEKLY_ITEM_TARGET}. Right-hand column shows the finish time, or the count and any run of missed weeks.`}
+      hint={`Photos done out of ${WEEKLY_ITEM_TARGET} · finish time, or missed-week run`}
     >
       <VenueJumpBar
         venues={rows.map((row) => row.venue)}

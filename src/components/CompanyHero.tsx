@@ -68,7 +68,7 @@ export function CompanyHero({
     <div className="mb-3 grid gap-3 sm:grid-cols-3">
       <Card
         title="Completion"
-        hint={`A new photo and a new comment on all ${WEEKLY_ITEM_TARGET} items, every week. Last week’s don’t carry over.`}
+        hint={`New photo + comment on all ${WEEKLY_ITEM_TARGET}, every week`}
       >
         <div className="flex h-full items-center justify-center">
           <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
@@ -78,7 +78,7 @@ export function CompanyHero({
       {history.length > 1 ? (
         <Card
           title="Completion by week"
-          hint="The last eight weeks on a fixed 0–100 scale, so a bad week looks like one."
+          hint="Last 8 weeks · fixed 0–100 scale"
           className="sm:col-span-2"
         >
           <div className="flex h-full flex-col justify-end">
@@ -93,7 +93,7 @@ export function CompanyHero({
 
       <Card
         title="Where venues stand"
-        hint={`Passing has all ${WEEKLY_ITEM_TARGET} done this week. Failing reached the deadline without them. Not set up has no items yet, so it has nothing to miss.`}
+        hint={`Passing has all ${WEEKLY_ITEM_TARGET} · Not set up has no items yet`}
         className="sm:col-span-2"
       >
         <div
@@ -129,7 +129,7 @@ export function CompanyHero({
       {first ? (
         <Card
           title="Turnaround"
-          hint={`When a venue’s ${WEEKLY_ITEM_TARGET}th photo landed. Earliest and latest of those who finished.`}
+          hint={`When the ${WEEKLY_ITEM_TARGET}th photo landed`}
           className="sm:col-span-3"
         >
           <div className="grid grid-cols-2 gap-6">
