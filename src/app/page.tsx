@@ -12,11 +12,26 @@ import { formatDeadline, formatWeekStart } from "@/lib/week";
 export const dynamic = "force-dynamic";
 
 /** Small labelled tile, like the readouts under a weather hero. */
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  count,
+  total,
+}: {
+  label: string;
+  count: number;
+  total: number;
+}) {
+  const percent = total ? (count / total) * 100 : 0;
   return (
-    <div className="panel px-5 py-4">
-      <p className="label">{label}</p>
-      <p className="mt-1 font-mono text-2xl tabular-nums">{value}</p>
+    <div className="panel relative overflow-hidden px-5 py-4">
+      {/* The tile fills to its own share, so an empty stat reads as empty. */}
+      <div
+        className="bg-ink/10 absolute inset-y-0 left-0"
+        style={{ width: `${percent}%` }}
+        aria-hidden
+      />
+      <p className="label relative">{label}</p>
+      <p className="relative mt-1 font-mono text-2xl tabular-nums">{count}</p>
     </div>
   );
 }
@@ -47,19 +62,35 @@ export default async function HomePage() {
 
       {/* Hero: the one number that matters, with the context beside it. */}
       <section className="mb-3 flex gap-3">
-        <div className="bg-ink text-paper flex aspect-square w-[38%] shrink-0 flex-col items-center justify-center rounded-full">
-          <span className="font-mono text-5xl leading-none tabular-nums">
-            {percent}%
-          </span>
-          <span className="label mt-1 opacity-70">
-            {itemsDone}/{itemsTarget} photos
-          </span>
+        {/* A dial that fills as the week does, rather than a solid disc with
+            the number floating in it. */}
+        <div
+          className="relative aspect-square w-[38%] shrink-0 rounded-full"
+          style={{
+            background: `conic-gradient(var(--ink) ${percent}%, var(--panel) 0)`,
+          }}
+        >
+          <div className="bg-surface absolute inset-[11%] flex flex-col items-center justify-center rounded-full">
+            <span className="font-mono text-4xl leading-none tabular-nums">
+              {percent}%
+            </span>
+            <span className="label mt-1">
+              {itemsDone}/{itemsTarget}
+            </span>
+          </div>
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col gap-3">
-          <div className="panel flex flex-1 flex-col justify-center rounded-full px-6 py-3">
-            <p className="label">Venues finished</p>
-            <p className="mt-1 font-mono text-xl tabular-nums">
+          <div className="panel relative flex flex-1 flex-col justify-center overflow-hidden rounded-full px-6 py-3">
+            <div
+              className="bg-ink/10 absolute inset-y-0 left-0"
+              style={{
+                width: `${rows.length ? (passing / rows.length) * 100 : 0}%`,
+              }}
+              aria-hidden
+            />
+            <p className="label relative">Venues finished</p>
+            <p className="relative mt-1 font-mono text-xl tabular-nums">
               {passing}
               <span className="text-muted">/{rows.length}</span>
             </p>
@@ -93,9 +124,9 @@ export default async function HomePage() {
       </section>
 
       <section className="mb-5 grid grid-cols-3 gap-3">
-        <Stat label="Passing" value={String(passing)} />
-        <Stat label="Pending" value={String(pending)} />
-        <Stat label="Failing" value={String(failing)} />
+        <Stat label="Passing" count={passing} total={rows.length} />
+        <Stat label="Pending" count={pending} total={rows.length} />
+        <Stat label="Failing" count={failing} total={rows.length} />
       </section>
 
       <LeaderLoginForm venues={venues} />
