@@ -10,8 +10,8 @@ export function AdminLoginForm() {
   const [state, formAction, pending] = useActionState(adminLogin, initialState);
 
   return (
-    <form action={formAction} className="panel space-y-5">
-      <div className="space-y-2">
+    <form action={formAction} className="panel space-y-6 p-6">
+      <div className="space-y-3">
         <label className="label" htmlFor="pin">
           Admin PIN
         </label>
@@ -32,7 +32,7 @@ export function AdminLoginForm() {
         </p>
       ) : null}
 
-      <button type="submit" className="btn w-full" disabled={pending}>
+      <button type="submit" className="btn mt-2 w-full" disabled={pending}>
         {pending ? "Checking…" : "Sign in"}
       </button>
     </form>

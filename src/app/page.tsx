@@ -27,7 +27,9 @@ export default async function HomePage() {
     // a screen of dead space under it.
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <header className="mb-8">
-        <h1 className="text-3xl font-medium tracking-tight">{APP_NAME}</h1>
+        <h1 className="text-center text-3xl font-medium tracking-tight">
+          {APP_NAME}
+        </h1>
       </header>
 
       <LeaderLoginForm venues={options} />
