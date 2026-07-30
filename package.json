@@ -13,7 +13,9 @@
     "demo": "node --env-file=.env.local scripts/demo.mjs",
     "purge": "node --env-file=.env.local scripts/purge-photos.mjs",
     "report": "node --env-file=.env.local scripts/report.mjs",
-    "set-items": "node --env-file=.env.local scripts/set-items.mjs"
+    "set-items": "node --env-file=.env.local scripts/set-items.mjs",
+    "predev": "node --env-file=.env.local scripts/preflight.mjs || true",
+    "prebuild": "node --env-file=.env.local scripts/preflight.mjs || true"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

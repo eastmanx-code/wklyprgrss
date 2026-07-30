@@ -1,20 +1,67 @@
 "use client";
 
-export default function Error({ reset }: { reset: () => void }) {
+const BUG_EMAIL = "beastman@ch-projects.com";
+
+/**
+ * Error screen with a one-tap bug report.
+ *
+ * The mailto is built in the click handler, not at render, so it can read the
+ * current URL without touching `window` during server rendering. The digest is
+ * the id Next assigns the error — it's what makes a report traceable, so it's
+ * shown on screen as well as put in the mail.
+ */
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  function reportBug() {
+    const lines = [
+      "Something went wrong in WKY >> PRGRSS.",
+      "",
+      `Page: ${window.location.href}`,
+      `Reference: ${error.digest ?? "none"}`,
+      `When: ${new Date().toString()}`,
+      `Device: ${navigator.userAgent}`,
+      "",
+      "What I was doing:",
+      "",
+    ];
+    const subject = encodeURIComponent("WKY >> PRGRSS bug report");
+    const body = encodeURIComponent(lines.join("\n"));
+    window.location.href = `mailto:${BUG_EMAIL}?subject=${subject}&body=${body}`;
+  }
+
   return (
-    <main className="pt-16">
-      <div className="panel text-center">
+    <main className="mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
+      <div className="panel p-6 text-center">
         <p className="label">Something went wrong</p>
         <h1 className="mt-3 text-xl font-medium tracking-tight">
           We couldn&apos;t load that
         </h1>
-        <p className="mt-3 text-sm text-muted">
-          Check your connection and try again. If it keeps happening, tell your
-          admin.
+        <p className="note mt-4 leading-relaxed text-muted">
+          Try again. If it keeps happening, send it over and it&apos;ll get
+          looked at.
         </p>
-        <button type="button" onClick={reset} className="btn mt-6">
-          Try again
-        </button>
+
+        <div className="mt-6 space-y-2">
+          <button type="button" onClick={reset} className="btn w-full">
+            Try again
+          </button>
+          <button
+            type="button"
+            onClick={reportBug}
+            className="btn-ghost w-full"
+          >
+            Email the bug
+          </button>
+        </div>
+
+        {error.digest ? (
+          <p className="label mt-5">Reference {error.digest}</p>
+        ) : null}
       </div>
     </main>
   );
