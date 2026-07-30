@@ -256,8 +256,7 @@ export default async function AdminVenuePage({
           Manage venue · items, order, PIN
         </summary>
 
-        <div className="mt-4 space-y-3">
-          <VenuePinForm venueId={venue.id} pin={venue.pin} />
+        <div className="mt-4">
           <AddItemForm venueId={venue.id} />
         </div>
 
@@ -388,6 +387,13 @@ export default async function AdminVenuePage({
               })}
             </ul>
           )}
+        </section>
+
+        {/* Last, and masked: the least-used control shouldn't sit in the most
+            prominent spot, and a PIN on screen is a PIN over a shoulder. */}
+        <section className="mt-8">
+          <h2 className="label mb-3">Venue PIN</h2>
+          <VenuePinForm venueId={venue.id} pin={venue.pin} />
         </section>
       </details>
     </main>
