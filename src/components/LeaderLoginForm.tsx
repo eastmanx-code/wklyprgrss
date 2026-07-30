@@ -42,8 +42,9 @@ export function LeaderLoginForm({
           type="password"
           inputMode="numeric"
           autoComplete="off"
+          maxLength={6}
           className="field tracking-[0.4em]"
-          placeholder="••••"
+          placeholder="••••••"
         />
       </div>
 

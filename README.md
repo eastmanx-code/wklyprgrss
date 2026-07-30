@@ -22,7 +22,7 @@ on the server.
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Settings → API |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only. Never expose to the browser. |
-| `ADMIN_PIN` | PIN for the admin screens |
+| `ADMIN_PIN` | PIN for the admin screens. 6 digits, matching venue PINs. |
 | `DEADLINE_DAY` | `0`=Sun … `6`=Sat, Pacific |
 | `DEADLINE_HOUR` | `0`–`23`, Pacific |
 
@@ -34,7 +34,7 @@ Thursday 3pm Pacific is `DEADLINE_DAY=4`, `DEADLINE_HOUR=15`.
 npm run seed
 ```
 
-Inserts the 27 venue codes with random 4-digit PINs and prints them **once**.
+Inserts the 27 venue codes with random 6-digit PINs and prints them **once**.
 Copy them before closing the terminal. Re-running is safe; existing venues are
 left alone. Items start empty — the admin adds them per venue.
 

@@ -22,7 +22,7 @@ export function AdminLoginForm() {
           inputMode="numeric"
           autoComplete="off"
           className="field tracking-[0.4em]"
-          placeholder="••••"
+          placeholder="••••••"
         />
       </div>
 

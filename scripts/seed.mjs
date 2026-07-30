@@ -1,5 +1,5 @@
 /**
- * Seeds the 27 venues with random 4-digit PINs.
+ * Seeds the 27 venues with random 6-digit PINs.
  *
  *   npm run seed
  *
@@ -32,7 +32,7 @@ const db = createClient(url, serviceKey, {
   auth: { persistSession: false },
 });
 
-const randomPin = () => String(randomInt(0, 10_000)).padStart(4, "0");
+const randomPin = () => String(randomInt(0, 1_000_000)).padStart(6, "0");
 
 const { data: existing, error: readError } = await db
   .from("venues")
@@ -65,7 +65,7 @@ if (insertError) {
 
 console.log(`\nSeeded ${toInsert.length} venues.\n`);
 console.log("  CODE    PIN");
-console.log("  ----    ----");
+console.log("  ----    ------");
 for (const venue of toInsert) {
   console.log(`  ${venue.code.padEnd(6)}  ${venue.pin}`);
 }

@@ -126,7 +126,7 @@ export async function updateVenuePin(
 
   const venueId = String(formData.get("venueId") ?? "");
   const pin = String(formData.get("pin") ?? "").trim();
-  if (!/^\d{4,8}$/.test(pin)) return { error: "PIN must be 4–8 digits." };
+  if (!/^\d{6}$/.test(pin)) return { error: "PIN must be 6 digits." };
 
   const { error } = await db().from("venues").update({ pin }).eq("id", venueId);
   if (error) return { error: "Could not update that PIN." };

@@ -30,6 +30,8 @@ export function VenuePinForm({
           className="field font-mono tracking-[0.3em]"
           defaultValue={pin}
           inputMode="numeric"
+          pattern="\d{6}"
+          maxLength={6}
           disabled={pending}
         />
         <input type="hidden" name="venueId" value={venueId} />
@@ -42,7 +44,7 @@ export function VenuePinForm({
           {state.error}
         </p>
       ) : (
-        <p className="label">Shared with everyone at this venue.</p>
+        <p className="label">6 digits · shared with everyone at this venue.</p>
       )}
     </form>
   );
