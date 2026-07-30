@@ -53,7 +53,7 @@ export default function Error({
           <button
             type="button"
             onClick={reportBug}
-            className="btn-ghost w-full"
+            className="btn-secondary w-full"
           >
             Email the bug
           </button>

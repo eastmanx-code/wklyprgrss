@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/session";
-import { db } from "@/lib/supabase";
+import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { Item } from "@/lib/types";
 
 export type AdminState = { error: string | null };
@@ -191,14 +191,84 @@ export async function approveAllForVenue(formData: FormData) {
   const itemIds = items.map((item) => item.id);
   if (itemIds.length === 0) return;
 
-  // Only sweeps up work the leaders have declared done.
-  await db()
+  // Only the newest submission per item counts. Approving every pending row
+  // for the week would sign off submissions a later one has already replaced —
+  // including ones whose current state is "another cycle".
+  const { data: week } = await db()
     .from("submissions")
-    .update({ review: "approved", reviewed_at: new Date().toISOString() })
+    .select("id, item_id, review, progress, created_at")
     .in("item_id", itemIds)
     .eq("week_start", weekStart)
-    .eq("review", "pending")
-    .eq("progress", "done");
+    .order("created_at", { ascending: false });
+
+  const newestPerItem = new Map<string, { id: string; review: string; progress: string }>();
+  for (const row of week ?? []) {
+    if (!newestPerItem.has(row.item_id)) newestPerItem.set(row.item_id, row);
+  }
+
+  const approvable = [...newestPerItem.values()]
+    .filter((row) => row.review === "pending" && row.progress === "done")
+    .map((row) => row.id);
+
+  if (approvable.length > 0) {
+    await db()
+      .from("submissions")
+      .update({ review: "approved", reviewed_at: new Date().toISOString() })
+      .in("id", approvable);
+  }
+
+  refresh(venueId);
+}
+
+/**
+ * Clears a venue's board back to empty: every item retired, every photo file
+ * deleted from storage, ten fresh slots waiting.
+ *
+ * Submission rows survive. They carry the comments, the names, the dates and
+ * the pass/fail history that streaks and the CSV are computed from — if a wipe
+ * deleted those, a venue could erase a run of failed weeks by pressing one
+ * button. Photos are the disposable part; the ledger is not.
+ *
+ * Admin only, unlike the rest of item management.
+ */
+export async function wipeVenue(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const confirmation = String(formData.get("confirm") ?? "");
+  if (!venueId || confirmation !== "WIPE") return;
+
+  const items = await itemsFor(venueId);
+  const itemIds = items.map((item) => item.id);
+
+  if (itemIds.length > 0) {
+    const { data: subs } = await db()
+      .from("submissions")
+      .select("id, photo_url, before_photo_url")
+      .in("item_id", itemIds)
+      .is("photo_purged_at", null);
+
+    const paths = (subs ?? []).flatMap((s) =>
+      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    );
+
+    // Chunked: storage rejects very large delete batches.
+    for (let i = 0; i < paths.length; i += 100) {
+      await db().storage.from(PHOTO_BUCKET).remove(paths.slice(i, i + 100));
+    }
+
+    if ((subs ?? []).length > 0) {
+      await db()
+        .from("submissions")
+        .update({ photo_purged_at: new Date().toISOString() })
+        .in(
+          "id",
+          (subs ?? []).map((s) => s.id),
+        );
+    }
+
+    await db().from("items").update({ active: false }).in("id", itemIds);
+  }
 
   refresh(venueId);
 }

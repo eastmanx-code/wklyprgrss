@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { CompanyHero } from "@/components/CompanyHero";
 import {
-  CompanyRollup,
   DotStrip,
   StatusPill,
   VenueJumpBar,
@@ -20,6 +20,9 @@ export default async function BoardPage() {
   const { weekStart, rows, itemsDone, itemsTarget } = await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   const passing = rows.filter((row) => row.status === "PASS").length;
+  const failing = rows.filter((row) => row.status === "FAIL").length;
+  const pending = rows.length - passing - failing;
+  const percent = itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0;
 
   return (
     <main>
@@ -39,12 +42,15 @@ export default async function BoardPage() {
         </Link>
       </header>
 
-      <CompanyRollup
+      <CompanyHero
+        percent={percent}
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
-        venuesPassing={passing}
-        venuesTotal={rows.length}
+        passing={passing}
+        pending={pending}
+        failing={failing}
         statuses={rows.map((row) => row.status)}
+        deadlineLabel={formatDeadline(weekStart)}
       />
 
       <VenueJumpBar

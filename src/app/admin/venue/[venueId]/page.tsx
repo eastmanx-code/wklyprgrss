@@ -10,6 +10,7 @@ import { AddItemForm } from "@/components/admin/AddItemForm";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
+import { WipeVenue } from "@/components/admin/WipeVenue";
 import {
   Attribution,
   BackLink,
@@ -394,6 +395,19 @@ export default async function AdminVenuePage({
             form carries its own label, so no heading here. */}
         <section className="mt-8">
           <VenuePinForm venueId={venue.id} pin={venue.pin} />
+        </section>
+
+        {/* Last thing on the page, behind the disclosure, behind a warning. */}
+        <section className="mt-10">
+          <h2 className="label text-fail mb-3">Danger</h2>
+          <WipeVenue
+            venueId={venue.id}
+            venueCode={venue.code}
+            itemCount={activeItems.length}
+            photoCount={
+              submissions.filter((s) => !s.photo_purged_at).length
+            }
+          />
         </section>
       </details>
     </main>
