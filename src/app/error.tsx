@@ -36,17 +36,17 @@ export default function Error({
 
   return (
     <main className="mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
-      <div className="panel p-6 text-center">
+      <div className="panel p-8 text-center">
         <p className="label">Something went wrong</p>
-        <h1 className="mt-3 text-xl font-medium tracking-tight">
+        <h1 className="mt-4 text-xl font-medium tracking-tight">
           We couldn&apos;t load that
         </h1>
-        <p className="note mt-4 leading-relaxed text-muted">
+        <p className="note mx-auto mt-5 max-w-xs leading-relaxed text-muted">
           Try again. If it keeps happening, send it over and it&apos;ll get
           looked at.
         </p>
 
-        <div className="mt-6 space-y-2">
+        <div className="mt-8 space-y-3">
           <button type="button" onClick={reset} className="btn w-full">
             Try again
           </button>
@@ -60,7 +60,7 @@ export default function Error({
         </div>
 
         {error.digest ? (
-          <p className="label mt-5">Reference {error.digest}</p>
+          <p className="label mt-6">Reference {error.digest}</p>
         ) : null}
       </div>
     </main>
