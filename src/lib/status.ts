@@ -222,12 +222,16 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   const venues = await getVenues();
 
-  const activeItems = await selectAll<Item>(
+  // Every item, not just the active ones. A retired item's photos still
+  // happened: filtering here dropped their submissions from the loop below, so
+  // retiring last week's list rewrote last week as incomplete. Venues that
+  // choose fresh items each week would lose their record every time they
+  // swapped.
+  const allItems = await selectAll<Item>(
     (from, to) =>
       db()
         .from("items")
         .select("id, venue_id, title, position, active")
-        .eq("active", true)
         .order("id")
         .range(from, to) as unknown as PromiseLike<{
         data: Item[] | null;
@@ -235,9 +239,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       }>,
   );
 
-  const itemToVenue = new Map(activeItems.map((i) => [i.id, i.venue_id]));
+  const itemToVenue = new Map(allItems.map((i) => [i.id, i.venue_id]));
+
+  // Active-only, because this answers "is this venue set up right now".
   const activeCountByVenue = new Map<string, number>();
-  for (const item of activeItems) {
+  for (const item of allItems.filter((i) => i.active)) {
     activeCountByVenue.set(
       item.venue_id,
       (activeCountByVenue.get(item.venue_id) ?? 0) + 1,
