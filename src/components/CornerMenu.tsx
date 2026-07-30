@@ -17,11 +17,11 @@ export async function CornerMenu() {
   const session = await getSession();
   const deadlineMs = deadlineFor(currentWeekStart()).getTime();
 
-  const home = session
-    ? session.role === "admin"
-      ? "/admin"
-      : "/venue"
-    : null;
+  // Admin's home already lists every venue, so a separate Board link would go
+  // to a read-only copy of the page they're on. Leaders get both: their own
+  // board, and everyone's.
+  const isAdmin = session?.role === "admin";
+  const home = session ? (isAdmin ? "/admin" : "/venue") : null;
 
   return (
     <nav className="fixed right-4 bottom-4 z-50 flex max-w-[calc(100vw-2rem)] flex-wrap items-center justify-end gap-2">
@@ -32,16 +32,16 @@ export async function CornerMenu() {
           href={home}
           className="btn-ghost shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
         >
-          Home
+          {isAdmin ? "All venues" : "Mine"}
         </Link>
       ) : null}
 
-      {session ? (
+      {session && !isAdmin ? (
         <Link
           href="/board"
           className="btn-ghost shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
         >
-          Board
+          All
         </Link>
       ) : null}
 

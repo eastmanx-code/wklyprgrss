@@ -52,9 +52,11 @@ export function CompanyHero({
 
   return (
     <>
-      <section className="mb-3 flex gap-3">
+      <section className="mb-3 flex max-h-[184px] gap-3">
         <div
-          className="relative aspect-square w-[38%] shrink-0 rounded-full"
+          // Capped: 38% of a 1152px container is a 440px circle, and the
+          // pills stretch to match it.
+          className="relative aspect-square w-[38%] max-w-[184px] shrink-0 rounded-full"
           style={{
             background: `conic-gradient(var(--ink) ${percent}%, var(--panel) 0)`,
           }}
