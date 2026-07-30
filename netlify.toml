@@ -1,0 +1,12 @@
+# Zip-upload deploys don't apply the framework runtime on their own, so the
+# plugin is declared here. `publish` must also be stated: the first deploy left
+# a UI setting of the repo root, and a UI value wins over an unset one — which
+# makes the plugin fail with "publish directory cannot be the same as the base
+# directory".
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
