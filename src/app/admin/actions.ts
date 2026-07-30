@@ -273,6 +273,41 @@ export async function wipeVenue(formData: FormData) {
   refresh(venueId);
 }
 
+/** Adds an admin code. Admin only, obviously. */
+export async function addAdminPin(
+  _prev: AdminState,
+  formData: FormData,
+): Promise<AdminState> {
+  if (!(await isAdmin())) return { error: "Not signed in." };
+
+  const pin = String(formData.get("pin") ?? "").trim();
+  const label = String(formData.get("label") ?? "").trim();
+  if (!/^\d{6}$/.test(pin)) return { error: "Code must be 6 digits." };
+  if (!label) return { error: "Give it a name, so you know what to revoke." };
+  if (label.length > MAX_TITLE_LENGTH) return { error: "That name is too long." };
+
+  const { error } = await db().from("admin_pins").insert({ pin, label });
+  if (error) {
+    return {
+      error: error.code === "23505" ? "That code is already in use." : "Could not add that code.",
+    };
+  }
+
+  revalidatePath("/admin");
+  return OK;
+}
+
+/** Revokes an admin code. The env master key isn't in this table, so it stays. */
+export async function revokeAdminPin(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+
+  await db().from("admin_pins").delete().eq("id", id);
+  revalidatePath("/admin");
+}
+
 export async function updateVenuePin(
   _prev: AdminState,
   formData: FormData,

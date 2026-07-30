@@ -10,6 +10,7 @@ import {
   startLeaderSession,
 } from "@/lib/session";
 import { getVenue } from "@/lib/status";
+import { db } from "@/lib/supabase";
 
 export type FormState = { error: string | null };
 
@@ -38,8 +39,15 @@ export async function adminLogin(
   formData: FormData,
 ): Promise<FormState> {
   const pin = String(formData.get("pin") ?? "");
-  // Every candidate is compared, so timing doesn't reveal which one matched.
-  const matched = ADMIN_PINS().reduce(
+  // The env key is the master and can't be removed from the UI; the rest are
+  // codes added in the app. Every candidate is compared, so timing doesn't
+  // reveal which one matched.
+  const { data: stored } = await db().from("admin_pins").select("pin");
+  const candidates = [
+    ...ADMIN_PINS(),
+    ...(stored ?? []).map((row) => row.pin as string),
+  ];
+  const matched = candidates.reduce(
     (found, candidate) => pinMatches(pin, candidate) || found,
     false,
   );

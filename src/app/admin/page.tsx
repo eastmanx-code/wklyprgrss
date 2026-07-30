@@ -9,6 +9,8 @@ import {
 } from "@/components/ui";
 import { getSession } from "@/lib/session";
 import { getDashboard } from "@/lib/status";
+import { db } from "@/lib/supabase";
+import { AdminPins, type AdminPin } from "@/components/admin/AdminPins";
 import { formatDeadline, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +20,11 @@ export default async function AdminDashboardPage() {
 
   const { weekStart, rows, itemsDone, itemsTarget, venuesUnderConfigured } =
     await getDashboard();
+  const { data: adminPins } = await db()
+    .from("admin_pins")
+    .select("id, pin, label")
+    .order("created_at");
+
   const passing = rows.filter((row) => row.status === "PASS").length;
   const failing = rows.filter((row) => row.status === "FAIL").length;
 
@@ -106,6 +113,11 @@ export default async function AdminDashboardPage() {
           </li>
         ))}
       </ul>
+
+      <section className="mt-10">
+        <h2 className="label mb-3">Admin codes</h2>
+        <AdminPins pins={(adminPins ?? []) as AdminPin[]} />
+      </section>
 
       <p className="mt-8 text-center">
         <Link href="/board" className="label hover:text-ink">

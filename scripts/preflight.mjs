@@ -87,6 +87,16 @@ for (const table of ["venues", "items", "submissions"]) {
   );
 }
 
+// Admin codes table (added by supabase/007_admin_pins.sql).
+{
+  const { error } = await db.from("admin_pins").select("id").limit(1);
+  record(
+    !error,
+    'table "admin_pins"',
+    error ? "missing — run supabase/007_admin_pins.sql" : "present",
+  );
+}
+
 // Storage bucket.
 const { data: buckets, error: bucketError } = await db.storage.listBuckets();
 if (bucketError) {
