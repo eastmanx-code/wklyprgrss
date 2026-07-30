@@ -1,19 +1,16 @@
 import Link from "next/link";
 
 import { ThemeToggle } from "./ThemeToggle";
-import { getSession } from "@/lib/session";
 
 /**
  * Persistent corner controls. Help sits here rather than inside any one screen
- * so it's reachable from everywhere without cluttering the boards.
+ * so it's reachable from everywhere without cluttering the boards — including
+ * before sign-in, which is when someone is most likely to be lost.
  */
-export async function CornerMenu() {
-  const session = await getSession();
-
+export function CornerMenu() {
   return (
     <nav className="fixed right-4 bottom-4 z-50 flex items-center gap-2">
-      {session ? (
-        <Link
+      <Link
           href="/help"
           className="btn-ghost shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
         >
@@ -21,8 +18,7 @@ export async function CornerMenu() {
               last line of content. */}
           <span className="sm:hidden">Help</span>
           <span className="hidden sm:inline">How to use this</span>
-        </Link>
-      ) : null}
+      </Link>
       <ThemeToggle />
     </nav>
   );

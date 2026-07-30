@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 import { AdminGuide, LeaderGuide } from "@/components/HowToUse";
 import { BackLink } from "@/components/ui";
 import { getSession } from "@/lib/session";
@@ -10,15 +8,15 @@ export const dynamic = "force-dynamic";
 
 export default async function HelpPage() {
   const session = await getSession();
-  if (!session) redirect("/");
 
   const deadlineLabel = formatDeadline(currentWeekStart());
-  const isAdmin = session.role === "admin";
+  // Signed out, show the leader guide — that's who reaches this cold.
+  const isAdmin = session?.role === "admin";
 
   return (
     <main>
-      <BackLink href={isAdmin ? "/admin" : "/venue"}>
-        {isAdmin ? "All venues" : "My items"}
+      <BackLink href={session ? (isAdmin ? "/admin" : "/venue") : "/"}>
+        {session ? (isAdmin ? "All venues" : "My items") : "Sign in"}
       </BackLink>
 
       <header className="mt-4 mb-6">
