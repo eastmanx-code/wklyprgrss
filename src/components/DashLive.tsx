@@ -33,7 +33,7 @@ export function CountdownRow({ deadlineMs }: { deadlineMs: number }) {
         label="Time left"
         value="Past due"
         fill={1}
-        tone="bg-fail/25"
+        tone="bg-fail"
         emphasis
       />
     );
@@ -52,7 +52,7 @@ export function CountdownRow({ deadlineMs }: { deadlineMs: number }) {
     <DashRow
       label="Time left"
       fill={remaining / week}
-      tone={urgent ? "bg-fail/25" : "bg-ink/10"}
+      tone={urgent ? "bg-fail" : "bg-ink"}
       emphasis
       value={
         days > 0 ? (

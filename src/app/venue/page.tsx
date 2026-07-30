@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { WeekProgress } from "@/components/WeekProgress";
+import { VenueHero } from "@/components/VenueHero";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
@@ -31,24 +31,21 @@ export default async function VenuePage() {
   return (
     <main>
       <header className="mb-6">
-        <div>
-          <p className="label">Venue</p>
-          <h1 className="mt-2 truncate text-2xl font-medium tracking-tight">
-            {venue.name && venue.name !== venue.code
-              ? venue.name
-              : venue.code}
-          </h1>
-        </div>
+        <p className="label">Week of {formatWeekStart(board.weekStart)}</p>
+        <h1 className="mt-2 truncate text-2xl font-medium tracking-tight">
+          {venue.name && venue.name !== venue.code ? venue.name : venue.code}
+        </h1>
       </header>
 
-      <WeekProgress
+      <VenueHero
         done={board.doneItemIds.size}
         total={WEEKLY_ITEM_TARGET}
         configured={board.items.length}
+        redo={board.sentBackItemIds.size}
+        rolling={board.rollingItemIds.size}
         status={board.status}
         deadlineMs={deadlineFor(board.weekStart).getTime()}
         deadlineLabel={formatDeadline(board.weekStart)}
-        weekLabel={formatWeekStart(board.weekStart)}
       />
 
       {/* Always ten tiles. A venue with four items set up should read as six

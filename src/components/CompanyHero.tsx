@@ -1,5 +1,6 @@
 import { ClockRow, CountdownRow, WeatherRow } from "./DashLive";
 import { DashRow } from "./DashRow";
+import { Dial } from "./Dial";
 import type { WeekStatus } from "@/lib/types";
 
 /**
@@ -64,25 +65,10 @@ export function CompanyHero({
   return (
     <>
       <section className="mb-3 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-        <div className="panel flex items-center justify-center p-5 sm:p-6">
-          {/* Smaller cap on phones: at full width the dial alone filled the
-              screen and pushed the venue list two scrolls down. */}
-          <div
-            className="relative aspect-square w-full max-w-[220px] rounded-full sm:max-w-[400px]"
-            style={{
-              background: `conic-gradient(var(--ink) ${percent}%, color-mix(in srgb, var(--ink) 12%, var(--panel)) 0)`,
-            }}
-          >
-            <div className="bg-panel absolute inset-[12%] flex flex-col items-center justify-center rounded-full">
-              <span className="font-mono text-6xl leading-none tabular-nums">
-                {percent}%
-              </span>
-              <span className="label mt-2">
-                {itemsDone} of {itemsTarget} photos
-              </span>
-            </div>
-          </div>
-        </div>
+        <Dial
+          percent={percent}
+          caption={`${itemsDone} of ${itemsTarget} photos`}
+        />
 
         <div className="panel divide-ink/10 flex flex-col divide-y overflow-hidden">
           <CountdownRow deadlineMs={deadlineMs} />
@@ -109,7 +95,7 @@ export function CompanyHero({
             label="Failing"
             value={failing}
             fill={share(failing)}
-            tone="bg-fail/25"
+            tone="bg-fail"
           />
           <DashRow
             label="Not started"
