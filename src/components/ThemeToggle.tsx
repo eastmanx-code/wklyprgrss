@@ -29,7 +29,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="btn-ghost fixed right-4 bottom-4 z-50 shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
+      className="btn-ghost shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
       aria-label="Switch between light and dark"
     >
       <span className="theme-to-dark">Dark</span>
