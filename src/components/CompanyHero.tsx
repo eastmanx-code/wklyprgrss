@@ -1,40 +1,34 @@
-import { ClockRow, CountdownRow, WeatherRow } from "./DashLive";
-import { DashRow } from "./DashRow";
+import { Clock, Countdown, Weather } from "./DashLive";
 import { Dial } from "./Dial";
+import { formatFinish } from "@/lib/week";
 import type { WeekStatus } from "@/lib/types";
 
-/**
- * Every venue as one dot, in the order the list below shows them. Twenty-seven
- * numbers is a table; twenty-seven dots is a glance.
- */
-function StatusBand({ statuses }: { statuses: WeekStatus[] }) {
+/** A number that carries itself, with the label kept quiet underneath it. */
+function Stat({
+  label,
+  value,
+  tone = "",
+}: {
+  label: string;
+  value: React.ReactNode;
+  tone?: string;
+}) {
   return (
-    <div className="panel mb-3 flex flex-wrap gap-1.5 px-5 py-4">
-      {statuses.map((status, index) => (
-        <span
-          key={index}
-          className={`h-3 w-3 rounded-full ${
-            status === "PASS"
-              ? "bg-ink"
-              : status === "FAIL"
-                ? "bg-fail"
-                : "bg-ink/20"
-          }`}
-          title={status}
-        />
-      ))}
+    <div>
+      <p className={`font-mono text-4xl leading-none tabular-nums ${tone}`}>
+        {value}
+      </p>
+      <p className="label mt-2">{label}</p>
     </div>
   );
 }
 
 /**
- * The company's week at a glance: how much of it is done, how long is left,
- * and the shape of all venues.
+ * The company's week: one dial, a few numbers, and every venue as a dot.
  *
- * The dial is the largest thing here — it is the one number anyone opens this
- * page for. Beside it the numbers are a dense readout rather than a grid of
- * tiles: tiles stretched to the dial's height left each one nearly empty, so
- * the rows flex instead and the stack always ends level with the dial.
+ * Kept to those three things on purpose. An earlier pass had a half-dial, four
+ * small rings and a stack of bars all on one screen, which turned a glanceable
+ * page into an instrument cluster.
  */
 export function CompanyHero({
   percent,
@@ -43,10 +37,10 @@ export function CompanyHero({
   passing,
   pending,
   failing,
-  notStarted,
   statuses,
   deadlineLabel,
   deadlineMs,
+  finishes,
 }: {
   percent: number;
   itemsDone: number;
@@ -54,65 +48,78 @@ export function CompanyHero({
   passing: number;
   pending: number;
   failing: number;
-  notStarted: number;
   statuses: WeekStatus[];
   deadlineLabel: string;
   deadlineMs: number;
+  finishes: { code: string; at: string }[];
 }) {
-  const total = statuses.length;
-  const share = (count: number) => (total ? count / total : 0);
+  const first = finishes[0];
+  const last = finishes[finishes.length - 1];
 
   return (
     <>
-      <section className="mb-3 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-        <Dial
-          percent={percent}
-          caption={`${itemsDone} of ${itemsTarget} photos`}
-        />
+      <section className="mb-8 grid items-center gap-8 sm:grid-cols-[auto_minmax(0,1fr)]">
+        <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
 
-        <div className="panel divide-ink/10 flex flex-col divide-y overflow-hidden">
-          <CountdownRow deadlineMs={deadlineMs} />
-          {/* Not "venues finished" — that is the same number as Passing, and
-              two rows saying six is worse than one. This one is the thing
-              anyone can act on. */}
-          <DashRow
-            label="Photos left"
-            value={Math.max(0, itemsTarget - itemsDone)}
-            fill={itemsTarget ? 1 - itemsDone / itemsTarget : 0}
+        <div className="space-y-8">
+          <Stat
+            label="Time left"
+            value={<Countdown deadlineMs={deadlineMs} />}
           />
-          <DashRow
-            label="Passing"
-            value={
-              <>
-                {passing}
-                <span className="text-muted text-base">/{total}</span>
-              </>
-            }
-            fill={share(passing)}
-          />
-          <DashRow label="Pending" value={pending} fill={share(pending)} />
-          <DashRow
-            label="Failing"
-            value={failing}
-            fill={share(failing)}
-            tone="bg-fail"
-          />
-          <DashRow
-            label="Not started"
-            value={notStarted}
-            fill={share(notStarted)}
-          />
-          <ClockRow />
-          <WeatherRow />
+          <div className="grid grid-cols-3 gap-4">
+            <Stat label="Passing" value={passing} />
+            <Stat label="Pending" value={pending} />
+            <Stat
+              label="Failing"
+              value={failing}
+              tone={failing ? "text-fail" : ""}
+            />
+          </div>
         </div>
       </section>
 
-      <section className="panel mb-3 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 px-6 py-4">
-        <p className="label">Everything due</p>
-        <p className="font-mono text-lg tabular-nums">{deadlineLabel}</p>
-      </section>
+      <div className="mb-8 flex flex-wrap gap-1.5">
+        {statuses.map((status, index) => (
+          <span
+            key={index}
+            className={`h-3 w-3 rounded-full ${
+              status === "PASS"
+                ? "bg-ink"
+                : status === "FAIL"
+                  ? "bg-fail"
+                  : "bg-ink/15"
+            }`}
+            title={status}
+          />
+        ))}
+      </div>
 
-      <StatusBand statuses={statuses} />
+      {/* Who got it in early and who cut it fine — the part people actually
+          compete over. Only shown once someone has finished. */}
+      {first ? (
+        <dl className="mb-8 grid grid-cols-2 gap-6">
+          <div>
+            <dt className="label">First in</dt>
+            <dd className="mt-2 font-mono text-lg">
+              {first.code}
+              <span className="text-muted"> · {formatFinish(first.at)}</span>
+            </dd>
+          </div>
+          {last && last.code !== first.code ? (
+            <div>
+              <dt className="label">Last in</dt>
+              <dd className="mt-2 font-mono text-lg">
+                {last.code}
+                <span className="text-muted"> · {formatFinish(last.at)}</span>
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
+
+      <p className="label mb-8">
+        Due {deadlineLabel} · <Clock /> · <Weather />
+      </p>
     </>
   );
 }

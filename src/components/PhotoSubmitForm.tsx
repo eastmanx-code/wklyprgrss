@@ -20,7 +20,10 @@ const MAX_EDGE = 1600;
 const TARGET_BYTES = 300 * 1024;
 const QUALITY_STEPS = [0.82, 0.72, 0.62, 0.52, 0.42];
 
-function toBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null> {
+function toBlob(
+  canvas: HTMLCanvasElement,
+  quality: number,
+): Promise<Blob | null> {
   return new Promise((resolve) =>
     canvas.toBlob((blob) => resolve(blob), "image/jpeg", quality),
   );
@@ -32,7 +35,9 @@ function toBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob | null
  * iPhone HEIC capture into something every browser can render.
  */
 async function compressToJpeg(file: File): Promise<File> {
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const bitmap = await createImageBitmap(file, {
+    imageOrientation: "from-image",
+  });
   const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
   const width = Math.max(1, Math.round(bitmap.width * scale));
   const height = Math.max(1, Math.round(bitmap.height * scale));
@@ -128,7 +133,8 @@ export function PhotoSubmitForm({
   useEffect(() => {
     return () => {
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
-      if (beforePreviewRef.current) URL.revokeObjectURL(beforePreviewRef.current);
+      if (beforePreviewRef.current)
+        URL.revokeObjectURL(beforePreviewRef.current);
     };
   }, []);
 
@@ -138,7 +144,6 @@ export function PhotoSubmitForm({
     if (state.ok) router.push("/venue");
   }, [state.ok, router]);
 
-
   async function handleBeforePick(event: React.ChangeEvent<HTMLInputElement>) {
     const original = event.target.files?.[0];
     if (!original) return;
@@ -147,7 +152,8 @@ export function PhotoSubmitForm({
     setLocalError(null);
     try {
       const compressed = await compressToJpeg(original);
-      if (beforePreviewRef.current) URL.revokeObjectURL(beforePreviewRef.current);
+      if (beforePreviewRef.current)
+        URL.revokeObjectURL(beforePreviewRef.current);
       const url = URL.createObjectURL(compressed);
       beforePreviewRef.current = url;
       setBeforePhoto(compressed);
@@ -323,7 +329,9 @@ export function PhotoSubmitForm({
         </label>
 
         {photo ? (
-          <p className="label">Ready · {formatKb(photo.size)}. Tap to retake.</p>
+          <p className="label">
+            Ready · {formatKb(photo.size)}. Tap to retake.
+          </p>
         ) : null}
       </div>
 
@@ -353,8 +361,8 @@ export function PhotoSubmitForm({
         </div>
         {progress === "another_cycle" ? (
           <p className="label">
-            Still counts for this week. It stays open and can&apos;t be
-            approved until it&apos;s done.
+            Still counts for this week. It stays open and can&apos;t be approved
+            until it&apos;s done.
           </p>
         ) : null}
       </div>

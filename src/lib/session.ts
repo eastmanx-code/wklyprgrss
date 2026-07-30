@@ -9,9 +9,7 @@ const COOKIE_NAME = "ww_session";
 const LEADER_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const ADMIN_TTL_MS = 12 * 60 * 60 * 1000;
 
-export type Session =
-  | { role: "leader"; venueId: string }
-  | { role: "admin" };
+export type Session = { role: "leader"; venueId: string } | { role: "admin" };
 
 type Payload = { r: "l"; v: string; e: number } | { r: "a"; e: number };
 
@@ -101,7 +99,10 @@ export async function startLeaderSession(venueId: string) {
 }
 
 export async function startAdminSession() {
-  await setSessionCookie({ r: "a", e: Date.now() + ADMIN_TTL_MS }, ADMIN_TTL_MS);
+  await setSessionCookie(
+    { r: "a", e: Date.now() + ADMIN_TTL_MS },
+    ADMIN_TTL_MS,
+  );
 }
 
 export async function endSession() {

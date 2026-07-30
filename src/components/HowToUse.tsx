@@ -13,7 +13,13 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
   );
 }
 
-function Term({ label, children }: { label: string; children: React.ReactNode }) {
+function Term({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <li className="flex items-start gap-4">
       <span className="w-20 shrink-0 pt-[2px]">
@@ -79,9 +85,7 @@ export function LeaderGuide({
         <h2 className="text-lg font-medium tracking-tight">Uploading</h2>
         <ol className="mt-5 space-y-4">
           <Step n={1}>Tap a card and take or choose the photo.</Step>
-          <Step n={2}>
-            Say whether it&apos;s done or needs one more cycle.
-          </Step>
+          <Step n={2}>Say whether it&apos;s done or needs one more cycle.</Step>
           <Step n={3}>Put your name in, and whoever helped you.</Step>
           <Step n={4}>
             Write the comment. Never blank — if it&apos;s done say so, if it
@@ -112,7 +116,9 @@ export function LeaderGuide({
       </section>
 
       <section className="panel">
-        <h2 className="text-lg font-medium tracking-tight">Everyone&apos;s board</h2>
+        <h2 className="text-lg font-medium tracking-tight">
+          Everyone&apos;s board
+        </h2>
         <p className="note mt-4 leading-relaxed">
           You can open any other venue and see what they uploaded. One team
           seeing another&apos;s work raises the bar for everyone.

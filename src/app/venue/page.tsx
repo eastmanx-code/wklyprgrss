@@ -42,7 +42,6 @@ export default async function VenuePage() {
         total={WEEKLY_ITEM_TARGET}
         configured={board.items.length}
         redo={board.sentBackItemIds.size}
-        rolling={board.rollingItemIds.size}
         status={board.status}
         deadlineMs={deadlineFor(board.weekStart).getTime()}
         deadlineLabel={formatDeadline(board.weekStart)}
@@ -51,63 +50,59 @@ export default async function VenuePage() {
       {/* Always ten tiles. A venue with four items set up should read as six
           slots missing, not as a short but complete-looking board. */}
       <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
-          {board.items.map((item) => {
-            const latest = board.latest.get(item.id);
-            const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
-            const done = board.doneItemIds.has(item.id);
+        {board.items.map((item) => {
+          const latest = board.latest.get(item.id);
+          const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
+          const done = board.doneItemIds.has(item.id);
 
-            return (
-              <li key={item.id}>
-                <Link
-                  href={`/venue/item/${item.id}`}
-                  className="panel panel-link flex h-full flex-col p-3"
-                >
-                  {thumb ? (
-                    <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={thumb}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <PhotoPlaceholder />
-                  )}
-                  <div className="mt-3 flex items-start justify-between gap-2">
-                    <p className="caps text-sm leading-snug font-medium">
-                      {item.title}
-                    </p>
+          return (
+            <li key={item.id}>
+              <Link
+                href={`/venue/item/${item.id}`}
+                className="panel panel-link flex h-full flex-col p-3"
+              >
+                {thumb ? (
+                  <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={thumb}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
                   </div>
-                  <p className="label mt-1">
-                    {latest
-                      ? `Last photo · ${formatLastUpload(latest.created_at)}`
-                      : "No photo yet"}
+                ) : (
+                  <PhotoPlaceholder />
+                )}
+                <div className="mt-3 flex items-start justify-between gap-2">
+                  <p className="caps text-sm leading-snug font-medium">
+                    {item.title}
                   </p>
-                  <div className="mt-2">
-                    {board.sentBackItemIds.has(item.id) ? (
-                      <span className="pill pill-fail">Redo</span>
-                    ) : board.rollingItemIds.has(item.id) ? (
-                      <span className="pill pill-rolling">Rolling</span>
-                    ) : (
-                      <DonePill done={done} />
-                    )}
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
+                </div>
+                <p className="label mt-1">
+                  {latest
+                    ? `Last photo · ${formatLastUpload(latest.created_at)}`
+                    : "No photo yet"}
+                </p>
+                <div className="mt-2">
+                  {board.sentBackItemIds.has(item.id) ? (
+                    <span className="pill pill-fail">Redo</span>
+                  ) : board.rollingItemIds.has(item.id) ? (
+                    <span className="pill pill-rolling">Rolling</span>
+                  ) : (
+                    <DonePill done={done} />
+                  )}
+                </div>
+              </Link>
+            </li>
+          );
+        })}
 
-          {/* A venue owns its own list — same control the admin has. Only
+        {/* A venue owns its own list — same control the admin has. Only
               approving stays admin-only. */}
-          {emptySlots(board.items.length, WEEKLY_ITEM_TARGET).map((slot) => (
-            <AddItemSlot
-              key={`slot-${slot}`}
-              venueId={venue.id}
-              index={slot}
-            />
-          ))}
-        </ul>
+        {emptySlots(board.items.length, WEEKLY_ITEM_TARGET).map((slot) => (
+          <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
+        ))}
+      </ul>
 
       <p className="mt-8 text-center">
         <Link href="/board" className="label hover:text-ink">

@@ -44,7 +44,9 @@ export default async function BoardVenuePage({
   if (!venue) notFound();
 
   const items = await getItems(venue.id);
-  const submissions = await getSubmissionsForItems(items.map((item) => item.id));
+  const submissions = await getSubmissionsForItems(
+    items.map((item) => item.id),
+  );
   const photos = await signedUrls(
     submissions.flatMap((s) =>
       s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
@@ -88,97 +90,97 @@ export default async function BoardVenuePage({
       </header>
 
       <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
-          {items.map((item) => {
-            const history = byItem.get(item.id) ?? [];
-            const latest = history[0];
-            const latestUrl = latest ? photos.get(latest.photo_url) : undefined;
+        {items.map((item) => {
+          const history = byItem.get(item.id) ?? [];
+          const latest = history[0];
+          const latestUrl = latest ? photos.get(latest.photo_url) : undefined;
 
-            return (
-              <li key={item.id} className="panel flex flex-col p-3">
-                <div className="relative">
-                  {latestUrl ? (
-                    <div className="aspect-square overflow-hidden rounded-xl bg-panel">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={latestUrl}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ) : latest?.photo_purged_at ? (
-                    <PurgedPhoto />
-                  ) : (
-                    <PhotoPlaceholder />
-                  )}
-                  <span className="absolute top-2 right-2">
-                    <DonePill done={doneThisWeek.has(item.id)} />
-                  </span>
-                </div>
-
-                <p className="caps mt-3 text-xs leading-snug font-medium">
-                  {item.title}
-                </p>
-                <p className="label mt-1">
-                  {latest
-                    ? `Last photo · ${formatLastUpload(latest.created_at)}`
-                    : "No photo yet"}
-                </p>
-
-                {latest ? (
-                  <>
-                    <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
-                      {latest.comment}
-                    </p>
-                    <Attribution
-                      author={latest.author}
-                      assistedBy={latest.assisted_by}
+          return (
+            <li key={item.id} className="panel flex flex-col p-3">
+              <div className="relative">
+                {latestUrl ? (
+                  <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={latestUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
                     />
-                  </>
-                ) : null}
+                  </div>
+                ) : latest?.photo_purged_at ? (
+                  <PurgedPhoto />
+                ) : (
+                  <PhotoPlaceholder />
+                )}
+                <span className="absolute top-2 right-2">
+                  <DonePill done={doneThisWeek.has(item.id)} />
+                </span>
+              </div>
 
-                {history.length > 1 ? (
-                  <details className="mt-3">
-                    <summary className="label cursor-pointer select-none">
-                      Earlier weeks · {history.length - 1}
-                    </summary>
-                    <ul className="mt-3 space-y-3">
-                      {history.slice(1).map((submission) => {
-                        const url = photos.get(submission.photo_url);
-                        return (
-                          <li key={submission.id} className="panel-quiet">
-                            <p className="label">
-                              Week of {formatWeekStart(submission.week_start)}
-                            </p>
-                            {url ? (
-                              <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src={url}
-                                  alt=""
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                            ) : null}
-                            <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
-                              {submission.comment}
-                            </p>
-                            <Attribution
-                              author={submission.author}
-                              assistedBy={submission.assisted_by}
-                            />
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </details>
-                ) : null}
-              </li>
-            );
-          })}
+              <p className="caps mt-3 text-xs leading-snug font-medium">
+                {item.title}
+              </p>
+              <p className="label mt-1">
+                {latest
+                  ? `Last photo · ${formatLastUpload(latest.created_at)}`
+                  : "No photo yet"}
+              </p>
 
-          {emptySlots(items.length, WEEKLY_ITEM_TARGET).map((slot) => (
-            <EmptySlot key={`slot-${slot}`} index={slot} />
-          ))}
+              {latest ? (
+                <>
+                  <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
+                    {latest.comment}
+                  </p>
+                  <Attribution
+                    author={latest.author}
+                    assistedBy={latest.assisted_by}
+                  />
+                </>
+              ) : null}
+
+              {history.length > 1 ? (
+                <details className="mt-3">
+                  <summary className="label cursor-pointer select-none">
+                    Earlier weeks · {history.length - 1}
+                  </summary>
+                  <ul className="mt-3 space-y-3">
+                    {history.slice(1).map((submission) => {
+                      const url = photos.get(submission.photo_url);
+                      return (
+                        <li key={submission.id} className="panel-quiet">
+                          <p className="label">
+                            Week of {formatWeekStart(submission.week_start)}
+                          </p>
+                          {url ? (
+                            <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={url}
+                                alt=""
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          ) : null}
+                          <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                            {submission.comment}
+                          </p>
+                          <Attribution
+                            author={submission.author}
+                            assistedBy={submission.assisted_by}
+                          />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+              ) : null}
+            </li>
+          );
+        })}
+
+        {emptySlots(items.length, WEEKLY_ITEM_TARGET).map((slot) => (
+          <EmptySlot key={`slot-${slot}`} index={slot} />
+        ))}
       </ul>
     </main>
   );

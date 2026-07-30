@@ -178,7 +178,9 @@ export default async function ItemPage({
                       show the pair. Otherwise just the one shot. */}
                   <div
                     className={`mt-3 ${
-                      submission.before_photo_url ? "grid grid-cols-2 gap-2" : ""
+                      submission.before_photo_url
+                        ? "grid grid-cols-2 gap-2"
+                        : ""
                     }`}
                   >
                     {submission.before_photo_url ? (

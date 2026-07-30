@@ -62,9 +62,7 @@ export async function getItems(
     .eq("venue_id", venueId);
   if (!includeInactive) query = query.eq("active", true);
 
-  const { data, error } = await query
-    .order("position")
-    .order("title");
+  const { data, error } = await query.order("position").order("title");
   if (error) throw new Error(error.message);
   return (data ?? []) as Item[];
 }
@@ -130,7 +128,8 @@ export function latestByItem(
   const latest = new Map<string, Submission>();
   for (const s of submissions) {
     const existing = latest.get(s.item_id);
-    if (!existing || s.created_at > existing.created_at) latest.set(s.item_id, s);
+    if (!existing || s.created_at > existing.created_at)
+      latest.set(s.item_id, s);
   }
   return latest;
 }
@@ -196,6 +195,8 @@ export type Dashboard = {
   itemsTarget: number;
   /** Venues that don't have the full 10 items configured yet. */
   venuesUnderConfigured: string[];
+  /** Who reached ten this week, earliest first. */
+  finishes: { code: string; at: string }[];
 };
 
 /**
@@ -214,16 +215,17 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   const venues = await getVenues();
 
-  const activeItems = await selectAll<Item>((from, to) =>
-    db()
-      .from("items")
-      .select("id, venue_id, title, position, active")
-      .eq("active", true)
-      .order("id")
-      .range(from, to) as unknown as PromiseLike<{
-      data: Item[] | null;
-      error: { message: string } | null;
-    }>,
+  const activeItems = await selectAll<Item>(
+    (from, to) =>
+      db()
+        .from("items")
+        .select("id, venue_id, title, position, active")
+        .eq("active", true)
+        .order("id")
+        .range(from, to) as unknown as PromiseLike<{
+        data: Item[] | null;
+        error: { message: string } | null;
+      }>,
   );
 
   const itemToVenue = new Map(activeItems.map((i) => [i.id, i.venue_id]));
@@ -236,16 +238,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   }
 
   // Sent-back submissions are filtered in SQL so they never count anywhere.
-  const submissions = await selectAll<Pick<Submission, "item_id" | "week_start">>(
+  const submissions = await selectAll<
+    Pick<Submission, "item_id" | "week_start" | "created_at">
+  >(
     (from, to) =>
       db()
         .from("submissions")
-        .select("item_id, week_start")
+        .select("item_id, week_start, created_at")
         .gte("week_start", earliestWeek)
         .neq("review", "sent_back")
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
-        data: Pick<Submission, "item_id" | "week_start">[] | null;
+        data:
+          Pick<Submission, "item_id" | "week_start" | "created_at">[] | null;
         error: { message: string } | null;
       }>,
   );
@@ -253,6 +258,8 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   // venueId -> weekStart -> set of done item ids
   const doneByVenueWeek = new Map<string, Map<string, Set<string>>>();
   const firstWeekByVenue = new Map<string, string>();
+  // venueId -> every submission this week, to be walked in time order below
+  const thisWeekByVenue = new Map<string, { item: string; at: string }[]>();
 
   for (const s of submissions) {
     const venueId = itemToVenue.get(s.item_id);
@@ -269,8 +276,35 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     }
     set.add(s.item_id);
 
+    if (s.week_start === weekStart) {
+      const forVenue = thisWeekByVenue.get(venueId) ?? [];
+      forVenue.push({ item: s.item_id, at: s.created_at });
+      thisWeekByVenue.set(venueId, forVenue);
+    }
+
     const first = firstWeekByVenue.get(venueId);
-    if (!first || s.week_start < first) firstWeekByVenue.set(venueId, s.week_start);
+    if (!first || s.week_start < first)
+      firstWeekByVenue.set(venueId, s.week_start);
+  }
+
+  /**
+   * When each venue reached the target this week — the moment its tenth
+   * distinct item got a photo.
+   *
+   * Sorted by time here rather than relying on the query order, which is by
+   * week: the tenth row processed is not the tenth row submitted.
+   */
+  const finishedAtByVenue = new Map<string, string>();
+  for (const [venueId, entries] of thisWeekByVenue) {
+    entries.sort((a, b) => a.at.localeCompare(b.at));
+    const seen = new Set<string>();
+    for (const entry of entries) {
+      seen.add(entry.item);
+      if (seen.size === WEEKLY_ITEM_TARGET) {
+        finishedAtByVenue.set(venueId, entry.at);
+        break;
+      }
+    }
   }
 
   const rows: VenueWeekSummary[] = venues.map((venue) => {
@@ -300,7 +334,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     };
   });
 
-  const statusRank: Record<WeekStatus, number> = { FAIL: 0, PENDING: 1, PASS: 2 };
+  const statusRank: Record<WeekStatus, number> = {
+    FAIL: 0,
+    PENDING: 1,
+    PASS: 2,
+  };
   rows.sort((a, b) => {
     if (statusRank[a.status] !== statusRank[b.status]) {
       return statusRank[a.status] - statusRank[b.status];
@@ -317,6 +355,13 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     rows,
     itemsDone: rows.reduce((sum, row) => sum + row.doneCount, 0),
     itemsTarget: rows.length * WEEKLY_ITEM_TARGET,
+    finishes: rows
+      .map((row) => ({
+        code: row.venue.code,
+        at: finishedAtByVenue.get(row.venue.id),
+      }))
+      .filter((f): f is { code: string; at: string } => Boolean(f.at))
+      .sort((a, b) => a.at.localeCompare(b.at)),
     venuesUnderConfigured: rows
       .filter((row) => row.activeCount < WEEKLY_ITEM_TARGET)
       .map((row) => row.venue.code),

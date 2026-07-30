@@ -108,7 +108,11 @@ export function PhotoPlaceholder({
  * A photo that has aged out of storage. The record of the work survives — this
  * only means the image file was cleared.
  */
-export function PurgedPhoto({ aspect = "square" }: { aspect?: "square" | "wide" }) {
+export function PurgedPhoto({
+  aspect = "square",
+}: {
+  aspect?: "square" | "wide";
+}) {
   return <PhotoPlaceholder aspect={aspect} label="Cleared" />;
 }
 
@@ -139,7 +143,10 @@ export function EmptySlot({ index }: { index: number }) {
 
 /** Pads a grid out to the weekly target. */
 export function emptySlots(count: number, target: number): number[] {
-  return Array.from({ length: Math.max(0, target - count) }, (_, i) => count + i + 1);
+  return Array.from(
+    { length: Math.max(0, target - count) },
+    (_, i) => count + i + 1,
+  );
 }
 
 /** Byline for a submission: who wrote it, and who helped. */
@@ -183,7 +190,13 @@ export function PageHeader({
   );
 }
 
-export function BackLink({ href, children }: { href: string; children: string }) {
+export function BackLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: string;
+}) {
   return (
     <Link href={href} className="label hover:text-ink">
       ← {children}

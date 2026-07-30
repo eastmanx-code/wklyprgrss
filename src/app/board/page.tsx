@@ -14,12 +14,12 @@ export default async function BoardPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const { weekStart, rows, itemsDone, itemsTarget } = await getDashboard();
+  const { weekStart, rows, itemsDone, itemsTarget, finishes } =
+    await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   const passing = rows.filter((row) => row.status === "PASS").length;
   const failing = rows.filter((row) => row.status === "FAIL").length;
   const pending = rows.length - passing - failing;
-  const notStarted = rows.filter((row) => row.doneCount === 0).length;
   const percent = itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0;
 
   return (
@@ -46,10 +46,10 @@ export default async function BoardPage() {
         passing={passing}
         pending={pending}
         failing={failing}
-        notStarted={notStarted}
         statuses={rows.map((row) => row.status)}
         deadlineLabel={formatDeadline(weekStart)}
         deadlineMs={deadlineFor(weekStart).getTime()}
+        finishes={finishes}
       />
 
       <VenueJumpBar

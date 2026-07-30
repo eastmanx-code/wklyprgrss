@@ -11,7 +11,10 @@ export function LeaderLoginForm({
 }: {
   venues: { id: string; code: string; name: string }[];
 }) {
-  const [state, formAction, pending] = useActionState(leaderLogin, initialState);
+  const [state, formAction, pending] = useActionState(
+    leaderLogin,
+    initialState,
+  );
 
   return (
     <form action={formAction} className="panel space-y-6 p-6">
@@ -26,7 +29,9 @@ export function LeaderLoginForm({
           {venues.map((venue) => (
             <option key={venue.id} value={venue.id}>
               {venue.code}
-              {venue.name && venue.name !== venue.code ? ` — ${venue.name}` : ""}
+              {venue.name && venue.name !== venue.code
+                ? ` — ${venue.name}`
+                : ""}
             </option>
           ))}
         </select>

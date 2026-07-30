@@ -111,7 +111,8 @@ export async function submitItem(
     return { error: "Say whether this is done or needs another cycle." };
   }
   if (!author) return { error: "Say who wrote this update." };
-  if (author.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
+  if (author.length > MAX_NAME_LENGTH)
+    return { error: "That name is too long." };
   if (assistedBy && assistedBy.length > MAX_NAME_LENGTH) {
     return { error: "That assisted-by list is too long." };
   }

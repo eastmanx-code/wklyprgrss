@@ -68,7 +68,11 @@ export function AddItemSlot({
         </div>
 
         <div className="mt-3 flex gap-2">
-          <button type="submit" className="btn btn-sm flex-1" disabled={pending}>
+          <button
+            type="submit"
+            className="btn btn-sm flex-1"
+            disabled={pending}
+          >
             {pending ? "Adding…" : "Add"}
           </button>
           <button

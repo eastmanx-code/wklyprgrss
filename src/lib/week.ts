@@ -37,7 +37,14 @@ function partsInTz(date: Date): Parts {
 /** Offset of the zone from UTC at this instant, in ms (negative for Pacific). */
 function tzOffsetMs(date: Date): number {
   const p = partsInTz(date);
-  const asIfUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  const asIfUtc = Date.UTC(
+    p.year,
+    p.month - 1,
+    p.day,
+    p.hour,
+    p.minute,
+    p.second,
+  );
   return asIfUtc - Math.floor(date.getTime() / 1000) * 1000;
 }
 
@@ -96,7 +103,9 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
  */
 export function deadlineFor(weekStart: string): Date {
   const daysFromMonday = (DEADLINE_DAY() + 6) % 7;
-  const target = new Date(isoDateToUtcMidnight(weekStart) + daysFromMonday * DAY_MS);
+  const target = new Date(
+    isoDateToUtcMidnight(weekStart) + daysFromMonday * DAY_MS,
+  );
   return zonedToUtc(
     target.getUTCFullYear(),
     target.getUTCMonth() + 1,
@@ -105,7 +114,23 @@ export function deadlineFor(weekStart: string): Date {
   );
 }
 
-export function isDeadlinePassed(weekStart: string, now: Date = new Date()): boolean {
+/**
+ * How long a week's working window really is: Monday 00:00 Pacific to the
+ * deadline. Shorter than seven days — anything drawing time left as a
+ * proportion needs this, not DAY_MS * 7, or the gauge starts part-empty on
+ * Monday morning and can never fill.
+ */
+export function weekWindowMs(weekStart: string): number {
+  const [year, month, day] = weekStart.split("-").map(Number);
+  return (
+    deadlineFor(weekStart).getTime() - zonedToUtc(year, month, day).getTime()
+  );
+}
+
+export function isDeadlinePassed(
+  weekStart: string,
+  now: Date = new Date(),
+): boolean {
   return now.getTime() >= deadlineFor(weekStart).getTime();
 }
 
@@ -150,6 +175,16 @@ const timestampFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
   minute: "2-digit",
 });
+
+/** "Wed 2:14 PM" — when a venue finished, in the timezone the deadline uses. */
+export function formatFinish(iso: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    weekday: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(iso));
+}
 
 export function formatTimestamp(iso: string): string {
   return `${timestampFormatter.format(new Date(iso))} PT`;

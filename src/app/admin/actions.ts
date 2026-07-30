@@ -62,7 +62,10 @@ async function normalizePositions(items: Item[]) {
     items.map((item, index) =>
       item.position === index + 1
         ? Promise.resolve()
-        : db().from("items").update({ position: index + 1 }).eq("id", item.id),
+        : db()
+            .from("items")
+            .update({ position: index + 1 })
+            .eq("id", item.id),
     ),
   );
 }
@@ -76,12 +79,18 @@ export async function addItem(
   if (!venueId) return { error: "Missing venue." };
   if (!(await canManage(venueId))) return { error: "Not signed in." };
   if (!title) return { error: "Give the item a title." };
-  if (title.length > MAX_TITLE_LENGTH) return { error: "That title is too long." };
+  if (title.length > MAX_TITLE_LENGTH)
+    return { error: "That title is too long." };
 
   const existing = await itemsFor(venueId);
   const { error } = await db()
     .from("items")
-    .insert({ venue_id: venueId, title, position: existing.length + 1, active: true });
+    .insert({
+      venue_id: venueId,
+      title,
+      position: existing.length + 1,
+      active: true,
+    });
   if (error) return { error: "Could not add that item." };
 
   refresh(venueId);
@@ -99,7 +108,8 @@ export async function renameItem(
   const owner = await venueOfItem(itemId);
   if (!owner || !(await canManage(owner))) return { error: "Not signed in." };
   if (!title) return { error: "Title can't be empty." };
-  if (title.length > MAX_TITLE_LENGTH) return { error: "That title is too long." };
+  if (title.length > MAX_TITLE_LENGTH)
+    return { error: "That title is too long." };
 
   const { error } = await db().from("items").update({ title }).eq("id", itemId);
   if (error) return { error: "Could not rename that item." };
@@ -201,7 +211,10 @@ export async function approveAllForVenue(formData: FormData) {
     .eq("week_start", weekStart)
     .order("created_at", { ascending: false });
 
-  const newestPerItem = new Map<string, { id: string; review: string; progress: string }>();
+  const newestPerItem = new Map<
+    string,
+    { id: string; review: string; progress: string }
+  >();
   for (const row of week ?? []) {
     if (!newestPerItem.has(row.item_id)) newestPerItem.set(row.item_id, row);
   }
@@ -254,7 +267,9 @@ export async function wipeVenue(formData: FormData) {
 
     // Chunked: storage rejects very large delete batches.
     for (let i = 0; i < paths.length; i += 100) {
-      await db().storage.from(PHOTO_BUCKET).remove(paths.slice(i, i + 100));
+      await db()
+        .storage.from(PHOTO_BUCKET)
+        .remove(paths.slice(i, i + 100));
     }
 
     if ((subs ?? []).length > 0) {
@@ -284,12 +299,16 @@ export async function addAdminPin(
   const label = String(formData.get("label") ?? "").trim();
   if (!/^\d{6}$/.test(pin)) return { error: "Code must be 6 digits." };
   if (!label) return { error: "Give it a name, so you know what to revoke." };
-  if (label.length > MAX_TITLE_LENGTH) return { error: "That name is too long." };
+  if (label.length > MAX_TITLE_LENGTH)
+    return { error: "That name is too long." };
 
   const { error } = await db().from("admin_pins").insert({ pin, label });
   if (error) {
     return {
-      error: error.code === "23505" ? "That code is already in use." : "Could not add that code.",
+      error:
+        error.code === "23505"
+          ? "That code is already in use."
+          : "Could not add that code.",
     };
   }
 

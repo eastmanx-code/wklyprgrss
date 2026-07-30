@@ -33,7 +33,11 @@ export function RenameItemForm({
           aria-label="Item title"
         />
         {dirty ? (
-          <button type="submit" className="btn-ghost shrink-0" disabled={pending}>
+          <button
+            type="submit"
+            className="btn-ghost shrink-0"
+            disabled={pending}
+          >
             {pending ? "Saving…" : "Save"}
           </button>
         ) : null}

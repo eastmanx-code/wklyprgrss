@@ -53,7 +53,9 @@ export default async function AdminVenuePage({
 
   const items = await getItems(venue.id, { includeInactive: true });
   const activeItems = items.filter((item) => item.active);
-  const submissions = await getSubmissionsForItems(items.map((item) => item.id));
+  const submissions = await getSubmissionsForItems(
+    items.map((item) => item.id),
+  );
   const photos = await signedUrls(
     submissions.flatMap((s) =>
       s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
@@ -123,132 +125,124 @@ export default async function AdminVenuePage({
         </div>
 
         <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
-            {activeItems.map((item) => {
-              const submission = latestThisWeek.get(item.id);
-              const url = submission
-                ? photos.get(submission.photo_url)
-                : undefined;
-              // Falls back to the last-ever upload, so a stale item still says
-              // how long it has been neglected rather than just "nothing yet".
-              const lastEver = byItem.get(item.id)?.[0];
+          {activeItems.map((item) => {
+            const submission = latestThisWeek.get(item.id);
+            const url = submission
+              ? photos.get(submission.photo_url)
+              : undefined;
+            // Falls back to the last-ever upload, so a stale item still says
+            // how long it has been neglected rather than just "nothing yet".
+            const lastEver = byItem.get(item.id)?.[0];
 
-              return (
-                <li key={item.id} className="panel flex flex-col p-3">
-                  <div className="relative">
-                    {url ? (
-                      <div className="aspect-square overflow-hidden rounded-xl bg-panel">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={url}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <PhotoPlaceholder />
-                    )}
-                    {submission ? (
-                      <span className="absolute top-2 right-2">
-                        <ReviewPill review={submission.review} />
-                      </span>
-                    ) : null}
-                  </div>
-
-                  <p className="caps mt-3 text-xs leading-snug font-medium">
-                    {item.title}
-                  </p>
-                  <p className="label mt-1">
-                    {lastEver
-                      ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
-                      : "No photo yet"}
-                  </p>
-
-                  {submission ? (
-                    <>
-                      <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed">
-                        {submission.comment}
-                      </p>
-                      <Attribution
-                        author={submission.author}
-                        assistedBy={submission.assisted_by}
+            return (
+              <li key={item.id} className="panel flex flex-col p-3">
+                <div className="relative">
+                  {url ? (
+                    <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt=""
+                        className="h-full w-full object-cover"
                       />
+                    </div>
+                  ) : (
+                    <PhotoPlaceholder />
+                  )}
+                  {submission ? (
+                    <span className="absolute top-2 right-2">
+                      <ReviewPill review={submission.review} />
+                    </span>
+                  ) : null}
+                </div>
 
-                      {submission.progress === "another_cycle" ? (
-                        <p className="label mt-1.5">
-                          Leader says: one more cycle
-                        </p>
-                      ) : null}
+                <p className="caps mt-3 text-xs leading-snug font-medium">
+                  {item.title}
+                </p>
+                <p className="label mt-1">
+                  {lastEver
+                    ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
+                    : "No photo yet"}
+                </p>
 
-                      {/* Stacked and bottom-aligned: at five columns a tile is
+                {submission ? (
+                  <>
+                    <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed">
+                      {submission.comment}
+                    </p>
+                    <Attribution
+                      author={submission.author}
+                      assistedBy={submission.assisted_by}
+                    />
+
+                    {submission.progress === "another_cycle" ? (
+                      <p className="label mt-1.5">
+                        Leader says: one more cycle
+                      </p>
+                    ) : null}
+
+                    {/* Stacked and bottom-aligned: at five columns a tile is
                           too narrow for two pills side by side, and pushing them
                           down keeps every card's actions on the same line. */}
-                      <div className="mt-auto flex flex-col gap-2 pt-3">
-                        {/* Can't approve work the leader hasn't called done. */}
-                        {submission.review !== "approved" &&
-                        submission.progress === "done" ? (
-                          <form action={reviewSubmission}>
-                            <input
-                              type="hidden"
-                              name="submissionId"
-                              value={submission.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="venueId"
-                              value={venue.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="review"
-                              value="approved"
-                            />
-                            <button type="submit" className="btn-ghost w-full">
-                              Approve
-                            </button>
-                          </form>
-                        ) : null}
+                    <div className="mt-auto flex flex-col gap-2 pt-3">
+                      {/* Can't approve work the leader hasn't called done. */}
+                      {submission.review !== "approved" &&
+                      submission.progress === "done" ? (
+                        <form action={reviewSubmission}>
+                          <input
+                            type="hidden"
+                            name="submissionId"
+                            value={submission.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="venueId"
+                            value={venue.id}
+                          />
+                          <input type="hidden" name="review" value="approved" />
+                          <button type="submit" className="btn-ghost w-full">
+                            Approve
+                          </button>
+                        </form>
+                      ) : null}
 
-                        {submission.review !== "sent_back" ? (
-                          <form action={reviewSubmission}>
-                            <input
-                              type="hidden"
-                              name="submissionId"
-                              value={submission.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="venueId"
-                              value={venue.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="review"
-                              value="sent_back"
-                            />
-                            <button type="submit" className="btn-ghost w-full">
-                              Send back
-                            </button>
-                          </form>
-                        ) : null}
-                      </div>
-                    </>
-                  ) : (
-                    <p className="label mt-2">Nothing submitted yet</p>
-                  )}
-                </li>
-              );
-            })}
+                      {submission.review !== "sent_back" ? (
+                        <form action={reviewSubmission}>
+                          <input
+                            type="hidden"
+                            name="submissionId"
+                            value={submission.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="venueId"
+                            value={venue.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="review"
+                            value="sent_back"
+                          />
+                          <button type="submit" className="btn-ghost w-full">
+                            Send back
+                          </button>
+                        </form>
+                      ) : null}
+                    </div>
+                  </>
+                ) : (
+                  <p className="label mt-2">Nothing submitted yet</p>
+                )}
+              </li>
+            );
+          })}
 
-            {/* Fillable in place — the board is where you can see what's
+          {/* Fillable in place — the board is where you can see what's
                 missing, so it's where it should be added. */}
-            {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
-              <AddItemSlot
-                key={`slot-${slot}`}
-                venueId={venue.id}
-                index={slot}
-              />
-            ))}
-          </ul>
+          {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
+            <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
+          ))}
+        </ul>
       </section>
 
       {/* Setup, not weekly work — tucked away so the review grid leads. */}
@@ -264,127 +258,126 @@ export default async function AdminVenuePage({
         <section className="mt-8">
           <h2 className="label mb-3">Items</h2>
 
-        {items.length === 0 ? (
-          <p className="text-sm text-muted">No items yet. Add the first above.</p>
-        ) : (
-          <ul className="space-y-3">
-            {items.map((item, index) => {
-              const history = byItem.get(item.id) ?? [];
-              return (
-                <li
-                  key={item.id}
-                  className={`panel ${item.active ? "" : "opacity-60"}`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="label w-5 shrink-0">{index + 1}</span>
-                    <RenameItemForm
-                      itemId={item.id}
-                      venueId={venue.id}
-                      title={item.title}
-                    />
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    {item.active ? (
-                      <DonePill done={doneThisWeek.has(item.id)} />
-                    ) : (
-                      <span className="pill pill-pending">Inactive</span>
-                    )}
-
-                    <form action={moveItem}>
-                      <input type="hidden" name="itemId" value={item.id} />
-                      <input type="hidden" name="venueId" value={venue.id} />
-                      <input type="hidden" name="direction" value="up" />
-                      <button
-                        type="submit"
-                        className="btn-ghost"
-                        disabled={index === 0}
-                        aria-label="Move up"
-                      >
-                        ↑
-                      </button>
-                    </form>
-
-                    <form action={moveItem}>
-                      <input type="hidden" name="itemId" value={item.id} />
-                      <input type="hidden" name="venueId" value={venue.id} />
-                      <input type="hidden" name="direction" value="down" />
-                      <button
-                        type="submit"
-                        className="btn-ghost"
-                        disabled={index === items.length - 1}
-                        aria-label="Move down"
-                      >
-                        ↓
-                      </button>
-                    </form>
-
-                    <form action={setItemActive}>
-                      <input type="hidden" name="itemId" value={item.id} />
-                      <input type="hidden" name="venueId" value={venue.id} />
-                      <input
-                        type="hidden"
-                        name="active"
-                        value={item.active ? "false" : "true"}
+          {items.length === 0 ? (
+            <p className="text-sm text-muted">
+              No items yet. Add the first above.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {items.map((item, index) => {
+                const history = byItem.get(item.id) ?? [];
+                return (
+                  <li
+                    key={item.id}
+                    className={`panel ${item.active ? "" : "opacity-60"}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="label w-5 shrink-0">{index + 1}</span>
+                      <RenameItemForm
+                        itemId={item.id}
+                        venueId={venue.id}
+                        title={item.title}
                       />
-                      <button type="submit" className="btn-ghost">
-                        {item.active ? "Deactivate" : "Reactivate"}
-                      </button>
-                    </form>
-                  </div>
+                    </div>
 
-                  <details className="mt-3">
-                    <summary className="label cursor-pointer select-none">
-                      History · {history.length}
-                    </summary>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {item.active ? (
+                        <DonePill done={doneThisWeek.has(item.id)} />
+                      ) : (
+                        <span className="pill pill-pending">Inactive</span>
+                      )}
 
-                    {history.length === 0 ? (
-                      <p className="mt-3 text-sm text-muted">
-                        Nothing submitted yet.
-                      </p>
-                    ) : (
-                      <ul className="mt-3 space-y-3">
-                        {history.map((submission) => {
-                          const url = photos.get(submission.photo_url);
-                          return (
-                            <li
-                              key={submission.id}
-                              className="panel-quiet"
-                            >
-                              <div className="flex items-baseline justify-between gap-3">
-                                <p className="label">
-                                  Week of{" "}
-                                  {formatWeekStart(submission.week_start)}
-                                </p>
-                                <p className="label">
-                                  {formatTimestamp(submission.created_at)}
-                                </p>
-                              </div>
-                              {url ? (
-                                <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={url}
-                                    alt=""
-                                    className="h-full w-full object-cover"
-                                  />
+                      <form action={moveItem}>
+                        <input type="hidden" name="itemId" value={item.id} />
+                        <input type="hidden" name="venueId" value={venue.id} />
+                        <input type="hidden" name="direction" value="up" />
+                        <button
+                          type="submit"
+                          className="btn-ghost"
+                          disabled={index === 0}
+                          aria-label="Move up"
+                        >
+                          ↑
+                        </button>
+                      </form>
+
+                      <form action={moveItem}>
+                        <input type="hidden" name="itemId" value={item.id} />
+                        <input type="hidden" name="venueId" value={venue.id} />
+                        <input type="hidden" name="direction" value="down" />
+                        <button
+                          type="submit"
+                          className="btn-ghost"
+                          disabled={index === items.length - 1}
+                          aria-label="Move down"
+                        >
+                          ↓
+                        </button>
+                      </form>
+
+                      <form action={setItemActive}>
+                        <input type="hidden" name="itemId" value={item.id} />
+                        <input type="hidden" name="venueId" value={venue.id} />
+                        <input
+                          type="hidden"
+                          name="active"
+                          value={item.active ? "false" : "true"}
+                        />
+                        <button type="submit" className="btn-ghost">
+                          {item.active ? "Deactivate" : "Reactivate"}
+                        </button>
+                      </form>
+                    </div>
+
+                    <details className="mt-3">
+                      <summary className="label cursor-pointer select-none">
+                        History · {history.length}
+                      </summary>
+
+                      {history.length === 0 ? (
+                        <p className="mt-3 text-sm text-muted">
+                          Nothing submitted yet.
+                        </p>
+                      ) : (
+                        <ul className="mt-3 space-y-3">
+                          {history.map((submission) => {
+                            const url = photos.get(submission.photo_url);
+                            return (
+                              <li key={submission.id} className="panel-quiet">
+                                <div className="flex items-baseline justify-between gap-3">
+                                  <p className="label">
+                                    Week of{" "}
+                                    {formatWeekStart(submission.week_start)}
+                                  </p>
+                                  <p className="label">
+                                    {formatTimestamp(submission.created_at)}
+                                  </p>
                                 </div>
-                              ) : null}
-                              <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
-                                {submission.comment}
-                              </p>
-                              <Attribution
-                                author={submission.author}
-                                assistedBy={submission.assisted_by}
-                              />
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    )}
-                  </details>
-                </li>
-              );
+                                {url ? (
+                                  <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={url}
+                                      alt=""
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                ) : null}
+                                <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                                  {submission.comment}
+                                </p>
+                                <Attribution
+                                  author={submission.author}
+                                  assistedBy={submission.assisted_by}
+                                />
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </details>
+                  </li>
+                );
               })}
             </ul>
           )}
@@ -404,9 +397,7 @@ export default async function AdminVenuePage({
             venueId={venue.id}
             venueCode={venue.code}
             itemCount={activeItems.length}
-            photoCount={
-              submissions.filter((s) => !s.photo_purged_at).length
-            }
+            photoCount={submissions.filter((s) => !s.photo_purged_at).length}
           />
         </section>
       </details>

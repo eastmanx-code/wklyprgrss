@@ -24,7 +24,10 @@ export const PHOTO_BUCKET = "photos";
 
 /** Supabase caps a single select at 1000 rows; page through everything. */
 export async function selectAll<T>(
-  build: (from: number, to: number) => PromiseLike<{
+  build: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{
     data: T[] | null;
     error: { message: string } | null;
   }>,

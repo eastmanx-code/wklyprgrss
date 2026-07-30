@@ -53,8 +53,8 @@ export function WipeVenue({
           retired. The board comes back empty, ready for ten new ones.
         </li>
         <li className="note leading-relaxed">
-          Comments, names, dates and pass/fail history are{" "}
-          <strong>kept</strong>, so streaks and reports stay honest.
+          Comments, names, dates and pass/fail history are <strong>kept</strong>
+          , so streaks and reports stay honest.
         </li>
       </ul>
 
