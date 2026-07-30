@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { VenueJumpBar } from "./ui";
 
 import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { formatFinish } from "@/lib/week";
@@ -35,11 +34,6 @@ export function VenueRows({
       title="Every venue"
       hint={`Photos done out of ${WEEKLY_ITEM_TARGET} · finish time, or missed-week run`}
     >
-      <VenueJumpBar
-        venues={rows.map((row) => row.venue)}
-        ownVenueId={ownVenueId ?? undefined}
-      />
-
       <ul className="stagger">
         {rows.map((row) => {
           const finished = finishedAt[row.venue.code];

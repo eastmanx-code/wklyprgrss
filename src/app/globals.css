@@ -1,36 +1,9 @@
 @import "tailwindcss";
 
-/* Theme values indirect through these so light/dark can swap at runtime. */
+/* Dark is the default, not a preference-dependent branch: the board is a
+   dark product and a light device shouldn't change what it looks like. Light
+   is opt-in through the toggle, which stamps data-theme="light". */
 :root {
-  --paper: #f1f1ef;
-  --surface: #ffffff;
-  --panel: #eaeae7;
-  --ink: #0d0d0d;
-  --muted: #7c7c74;
-  --line: #e2e2dd;
-  --fail: #6f6f0f;
-  --on-fail: #ffffff;
-  --dot: rgba(0, 0, 0, 0.11);
-  --dot-strong: rgba(0, 0, 0, 0.18);
-}
-
-/* Follow the device unless the viewer has explicitly chosen. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0b0b0a;
-    --surface: #1c1c1a;
-    --panel: #2b2b28;
-    --ink: #f1f1ef;
-    --muted: #94948c;
-    --line: #3d3d38;
-    --fail: #bcbc1e;
-    --on-fail: #0d0d0d;
-    --dot: rgba(255, 255, 255, 0.1);
-    --dot-strong: rgba(255, 255, 255, 0.16);
-  }
-}
-
-:root[data-theme="dark"] {
   --paper: #0b0b0a;
   --surface: #1c1c1a;
   --panel: #2b2b28;
@@ -41,6 +14,19 @@
   --on-fail: #0d0d0d;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
+}
+
+:root[data-theme="light"] {
+  --paper: #f1f1ef;
+  --surface: #ffffff;
+  --panel: #eaeae7;
+  --ink: #0d0d0d;
+  --muted: #7c7c74;
+  --line: #e2e2dd;
+  --fail: #6f6f0f;
+  --on-fail: #ffffff;
+  --dot: rgba(0, 0, 0, 0.11);
+  --dot-strong: rgba(0, 0, 0, 0.18);
 }
 
 @theme inline {
@@ -58,19 +44,12 @@
 }
 
 /* The toggle shows the label for the mode you'd switch TO. Done in CSS so the
-   server and client render identically and there's no hydration flicker. */
-:root[data-theme="dark"] .theme-to-dark,
-:root:not([data-theme="dark"]) .theme-to-light {
+   server and client render identically and there's no hydration flicker.
+   Keyed off data-theme="light" alone now: with no attribute we are in dark,
+   whatever the device prefers, so the offer is always "switch to light". */
+:root[data-theme="light"] .theme-to-light,
+:root:not([data-theme="light"]) .theme-to-dark {
   display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-to-dark {
-    display: none;
-  }
-  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-to-light {
-    display: inline;
-  }
 }
 
 html {

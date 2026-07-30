@@ -19,7 +19,7 @@ function Stat({
     <div>
       <p className="label">{label}</p>
       <p
-        className={`mt-2 font-mono text-3xl leading-none tabular-nums ${tone}`}
+        className={`mt-3 font-mono text-4xl leading-none tabular-nums ${tone}`}
       >
         {value}
       </p>
@@ -65,7 +65,7 @@ export function CompanyHero({
   const last = finishes[finishes.length - 1];
 
   return (
-    <div className="mb-3 grid gap-3 sm:grid-cols-3">
+    <div className="mb-3 grid items-start gap-3 sm:grid-cols-3">
       <Card
         title="Completion"
         hint={`New photo + comment on all ${WEEKLY_ITEM_TARGET}, every week`}
@@ -113,7 +113,7 @@ export function CompanyHero({
       </Card>
 
       <Card title="Deadline" hint={deadlineLabel}>
-        <p className="font-mono text-3xl leading-none tabular-nums">
+        <p className="font-mono text-4xl leading-none tabular-nums">
           <Countdown deadlineMs={deadlineMs} />
         </p>
         <p className="label mt-4">
@@ -135,7 +135,7 @@ export function CompanyHero({
           <div className="grid grid-cols-2 gap-6">
             <div>
               <p className="label">First in</p>
-              <p className="mt-2 font-mono text-lg">
+              <p className="mt-3 font-mono text-2xl">
                 {first.code}
                 <span className="text-muted"> · {formatFinish(first.at)}</span>
               </p>
@@ -143,7 +143,7 @@ export function CompanyHero({
             {last && last.code !== first.code ? (
               <div>
                 <p className="label">Last in</p>
-                <p className="mt-2 font-mono text-lg">
+                <p className="mt-3 font-mono text-2xl">
                   {last.code}
                   <span className="text-muted"> · {formatFinish(last.at)}</span>
                 </p>

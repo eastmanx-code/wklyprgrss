@@ -12,10 +12,9 @@ export function ThemeToggle() {
   function toggle() {
     const root = document.documentElement;
     const current =
-      root.dataset.theme ??
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
+      // No attribute means dark: it is the base theme, not a device-dependent
+      // guess, so the first tap always goes to light.
+      root.dataset.theme ?? "dark";
     const next = current === "dark" ? "light" : "dark";
     root.dataset.theme = next;
     try {

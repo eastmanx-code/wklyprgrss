@@ -21,7 +21,8 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
   }, [deadlineMs]);
 
   if (remaining === null) return <>—</>;
-  if (remaining <= 0) return <span className="text-fail">Past due</span>;
+  if (remaining <= 0)
+    return <span className="text-fail text-2xl">Past due</span>;
 
   const minutes = Math.floor(remaining / 60_000);
   const days = Math.floor(minutes / 1440);

@@ -43,49 +43,6 @@ export function DotStrip({ done, total }: { done: number; total: number }) {
   );
 }
 
-/**
- * Tap a code to jump straight to that venue's row. The list is sorted by
- * status, so a venue moves around week to week — this strip stays alphabetical
- * so people can always find their own without scanning.
- */
-export function VenueJumpBar({
-  venues,
-  ownVenueId,
-}: {
-  venues: { id: string; code: string }[];
-  ownVenueId?: string | null;
-}) {
-  const sorted = [...venues].sort((a, b) => a.code.localeCompare(b.code));
-
-  return (
-    <nav
-      aria-label="Jump to venue"
-      className="-mx-4 mb-5 overflow-x-auto px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    >
-      <ul className="flex w-max gap-[6px]">
-        {sorted.map((venue) => (
-          <li key={venue.id}>
-            <a
-              href={`#venue-${venue.code}`}
-              className={`flex h-8 items-center rounded-full px-3 font-mono text-[11px] tracking-wider ${
-                venue.id === ownVenueId
-                  ? "bg-ink text-paper"
-                  : "bg-surface text-muted"
-              }`}
-            >
-              {venue.code}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
-/**
- * Stands in wherever a photo is missing. A labelled dot field reads as a slot
- * still waiting to be filled, rather than as a broken or empty card.
- */
 export function PhotoPlaceholder({
   aspect = "square",
   label = "Photo needed",
