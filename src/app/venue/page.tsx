@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { logout } from "@/app/actions";
 import { WeekProgress } from "@/components/WeekProgress";
 import {
   DonePill,
@@ -35,8 +34,8 @@ export default async function VenuePage() {
 
   return (
     <main>
-      <header className="mb-6 flex items-start justify-between gap-4">
-        <div className="min-w-0">
+      <header className="mb-6">
+        <div>
           <p className="label">Venue</p>
           <h1 className="mt-2 truncate text-2xl font-medium tracking-tight">
             {venue.name && venue.name !== venue.code
@@ -44,11 +43,6 @@ export default async function VenuePage() {
               : venue.code}
           </h1>
         </div>
-        <form action={logout}>
-          <button type="submit" className="btn-ghost">
-            Sign out
-          </button>
-        </form>
       </header>
 
       <WeekProgress

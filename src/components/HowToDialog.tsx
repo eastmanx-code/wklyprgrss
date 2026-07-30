@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { APP_NAME } from "@/lib/app";
 
 const ACK_KEY = "ww_howto_ack";
 
@@ -54,7 +55,7 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
     <>
       <button
         type="button"
-        className="btn-ghost w-full"
+        className="label hover:text-ink"
         onClick={() => ref.current?.showModal()}
       >
         {acknowledged ? "How to use this" : "Read this first"}
@@ -72,7 +73,7 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
             lives on /help. */}
         <div className="ww-dialog-body">
           <header className="mb-4">
-            <p className="label">Before you start</p>
+            <p className="label">{APP_NAME} · before you start</p>
             <h2 className="mt-2 text-xl font-medium tracking-tight">
               How to use this
             </h2>

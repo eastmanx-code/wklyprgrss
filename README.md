@@ -1,4 +1,6 @@
-# Weekly Walkthrough
+# WKY >> PRGRSS
+
+Weekly progress photos for a 27-venue hospitality group.
 
 Replaces the Figma progress board for a 27-venue hospitality group. Each venue
 leader updates their items weekly with a new photo and a new comment before the

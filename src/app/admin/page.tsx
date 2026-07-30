@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { logout } from "@/app/actions";
 import {
   CompanyRollup,
   DotStrip,
@@ -24,7 +23,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <main>
-      <header className="mb-6 flex items-start justify-between gap-4">
+      <header className="mb-6">
         <div>
           <p className="label">Week of {formatWeekStart(weekStart)}</p>
           <h1 className="mt-2 text-2xl font-medium tracking-tight">
@@ -32,11 +31,6 @@ export default async function AdminDashboardPage() {
           </h1>
           <p className="label mt-2">Due {formatDeadline(weekStart)}</p>
         </div>
-        <form action={logout}>
-          <button type="submit" className="btn-ghost">
-            Sign out
-          </button>
-        </form>
       </header>
 
       <CompanyRollup

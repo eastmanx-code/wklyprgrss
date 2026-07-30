@@ -1,5 +1,6 @@
 import { AdminGuide, LeaderGuide } from "@/components/HowToUse";
 import { BackLink } from "@/components/ui";
+import { APP_NAME } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { currentWeekStart, formatDeadline } from "@/lib/week";
@@ -20,7 +21,7 @@ export default async function HelpPage() {
       </BackLink>
 
       <header className="mt-4 mb-6">
-        <p className="label">Weekly Walkthrough</p>
+        <p className="label">{APP_NAME}</p>
         <h1 className="mt-2 text-2xl font-medium tracking-tight">
           How to use this
         </h1>

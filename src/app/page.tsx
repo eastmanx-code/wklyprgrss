@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { HowToDialog } from "@/components/HowToDialog";
+import { APP_NAME } from "@/lib/app";
 import { HowToSummary } from "@/components/HowToUse";
 import { LeaderLoginForm } from "@/components/LeaderLoginForm";
 import { getSession } from "@/lib/session";
@@ -24,30 +25,22 @@ export default async function HomePage() {
     // unreadable. Boards get the full container; prose does not.
     // Centred vertically: on a laptop the form otherwise sits at the top with
     // a screen of dead space under it.
-    <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-2xl flex-col justify-center">
+    <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <header className="mb-8">
-        <p className="label">Weekly Walkthrough</p>
-        <h1 className="mt-2 text-3xl font-medium tracking-tight">
-          Our weekly progress
-        </h1>
-        <p className="note mt-3 text-muted">
-          Photo and comment on all {WEEKLY_ITEM_TARGET} items, every week, by{" "}
-          {deadlineLabel}.
-        </p>
+        <h1 className="text-3xl font-medium tracking-tight">{APP_NAME}</h1>
       </header>
 
       <LeaderLoginForm venues={options} />
 
-      <p className="mt-8 mb-3 text-center">
+      {/* One quiet row of secondary actions, so neither competes with
+          Continue. The dialog still opens itself on a first visit. */}
+      <div className="mt-6 flex items-center justify-center gap-4">
         <Link href="/admin/login" className="label hover:text-ink">
           Admin sign in
         </Link>
-      </p>
-
-      {/* Instructions as an acknowledged dialog: it opens itself the first
-          time on a device, so nobody starts uploading without seeing the rule,
-          and stays one tap away afterwards. */}
-      <div className="mt-4">
+        <span className="label" aria-hidden>
+          ·
+        </span>
         <HowToDialog>
           <HowToSummary
             target={WEEKLY_ITEM_TARGET}

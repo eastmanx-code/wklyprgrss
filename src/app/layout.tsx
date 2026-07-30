@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Weekly Walkthrough",
-  description: "Weekly photo walkthrough for venue leaders.",
+  title: "WKY >> PRGRSS",
+  description: "Weekly progress photos for venue leaders.",
 };
 
 export const viewport: Viewport = {
