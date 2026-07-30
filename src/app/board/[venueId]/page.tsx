@@ -4,13 +4,16 @@ import {
   Attribution,
   BackLink,
   DonePill,
+  EmptySlot,
   PhotoPlaceholder,
   PurgedPhoto,
   StatusPill,
+  emptySlots,
 } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
+  WEEKLY_ITEM_TARGET,
   doneItemIdsFrom,
   getItems,
   getSubmissionsForItems,
@@ -76,10 +79,7 @@ export default async function BoardVenuePage({
         </div>
       </header>
 
-      {items.length === 0 ? (
-        <p className="text-sm text-muted">No items set up yet.</p>
-      ) : (
-        <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
+      <ul className="grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
           {items.map((item) => {
             const history = byItem.get(item.id) ?? [];
             const latest = history[0];
@@ -162,8 +162,11 @@ export default async function BoardVenuePage({
               </li>
             );
           })}
-        </ul>
-      )}
+
+          {emptySlots(items.length, WEEKLY_ITEM_TARGET).map((slot) => (
+            <EmptySlot key={`slot-${slot}`} index={slot} />
+          ))}
+      </ul>
     </main>
   );
 }

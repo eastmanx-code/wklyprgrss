@@ -186,6 +186,26 @@ export function ReviewPill({ review }: { review: ReviewState }) {
   return <span className="pill pill-pending">Needs review</span>;
 }
 
+/**
+ * An unconfigured slot. Every venue owes ten items a week, so the grid always
+ * shows ten tiles — a venue with only four set up reads as six slots missing
+ * rather than as a short, complete-looking board.
+ */
+export function EmptySlot({ index }: { index: number }) {
+  return (
+    <li className="panel flex flex-col p-3 opacity-60">
+      <PhotoPlaceholder label="No item set up" />
+      <p className="label mt-3">Slot {index}</p>
+      <p className="note mt-1 text-muted">Awaiting setup</p>
+    </li>
+  );
+}
+
+/** Pads a grid out to the weekly target. */
+export function emptySlots(count: number, target: number): number[] {
+  return Array.from({ length: Math.max(0, target - count) }, (_, i) => count + i + 1);
+}
+
 /** Byline for a submission: who wrote it, and who helped. */
 export function Attribution({
   author,

@@ -3,10 +3,15 @@ import { redirect } from "next/navigation";
 
 import { logout } from "@/app/actions";
 import { WeekProgress } from "@/components/WeekProgress";
-import { DonePill, EmptyNote, PhotoPlaceholder } from "@/components/ui";
+import {
+  DonePill,
+  EmptySlot,
+  PhotoPlaceholder,
+  emptySlots,
+} from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { getLeaderBoard, getVenue } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
 import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -50,12 +55,9 @@ export default async function VenuePage() {
         weekLabel={formatWeekStart(board.weekStart)}
       />
 
-      {board.items.length === 0 ? (
-        <EmptyNote>
-          No items set up for this venue yet. Your admin adds them.
-        </EmptyNote>
-      ) : (
-        <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
+      {/* Always ten tiles. A venue with four items set up should read as six
+          slots missing, not as a short but complete-looking board. */}
+      <ul className="grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
           {board.items.map((item) => {
             const latest = board.latest.get(item.id);
             const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
@@ -97,8 +99,11 @@ export default async function VenuePage() {
               </li>
             );
           })}
+
+          {emptySlots(board.items.length, WEEKLY_ITEM_TARGET).map((slot) => (
+            <EmptySlot key={`slot-${slot}`} index={slot} />
+          ))}
         </ul>
-      )}
 
       <p className="mt-8 text-center">
         <Link href="/board" className="label hover:text-ink">

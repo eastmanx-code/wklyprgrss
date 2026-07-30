@@ -12,6 +12,12 @@ Next.js (App Router) · Supabase Postgres + Storage · Netlify.
 [`supabase/schema.sql`](supabase/schema.sql). It creates the three tables,
 enables RLS with no policies, and adds the read indexes.
 
+If you set the project up earlier, run the numbered migrations in order
+instead — `002_attribution.sql`, `003_review.sql`, `004_progress.sql`,
+`005_photo_purge.sql`. `schema.sql` already includes all of them for a fresh
+install. The SQL editor runs everything in the box every time, so clear it
+before pasting a new one.
+
 **2. Create the storage bucket.** Name it `photos`. **Private** — leave "Public
 bucket" off. The app serves every image through a short-lived signed URL minted
 on the server.
@@ -38,11 +44,29 @@ Inserts the 27 venue codes with random 6-digit PINs and prints them **once**.
 Copy them before closing the terminal. Re-running is safe; existing venues are
 left alone. Items start empty — the admin adds them per venue.
 
-**5. Run it.**
+**5. Check the wiring, then run it.**
+
+```bash
+npm run preflight
+```
+
+Confirms the key works, every table and column exists, and the `photos` bucket
+is present and private. It names the migration to run if anything is missing.
 
 ```bash
 npm run dev
 ```
+
+## Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run preflight` | Verifies the database connection, schema and bucket |
+| `npm run seed` | Creates the 27 venues with random 6-digit PINs, printed once |
+| `npm run set-items -- --file items.txt` | Applies a standard item list to every venue (add `CODE ...` to limit, `--replace` to retire anything else) |
+| `npm run report` | Writes `reports/walkthrough-DATE.csv`, one row per venue per week |
+| `npm run purge` | Dry run of photo retention; add `--yes` to delete, `--weeks N` to change the window |
+| `npm run demo -- HOOD` | Loads demo items and photos into one venue; `--clear` removes them |
 
 ## Deploy
 
@@ -93,6 +117,23 @@ them:
 
 Lookback is capped at 26 weeks.
 
+### Review and progress
+
+Leaders declare **This is done** or **One more cycle** on every submission.
+Both count towards the week — someone who shows up with a photo, a comment and
+an honest "not finished" has done their weekly job — but only work declared
+done can be approved. That rule is enforced in the server action, not just by
+hiding the button.
+
+The admin approves one by one or all at once. **Sending something back** stops
+it counting for the week, so the item returns to PENDING and the leader sees a
+red **REDO**. Approval never affects PASS/FAIL: a venue passes by submitting
+before the deadline, whether or not it has been reviewed — otherwise a venue
+could fail because the admin was busy.
+
+Every grid always shows **ten** tiles. A venue with four items configured reads
+as six slots missing rather than as a short but complete-looking board.
+
 ### Photos
 
 Compressed in the browser before upload: re-encoded to JPEG, max 1600px on the
@@ -104,8 +145,14 @@ Objects are stored at `VENUE/ITEM/WEEK-unique.jpg` in the private bucket.
 `submissions.photo_url` holds that **storage path**, not a URL — the URL is
 signed per request and expires in an hour.
 
-At ~300KB and 270 photos a week, Supabase's 1GB free tier holds about 3 months.
-Supabase Pro is $25/mo for 100GB.
+At ~300KB and 270 photos a week that's ~81MB a week, so the 1GB free tier holds
+about 12 weeks and would otherwise force the $25/mo Pro plan.
+
+`npm run purge` clears image **files** older than the retention window (8 weeks
+by default). Submission rows are never deleted — comments, authors, dates and
+review state are kept forever, and status, streaks and reports are all computed
+from rows. A cleared photo shows **PHOTO CLEARED** instead of a broken image.
+Run it periodically and storage never grows.
 
 ### Screens
 

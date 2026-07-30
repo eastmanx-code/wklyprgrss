@@ -13,13 +13,16 @@ import {
   Attribution,
   BackLink,
   DonePill,
+  EmptySlot,
   PhotoPlaceholder,
   ReviewPill,
   StatusPill,
+  emptySlots,
 } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
+  WEEKLY_ITEM_TARGET,
   doneItemIdsFrom,
   getItems,
   getSubmissionsForItems,
@@ -109,10 +112,7 @@ export default async function AdminVenuePage({
           ) : null}
         </div>
 
-        {activeItems.length === 0 ? (
-          <p className="note text-muted">No items yet.</p>
-        ) : (
-          <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
             {activeItems.map((item) => {
               const submission = latestThisWeek.get(item.id);
               const url = submission
@@ -220,8 +220,11 @@ export default async function AdminVenuePage({
                 </li>
               );
             })}
+
+            {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
+              <EmptySlot key={`slot-${slot}`} index={slot} />
+            ))}
           </ul>
-        )}
       </section>
 
       {/* Setup, not weekly work — tucked away so the review grid leads. */}
