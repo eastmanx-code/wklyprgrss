@@ -1,16 +1,72 @@
 @import "tailwindcss";
 
-@theme {
-  --color-paper: #f1f1ef;
-  --color-surface: #ffffff;
-  --color-panel: #eaeae7;
-  --color-ink: #0d0d0d;
-  --color-muted: #7c7c74;
-  --color-line: #e2e2dd;
-  --color-fail: #a5261b;
+/* Theme values indirect through these so light/dark can swap at runtime. */
+:root {
+  --paper: #f1f1ef;
+  --surface: #ffffff;
+  --panel: #eaeae7;
+  --ink: #0d0d0d;
+  --muted: #7c7c74;
+  --line: #e2e2dd;
+  --fail: #a5261b;
+  --dot: rgba(0, 0, 0, 0.11);
+  --dot-strong: rgba(0, 0, 0, 0.18);
+}
+
+/* Follow the device unless the viewer has explicitly chosen. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0b0b0a;
+    --surface: #1c1c1a;
+    --panel: #2b2b28;
+    --ink: #f1f1ef;
+    --muted: #94948c;
+    --line: #3d3d38;
+    --fail: #d4574a;
+    --dot: rgba(255, 255, 255, 0.1);
+    --dot-strong: rgba(255, 255, 255, 0.16);
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0b0b0a;
+  --surface: #1c1c1a;
+  --panel: #2b2b28;
+  --ink: #f1f1ef;
+  --muted: #94948c;
+  --line: #3d3d38;
+  --fail: #d4574a;
+  --dot: rgba(255, 255, 255, 0.1);
+  --dot-strong: rgba(255, 255, 255, 0.16);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-fail: var(--fail);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+/* The toggle shows the label for the mode you'd switch TO. Done in CSS so the
+   server and client render identically and there's no hydration flicker. */
+:root[data-theme="dark"] .theme-to-dark,
+:root:not([data-theme="dark"]) .theme-to-light {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-to-dark {
+    display: none;
+  }
+  :root:not([data-theme="light"]):not([data-theme="dark"]) .theme-to-light {
+    display: inline;
+  }
 }
 
 html {
@@ -30,7 +86,7 @@ body {
   background-color: var(--color-paper);
   background-image: radial-gradient(
     circle,
-    rgba(0, 0, 0, 0.11) 1px,
+    var(--dot) 1px,
     transparent 1px
   );
   background-size: 16px 16px;
@@ -94,8 +150,11 @@ p {
     color: var(--color-muted);
   }
 
+  /* A hairline frame, not just a fill difference — in dark mode a slightly
+     lighter fill alone doesn't read as an edge. */
   .panel {
     background: var(--color-surface);
+    border: 1px solid var(--color-line);
     border-radius: 20px;
     padding: 1.25rem;
   }
@@ -106,7 +165,7 @@ p {
     background-color: var(--color-panel);
     background-image: radial-gradient(
       circle,
-      rgba(0, 0, 0, 0.18) 1.5px,
+      var(--dot-strong) 1.5px,
       transparent 1.5px
     );
     background-size: 12px 12px;
@@ -115,6 +174,7 @@ p {
 
   .panel-quiet {
     background: var(--color-panel);
+    border: 1px solid var(--color-line);
     border-radius: 20px;
     padding: 1.25rem;
   }

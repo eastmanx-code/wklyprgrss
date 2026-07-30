@@ -221,13 +221,19 @@ export default async function AdminVenuePage({
         )}
       </section>
 
-      <div className="space-y-3">
-        <VenuePinForm venueId={venue.id} pin={venue.pin} />
-        <AddItemForm venueId={venue.id} />
-      </div>
+      {/* Setup, not weekly work — tucked away so the review grid leads. */}
+      <details className="mt-8">
+        <summary className="label cursor-pointer select-none">
+          Manage venue · items, order, PIN
+        </summary>
 
-      <section className="mt-8">
-        <h2 className="label mb-3">Items</h2>
+        <div className="mt-4 space-y-3">
+          <VenuePinForm venueId={venue.id} pin={venue.pin} />
+          <AddItemForm venueId={venue.id} />
+        </div>
+
+        <section className="mt-8">
+          <h2 className="label mb-3">Items</h2>
 
         {items.length === 0 ? (
           <p className="text-sm text-muted">No items yet. Add the first above.</p>
@@ -350,10 +356,11 @@ export default async function AdminVenuePage({
                   </details>
                 </li>
               );
-            })}
-          </ul>
-        )}
-      </section>
+              })}
+            </ul>
+          )}
+        </section>
+      </details>
     </main>
   );
 }
