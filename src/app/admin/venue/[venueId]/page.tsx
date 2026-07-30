@@ -7,13 +7,13 @@ import {
   setItemActive,
 } from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
+import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
 import {
   Attribution,
   BackLink,
   DonePill,
-  EmptySlot,
   PhotoPlaceholder,
   ReviewPill,
   StatusPill,
@@ -238,8 +238,14 @@ export default async function AdminVenuePage({
               );
             })}
 
+            {/* Fillable in place — the board is where you can see what's
+                missing, so it's where it should be added. */}
             {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
-              <EmptySlot key={`slot-${slot}`} index={slot} />
+              <AddItemSlot
+                key={`slot-${slot}`}
+                venueId={venue.id}
+                index={slot}
+              />
             ))}
           </ul>
       </section>
