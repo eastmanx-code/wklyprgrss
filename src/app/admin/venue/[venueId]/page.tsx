@@ -112,7 +112,7 @@ export default async function AdminVenuePage({
         {activeItems.length === 0 ? (
           <p className="note text-muted">No items yet.</p>
         ) : (
-          <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
             {activeItems.map((item) => {
               const submission = latestThisWeek.get(item.id);
               const url = submission
@@ -120,7 +120,7 @@ export default async function AdminVenuePage({
                 : undefined;
 
               return (
-                <li key={item.id} className="panel p-3">
+                <li key={item.id} className="panel flex flex-col p-3">
                   <div className="relative">
                     {url ? (
                       <div className="aspect-square overflow-hidden rounded-xl bg-panel">
@@ -147,7 +147,7 @@ export default async function AdminVenuePage({
 
                   {submission ? (
                     <>
-                      <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
+                      <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed">
                         {submission.comment}
                       </p>
                       <Attribution
@@ -156,12 +156,15 @@ export default async function AdminVenuePage({
                       />
 
                       {submission.progress === "another_cycle" ? (
-                        <p className="label mt-2">
+                        <p className="label mt-1.5">
                           Leader says: one more cycle
                         </p>
                       ) : null}
 
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      {/* Stacked and bottom-aligned: at five columns a tile is
+                          too narrow for two pills side by side, and pushing them
+                          down keeps every card's actions on the same line. */}
+                      <div className="mt-auto flex flex-col gap-2 pt-3">
                         {/* Can't approve work the leader hasn't called done. */}
                         {submission.review !== "approved" &&
                         submission.progress === "done" ? (
@@ -181,7 +184,7 @@ export default async function AdminVenuePage({
                               name="review"
                               value="approved"
                             />
-                            <button type="submit" className="btn-ghost">
+                            <button type="submit" className="btn-ghost w-full">
                               Approve
                             </button>
                           </form>
@@ -204,7 +207,7 @@ export default async function AdminVenuePage({
                               name="review"
                               value="sent_back"
                             />
-                            <button type="submit" className="btn-ghost">
+                            <button type="submit" className="btn-ghost w-full">
                               Send back
                             </button>
                           </form>

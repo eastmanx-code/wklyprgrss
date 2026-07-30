@@ -79,14 +79,14 @@ export default async function BoardVenuePage({
       {items.length === 0 ? (
         <p className="text-sm text-muted">No items set up yet.</p>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <ul className="grid grid-cols-2 items-stretch gap-3 lg:grid-cols-5">
           {items.map((item) => {
             const history = byItem.get(item.id) ?? [];
             const latest = history[0];
             const latestUrl = latest ? photos.get(latest.photo_url) : undefined;
 
             return (
-              <li key={item.id} className="panel p-3">
+              <li key={item.id} className="panel flex flex-col p-3">
                 <div className="relative">
                   {latestUrl ? (
                     <div className="aspect-square overflow-hidden rounded-xl bg-panel">
