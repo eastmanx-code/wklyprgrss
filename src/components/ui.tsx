@@ -150,7 +150,7 @@ export function CompanyRollup({
  */
 export function PhotoPlaceholder({
   aspect = "square",
-  label = "Task photo needed",
+  label = "Photo needed",
 }: {
   aspect?: "square" | "wide";
   label?: string;
@@ -161,7 +161,7 @@ export function PhotoPlaceholder({
         aspect === "square" ? "aspect-square" : "aspect-[4/3]"
       }`}
     >
-      <span className="label text-ink bg-paper rounded-full px-3 py-1.5 text-center shadow-[0_0_0_4px_var(--color-paper)]">
+      <span className="label text-ink bg-paper max-w-[88%] truncate rounded-full px-2.5 py-1 whitespace-nowrap">
         {label}
       </span>
     </div>
@@ -173,7 +173,7 @@ export function PhotoPlaceholder({
  * only means the image file was cleared.
  */
 export function PurgedPhoto({ aspect = "square" }: { aspect?: "square" | "wide" }) {
-  return <PhotoPlaceholder aspect={aspect} label="Photo cleared" />;
+  return <PhotoPlaceholder aspect={aspect} label="Cleared" />;
 }
 
 export function ReviewPill({ review }: { review: ReviewState }) {
@@ -194,7 +194,7 @@ export function ReviewPill({ review }: { review: ReviewState }) {
 export function EmptySlot({ index }: { index: number }) {
   return (
     <li className="panel flex flex-col p-3 opacity-60">
-      <PhotoPlaceholder label="No item set up" />
+      <PhotoPlaceholder label="Not set up" />
       <p className="label mt-3">Slot {index}</p>
       <p className="note mt-1 text-muted">Awaiting setup</p>
     </li>
