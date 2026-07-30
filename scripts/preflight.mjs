@@ -74,6 +74,19 @@ for (const table of ["venues", "items", "submissions"]) {
   );
 }
 
+// Optional before photo (added by supabase/006_before_photo.sql).
+{
+  const { error } = await db
+    .from("submissions")
+    .select("before_photo_url")
+    .limit(1);
+  record(
+    !error,
+    "submissions.before_photo_url",
+    error ? "missing — run supabase/006_before_photo.sql" : "present",
+  );
+}
+
 // Storage bucket.
 const { data: buckets, error: bucketError } = await db.storage.listBuckets();
 if (bucketError) {

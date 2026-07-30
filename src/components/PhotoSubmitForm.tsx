@@ -76,6 +76,8 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
   const [state, formAction, pending] = useActionState(submitItem, initialState);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [beforePhoto, setBeforePhoto] = useState<File | null>(null);
+  const [beforePreview, setBeforePreview] = useState<string | null>(null);
   const [comment, setComment] = useState("");
   // Ten items a week is a lot of retyping, so the name is remembered. `null`
   // means untouched — fall back to whatever was saved last time.
@@ -93,13 +95,35 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const previewRef = useRef<string | null>(null);
+  const beforePreviewRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+      if (beforePreviewRef.current) URL.revokeObjectURL(beforePreviewRef.current);
     };
   }, []);
 
+
+  async function handleBeforePick(event: React.ChangeEvent<HTMLInputElement>) {
+    const original = event.target.files?.[0];
+    if (!original) return;
+
+    setProcessing(true);
+    setLocalError(null);
+    try {
+      const compressed = await compressToJpeg(original);
+      if (beforePreviewRef.current) URL.revokeObjectURL(beforePreviewRef.current);
+      const url = URL.createObjectURL(compressed);
+      beforePreviewRef.current = url;
+      setBeforePhoto(compressed);
+      setBeforePreview(url);
+    } catch {
+      setLocalError("Couldn't read that photo. Try taking it again.");
+    } finally {
+      setProcessing(false);
+    }
+  }
 
   async function handlePick(event: React.ChangeEvent<HTMLInputElement>) {
     const original = event.target.files?.[0];
@@ -142,6 +166,7 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
     data.set("assistedBy", assistedBy);
     data.set("progress", progress);
     data.set("photo", photo, photo.name);
+    if (beforePhoto) data.set("beforePhoto", beforePhoto, beforePhoto.name);
     formAction(data);
   }
 
@@ -155,8 +180,44 @@ export function PhotoSubmitForm({ itemId }: { itemId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="panel space-y-5">
+      {/* Only for work executed inside the week. On an ongoing item the
+          previous week's photo is the before, so this stays empty. */}
       <div className="space-y-2">
-        <span className="label">Photo</span>
+        <span className="label">Before (optional)</span>
+
+        <label className="block cursor-pointer">
+          <input
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={handleBeforePick}
+            disabled={busy}
+          />
+          <div className="dotfield relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
+            {beforePreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={beforePreview}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="label text-ink bg-paper rounded-full px-3 py-1.5 shadow-[0_0_0_4px_var(--color-paper)]">
+                Only if you shot one this week
+              </span>
+            )}
+          </div>
+        </label>
+
+        {beforePhoto ? (
+          <p className="label">Before ready · {formatKb(beforePhoto.size)}</p>
+        ) : null}
+      </div>
+
+      <div className="space-y-2">
+        <span className="label">
+          {beforePhoto ? "After (required)" : "Photo (required)"}
+        </span>
 
         <label className="block cursor-pointer">
           <input

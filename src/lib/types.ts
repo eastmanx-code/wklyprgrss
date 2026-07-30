@@ -27,6 +27,11 @@ export type Submission = {
   /** Storage object path inside the private `photos` bucket, not a public URL. */
   photo_url: string;
   /**
+   * Optional same-week "before" shot, for tasks executed inside the week. Null
+   * on ongoing items, where the previous week's photo is the before.
+   */
+  before_photo_url: string | null;
+  /**
    * When the image file was cleared from storage. The row itself is never
    * deleted — status, streaks and reports are computed from rows, not photos.
    */

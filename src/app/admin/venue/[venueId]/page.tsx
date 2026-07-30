@@ -48,7 +48,11 @@ export default async function AdminVenuePage({
   const items = await getItems(venue.id, { includeInactive: true });
   const activeItems = items.filter((item) => item.active);
   const submissions = await getSubmissionsForItems(items.map((item) => item.id));
-  const photos = await signedUrls(submissions.map((s) => s.photo_url));
+  const photos = await signedUrls(
+    submissions.flatMap((s) =>
+      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    ),
+  );
 
   const weekStart = currentWeekStart();
   const thisWeek = submissions.filter((s) => s.week_start === weekStart);

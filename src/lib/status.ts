@@ -78,7 +78,7 @@ export async function getSubmissionsForItems(
     let query = db()
       .from("submissions")
       .select(
-        "id, item_id, week_start, photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
+        "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
       )
       .in("item_id", itemIds);
     if (weekStart) query = query.eq("week_start", weekStart);

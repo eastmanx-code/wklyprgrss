@@ -20,6 +20,9 @@ create table submissions (
   item_id uuid references items(id) not null,
   week_start date not null,
   photo_url text not null,
+  -- Optional same-week before shot; null when the previous week's photo is
+  -- the before.
+  before_photo_url text,
   comment text not null,
   -- Who wrote this update, and who helped with the work.
   author text not null,

@@ -31,6 +31,7 @@ export async function submitItem(
   const assistedBy = assistedRaw || null;
   const progress = String(formData.get("progress") ?? "");
   const photo = formData.get("photo");
+  const beforePhoto = formData.get("beforePhoto");
 
   if (progress !== "done" && progress !== "another_cycle") {
     return { error: "Say whether this is done or needs another cycle." };
@@ -49,6 +50,10 @@ export async function submitItem(
   }
   if (photo.size > MAX_UPLOAD_BYTES) {
     return { error: "That photo is too large. Try again." };
+  }
+  const hasBefore = beforePhoto instanceof File && beforePhoto.size > 0;
+  if (hasBefore && (beforePhoto as File).size > MAX_UPLOAD_BYTES) {
+    return { error: "That before photo is too large. Try again." };
   }
 
   // The item must belong to the signed-in venue and still be active.
@@ -80,10 +85,29 @@ export async function submitItem(
 
   if (uploadError) return { error: "Upload failed. Try again." };
 
+  // Optional before shot, uploaded alongside. If it fails, drop the whole
+  // submission rather than record a half-truth.
+  let beforePath: string | null = null;
+  if (hasBefore) {
+    beforePath = photoPath(venue?.code ?? "unknown", item.id, `${weekStart}-before`);
+    const beforeBytes = Buffer.from(await (beforePhoto as File).arrayBuffer());
+    const { error: beforeError } = await db()
+      .storage.from(PHOTO_BUCKET)
+      .upload(beforePath, beforeBytes, {
+        contentType: "image/jpeg",
+        upsert: false,
+      });
+    if (beforeError) {
+      await db().storage.from(PHOTO_BUCKET).remove([path]);
+      return { error: "Upload failed. Try again." };
+    }
+  }
+
   const { error: insertError } = await db().from("submissions").insert({
     item_id: item.id,
     week_start: weekStart,
     photo_url: path,
+    before_photo_url: beforePath,
     comment,
     author,
     assisted_by: assistedBy,
@@ -91,8 +115,10 @@ export async function submitItem(
   });
 
   if (insertError) {
-    // Don't leave an orphaned object behind in storage.
-    await db().storage.from(PHOTO_BUCKET).remove([path]);
+    // Don't leave orphaned objects behind in storage.
+    await db()
+      .storage.from(PHOTO_BUCKET)
+      .remove(beforePath ? [path, beforePath] : [path]);
     return { error: "Could not save that. Try again." };
   }
 

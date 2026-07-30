@@ -33,7 +33,11 @@ export default async function ItemPage({
   if (!item || !item.active) notFound();
 
   const submissions = await getSubmissionsForItems([item.id]);
-  const photos = await signedUrls(submissions.map((s) => s.photo_url));
+  const photos = await signedUrls(
+    submissions.flatMap((s) =>
+      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    ),
+  );
 
   const weekStart = currentWeekStart();
   const thisWeek = submissions.filter((s) => s.week_start === weekStart);
@@ -43,6 +47,11 @@ export default async function ItemPage({
   const sentBack = current?.review === "sent_back";
   const rolling = !sentBack && current?.progress === "another_cycle";
   const doneThisWeek = Boolean(current) && !sentBack;
+
+  // On an ongoing item the most recent earlier photo is the before. Uses the
+  // last photo rather than strictly last week's, so a gap doesn't blank it.
+  const previous = submissions.find((s) => s.week_start < weekStart);
+  const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
 
   return (
     <main>
@@ -86,6 +95,33 @@ export default async function ItemPage({
         </div>
       ) : null}
 
+      {previous ? (
+        <section className="panel mb-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="label">Before · last photo</p>
+            <p className="label">{formatWeekStart(previous.week_start)}</p>
+          </div>
+          <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+            {previousUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={previousUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <PurgedPhoto aspect="wide" />
+            )}
+          </div>
+          <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+            {previous.comment}
+          </p>
+          <p className="label mt-2">
+            Shoot this week&apos;s from the same angle.
+          </p>
+        </section>
+      ) : null}
+
       <PhotoSubmitForm itemId={item.id} />
 
       <section className="mt-10">
@@ -97,6 +133,9 @@ export default async function ItemPage({
           <ul className="space-y-3">
             {submissions.map((submission) => {
               const url = photos.get(submission.photo_url);
+              const beforeUrl = submission.before_photo_url
+                ? photos.get(submission.before_photo_url)
+                : undefined;
               return (
                 <li key={submission.id} className="panel">
                   <div className="flex items-baseline justify-between gap-3">
@@ -107,19 +146,48 @@ export default async function ItemPage({
                       {formatTimestamp(submission.created_at)}
                     </p>
                   </div>
-                  <div className="mt-3">
-                    {url ? (
-                      <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={url}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <PurgedPhoto aspect="wide" />
-                    )}
+                  {/* A same-week before means the work was executed that week;
+                      show the pair. Otherwise just the one shot. */}
+                  <div
+                    className={`mt-3 ${
+                      submission.before_photo_url ? "grid grid-cols-2 gap-2" : ""
+                    }`}
+                  >
+                    {submission.before_photo_url ? (
+                      <figure>
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+                          {beforeUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={beforeUrl}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <PurgedPhoto aspect="wide" />
+                          )}
+                        </div>
+                        <figcaption className="label mt-2">Before</figcaption>
+                      </figure>
+                    ) : null}
+
+                    <figure>
+                      {url ? (
+                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={url}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <PurgedPhoto aspect="wide" />
+                      )}
+                      {submission.before_photo_url ? (
+                        <figcaption className="label mt-2">After</figcaption>
+                      ) : null}
+                    </figure>
                   </div>
                   <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
                     {submission.comment}
