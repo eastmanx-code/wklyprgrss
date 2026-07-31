@@ -8,6 +8,14 @@ import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 export type CloseState = { error: string | null };
 
+function safeJson(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
 /** The venue this session may work on. */
 async function venueId(): Promise<string | null> {
   const session = await getSession();
@@ -28,15 +36,28 @@ async function checklistFor(slug: string) {
   const [house, ...rest] = slug.split("-");
   const phase = rest[rest.length - 1];
   const role = rest.slice(0, -1).join(" ");
+  // Matched in JS rather than with ilike: the slug is user input and ilike
+  // treats % and _ as wildcards, so foh-%-close would match whatever role
+  // came back first. The set is a handful of rows per venue.
   const { data } = await db()
     .from("close_checklists")
     .select("id, house, role, phase")
     .eq("venue_id", venue)
-    .ilike("house", house)
-    .ilike("role", role)
-    .eq("phase", phase)
-    .maybeSingle();
-  return data as { id: string } | null;
+    .eq("active", true);
+
+  const rows = (data ?? []) as {
+    id: string;
+    house: string;
+    role: string;
+    phase: string;
+  }[];
+  const match = rows.find(
+    (row) =>
+      row.house.toLowerCase() === house.toLowerCase() &&
+      row.role.toLowerCase() === role.toLowerCase() &&
+      row.phase.toLowerCase() === phase.toLowerCase(),
+  );
+  return match ? { id: match.id } : null;
 }
 
 /**
@@ -48,20 +69,29 @@ async function checklistFor(slug: string) {
  */
 async function nightId(checklistId: string): Promise<string | null> {
   const night = currentNight();
-  const existing = await db()
+
+  // Upsert rather than check-then-insert. Two people ticking in the same
+  // second both saw no row and both inserted; the second lost the unique
+  // constraint and was told the night could not be opened — in precisely the
+  // concurrent case this whole feature exists for.
+  const { data } = await db()
+    .from("close_nights")
+    .upsert(
+      { checklist_id: checklistId, night },
+      { onConflict: "checklist_id,night", ignoreDuplicates: false },
+    )
+    .select("id")
+    .single();
+  if (data) return (data as { id: string }).id;
+
+  // Upsert can still lose a race against a concurrent insert; read it back.
+  const { data: existing } = await db()
     .from("close_nights")
     .select("id")
     .eq("checklist_id", checklistId)
     .eq("night", night)
     .maybeSingle();
-  if (existing.data) return (existing.data as { id: string }).id;
-
-  const { data } = await db()
-    .from("close_nights")
-    .insert({ checklist_id: checklistId, night })
-    .select("id")
-    .single();
-  return (data as { id: string } | null)?.id ?? null;
+  return (existing as { id: string } | null)?.id ?? null;
 }
 
 /** A certified night is a record. Nothing may be written to it. */
@@ -170,6 +200,8 @@ export async function captureTarget(
   itemId: string,
   shotIndex: number,
   kind: "photo" | "video",
+  /** The real extension, for video — an iPhone records .mov, not .mp4. */
+  extension = "",
 ): Promise<{ error: string | null; path?: string; signedUrl?: string }> {
   const list = await checklistFor(slug);
   if (!list) return { error: "That checklist is not available." };
@@ -177,9 +209,11 @@ export async function captureTarget(
   if (!night) return { error: "Could not open tonight." };
   if (await isLocked(night)) return { error: "Tonight is already certified." };
 
-  const path = `close/${night}/${itemId}/${shotIndex}-${Date.now()}.${
-    kind === "video" ? "mp4" : "jpg"
-  }`;
+  // Photos are re-encoded to JPEG in the browser before they get here, so
+  // that extension is always true. Video is uploaded as shot.
+  const safe = extension.replace(/[^a-z0-9]/gi, "").slice(0, 5).toLowerCase();
+  const ext = kind === "photo" ? "jpg" : safe || "mov";
+  const path = `close/${night}/${itemId}/${shotIndex}-${Date.now()}.${ext}`;
   const { data, error } = await db()
     .storage.from(PHOTO_BUCKET)
     .createSignedUploadUrl(path);
@@ -256,7 +290,7 @@ export async function certifyNight(
       // this person put their name to.
       attestation,
       signature,
-      open_at_signing: JSON.parse(openAtSigning),
+      open_at_signing: safeJson(openAtSigning),
     })
     .eq("id", night);
 
