@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? "https://wklyprgrss.com",
   ),
   title: "WKLY > PRGRSS",
-  description: "Weekly progress photos for venue leaders.",
+  description: "Defining the standards.",
 };
 
 export const viewport: Viewport = {
