@@ -11,7 +11,11 @@ import { currentWeekStart, deadlineFor } from "@/lib/week";
  * a way out, and the theme. Reachable from every screen, so no page is a dead
  * end — which was the state of the board and item pages before.
  *
- * Wraps rather than overflows: five controls is wider than a small phone.
+ * Collapsed to a single chip, because six controls in a row had grown wide
+ * enough to be the widest thing on the screen and to sit over the content on a
+ * tablet. It opens on hover where there is a pointer and on a tap where there
+ * isn't: a <details> gives the tap for free, and the hover is one CSS rule on
+ * top. No client component, so it stays on the server like the rest of the bar.
  */
 export async function CornerMenu() {
   const session = await getSession();
@@ -24,52 +28,58 @@ export async function CornerMenu() {
   const home = session ? (isAdmin ? "/admin" : "/venue") : null;
 
   return (
-    /* Solid surface with a blur behind it: floating over a dot grid, the old
-       translucent buttons picked up the pattern and read as damaged. Grouped
-       status | nav | exit so the eye lands on three things, not six. */
-    <nav className="border-card-border bg-surface/90 fixed right-4 bottom-4 left-4 z-50 flex h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:left-auto sm:gap-4 sm:px-3">
-      <span className="hidden sm:contents">
-        <DeadlineCountdown deadlineMs={deadlineMs} />
-        <span className="bg-card-border h-6 w-px" aria-hidden />
-      </span>
+    /* Sized to its content now rather than pinned across the phone, so the
+       collapsed state is genuinely small. */
+    <nav className="fixed right-4 bottom-4 z-50">
+      <details className="ww-menu">
+        <summary className="border-card-border bg-surface/90 text-ink flex h-14 cursor-pointer items-center gap-2 rounded-[8px] border px-3 backdrop-blur-md">
+          <span className="label text-ink">Menu</span>
+          <span className="ww-menu-caret" aria-hidden />
+        </summary>
 
-      {home ? (
-        <Link href={home} className="btn-ghost">
-          {isAdmin ? "All venues" : "Mine"}
-        </Link>
-      ) : null}
+        <div className="border-card-border bg-surface/90 ww-menu-items absolute right-0 bottom-0 h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:gap-3 sm:px-3">
+          <span className="hidden sm:contents">
+            <DeadlineCountdown deadlineMs={deadlineMs} />
+            <span className="bg-card-border h-6 w-px" aria-hidden />
+          </span>
 
-      {session && !isAdmin ? (
-        <Link href="/board" className="btn-ghost">
-          All
-        </Link>
-      ) : null}
+          {home ? (
+            <Link href={home} className="btn-ghost">
+              {isAdmin ? "All venues" : "Mine"}
+            </Link>
+          ) : null}
 
-      {/* Under review, not in service. Sits with the other destinations
-          because the people whose opinion is wanted are the ones already
-          reaching for this bar — but it says Preview so nobody mistakes it
-          for the night's record. */}
-      {session ? (
-        <Link href="/close" className="btn-ghost">
-          Close · preview
-        </Link>
-      ) : null}
+          {session && !isAdmin ? (
+            <Link href="/board" className="btn-ghost">
+              All
+            </Link>
+          ) : null}
 
-      <Link href="/help" className="btn-ghost">
-        How to
-      </Link>
+          {/* Work in progress, and named so. It is on the live site to be
+              looked at, not to be relied on. */}
+          {session ? (
+            <Link href="/close" className="btn-ghost">
+              Chcklst &gt; WIP
+            </Link>
+          ) : null}
 
-      <span className="bg-card-border h-6 w-px" aria-hidden />
+          <Link href="/help" className="btn-ghost">
+            How to
+          </Link>
 
-      {session ? (
-        <form action={logout}>
-          <button type="submit" className="btn-ghost">
-            Out
-          </button>
-        </form>
-      ) : null}
+          <span className="bg-card-border h-6 w-px" aria-hidden />
 
-      <ThemeToggle />
+          {session ? (
+            <form action={logout}>
+              <button type="submit" className="btn-ghost">
+                Out
+              </button>
+            </form>
+          ) : null}
+
+          <ThemeToggle />
+        </div>
+      </details>
     </nav>
   );
 }

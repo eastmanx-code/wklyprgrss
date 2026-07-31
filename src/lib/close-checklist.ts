@@ -7,7 +7,14 @@
  * in, and the shape is what we still have questions about.
  */
 
-export type ProofKind = "photo" | "video";
+/**
+ * A note is proof too. Some of this checklist has nothing to photograph — what
+ * a crew member actually said is the record, and a tick alone loses it.
+ */
+export type ProofKind = "photo" | "video" | "note";
+
+/** One capture, with the thing it has to show. */
+export type Shot = { kind: ProofKind; prompt: string };
 
 export type CloseItem = {
   /** Displayed, and how MODs already refer to these to each other. */
@@ -16,11 +23,18 @@ export type CloseItem = {
   /** The standard for what "done" means. Not separately ticked. */
   detail: string[];
   /**
-   * What has to be captured, and what has to be in frame. The prompt is the
-   * whole point: a photo you can't take without being told what to shoot is
-   * much harder to fill with a covered lens than a generic camera icon is.
+   * The captures this item owes — a list, because two things that both need
+   * proving are usually nowhere near each other. A safe count screen and a
+   * secured drawer cannot be got into one frame, and asking for it produces
+   * either a bad photo of both or an honest photo of one.
+   *
+   * Each shot names what it has to show. That prompt is the whole mechanism:
+   * a covered lens is obviously wrong against "the back door, closed and
+   * locked, with the latch visible", and nothing has to judge the picture.
+   *
+   * The item completes when every shot is taken, not the first.
    */
-  proof?: { kind: ProofKind; prompt: string };
+  proof?: Shot[];
 };
 
 export const CLOSE_CHECKLIST: CloseItem[] = [
@@ -29,6 +43,13 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
     title: "Positive moment check-ins",
     detail: [
       "Checked in with at least 2 crew members about a positive moment from their shift.",
+    ],
+    proof: [
+      {
+        kind: "note",
+        prompt:
+          "Who you spoke to and what the moment was. Dictate it with the mic on your keyboard if that is quicker.",
+      },
     ],
   },
   {
@@ -44,7 +65,11 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
       "All money counted and placed in safe, bar drawer verified.",
       "iPads and equipment stored and charging.",
     ],
-    proof: { kind: "photo", prompt: "The safe count screen and the secured drawer, both in frame" },
+    proof: [
+      { kind: "photo", prompt: "The safe count screen" },
+      { kind: "photo", prompt: "The secured drawer" },
+      { kind: "photo", prompt: "iPads and equipment on their chargers" },
+    ],
   },
   {
     number: 4,
@@ -53,6 +78,13 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
       "Restrooms thorough clean and stocking, all trash emptied.",
       "Towels removed, multifold towels in place of towels to avoid waste.",
       "Double check that the opening team will have stock of all shrine supplies: mouthwash, cups, mints, tampons — and alert all leaders if this will not be the case.",
+    ],
+    proof: [
+      { kind: "photo", prompt: "Each restroom, clean, with the trash emptied" },
+      {
+        kind: "photo",
+        prompt: "The shrine, stocked for the opening team",
+      },
     ],
   },
   {
@@ -94,13 +126,21 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
     detail: [
       "Recorded everything valuable for openers. This is the note the AM MOD reviews and signs in Open Daily. Include anything the next shift needs.",
     ],
-    proof: { kind: "photo", prompt: "The written closing report, readable end to end" },
+    proof: [
+      { kind: "photo", prompt: "The written closing report, readable end to end" },
+    ],
   },
   {
     number: 9,
     title: "Back door & kitchen entrance",
     detail: ["Back door and kitchen entrance secured."],
-    proof: { kind: "photo", prompt: "The back door, closed and locked, with the latch visible" },
+    proof: [
+      {
+        kind: "photo",
+        prompt: "The back door, closed and locked, with the latch visible",
+      },
+      { kind: "photo", prompt: "The kitchen entrance, secured" },
+    ],
   },
   {
     number: 10,
@@ -108,11 +148,13 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
     detail: [
       "Everything in good condition and functioning. Property issues logged with photo to MOD chat and here.",
     ],
-    proof: {
-      kind: "video",
-      prompt:
-        "Walk the space and record it: restrooms clean, dumpster area clear, music off, fire off. Say out loud anything that needs attention.",
-    },
+    proof: [
+      {
+        kind: "video",
+        prompt:
+          "Walk the space and record it: restrooms clean, dumpster area clear, music off, fire off. Say out loud anything that needs attention.",
+      },
+    ],
   },
 ];
 
