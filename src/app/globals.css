@@ -412,6 +412,17 @@ p {
     background: var(--hover);
   }
 
+  /* The CH monogram. Drawn as a mask filled with the ink colour rather than
+     an <img>: the artwork is white, so on the light theme an image would be
+     invisible. As a mask it takes whatever the theme's foreground is. */
+  .ch-mark {
+    display: block;
+    aspect-ratio: 320 / 280;
+    background-color: var(--color-ink);
+    -webkit-mask: url("/ch.png") center / contain no-repeat;
+    mask: url("/ch.png") center / contain no-repeat;
+  }
+
   .panel {
     background: var(--color-surface);
     border: 1px solid var(--color-card-border);

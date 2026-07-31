@@ -15,6 +15,7 @@ export default async function AdminLoginPage() {
     // empty screen reads as unfinished.
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <header className="mb-8 text-center">
+        <span className="ch-mark mx-auto mb-6 h-10" aria-hidden />
         <p className="label">{APP_NAME}</p>
         <h1 className="mt-2 text-metric font-medium">Admin</h1>
       </header>
