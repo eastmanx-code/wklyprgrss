@@ -434,19 +434,24 @@ p {
      deliberate slot rather than a blank hole. */
   .dotfield {
     background-color: var(--color-panel);
-    background-image: radial-gradient(
-      circle,
-      var(--dot-strong) 1.5px,
-      transparent 1.5px
-    );
-    background-size: 12px 12px;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        var(--dot-strong) 0 1px,
+        transparent 1px 8px
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        var(--dot-strong) 0 1px,
+        transparent 1px 8px
+      );
     background-position: center;
   }
 
   .panel-quiet {
     background: var(--color-panel);
-    border: 1px solid var(--color-line);
-    border-radius: 20px;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
     padding: 1.25rem;
   }
 
@@ -533,9 +538,9 @@ p {
     width: 100%;
     min-height: 48px;
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 4px;
     background: var(--color-panel);
-    border: 1px solid transparent;
+    border: 1px solid var(--color-card-border);
     color: var(--color-ink);
     outline: none;
   }
@@ -573,6 +578,7 @@ p {
 
   .field:focus {
     border-color: var(--color-ink);
+    outline: none;
   }
 
   .field::placeholder {

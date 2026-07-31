@@ -42,35 +42,45 @@ export function AddItemSlot({
       <form action={formAction} className="flex flex-1 flex-col">
         <input type="hidden" name="venueId" value={venueId} />
 
-        {/* The field is a bare line on the dot ground rather than a filled
-            input box: a grey slab floating inside the dotfield was the clunky
-            part, and the placeholder already says what to do. Still a real
-            input, so tapping it opens the keyboard on iOS. */}
-        <label className="dotfield flex aspect-square w-full cursor-text items-center justify-center rounded-[8px] p-3">
-          <input
-            name="title"
-            className="text-body text-ink placeholder:text-muted w-full border-0 bg-transparent text-center tracking-normal outline-none"
-            placeholder="Name this item"
-            maxLength={120}
-            disabled={pending}
-            aria-label={`Item for slot ${index}`}
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="btn btn-sm mt-3 w-full"
-          disabled={pending}
-        >
-          {pending ? "Adding…" : uploadPrefix ? "Name + add photo" : "Add"}
-        </button>
+        {/* One control, not a field stacked on a button. Naming the item and
+            committing it are a single act, so the submit sits inside the
+            field's own frame. Still a real input, so tapping it opens the
+            keyboard on iOS. */}
+        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px] p-3">
+          {/* Solid pill on the grid, the same treatment as the "photo needed"
+              marker — it holds contrast against the ruled ground where a
+              bordered surface field washed out. */}
+          <label className="bg-paper flex max-w-[88%] items-center rounded-full py-1 pl-3.5">
+            <input
+              name="title"
+              className="label text-ink placeholder:text-muted min-w-0 flex-1 border-0 bg-transparent outline-none"
+              placeholder="Name this item"
+              size={12}
+              maxLength={120}
+              disabled={pending}
+              aria-label={`Item for slot ${index}`}
+            />
+            <button
+              type="submit"
+              className="label text-muted hover:text-ink shrink-0 px-3 disabled:opacity-40"
+              disabled={pending}
+              aria-label={uploadPrefix ? "Add item and take photo" : "Add item"}
+            >
+              {pending ? "…" : "→"}
+            </button>
+          </label>
+        </div>
 
         {state.error ? (
           <p role="alert" className="label text-warn mt-2">
             {state.error}
           </p>
         ) : (
-          <p className="label mt-2">Slot {index}</p>
+          <p className="label mt-3">
+            {uploadPrefix
+              ? `Slot ${index} · name it, then take the photo`
+              : `Slot ${index}`}
+          </p>
         )}
       </form>
     </li>
