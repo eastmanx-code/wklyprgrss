@@ -17,6 +17,8 @@
   --divider: rgba(255, 255, 255, 0.08);
   --warn: #bcbc1e;
   --on-warn: #0d0d0d;
+  --accent: #6cc6d4;
+  --on-accent: #062229;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
 }
@@ -34,6 +36,8 @@
   --divider: rgba(0, 0, 0, 0.08);
   --warn: #6f6f0f;
   --on-warn: #ffffff;
+  --accent: #11707e;
+  --on-accent: #ffffff;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);
 }
@@ -58,6 +62,8 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-warn: var(--warn);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-card-border: var(--card-border);
   --color-inset: var(--inset);
   --color-hover: var(--hover);
@@ -401,13 +407,11 @@ p {
     letter-spacing: 0;
   }
 
-  /* The one place the house uppercase is set aside. Everything else is display
-     text scanned at a glance; an attestation is a sentence someone has to read
-     and mean before putting their name to it, and long uppercase prose gets
-     read by shape, which is to say skimmed. Same exception the leaders' own
-     comments already get. */
+  /* The attestation reads as a sentence but is set like everything else. Caps
+     throughout is the house style and it does not get an exception; the size
+     and the leading are what carry it instead. */
   .attest {
-    text-transform: none;
+    text-transform: uppercase;
     letter-spacing: 0;
     font-size: 15px;
     line-height: 1.6;

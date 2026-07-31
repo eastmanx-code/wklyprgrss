@@ -28,10 +28,11 @@ const VIDEO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "video").length;
  */
 export function CloseChecklist() {
   const [done, setDone] = useState<Record<number, boolean>>({});
-  const [byWhom, setByWhom] = useState<Record<number, string>>({});
   const [captures, setCaptures] = useState<Record<string, Capture>>({});
-  const [initials, setInitials] = useState("");
-  const [initialsWanted, setInitialsWanted] = useState(false);
+  const [rowInitials, setRowInitials] = useState<Record<number, string>>({});
+  const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
+  /** Tapped, and waiting on its initials before it does anything. */
+  const [pending, setPending] = useState<number | null>(null);
   const [certifier, setCertifier] = useState("");
   const [signed, setSigned] = useState(false);
   const [certified, setCertified] = useState<string | null>(null);
@@ -39,7 +40,7 @@ export function CloseChecklist() {
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
-  const initialsRef = useRef<HTMLInputElement>(null);
+  const initialsRefs = useRef<Record<number, HTMLInputElement | null>>({});
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
 
@@ -56,23 +57,25 @@ export function CloseChecklist() {
   const openItems = CLOSE_CHECKLIST.filter((item) => !done[item.number]);
   const untouched = doneCount === 0;
 
-  /** Nothing gets ticked anonymously. */
-  function haveInitials() {
-    if (initials.trim()) return true;
-    setInitialsWanted(true);
-    initialsRef.current?.focus();
-    initialsRef.current?.scrollIntoView({ block: "center" });
+  /**
+   * Never prefilled. Ten items initialled ten times is the point — a single
+   * value applied to the whole night records who opened the app, not who did
+   * the work, and the second is the only one worth keeping.
+   */
+  const initialsFor = (number: number) => rowInitials[number] ?? "";
+
+  /** Nothing happens on a row until it is signed for. */
+  function haveInitials(number: number) {
+    if (initialsFor(number).trim()) return true;
+    setInitialsWanted(number);
+    setPending(number);
+    initialsRefs.current[number]?.focus();
     return false;
   }
 
   function toggle(item: CloseItem) {
     if (done[item.number]) {
       setDone((c) => ({ ...c, [item.number]: false }));
-      setByWhom((c) => {
-        const next = { ...c };
-        delete next[item.number];
-        return next;
-      });
       if (item.proof) {
         setCaptures((c) => {
           const next = { ...c };
@@ -83,7 +86,7 @@ export function CloseChecklist() {
       return;
     }
 
-    if (!haveInitials()) return;
+    if (!haveInitials(item.number)) return;
 
     // Evidence is the check. Tapping the card jumps to the first shot still
     // outstanding rather than ticking anything.
@@ -96,7 +99,6 @@ export function CloseChecklist() {
     }
 
     setDone((c) => ({ ...c, [item.number]: true }));
-    setByWhom((c) => ({ ...c, [item.number]: initials.trim().toUpperCase() }));
   }
 
   function onCapture(item: CloseItem, shotIndex: number, file: File | undefined) {
@@ -110,7 +112,6 @@ export function CloseChecklist() {
       const all = item.proof!.every((_, index) => next[slotKey(item.number, index)]);
       if (all) {
         setDone((c) => ({ ...c, [item.number]: true }));
-        setByWhom((c) => ({ ...c, [item.number]: initials.trim().toUpperCase() }));
       }
       return next;
     });
@@ -166,46 +167,20 @@ export function CloseChecklist() {
           ))}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <label className="label shrink-0" htmlFor="initials">
-            Ticking as
-          </label>
-          <input
-            id="initials"
-            ref={initialsRef}
-            className={`field h-10 min-h-0 w-24 px-3 text-center tracking-[0.2em] ${
-              initialsWanted && !initials.trim() ? "border-warn" : ""
-            }`}
-            placeholder="AB"
-            maxLength={4}
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            value={initials}
-            onChange={(event) => {
-              setInitials(event.target.value);
-              if (event.target.value.trim()) setInitialsWanted(false);
-            }}
-            aria-label="Your initials"
-          />
-          <p className="label min-w-0 flex-1">
-            {initialsWanted && !initials.trim()
-              ? "Add your initials before ticking anything."
-              : "Change these when someone else takes over."}
-          </p>
-        </div>
       </section>
 
       <ul className="space-y-2.5">
         {CLOSE_CHECKLIST.map((item) => {
           const isDone = Boolean(done[item.number]);
-          const stamp = byWhom[item.number];
           const shots = item.proof ?? [];
           const taken = shotsTaken(item);
 
+          const mine = initialsFor(item.number);
+          const wanted = initialsWanted === item.number && !mine.trim();
+
           return (
             <li key={item.number} className="panel p-0">
-
+              <div className="flex items-start">
               <button
                 type="button"
                 onPointerDown={() => {
@@ -254,19 +229,13 @@ export function CloseChecklist() {
                             : "Photo"}
                       </span>
                     ) : null}
-                    {stamp ? (
-                      <span className="bg-inset text-muted inline-flex h-[22px] shrink-0 items-center rounded px-2 text-label tracking-[0.08em]">
-                        {stamp}
-                      </span>
-                    ) : null}
                   </span>
 
-                  {/* Sentence case, and bulleted when there is more than one.
-                      Four lines of caps is slow reading at 1am, and this is
-                      the one place the specimen look loses to the job. */}
+                  {/* Caps throughout — house style, no exceptions. Bulleted
+                      when there is more than one line. */}
                   {item.detail.length === 1 ? (
                     <span
-                      className={`text-[14px] leading-relaxed normal-case ${
+                      className={`text-[14px] leading-relaxed ${
                         isDone ? "text-ink/40" : "text-ink/65"
                       }`}
                     >
@@ -274,7 +243,7 @@ export function CloseChecklist() {
                     </span>
                   ) : (
                     <span
-                      className={`flex flex-col gap-1 text-[13px] leading-snug normal-case ${
+                      className={`flex flex-col gap-1 text-[13px] leading-snug ${
                         isDone ? "text-ink/40" : "text-ink/65"
                       }`}
                     >
@@ -290,6 +259,53 @@ export function CloseChecklist() {
                   )}
                 </span>
               </button>
+
+              {/* At the end of the line it belongs to. Not inside the button —
+                  an input cannot live in one — so it sits beside it, aligned
+                  to the title. */}
+              <span className="flex shrink-0 flex-col items-end gap-1 py-4 pr-4 pl-1">
+                <input
+                  ref={(node) => {
+                    initialsRefs.current[item.number] = node;
+                  }}
+                  className={`field h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] ${
+                    wanted ? "border-warn" : ""
+                  }`}
+                  placeholder="––"
+                  maxLength={4}
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  value={mine}
+                  disabled={isDone}
+                  aria-label={`Initials for ${item.title}`}
+                  onChange={(event) => {
+                    setRowInitials((c) => ({
+                      ...c,
+                      [item.number]: event.target.value,
+                    }));
+                    if (event.target.value.trim()) setInitialsWanted(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      event.currentTarget.blur();
+                    }
+                  }}
+                  onBlur={() => {
+                    // Tapped first, initialled second — finish what the tap
+                    // started rather than making them tap the card again.
+                    if (pending === item.number && initialsFor(item.number).trim()) {
+                      setPending(null);
+                      toggle(item);
+                    }
+                  }}
+                />
+                {wanted ? (
+                  <span className="label text-warn text-right">Initial it</span>
+                ) : null}
+              </span>
+              </div>
 
               {/* One control per shot. Two things that both need proving are
                   rarely in the same place, so each names what it has to show
@@ -316,14 +332,14 @@ export function CloseChecklist() {
 
                         {got ? (
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="pill pill-done">
+                            <span className="bg-accent text-on-accent pill">
                               {shot.kind === "video" ? "Recorded" : "Taken"}
                             </span>
                             <button
                               type="button"
                               className="btn-ghost"
                               onClick={() => {
-                                if (!haveInitials()) return;
+                                if (!haveInitials(item.number)) return;
                                 inputs.current[key]?.click();
                               }}
                             >
@@ -334,10 +350,10 @@ export function CloseChecklist() {
                           <button
                             type="button"
                             onClick={() => {
-                              if (!haveInitials()) return;
+                              if (!haveInitials(item.number)) return;
                               inputs.current[key]?.click();
                             }}
-                            className="ring-ink/70 text-ink inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em] ring-1"
+                            className="ring-accent/70 text-accent inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em] ring-1"
                           >
                             <CaptureGlyph kind={shot.kind} />
                             {shot.kind === "video" ? "Record" : "Photograph"}
@@ -346,7 +362,7 @@ export function CloseChecklist() {
 
                         {/* The framing spec sits under the control, not inside
                             it — a button label should be one verb. */}
-                        <p className="text-ink/50 mt-2 text-[12px] leading-snug normal-case">
+                        <p className="text-ink/50 mt-2 text-[12px] leading-snug">
                           {shot.prompt}
                         </p>
 

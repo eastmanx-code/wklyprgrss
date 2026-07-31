@@ -68,6 +68,13 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
       "Towels removed, multifold towels in place of towels to avoid waste.",
       "Double check that the opening team will have stock of all shrine supplies: mouthwash, cups, mints, tampons — and alert all leaders if this will not be the case.",
     ],
+    proof: [
+      { kind: "photo", prompt: "Each restroom, clean, with the trash emptied" },
+      {
+        kind: "photo",
+        prompt: "The shrine, stocked for the opening team",
+      },
+    ],
   },
   {
     number: 5,
