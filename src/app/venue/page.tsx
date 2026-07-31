@@ -100,7 +100,12 @@ export default async function VenuePage() {
         {/* A venue owns its own list — same control the admin has. Only
               approving stays admin-only. */}
         {emptySlots(board.items.length, WEEKLY_ITEM_TARGET).map((slot) => (
-          <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
+          <AddItemSlot
+            key={`slot-${slot}`}
+            venueId={venue.id}
+            index={slot}
+            uploadPrefix="/venue/item/"
+          />
         ))}
       </ul>
 

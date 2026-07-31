@@ -20,19 +20,23 @@ export default async function ItemPage({
 }) {
   const { itemId } = await params;
 
+  // A leader may open their own venue's items; an admin may open any. Same
+  // screen for both — the two roles differ only in who can approve.
   const session = await getSession();
-  if (session?.role !== "leader") redirect("/");
+  if (!session) redirect("/");
 
   const { data, error } = await db()
     .from("items")
     .select("id, venue_id, title, position, active")
     .eq("id", itemId)
-    .eq("venue_id", session.venueId)
     .maybeSingle();
 
   if (error) throw new Error(error.message);
   const item = data as Item | null;
   if (!item || !item.active) notFound();
+  if (session.role === "leader" && session.venueId !== item.venue_id) {
+    notFound();
+  }
 
   const submissions = await getSubmissionsForItems([item.id]);
   const photos = await signedUrls(

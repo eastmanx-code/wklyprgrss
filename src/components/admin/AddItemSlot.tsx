@@ -1,95 +1,73 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 
 import { addItem, type AdminState } from "@/app/admin/actions";
 
 const initialState: AdminState = { error: null };
 
 /**
- * An empty slot the admin can fill in place.
+ * An empty slot, filled in place.
  *
- * Setting up a venue used to mean leaving the board for "Manage venue", which
- * is a detour from the one screen that already shows you what's missing. The
- * slot itself is the obvious place to do it.
+ * The field is always rendered rather than appearing after a tap. On iOS the
+ * keyboard only opens when focus happens inside the gesture that triggered
+ * it — focusing a newly-mounted input from an effect leaves the field looking
+ * active with no keyboard, which reads as broken. Tapping the field itself is
+ * the gesture, so it just works, and it's one tap fewer.
+ *
+ * With uploadPrefix set, naming an item goes straight to its upload screen:
+ * an item with no photo is the failure this setup step exists to avoid.
  */
 export function AddItemSlot({
   venueId,
   index,
+  uploadPrefix,
 }: {
   venueId: string;
   index: number;
+  uploadPrefix?: string;
 }) {
   const [state, formAction, pending] = useActionState(addItem, initialState);
-  const [open, setOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    // Focus straight into the field so it's type-and-go.
-    if (open) inputRef.current?.focus();
-  }, [open]);
-
-  if (!open) {
-    return (
-      <li className="panel flex flex-col p-3">
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          className="dotfield panel-link flex aspect-square w-full items-center justify-center rounded-xl"
-          aria-label={`Add item for slot ${index}`}
-        >
-          <span className="label text-ink bg-paper rounded-full px-3 py-1.5 shadow-[0_0_0_4px_var(--color-paper)]">
-            + Add item
-          </span>
-        </button>
-        <p className="label mt-3">Slot {index}</p>
-        <p className="note mt-1 text-muted">Empty</p>
-      </li>
-    );
-  }
+    if (state.createdItemId && uploadPrefix) {
+      router.push(`${uploadPrefix}${state.createdItemId}`);
+    }
+  }, [state.createdItemId, uploadPrefix, router]);
 
   return (
     <li className="panel flex flex-col p-3">
-      {/* On success the server revalidates, this slot is replaced by the new
-          item, and the next empty slot renders fresh — no manual reset. */}
-      <form action={formAction}>
+      <form action={formAction} className="flex flex-1 flex-col">
         <input type="hidden" name="venueId" value={venueId} />
-        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-xl p-3">
+
+        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px] p-3">
           <input
-            ref={inputRef}
             name="title"
             className="field text-center"
-            placeholder="e.g. Walk-in cooler"
+            placeholder="Name this item"
+            maxLength={120}
             disabled={pending}
-            onKeyDown={(event) => {
-              if (event.key === "Escape") setOpen(false);
-            }}
+            aria-label={`Item for slot ${index}`}
           />
         </div>
 
-        <div className="mt-3 flex gap-2">
-          <button
-            type="submit"
-            className="btn btn-sm flex-1"
-            disabled={pending}
-          >
-            {pending ? "Adding…" : "Add"}
-          </button>
-          <button
-            type="button"
-            className="btn-ghost"
-            onClick={() => setOpen(false)}
-            disabled={pending}
-          >
-            Cancel
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="btn btn-sm mt-3 w-full"
+          disabled={pending}
+        >
+          {pending ? "Adding…" : uploadPrefix ? "Add + photo" : "Add"}
+        </button>
 
         {state.error ? (
-          <p role="alert" className="label mt-2 text-warn">
+          <p role="alert" className="label text-warn mt-2">
             {state.error}
           </p>
-        ) : null}
+        ) : (
+          <p className="label mt-2">Slot {index}</p>
+        )}
       </form>
     </li>
   );

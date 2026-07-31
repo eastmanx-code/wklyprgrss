@@ -7,7 +7,7 @@ import { getSession } from "@/lib/session";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { Item } from "@/lib/types";
 
-export type AdminState = { error: string | null };
+export type AdminState = { error: string | null; createdItemId?: string };
 
 const OK: AdminState = { error: null };
 const MAX_TITLE_LENGTH = 120;
@@ -83,18 +83,23 @@ export async function addItem(
     return { error: "That title is too long." };
 
   const existing = await itemsFor(venueId);
-  const { error } = await db()
+  // Returns the row so the caller can send the leader straight to its upload
+  // screen: naming an item and never photographing it is the failure mode
+  // this whole setup step exists to avoid.
+  const { data, error } = await db()
     .from("items")
     .insert({
       venue_id: venueId,
       title,
       position: existing.length + 1,
       active: true,
-    });
-  if (error) return { error: "Could not add that item." };
+    })
+    .select("id")
+    .single();
+  if (error || !data) return { error: "Could not add that item." };
 
   refresh(venueId);
-  return OK;
+  return { error: null, createdItemId: data.id as string };
 }
 
 export async function renameItem(

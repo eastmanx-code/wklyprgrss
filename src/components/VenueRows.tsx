@@ -70,7 +70,7 @@ export function VenueRows({
                 <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                   <Link
                     href={`${hrefPrefix}${row.venue.id}`}
-                    className="hover:bg-hover focus-visible:outline-warn -mx-2 flex h-10 items-center gap-4 rounded-[4px] px-2 transition-colors focus-visible:outline focus-visible:outline-1"
+                    className="hover:bg-hover -mx-2 flex h-10 items-center gap-4 rounded-[4px] px-2 transition-colors"
                   >
                     <span className="text-body text-ink w-16 shrink-0 tracking-normal tabular-nums">
                       {row.venue.code}
@@ -114,7 +114,7 @@ export function VenueRows({
               <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                 <Link
                   href={`${hrefPrefix}${row.venue.id}`}
-                  className="bg-inset hover:bg-hover focus-visible:outline-warn text-body text-muted flex h-10 items-center justify-center rounded-[4px] tracking-normal transition-colors focus-visible:outline focus-visible:outline-1"
+                  className="bg-inset hover:bg-hover text-body text-muted flex h-10 items-center justify-center rounded-[4px] tracking-normal transition-colors"
                 >
                   {row.venue.code}
                 </Link>

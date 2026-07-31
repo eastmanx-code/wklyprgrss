@@ -21,20 +21,33 @@ export type UploadTargets = {
 const MAX_COMMENT_LENGTH = 2000;
 const MAX_NAME_LENGTH = 120;
 
-/** The item, if it belongs to the signed-in venue and is still active. */
+/**
+ * The item, if this session may work on it and it is still active.
+ *
+ * A leader may work on their own venue's items; an admin may work on any.
+ * Admins were previously refused outright, which made the setup flow on the
+ * admin page dead-end at a redirect — and the rule has always been that admin
+ * and venue differ only in who can approve.
+ *
+ * The venue is read from the item itself, never from the request.
+ */
 async function ownedItem(itemId: string) {
   const session = await getSession();
-  if (session?.role !== "leader") return null;
+  if (!session) return null;
 
   const { data } = await db()
     .from("items")
     .select("id, venue_id, title, position, active")
     .eq("id", itemId)
-    .eq("venue_id", session.venueId)
     .eq("active", true)
     .maybeSingle();
 
-  return (data as Item | null) ?? null;
+  const item = (data as Item | null) ?? null;
+  if (!item) return null;
+  if (session.role === "leader" && session.venueId !== item.venue_id) {
+    return null;
+  }
+  return item;
 }
 
 async function venueCode(venueId: string): Promise<string> {

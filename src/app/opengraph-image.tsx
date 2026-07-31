@@ -67,89 +67,87 @@ export default async function OpengraphImage() {
   const photo = await loadPhoto();
 
   return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          position: "relative",
-          background: "#0b0b0a",
-          fontFamily: "Geist Mono",
-        }}
-      >
-        {photo ? (
-          <img
-            src={photo}
-            alt=""
-            width={size.width}
-            height={size.height}
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        ) : null}
-
-        {/* Scrim: the tagline has to hold over whatever the photo does at the
-            bottom edge. */}
-        <div
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        position: "relative",
+        background: "#0b0b0a",
+        fontFamily: "Geist Mono",
+      }}
+    >
+      {photo ? (
+        <img
+          src={photo}
+          alt=""
+          width={size.width}
+          height={size.height}
           style={{
             position: "absolute",
             inset: 0,
-            display: "flex",
-            background:
-              "linear-gradient(to bottom, rgba(11,11,10,0.15) 0%, rgba(11,11,10,0.55) 55%, rgba(11,11,10,0.92) 100%)",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
           }}
         />
+      ) : null}
 
-        {/* Explicit width/height, not just inset: Satori won't resolve
+      {/* Scrim: the tagline has to hold over whatever the photo does at the
+            bottom edge. */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "flex",
+          background:
+            "linear-gradient(to bottom, rgba(11,11,10,0.15) 0%, rgba(11,11,10,0.55) 55%, rgba(11,11,10,0.92) 100%)",
+        }}
+      />
+
+      {/* Explicit width/height, not just inset: Satori won't resolve
             space-between against an auto height. */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: size.width,
-            height: size.height,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: 64,
-          }}
-        >
-          <Asterisk size={photo ? 84 : 120} stroke={photo ? 13 : 18} />
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: size.width,
+          height: size.height,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: 64,
+        }}
+      >
+        <Asterisk size={photo ? 84 : 120} stroke={photo ? 13 : 18} />
 
-          {/* Two lines rather than one: the full string is 37 characters, and
+        {/* Two lines rather than one: the full string is 37 characters, and
               at a size that fills the card it runs off the right edge. */}
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div
-              style={{
-                fontSize: 64,
-                letterSpacing: "0.04em",
-                color: "#f1f1ef",
-                lineHeight: 1.2,
-              }}
-            >
-              {APP_NAME}
-            </div>
-            <div
-              style={{
-                fontSize: 30,
-                letterSpacing: "0.08em",
-                color: "rgba(255,255,255,0.75)",
-                marginTop: 16,
-              }}
-            >
-              {TAGLINE}
-            </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              fontSize: 64,
+              letterSpacing: "0.04em",
+              color: "#f1f1ef",
+              lineHeight: 1.2,
+            }}
+          >
+            {APP_NAME}
+          </div>
+          <div
+            style={{
+              fontSize: 30,
+              letterSpacing: "0.08em",
+              color: "rgba(255,255,255,0.75)",
+              marginTop: 16,
+            }}
+          >
+            {TAGLINE}
           </div>
         </div>
       </div>
-    ),
+    </div>,
     {
       ...size,
       fonts: [{ name: "Geist Mono", data: mono, style: "normal", weight: 400 }],

@@ -1,53 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { APP_NAME } from "@/lib/app";
 
-const ACK_KEY = "ww_howto_ack";
-
-/** Never changes mid-session, so there is nothing to subscribe to. */
-const subscribeToNothing = () => () => {};
-
-function readAck(): string {
-  try {
-    return localStorage.getItem(ACK_KEY) === "1" ? "1" : "0";
-  } catch {
-    return "0";
-  }
-}
-
-/** Treated as acknowledged on the server, so nothing flashes before hydration. */
-const ackOnServer = () => "1";
-
 /**
- * The instructions as a dialog on the sign-in screen, with an acknowledgement.
+ * The instructions as a full-screen dialog on the sign-in screen, with an
+ * acknowledgement.
  *
- * Opens by itself the first time on a device, then stays out of the way and is
- * reopened from the button. Native <dialog>, so focus trapping and Esc come
- * for free.
+ * Opens on every visit to sign-in rather than once per device. A device
+ * acknowledgement was the wrong unit: the PIN is shared, so "this phone has
+ * seen it" says nothing about the person holding it, and the rule it states —
+ * a new photo and a new comment, nothing carried forward — is the thing most
+ * worth repeating weekly.
  *
- * The acknowledgement is per-device, not per-person — there are no accounts,
- * and a shared venue PIN cannot tell two people apart. Read it as "this phone
- * has seen the instructions", not as a signature.
+ * Native <dialog>, so focus trapping and Esc come for free.
  */
 export function HowToDialog({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDialogElement>(null);
-  const stored = useSyncExternalStore(subscribeToNothing, readAck, ackOnServer);
-  const [clicked, setClicked] = useState(false);
-  const acknowledged = clicked || stored === "1";
+  const [acknowledged, setAcknowledged] = useState(false);
 
   useEffect(() => {
     // Pure DOM sync — no state is set here.
-    if (!acknowledged) ref.current?.showModal();
-  }, [acknowledged]);
+    ref.current?.showModal();
+  }, []);
 
   function acknowledge() {
-    try {
-      localStorage.setItem(ACK_KEY, "1");
-    } catch {
-      // Private browsing — it just asks again next time.
-    }
-    setClicked(true);
+    setAcknowledged(true);
     ref.current?.close();
   }
 
@@ -58,7 +36,7 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
         className="label hover:text-ink"
         onClick={() => ref.current?.showModal()}
       >
-        {acknowledged ? "How to use this" : "Read this first"}
+        {"How to use this"}
       </button>
 
       <dialog

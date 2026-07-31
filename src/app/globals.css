@@ -107,10 +107,11 @@
   border-radius: 4px;
 }
 
-/* One focus treatment everywhere, in the alert colour so it is unmistakable
-   against a monochrome page. */
+/* One focus treatment everywhere. Ink, not the alert colour: the accent means
+   past due, failing or a missed week, and a focused button is none of those.
+   Kept rather than removed — without it the interface is unusable by keyboard. */
 :focus-visible {
-  outline: 1px solid var(--color-warn);
+  outline: 1px solid var(--color-ink);
   outline-offset: 2px;
 }
 
@@ -325,11 +326,9 @@ p {
   @keyframes ww-dialog-in {
     from {
       opacity: 0;
-      transform: translateY(8px) scale(0.98);
     }
     to {
       opacity: 1;
-      transform: none;
     }
   }
 
@@ -543,12 +542,18 @@ p {
 
   /* Centred, sized to its content. No max-height and no scroll: if it doesn't
      fit, the content is wrong for a modal. */
+  /* Fills the viewport rather than floating: on the sign-in screen the page
+     behind it is the thing it is interrupting, and a card with the form
+     showing above it reads as dismissible. */
   .ww-dialog {
-    width: min(30rem, calc(100vw - 2rem));
-    margin: auto;
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
     padding: 0;
-    border: 1px solid var(--color-line);
-    border-radius: 8px;
+    border: 0;
+    border-radius: 0;
     background: var(--color-paper);
     color: var(--color-ink);
   }
@@ -559,6 +564,13 @@ p {
   }
 
   .ww-dialog-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 34rem;
+    min-height: 100dvh;
+    margin: 0 auto;
     padding: 24px;
   }
 
