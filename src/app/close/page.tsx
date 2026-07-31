@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
+import { venueRollup } from "@/lib/rollup";
 import { SAMPLE_MISSED, SAMPLE_NIGHTS } from "@/lib/rollup-sample";
 import {
   HOUSES,
@@ -55,10 +56,17 @@ export default async function ChecklistsPage() {
   const total = builtCount().total;
   const built = live.size;
 
+  // Real once there is anything real. Same fallback as the report itself.
+  const real = venue ? await venueRollup(venue) : null;
+  const missed = real?.missed ?? SAMPLE_MISSED;
+  const windowNights = real?.nights ?? SAMPLE_NIGHTS;
+
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <header className="mb-5">
-        <span className="pill pill-pending">Prototype · nothing is saved</span>
+        {/* It saves now. Saying otherwise on the way in taught the first
+            testers not to trust what they had just done. */}
+        <span className="pill pill-pending">Review build</span>
         <p className="label mt-3">Night Hawk · {formatNight(night)}</p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
         <p className="label mt-2">
@@ -74,11 +82,17 @@ export default async function ChecklistsPage() {
       <section className="panel border-warn/30 mb-5">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <h2 className="card-title">What&apos;s getting missed</h2>
-          <p className="label">Last {SAMPLE_NIGHTS} nights</p>
+          <p className="label">Last {windowNights} nights</p>
         </div>
 
         <div className="mt-4">
-          <MissedList rows={SAMPLE_MISSED.slice(0, 4)} />
+          {missed.length === 0 ? (
+            <p className="note text-muted">
+              Nothing left open in the window.
+            </p>
+          ) : (
+            <MissedList rows={missed.slice(0, 4)} />
+          )}
         </div>
 
         <Link
@@ -89,9 +103,11 @@ export default async function ChecklistsPage() {
           <span className="text-muted">by role, by night, by venue</span>
         </Link>
 
-        <p className="label mt-3">
-          Sample figures. Real from the night the first list is signed.
-        </p>
+        {real ? null : (
+          <p className="label mt-3">
+            Sample figures. Real from the night the first list is signed.
+          </p>
+        )}
       </section>
 
       <div className="space-y-5">
