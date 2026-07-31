@@ -119,7 +119,7 @@ export default async function ItemPage({
               <img
                 src={previousUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             ) : (
               <PurgedPhoto aspect="wide" />
@@ -146,7 +146,15 @@ export default async function ItemPage({
           <input type="hidden" name="itemId" value={item.id} />
           <input type="hidden" name="venueId" value={item.venue_id} />
           <input type="hidden" name="active" value="false" />
-          <input type="hidden" name="redirectTo" value="/venue" />
+          <input
+            type="hidden"
+            name="redirectTo"
+            value={
+              session.role === "admin"
+                ? `/admin/venue/${item.venue_id}`
+                : "/venue"
+            }
+          />
           <button type="submit" className="btn-ghost">
             Retire this item
           </button>
@@ -195,7 +203,7 @@ export default async function ItemPage({
                             <img
                               src={beforeUrl}
                               alt=""
-                              className="h-full w-full object-cover"
+                              className="h-full w-full object-contain"
                             />
                           ) : (
                             <PurgedPhoto aspect="wide" />
@@ -212,7 +220,7 @@ export default async function ItemPage({
                           <img
                             src={url}
                             alt=""
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-contain"
                           />
                         </div>
                       ) : (

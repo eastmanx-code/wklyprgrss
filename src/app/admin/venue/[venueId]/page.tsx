@@ -141,7 +141,7 @@ export default async function AdminVenuePage({
                 >
                   <div className="relative">
                     {url ? (
-                      <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                      <div className="bg-inset aspect-square overflow-hidden rounded-[8px]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={url}
@@ -368,7 +368,7 @@ export default async function AdminVenuePage({
                                     <img
                                       src={url}
                                       alt=""
-                                      className="h-full w-full object-cover"
+                                      className="h-full w-full object-contain"
                                     />
                                   </div>
                                 ) : null}

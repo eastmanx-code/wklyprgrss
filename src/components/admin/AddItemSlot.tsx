@@ -50,21 +50,20 @@ export function AddItemSlot({
           {/* Solid pill on the grid, the same treatment as the "photo needed"
               marker — it holds contrast against the ruled ground where a
               bordered surface field washed out. */}
-          <label className="bg-paper flex max-w-[88%] items-center rounded-full py-1 pl-3.5">
+          <label className="bg-paper flex w-full items-center rounded-full py-1.5 pl-3">
             <input
               name="title"
-              className="label text-ink placeholder:text-muted min-w-0 flex-1 border-0 bg-transparent outline-none"
-              placeholder="Name this item"
-              size={12}
+              className="label text-ink placeholder:text-muted w-full min-w-0 flex-1 border-0 bg-transparent outline-none"
+              placeholder="Task name"
               maxLength={120}
               disabled={pending}
-              aria-label={`Item for slot ${index}`}
+              aria-label={`Task's name for slot ${index}`}
             />
             <button
               type="submit"
-              className="label text-muted hover:text-ink shrink-0 px-3 disabled:opacity-40"
+              className="label text-muted hover:text-ink shrink-0 px-2 disabled:opacity-40"
               disabled={pending}
-              aria-label={uploadPrefix ? "Add item and take photo" : "Add item"}
+              aria-label={uploadPrefix ? "Add task and take photo" : "Add task"}
             >
               {pending ? "…" : "→"}
             </button>
@@ -78,7 +77,7 @@ export function AddItemSlot({
         ) : (
           <p className="label mt-3">
             {uploadPrefix
-              ? `Slot ${index} · name it, then take the photo`
+              ? `Slot ${index} · name the task, then take the photo`
               : `Slot ${index}`}
           </p>
         )}

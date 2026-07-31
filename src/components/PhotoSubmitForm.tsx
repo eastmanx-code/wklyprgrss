@@ -277,7 +277,7 @@ export function PhotoSubmitForm({
               <img
                 src={beforePreview}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             ) : (
               <span className="label text-ink bg-paper rounded-full px-3 py-1.5 shadow-[0_0_0_4px_var(--color-paper)]">
@@ -312,7 +312,7 @@ export function PhotoSubmitForm({
                 <img
                   src={preview ?? currentPhotoUrl ?? ""}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-contain"
                 />
                 {!preview ? (
                   <span className="label text-ink bg-paper absolute bottom-3 rounded-full px-3 py-1.5">
