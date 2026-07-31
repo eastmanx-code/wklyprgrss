@@ -46,7 +46,12 @@ export function AddItemSlot({
             committing it are a single act, so the submit sits inside the
             field's own frame. Still a real input, so tapping it opens the
             keyboard on iOS. */}
-        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px] p-3">
+        {/* The well's padding comes off the naming field, so it stays modest
+            until there's width to spare. The field renders at 16px whatever
+            .label asks for — the unlayered rule that stops iOS zooming a
+            focused input outranks it — so it needs room for 16px text, not for
+            an 11px label. */}
+        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px] p-2 sm:p-3">
           {/* Solid pill on the grid, the same treatment as the "photo needed"
               marker — it holds contrast against the ruled ground where a
               bordered surface field washed out. */}

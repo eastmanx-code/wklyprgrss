@@ -125,7 +125,9 @@ export default async function AdminVenuePage({
           ) : null}
         </div>
 
-        <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
+        {/* One tile per row on a phone — see /venue for why two columns are too
+            narrow for a task name. */}
+        <ul className="stagger grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {activeItems.map((item) => {
             const submission = latestThisWeek.get(item.id);
             const url = submission
@@ -161,7 +163,7 @@ export default async function AdminVenuePage({
                     ) : null}
                   </div>
 
-                  <p className="caps mt-3 text-body leading-snug font-medium">
+                  <p className="caps mt-3 text-body leading-snug font-medium break-words">
                     {item.title}
                   </p>
                   <p className="label mt-1">

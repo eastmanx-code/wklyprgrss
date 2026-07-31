@@ -51,7 +51,12 @@ export default async function AdminCodesPage() {
         <ul className="space-y-3">
           {((venues ?? []) as { id: string; code: string; pin: string }[]).map(
             (venue) => (
-              <li key={venue.id} className="flex items-center gap-4">
+              /* px-5 matches the admin code rows' own padding, so the venue
+                 letters sit under their labels and Save sits under Revoke —
+                 one column down the page instead of a full-width panel
+                 followed by a list hugging the left. Not on a phone, where
+                 that padding is width the row's own controls need. */
+              <li key={venue.id} className="flex items-center gap-4 sm:px-5">
                 <span className="text-body text-ink w-16 shrink-0 tracking-normal">
                   {venue.code}
                 </span>

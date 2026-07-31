@@ -48,8 +48,13 @@ export default async function VenuePage() {
       />
 
       {/* Always ten tiles. A venue with four items set up should read as six
-          slots missing, not as a short but complete-looking board. */}
-      <ul className="stagger grid grid-cols-2 items-stretch gap-3 xl:grid-cols-5">
+          slots missing, not as a short but complete-looking board.
+
+          One tile per row on a phone. Two columns left each card about 140px of
+          usable width, which is narrower than the task name it has to hold —
+          names wrapped to a stack of fragments and the naming field ran out of
+          room mid-placeholder. */}
+      <ul className="stagger grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {board.items.map((item) => {
           const latest = board.latest.get(item.id);
           const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
@@ -73,11 +78,9 @@ export default async function VenuePage() {
                 ) : (
                   <PhotoPlaceholder />
                 )}
-                <div className="mt-3 flex items-start justify-between gap-2">
-                  <p className="caps text-body leading-snug font-medium">
-                    {item.title}
-                  </p>
-                </div>
+                <p className="caps mt-3 text-body leading-snug font-medium break-words">
+                  {item.title}
+                </p>
                 <p className="label mt-1">
                   {latest
                     ? `Last photo · ${formatLastUpload(latest.created_at)}`
