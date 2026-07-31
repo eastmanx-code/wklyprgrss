@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import {
@@ -134,34 +135,39 @@ export default async function AdminVenuePage({
 
             return (
               <li key={item.id} className="panel flex flex-col p-3">
-                <div className="relative">
-                  {url ? (
-                    <div className="aspect-square overflow-hidden rounded-xl bg-panel">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <PhotoPlaceholder />
-                  )}
-                  {submission ? (
-                    <span className="absolute top-2 right-2">
-                      <ReviewPill review={submission.review} />
-                    </span>
-                  ) : null}
-                </div>
+                <Link
+                  href={`/venue/item/${item.id}`}
+                  className="flex flex-1 flex-col"
+                >
+                  <div className="relative">
+                    {url ? (
+                      <div className="aspect-square overflow-hidden rounded-xl bg-panel">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <PhotoPlaceholder />
+                    )}
+                    {submission ? (
+                      <span className="absolute top-2 right-2">
+                        <ReviewPill review={submission.review} />
+                      </span>
+                    ) : null}
+                  </div>
 
-                <p className="caps mt-3 text-body leading-snug font-medium">
-                  {item.title}
-                </p>
-                <p className="label mt-1">
-                  {lastEver
-                    ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
-                    : "No photo yet"}
-                </p>
+                  <p className="caps mt-3 text-body leading-snug font-medium">
+                    {item.title}
+                  </p>
+                  <p className="label mt-1">
+                    {lastEver
+                      ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
+                      : "No photo yet"}
+                  </p>
+                </Link>
 
                 {submission ? (
                   <>

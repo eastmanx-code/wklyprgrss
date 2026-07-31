@@ -22,19 +22,21 @@ export function LeaderLoginForm({
         <label className="label" htmlFor="venueId">
           Venue
         </label>
-        <select id="venueId" name="venueId" className="field" defaultValue="">
-          <option value="" disabled>
-            Select your venue
-          </option>
-          {venues.map((venue) => (
-            <option key={venue.id} value={venue.id}>
-              {venue.code}
-              {venue.name && venue.name !== venue.code
-                ? ` — ${venue.name}`
-                : ""}
+        <span className="select-wrap">
+          <select id="venueId" name="venueId" className="field" defaultValue="">
+            <option value="" disabled>
+              Select your venue
             </option>
-          ))}
-        </select>
+            {venues.map((venue) => (
+              <option key={venue.id} value={venue.id}>
+                {venue.code}
+                {venue.name && venue.name !== venue.code
+                  ? ` — ${venue.name}`
+                  : ""}
+              </option>
+            ))}
+          </select>
+        </span>
       </div>
 
       <div className="space-y-3">

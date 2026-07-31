@@ -42,23 +42,27 @@ export function AddItemSlot({
       <form action={formAction} className="flex flex-1 flex-col">
         <input type="hidden" name="venueId" value={venueId} />
 
-        <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px] p-3">
+        {/* The field is a bare line on the dot ground rather than a filled
+            input box: a grey slab floating inside the dotfield was the clunky
+            part, and the placeholder already says what to do. Still a real
+            input, so tapping it opens the keyboard on iOS. */}
+        <label className="dotfield flex aspect-square w-full cursor-text items-center justify-center rounded-[8px] p-3">
           <input
             name="title"
-            className="field text-center"
+            className="text-body text-ink placeholder:text-muted w-full border-0 bg-transparent text-center tracking-normal outline-none"
             placeholder="Name this item"
             maxLength={120}
             disabled={pending}
             aria-label={`Item for slot ${index}`}
           />
-        </div>
+        </label>
 
         <button
           type="submit"
           className="btn btn-sm mt-3 w-full"
           disabled={pending}
         >
-          {pending ? "Adding…" : uploadPrefix ? "Add + photo" : "Add"}
+          {pending ? "Adding…" : uploadPrefix ? "Name + add photo" : "Add"}
         </button>
 
         {state.error ? (

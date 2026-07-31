@@ -27,7 +27,7 @@ export default async function HomePage() {
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <header className="mb-8">
-        <span className="ch-mark mx-auto h-10" aria-hidden />
+        <span className="ch-mark mx-auto h-20" aria-hidden />
         <h1 className="text-metric mt-6 text-center font-medium">{APP_NAME}</h1>
       </header>
 
