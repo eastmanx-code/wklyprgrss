@@ -1,0 +1,10 @@
+<!-- Six spokes drawn as three lines through the centre: separate spokes
+     leave a seam at the join once the stroke is this heavy. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#0b0b0a"/>
+  <g stroke="#f1f1ef" stroke-width="10" stroke-linecap="butt">
+  <line x1="32.00" y1="54.00" x2="32.00" y2="10.00"/>
+  <line x1="51.05" y1="43.00" x2="12.95" y2="21.00"/>
+  <line x1="51.05" y1="21.00" x2="12.95" y2="43.00"/>
+  </g>
+</svg>
