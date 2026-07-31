@@ -129,6 +129,15 @@
   outline: none;
 }
 
+/* The close flow brings its own bar. The global one carries the weekly
+   deadline and venue navigation, which are dashboard context and not what
+   somebody locking up at 2am is doing — and on a tablet it sat over item 7.
+   Matched on the page rather than plumbed through the layout, because the bar
+   is a sibling of the page container, not inside it. */
+body:has(.close-flow) > nav {
+  display: none;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
