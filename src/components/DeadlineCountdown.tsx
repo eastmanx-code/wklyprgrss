@@ -40,7 +40,7 @@ export function DeadlineCountdown({ deadlineMs }: { deadlineMs: number }) {
   return (
     <span
       className={`btn-ghost pointer-events-none tabular-nums shadow-[0_2px_12px_rgba(0,0,0,0.12)] ${
-        overdue ? "bg-fail text-on-fail" : urgent ? "bg-ink text-paper" : ""
+        overdue ? "bg-warn text-on-warn" : urgent ? "bg-ink text-paper" : ""
       }`}
       title="Time left to update every item"
     >

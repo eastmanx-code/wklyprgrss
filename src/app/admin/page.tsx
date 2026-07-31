@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { CompanyHero } from "@/components/CompanyHero";
+import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
 import { getDashboard } from "@/lib/status";
@@ -43,21 +44,31 @@ export default async function AdminDashboardPage() {
         </div>
       </header>
 
-      <CompanyHero
-        percent={itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0}
+      <NarrativeStrip
+        deadlineMs={deadlineFor(weekStart).getTime()}
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
-        passing={passing}
-        pending={pendingCount}
-        failing={failing}
-        setup={setup}
-        deadlineLabel={formatDeadline(weekStart)}
-        deadlineMs={deadlineFor(weekStart).getTime()}
-        finishes={finishes}
-        history={history}
+        activeVenues={rows.length - setup}
+        notSetUp={setup}
       />
 
       <div className="grid grid-cols-12 gap-4">
+        <CompanyHero
+          percent={
+            itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0
+          }
+          itemsDone={itemsDone}
+          itemsTarget={itemsTarget}
+          passing={passing}
+          pending={pendingCount}
+          failing={failing}
+          setup={setup}
+          deadlineLabel={formatDeadline(weekStart)}
+          deadlineMs={deadlineFor(weekStart).getTime()}
+          finishes={finishes}
+          history={history}
+        />
+
         <VenueRows
           rows={rows}
           hrefPrefix="/admin/venue/"

@@ -21,7 +21,7 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
   }, [deadlineMs]);
 
   if (remaining === null) return <>—</>;
-  if (remaining <= 0) return <span className="text-fail">Past due</span>;
+  if (remaining <= 0) return <span className="text-warn">Past due</span>;
 
   const minutes = Math.floor(remaining / 60_000);
   const days = Math.floor(minutes / 1440);
@@ -45,6 +45,15 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
           <span className="text-body">m</span>
         </>
       )}
+    </>
+  );
+}
+
+/** One dim line: "THU 5:20 PM PT · 76° PARTLY CLOUDY". */
+export function ClockAndWeather() {
+  return (
+    <>
+      <Clock /> · <Weather />
     </>
   );
 }

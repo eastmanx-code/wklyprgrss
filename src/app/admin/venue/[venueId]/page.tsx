@@ -390,7 +390,7 @@ export default async function AdminVenuePage({
 
         {/* Last thing on the page, behind the disclosure, behind a warning. */}
         <section className="mt-10">
-          <h2 className="label text-fail mb-3">Danger</h2>
+          <h2 className="label text-warn mb-3">Danger</h2>
           <WipeVenue
             venueId={venue.id}
             venueCode={venue.code}

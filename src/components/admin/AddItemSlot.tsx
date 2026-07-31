@@ -86,7 +86,7 @@ export function AddItemSlot({
         </div>
 
         {state.error ? (
-          <p role="alert" className="label mt-2 text-fail">
+          <p role="alert" className="label mt-2 text-warn">
             {state.error}
           </p>
         ) : null}

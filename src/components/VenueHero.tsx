@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { Clock, Countdown, Weather } from "./DashLive";
+import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import type { WeekStatus } from "@/lib/types";
 
@@ -34,7 +34,7 @@ export function VenueHero({
   const shortOfItems = configured < total;
 
   return (
-    <div className="mb-12 grid grid-cols-12 gap-4">
+    <>
       <Card
         title="Your week"
         hint={`New photo + comment on all ${total}`}
@@ -43,7 +43,7 @@ export function VenueHero({
         <Dial
           percent={percent}
           caption={`${done} of ${total}`}
-          tone={missed ? "var(--fail)" : "var(--ink)"}
+          tone="var(--ink)"
         />
       </Card>
 
@@ -57,7 +57,7 @@ export function VenueHero({
             <span
               key={i}
               className={`h-8 w-8 rounded-full ${
-                i < done ? (missed ? "bg-fail" : "bg-ink") : "bg-divider"
+                i < done ? "bg-ink" : "bg-inset"
               }`}
             />
           ))}
@@ -73,10 +73,7 @@ export function VenueHero({
           <Countdown deadlineMs={deadlineMs} />
         </p>
         <p className="label mt-6">
-          <Clock />
-        </p>
-        <p className="label mt-2">
-          <Weather />
+          <ClockAndWeather />
         </p>
       </Card>
 
@@ -88,7 +85,7 @@ export function VenueHero({
         {/* Template strings, not JSX text: interpolating mid-sentence swallowed
             the space and shipped "10items are set up". */}
         <p
-          className={`text-body leading-[1.5] ${missed ? "text-fail" : "text-ink"}`}
+          className={`text-body leading-[1.5] ${missed ? "text-warn" : "text-ink"}`}
         >
           {shortOfItems
             ? `Only ${configured} of ${total} items are set up. A week can't pass with fewer than ${total} — add the rest from any empty slot below.`
@@ -99,6 +96,6 @@ export function VenueHero({
                 : `${total - done} still to go. Every one needs a new photo and a new comment.${redo ? ` ${redo} sent back.` : ""}`}
         </p>
       </Card>
-    </div>
+    </>
   );
 }

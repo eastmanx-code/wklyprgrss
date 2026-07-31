@@ -241,6 +241,20 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   const itemToVenue = new Map(allItems.map((i) => [i.id, i.venue_id]));
 
+  /**
+   * Two different questions, two different item sets — conflating them put a
+   * filled bar next to "not set up" on any venue whose only items were
+   * retired.
+   *
+   * This week asks "how much of what you have now is done", so it counts
+   * active items alone. Past weeks ask "did you complete that week", and the
+   * config back then is unrecorded, so those count every item — the photos
+   * genuinely happened.
+   */
+  const activeItemIds = new Set(
+    allItems.filter((i) => i.active).map((i) => i.id),
+  );
+
   // Active-only, because this answers "is this venue set up right now".
   const activeCountByVenue = new Map<string, number>();
   for (const item of allItems.filter((i) => i.active)) {
@@ -312,6 +326,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     entries.sort((a, b) => a.at.localeCompare(b.at));
     const seen = new Set<string>();
     for (const entry of entries) {
+      if (!activeItemIds.has(entry.item)) continue;
       seen.add(entry.item);
       if (seen.size === WEEKLY_ITEM_TARGET) {
         finishedAtByVenue.set(venueId, entry.at);
@@ -323,7 +338,10 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   const rows: VenueWeekSummary[] = venues.map((venue) => {
     const activeCount = activeCountByVenue.get(venue.id) ?? 0;
     const weeks = doneByVenueWeek.get(venue.id);
-    const doneCount = weeks?.get(weekStart)?.size ?? 0;
+    const doneThisWeek = weeks?.get(weekStart);
+    const doneCount = doneThisWeek
+      ? [...doneThisWeek].filter((id) => activeItemIds.has(id)).length
+      : 0;
 
     let failStreak = 0;
     const firstWeek = firstWeekByVenue.get(venue.id);
@@ -372,11 +390,16 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     itemsTarget: rows.length * WEEKLY_ITEM_TARGET,
     history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
       const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
-      let done = 0;
-      for (const weeks of doneByVenueWeek.values()) {
-        done += weeks.get(week)?.size ?? 0;
-      }
       const target = venues.length * WEEKLY_ITEM_TARGET;
+      // The current week reuses the rows the ring, buckets and list are all
+      // built from, so the chart's last point cannot drift from the headline.
+      const done =
+        week === weekStart
+          ? rows.reduce((sum, row) => sum + row.doneCount, 0)
+          : [...doneByVenueWeek.values()].reduce(
+              (sum, weeks) => sum + (weeks.get(week)?.size ?? 0),
+              0,
+            );
       return {
         weekStart: week,
         percent: target ? Math.round((done / target) * 100) : 0,

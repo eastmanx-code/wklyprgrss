@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { Clock, Countdown, Weather } from "./DashLive";
+import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
 import { WEEKLY_ITEM_TARGET } from "@/lib/status";
@@ -23,7 +23,7 @@ function Stat({
       <p className="label">{label}</p>
       <p
         className={`text-metric mt-2 leading-[1.2] tracking-normal tabular-nums ${
-          accent ? "text-fail" : "text-ink"
+          accent ? "text-warn" : "text-ink"
         }`}
       >
         {value}
@@ -66,16 +66,23 @@ export function CompanyHero({
   history: { weekStart: string; percent: number }[];
 }) {
   const first = finishes[0];
+  // Same series the chart plots, so the two can't disagree.
+  const lastWeek = history.length > 1 ? history[history.length - 2] : undefined;
   const last = finishes[finishes.length - 1];
 
   return (
-    <div className="mb-12 grid grid-cols-12 gap-4">
+    <>
       <Card
         title="Completion"
         hint={`New photo + comment on all ${WEEKLY_ITEM_TARGET}, every week`}
         className="col-span-12 sm:col-span-4"
       >
         <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
+        {lastWeek ? (
+          <p className="label mt-4 text-center">
+            Last week: {lastWeek.percent}%
+          </p>
+        ) : null}
       </Card>
 
       {history.length > 1 ? (
@@ -114,10 +121,7 @@ export function CompanyHero({
           <Countdown deadlineMs={deadlineMs} />
         </p>
         <p className="label mt-6">
-          <Clock />
-        </p>
-        <p className="label mt-2">
-          <Weather />
+          <ClockAndWeather />
         </p>
       </Card>
 
@@ -149,11 +153,11 @@ export function CompanyHero({
             ) : null}
           </div>
         ) : (
-          <p className="text-body text-muted leading-[1.5]">
+          <p className="text-body text-muted flex h-10 items-center leading-[1.5]">
             No venue has finished this week yet.
           </p>
         )}
       </Card>
-    </div>
+    </>
   );
 }

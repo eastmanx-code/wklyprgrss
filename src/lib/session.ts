@@ -6,7 +6,8 @@ import { cookies } from "next/headers";
 import { SUPABASE_SERVICE_ROLE_KEY } from "./env";
 
 const COOKIE_NAME = "ww_session";
-const LEADER_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+/** A day: leaders sign in each shift rather than staying logged in for a month. */
+const LEADER_TTL_MS = 24 * 60 * 60 * 1000;
 const ADMIN_TTL_MS = 12 * 60 * 60 * 1000;
 
 export type Session = { role: "leader"; venueId: string } | { role: "admin" };

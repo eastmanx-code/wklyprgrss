@@ -4,15 +4,19 @@
    dark product and a light device shouldn't change what it looks like. Light
    is opt-in through the toggle, which stamps data-theme="light". */
 :root {
+  /* Exactly three surfaces: page, card, inset (chart bg, tracks, chips). */
   --paper: #0b0b0a;
-  --surface: #1c1c1a;
-  --panel: #2b2b28;
+  --surface: #141413;
+  --panel: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --inset: rgba(255, 255, 255, 0.06);
+  --hover: rgba(255, 255, 255, 0.04);
   --ink: #f1f1ef;
   --muted: rgba(255, 255, 255, 0.45);
   --line: rgba(255, 255, 255, 0.08);
   --divider: rgba(255, 255, 255, 0.08);
-  --fail: #bcbc1e;
-  --on-fail: #0d0d0d;
+  --warn: #bcbc1e;
+  --on-warn: #0d0d0d;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
 }
@@ -20,13 +24,16 @@
 :root[data-theme="light"] {
   --paper: #f1f1ef;
   --surface: #ffffff;
-  --panel: #eaeae7;
+  --panel: rgba(0, 0, 0, 0.06);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --inset: rgba(0, 0, 0, 0.06);
+  --hover: rgba(0, 0, 0, 0.04);
   --ink: #0d0d0d;
   --muted: rgba(0, 0, 0, 0.45);
   --line: rgba(0, 0, 0, 0.08);
   --divider: rgba(0, 0, 0, 0.08);
-  --fail: #6f6f0f;
-  --on-fail: #ffffff;
+  --warn: #6f6f0f;
+  --on-warn: #ffffff;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);
 }
@@ -50,7 +57,10 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-line: var(--line);
-  --color-fail: var(--fail);
+  --color-warn: var(--warn);
+  --color-card-border: var(--card-border);
+  --color-inset: var(--inset);
+  --color-hover: var(--hover);
   --color-divider: var(--divider);
 
   --text-label: 11px;
@@ -58,9 +68,8 @@
   --text-body: 14px;
   --text-metric: 28px;
   --text-hero: 56px;
-  --color-on-fail: var(--on-fail);
+  --color-on-warn: var(--on-warn);
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
@@ -71,6 +80,38 @@
 :root[data-theme="light"] .theme-to-light,
 :root:not([data-theme="light"]) .theme-to-dark {
   display: none;
+}
+
+/* Defaults flash bright on a dark page. */
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--inset) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--inset);
+  border-radius: 4px;
+}
+
+/* One focus treatment everywhere, in the alert colour so it is unmistakable
+   against a monochrome page. */
+:focus-visible {
+  outline: 1px solid var(--color-warn);
+  outline-offset: 2px;
 }
 
 html {
@@ -368,10 +409,14 @@ p {
 
   /* A hairline frame, not just a fill difference — in dark mode a slightly
      lighter fill alone doesn't read as an edge. */
+  .row-hover:hover {
+    background: var(--hover);
+  }
+
   .panel {
     background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: 16px;
+    border: 1px solid var(--color-card-border);
+    border-radius: 8px;
     padding: 24px;
   }
 
@@ -402,7 +447,7 @@ p {
     gap: 0.5rem;
     min-height: 48px;
     padding: 0 1.5rem;
-    border-radius: 999px;
+    border-radius: 4px;
     background: var(--color-ink);
     color: var(--color-paper);
     font-size: var(--t-body);
@@ -436,7 +481,7 @@ p {
     gap: 0.5rem;
     min-height: 32px;
     padding: 0 16px;
-    border-radius: 999px;
+    border-radius: 4px;
     background: var(--color-panel);
     color: var(--color-ink);
     font-size: var(--t-label);
@@ -461,7 +506,7 @@ p {
     gap: 0.5rem;
     min-height: 48px;
     padding: 0 24px;
-    border-radius: 999px;
+    border-radius: 4px;
     background: var(--color-panel);
     color: var(--color-ink);
     font-size: var(--t-body);
@@ -476,7 +521,7 @@ p {
     width: 100%;
     min-height: 48px;
     padding: 16px;
-    border-radius: 16px;
+    border-radius: 8px;
     background: var(--color-panel);
     border: 1px solid transparent;
     color: var(--color-ink);
@@ -501,7 +546,7 @@ p {
     margin: auto;
     padding: 0;
     border: 1px solid var(--color-line);
-    border-radius: 16px;
+    border-radius: 8px;
     background: var(--color-paper);
     color: var(--color-ink);
   }
@@ -522,7 +567,7 @@ p {
     align-items: center;
     height: 24px;
     padding: 0 8px;
-    border-radius: 999px;
+    border-radius: 4px;
     font-family: var(--font-mono);
     font-size: var(--t-label);
     letter-spacing: var(--track-label);
@@ -540,11 +585,11 @@ p {
     color: var(--color-muted);
   }
 
-  .pill-fail {
-    background: var(--color-fail);
+  .pill-warn {
+    background: var(--color-warn);
     /* Per theme: the light accent is dark enough for white, the dark accent
        is a bright yellow that needs near-black. */
-    color: var(--color-on-fail);
+    color: var(--color-on-warn);
   }
 
   /* Submitted, counts for the week, but the leader says it isn't finished. */

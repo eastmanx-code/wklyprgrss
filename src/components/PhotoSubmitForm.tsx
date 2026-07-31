@@ -424,7 +424,7 @@ export function PhotoSubmitForm({
       </div>
 
       {error ? (
-        <p role="alert" className="text-body text-fail">
+        <p role="alert" className="text-body text-warn">
           {error}
         </p>
       ) : null}

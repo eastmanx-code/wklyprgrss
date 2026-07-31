@@ -53,7 +53,7 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
           </button>
         </div>
         {state.error ? (
-          <p role="alert" className="label text-fail">
+          <p role="alert" className="label text-warn">
             {state.error}
           </p>
         ) : (
@@ -89,7 +89,7 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
               </button>
               <form action={revokeAdminPin}>
                 <input type="hidden" name="id" value={entry.id} />
-                <button type="submit" className="btn-ghost text-fail">
+                <button type="submit" className="btn-ghost text-warn">
                   Revoke
                 </button>
               </form>

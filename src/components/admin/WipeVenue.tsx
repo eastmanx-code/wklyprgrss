@@ -27,7 +27,7 @@ export function WipeVenue({
       <button
         type="button"
         onClick={() => setArmed(true)}
-        className="btn-ghost text-fail"
+        className="btn-ghost text-warn"
       >
         Wipe {venueCode}
       </button>
@@ -35,10 +35,10 @@ export function WipeVenue({
   }
 
   return (
-    <div className="border-fail/60 bg-fail/5 rounded-[20px] border p-6">
-      <p className="label text-fail">Destructive · cannot be undone</p>
+    <div className="border-fail/60 bg-warn/5 rounded-[20px] border p-6">
+      <p className="label text-warn">Destructive · cannot be undone</p>
 
-      <h3 className="text-fail mt-3 text-metric leading-tight font-medium">
+      <h3 className="text-warn mt-3 text-metric leading-tight font-medium">
         Wipe {venueCode}&apos;s board?
       </h3>
 
@@ -67,7 +67,7 @@ export function WipeVenue({
         <form action={wipeVenue}>
           <input type="hidden" name="venueId" value={venueId} />
           <input type="hidden" name="confirm" value="WIPE" />
-          <button type="submit" className="btn bg-fail text-on-fail">
+          <button type="submit" className="btn bg-warn text-on-warn">
             Yes — wipe {venueCode}
           </button>
         </form>

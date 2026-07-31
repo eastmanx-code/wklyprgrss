@@ -1,20 +1,43 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-
 import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { formatFinish } from "@/lib/week";
 import type { VenueWeekSummary } from "@/lib/types";
 
 /**
- * The all-venues list: code, a thin bar, and the count.
+ * Ten discrete segments, not a continuous fill.
  *
- * A bar per venue rather than ten circles per venue — twenty-seven venues is
- * 270 circles, which is a texture, not a reading. Circles are kept for the
- * leader's own page, where there are only ten of them.
+ * The metric is ten photos, so the bar should be countable: at 1/10 a
+ * continuous fill is an unreadable sliver, while one lit segment out of ten
+ * reads instantly. Fill is always white — the alert colour is reserved for
+ * past due, failing and missed-week runs, and a yellow progress bar would say
+ * "progress is bad".
+ */
+function Segments({ done }: { done: number }) {
+  return (
+    <span className="flex min-w-0 flex-1 gap-[2px]">
+      {Array.from({ length: WEEKLY_ITEM_TARGET }, (_, i) => (
+        <span
+          key={i}
+          className={`h-2 flex-1 rounded-[1px] ${
+            i < done ? "bg-ink" : "bg-inset"
+          }`}
+        />
+      ))}
+    </span>
+  );
+}
+
+/**
+ * The all-venues list, split by whether a venue has anything to walk yet.
+ *
+ * Venues with no items collapse to code chips rather than rows: twenty-four
+ * empty tracks imply progress was possible this week, and chips say "not
+ * started" honestly.
  *
  * The two pages are the same view of the same week; the only difference is
- * where a row leads: the board to a read-only venue, admin to the screen with
+ * where a row leads — the board to a read-only venue, admin to the screen with
  * approve and send-back on it.
  */
 export function VenueRows({
@@ -29,55 +52,82 @@ export function VenueRows({
   /** venue code -> when it reached ten, for the venues that got there. */
   finishedAt?: Record<string, string>;
 }) {
+  const active = rows.filter((row) => row.status !== "SETUP");
+  const notSetUp = rows.filter((row) => row.status === "SETUP");
+
   return (
-    <Card
-      className="col-span-12"
-      title="Every venue"
-      hint={`Photos done out of ${WEEKLY_ITEM_TARGET} · finish time, or missed-week run`}
-    >
-      <ul className="stagger">
-        {rows.map((row) => {
-          const finished = finishedAt[row.venue.code];
-          const percent = (row.doneCount / WEEKLY_ITEM_TARGET) * 100;
+    <>
+      {active.length > 0 ? (
+        <Card
+          className="col-span-12"
+          title="Active venues"
+          hint={`Photos done out of ${WEEKLY_ITEM_TARGET}`}
+        >
+          <ul>
+            {active.map((row) => {
+              const finished = finishedAt[row.venue.code];
+              return (
+                <li key={row.venue.id} id={`venue-${row.venue.code}`}>
+                  <Link
+                    href={`${hrefPrefix}${row.venue.id}`}
+                    className="hover:bg-hover focus-visible:outline-warn -mx-2 flex h-10 items-center gap-4 rounded-[4px] px-2 transition-colors focus-visible:outline focus-visible:outline-1"
+                  >
+                    <span className="text-body text-ink w-16 shrink-0 tracking-normal tabular-nums">
+                      {row.venue.code}
+                    </span>
 
-          return (
-            <li
-              key={row.venue.id}
-              id={`venue-${row.venue.code}`}
-              className="border-divider scroll-mt-4 border-b last:border-0"
-            >
-              <Link
-                href={`${hrefPrefix}${row.venue.id}`}
-                className="hover:bg-ink/5 -mx-2 flex items-center gap-4 rounded-lg px-2 py-4 transition-colors"
-              >
-                <span className="text-body text-ink w-16 shrink-0 tracking-normal">
+                    <Segments done={row.doneCount} />
+
+                    <span className="text-body w-[72px] shrink-0 text-right tracking-normal tabular-nums">
+                      {finished ? (
+                        <span className="text-ink">
+                          {formatFinish(finished)}
+                        </span>
+                      ) : (
+                        <>
+                          <span className="text-ink">
+                            {row.doneCount}/{WEEKLY_ITEM_TARGET}
+                          </span>
+                          {row.failStreak > 0 ? (
+                            <span className="text-muted">
+                              {" "}
+                              · {row.failStreak}w
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                      {row.venue.id === ownVenueId ? (
+                        <span className="text-muted"> · you</span>
+                      ) : null}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ) : null}
+
+      {notSetUp.length > 0 ? (
+        <Card
+          className="col-span-12"
+          title="Not set up"
+          hint="No items yet — nothing to miss"
+        >
+          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+            {notSetUp.map((row) => (
+              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
+                <Link
+                  href={`${hrefPrefix}${row.venue.id}`}
+                  className="bg-inset hover:bg-hover focus-visible:outline-warn text-body text-muted flex h-10 items-center justify-center rounded-[4px] tracking-normal transition-colors focus-visible:outline focus-visible:outline-1"
+                >
                   {row.venue.code}
-                </span>
-
-                <span className="bg-divider h-2 min-w-0 flex-1 overflow-hidden rounded-full">
-                  <span
-                    className={`block h-full rounded-full ${
-                      row.status === "FAIL" ? "bg-fail" : "bg-ink"
-                    }`}
-                    style={{ width: `${percent}%` }}
-                  />
-                </span>
-
-                <span className="label w-32 shrink-0 text-right tabular-nums">
-                  {row.status === "SETUP"
-                    ? "Not set up"
-                    : finished
-                      ? formatFinish(finished)
-                      : row.failStreak > 0
-                        ? `${row.doneCount}/${WEEKLY_ITEM_TARGET} · ${row.failStreak}w`
-                        : `${row.doneCount}/${WEEKLY_ITEM_TARGET}`}
-                  {row.venue.id === ownVenueId ? " · you" : ""}
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </Card>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
+    </>
   );
 }

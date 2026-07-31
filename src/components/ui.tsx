@@ -6,7 +6,7 @@ export function StatusPill({ status }: { status: WeekStatus }) {
     status === "PASS"
       ? "pill pill-done"
       : status === "FAIL"
-        ? "pill pill-fail"
+        ? "pill pill-warn"
         : status === "SETUP"
           ? "pill pill-rolling"
           : "pill pill-pending";
@@ -80,7 +80,7 @@ export function ReviewPill({ review }: { review: ReviewState }) {
     return <span className="pill pill-done">Approved</span>;
   }
   if (review === "sent_back") {
-    return <span className="pill pill-fail">Sent back</span>;
+    return <span className="pill pill-warn">Sent back</span>;
   }
   return <span className="pill pill-pending">Needs review</span>;
 }

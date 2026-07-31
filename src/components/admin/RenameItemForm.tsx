@@ -43,7 +43,7 @@ export function RenameItemForm({
         ) : null}
       </div>
       {state.error ? (
-        <p role="alert" className="mt-2 text-body text-fail">
+        <p role="alert" className="mt-2 text-body text-warn">
           {state.error}
         </p>
       ) : null}

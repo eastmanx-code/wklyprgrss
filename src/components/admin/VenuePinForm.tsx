@@ -59,7 +59,7 @@ export function VenuePinForm({
       </button>
 
       {state.error ? (
-        <p role="alert" className="label text-fail w-full">
+        <p role="alert" className="label text-warn w-full">
           {state.error}
         </p>
       ) : (

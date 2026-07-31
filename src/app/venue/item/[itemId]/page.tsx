@@ -72,7 +72,7 @@ export default async function ItemPage({
         </div>
         <div className="mt-3">
           {sentBack ? (
-            <span className="pill pill-fail">Redo</span>
+            <span className="pill pill-warn">Redo</span>
           ) : rolling ? (
             <span className="pill pill-rolling">Rolling</span>
           ) : (

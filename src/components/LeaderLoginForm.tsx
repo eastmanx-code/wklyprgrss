@@ -54,7 +54,7 @@ export function LeaderLoginForm({
       </div>
 
       {state.error ? (
-        <p role="alert" className="text-body text-fail">
+        <p role="alert" className="text-body text-warn">
           {state.error}
         </p>
       ) : null}
