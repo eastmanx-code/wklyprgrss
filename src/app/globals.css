@@ -392,6 +392,18 @@ p {
     letter-spacing: 0;
   }
 
+  /* The one place the house uppercase is set aside. Everything else is display
+     text scanned at a glance; an attestation is a sentence someone has to read
+     and mean before putting their name to it, and long uppercase prose gets
+     read by shape, which is to say skimmed. Same exception the leaders' own
+     comments already get. */
+  .attest {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
   /* Short helper and status lines. */
   .note {
     text-transform: uppercase;
