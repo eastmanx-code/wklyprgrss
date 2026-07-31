@@ -77,9 +77,7 @@ export default async function BoardVenuePage({
 
       <header className="mt-4 mb-6">
         <p className="label">Venue</p>
-        <h1 className="mt-2 font-mono text-2xl font-medium tracking-tight">
-          {venue.code}
-        </h1>
+        <h1 className="mt-2 font-mono text-metric font-medium">{venue.code}</h1>
         <div className="mt-3 flex items-center gap-2">
           <StatusPill status={status} />
           <span className="label">
@@ -117,7 +115,7 @@ export default async function BoardVenuePage({
                 </span>
               </div>
 
-              <p className="caps mt-3 text-xs leading-snug font-medium">
+              <p className="caps mt-3 text-body leading-snug font-medium">
                 {item.title}
               </p>
               <p className="label mt-1">
@@ -128,7 +126,7 @@ export default async function BoardVenuePage({
 
               {latest ? (
                 <>
-                  <p className="mt-2 line-clamp-3 text-xs leading-relaxed">
+                  <p className="mt-2 line-clamp-3 text-body leading-relaxed">
                     {latest.comment}
                   </p>
                   <Attribution
@@ -161,7 +159,7 @@ export default async function BoardVenuePage({
                               />
                             </div>
                           ) : null}
-                          <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                          <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
                             {submission.comment}
                           </p>
                           <Attribution

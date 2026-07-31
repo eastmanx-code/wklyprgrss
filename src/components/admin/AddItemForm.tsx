@@ -33,7 +33,7 @@ export function AddItemForm({ venueId }: { venueId: string }) {
         </button>
       </div>
       {state.error ? (
-        <p role="alert" className="text-sm text-fail">
+        <p role="alert" className="text-body text-fail">
           {state.error}
         </p>
       ) : null}

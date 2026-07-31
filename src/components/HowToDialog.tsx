@@ -74,9 +74,7 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
         <div className="ww-dialog-body">
           <header className="mb-4">
             <p className="label">{APP_NAME} · before you start</p>
-            <h2 className="mt-2 text-xl font-medium tracking-tight">
-              How to use this
-            </h2>
+            <h2 className="mt-2 text-metric font-medium">How to use this</h2>
           </header>
 
           {children}

@@ -1,4 +1,4 @@
-# WKY >> PRGRSS
+# WKLY > PRGRSS
 
 Weekly progress photos for a 27-venue hospitality group.
 

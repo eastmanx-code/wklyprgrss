@@ -121,7 +121,7 @@ export default async function ItemPage({
               <PurgedPhoto aspect="wide" />
             )}
           </div>
-          <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+          <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
             {previous.comment}
           </p>
           <p className="label mt-2">
@@ -156,7 +156,7 @@ export default async function ItemPage({
         <h2 className="label mb-3">History · newest first</h2>
 
         {submissions.length === 0 ? (
-          <p className="text-sm text-muted">Nothing submitted yet.</p>
+          <p className="text-body text-muted">Nothing submitted yet.</p>
         ) : (
           <ul className="space-y-3">
             {submissions.map((submission) => {
@@ -219,7 +219,7 @@ export default async function ItemPage({
                       ) : null}
                     </figure>
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                  <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
                     {submission.comment}
                   </p>
                   <Attribution

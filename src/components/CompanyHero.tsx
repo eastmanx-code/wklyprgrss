@@ -121,14 +121,15 @@ export function CompanyHero({
         </p>
       </Card>
 
-      {/* Hidden until someone has finished: an empty card teaches nothing and
-          takes the same room. */}
-      {first ? (
-        <Card
-          title="Turnaround"
-          hint={`When the ${WEEKLY_ITEM_TARGET}th photo landed`}
-          className="col-span-12"
-        >
+      {/* Always present, with an empty state. Hiding it until someone finished
+          made the card look like it had gone missing on a week where nobody
+          had. */}
+      <Card
+        title="Turnaround"
+        hint={`When the ${WEEKLY_ITEM_TARGET}th photo landed`}
+        className="col-span-12"
+      >
+        {first ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <p className="label">First in</p>
@@ -147,8 +148,12 @@ export function CompanyHero({
               </div>
             ) : null}
           </div>
-        </Card>
-      ) : null}
+        ) : (
+          <p className="text-body text-muted leading-[1.5]">
+            No venue has finished this week yet.
+          </p>
+        )}
+      </Card>
     </div>
   );
 }

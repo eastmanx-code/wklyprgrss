@@ -38,7 +38,7 @@ export function WipeVenue({
     <div className="border-fail/60 bg-fail/5 rounded-[20px] border p-6">
       <p className="label text-fail">Destructive · cannot be undone</p>
 
-      <h3 className="text-fail mt-3 text-xl leading-tight font-medium tracking-tight">
+      <h3 className="text-fail mt-3 text-metric leading-tight font-medium">
         Wipe {venueCode}&apos;s board?
       </h3>
 

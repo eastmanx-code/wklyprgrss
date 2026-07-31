@@ -27,7 +27,7 @@ export default async function BoardPage() {
       <header className="mb-6 flex items-start justify-between gap-4">
         <div>
           <p className="label">Week of {formatWeekStart(weekStart)}</p>
-          <h1 className="mt-2 text-2xl font-medium tracking-tight">
+          <h1 className="text-metric mt-2 tracking-normal">
             Everyone&apos;s progress
           </h1>
         </div>
@@ -53,12 +53,14 @@ export default async function BoardPage() {
         history={history}
       />
 
-      <VenueRows
-        rows={rows}
-        hrefPrefix="/board/"
-        ownVenueId={ownVenueId}
-        finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
-      />
+      <div className="grid grid-cols-12 gap-4">
+        <VenueRows
+          rows={rows}
+          hrefPrefix="/board/"
+          ownVenueId={ownVenueId}
+          finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
+        />
+      </div>
     </main>
   );
 }

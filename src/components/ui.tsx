@@ -139,9 +139,7 @@ export function PageHeader({
     <header className="mb-6 flex items-start justify-between gap-4">
       <div className="min-w-0">
         <p className="label">{eyebrow}</p>
-        <h1 className="mt-2 truncate text-2xl font-medium tracking-tight">
-          {title}
-        </h1>
+        <h1 className="mt-2 truncate text-metric font-medium">{title}</h1>
         {meta ? <p className="label mt-2">{meta}</p> : null}
       </div>
       {action}

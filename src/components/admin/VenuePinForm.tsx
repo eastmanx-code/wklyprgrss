@@ -36,7 +36,7 @@ export function VenuePinForm({
         id="venue-pin"
         name="pin"
         type={revealed ? "text" : "password"}
-        className="bg-panel text-ink h-8 w-28 rounded-full px-3 text-center font-mono text-xs tracking-[0.3em] outline-none focus:ring-1 focus:ring-current"
+        className="bg-panel text-ink h-8 w-28 rounded-full px-3 text-center font-mono text-body tracking-[0.3em] outline-none focus:ring-1 focus:ring-current"
         defaultValue={pin}
         inputMode="numeric"
         pattern="\d{6}"

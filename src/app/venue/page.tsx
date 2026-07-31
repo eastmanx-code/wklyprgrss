@@ -32,7 +32,7 @@ export default async function VenuePage() {
     <main>
       <header className="mb-6">
         <p className="label">Week of {formatWeekStart(board.weekStart)}</p>
-        <h1 className="mt-2 truncate text-2xl font-medium tracking-tight">
+        <h1 className="text-metric mt-2 truncate tracking-normal">
           {venue.name && venue.name !== venue.code ? venue.name : venue.code}
         </h1>
       </header>
@@ -74,7 +74,7 @@ export default async function VenuePage() {
                   <PhotoPlaceholder />
                 )}
                 <div className="mt-3 flex items-start justify-between gap-2">
-                  <p className="caps text-sm leading-snug font-medium">
+                  <p className="caps text-body leading-snug font-medium">
                     {item.title}
                   </p>
                 </div>

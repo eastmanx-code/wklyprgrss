@@ -35,6 +35,7 @@
    Letter-spacing lives on the 11px label role alone. */
 :root {
   --t-label: 11px;
+  --t-title: 16px;
   --t-body: 14px;
   --t-metric: 28px;
   --t-hero: 56px;
@@ -53,6 +54,7 @@
   --color-divider: var(--divider);
 
   --text-label: 11px;
+  --text-title: 16px;
   --text-body: 14px;
   --text-metric: 28px;
   --text-hero: 56px;
@@ -342,6 +344,16 @@ p {
     letter-spacing: 0;
     font-size: var(--t-body);
     line-height: 1.5;
+  }
+
+  /* Card headers. 16px white, tracked like the label role. */
+  .card-title {
+    font-family: var(--font-mono);
+    font-size: var(--t-title);
+    line-height: 1.2;
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--color-ink);
   }
 
   /* Small tracked mono caption — the modernist plate label. */

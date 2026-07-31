@@ -19,7 +19,7 @@ export default function Error({
 }) {
   function reportBug() {
     const lines = [
-      "Something went wrong in WKY >> PRGRSS.",
+      "Something went wrong in WKLY > PRGRSS.",
       "",
       `Page: ${window.location.href}`,
       `Reference: ${error.digest ?? "none"}`,
@@ -29,7 +29,7 @@ export default function Error({
       "What I was doing:",
       "",
     ];
-    const subject = encodeURIComponent("WKY >> PRGRSS bug report");
+    const subject = encodeURIComponent("WKLY > PRGRSS bug report");
     const body = encodeURIComponent(lines.join("\n"));
     window.location.href = `mailto:${BUG_EMAIL}?subject=${subject}&body=${body}`;
   }
@@ -38,7 +38,7 @@ export default function Error({
     <main className="mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <div className="panel p-8 text-center">
         <p className="label">Something went wrong</p>
-        <h1 className="mt-4 text-xl font-medium tracking-tight">
+        <h1 className="mt-4 text-metric font-medium">
           We couldn&apos;t load that
         </h1>
         <p className="note mx-auto mt-5 max-w-xs leading-relaxed text-muted">

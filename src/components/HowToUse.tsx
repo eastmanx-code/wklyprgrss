@@ -73,7 +73,7 @@ export function LeaderGuide({
   return (
     <>
       <section className="panel mb-3">
-        <h2 className="text-lg font-medium tracking-tight">The rule</h2>
+        <h2 className="text-body font-medium">The rule</h2>
         <p className="note mt-4 leading-relaxed">
           By {deadlineLabel}, all {target} items need a{" "}
           <strong>new photo</strong> and a <strong>new comment</strong>. Nothing
@@ -82,7 +82,7 @@ export function LeaderGuide({
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-lg font-medium tracking-tight">Uploading</h2>
+        <h2 className="text-body font-medium">Uploading</h2>
         <ol className="mt-5 space-y-4">
           <Step n={1}>Tap a card and take or choose the photo.</Step>
           <Step n={2}>Say whether it&apos;s done or needs one more cycle.</Step>
@@ -99,7 +99,7 @@ export function LeaderGuide({
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-lg font-medium tracking-tight">Badges</h2>
+        <h2 className="text-body font-medium">Badges</h2>
         <ul className="mt-5 space-y-4">
           <Term label="Done">Photo and comment are in for this week.</Term>
           <Term label="Rolling">
@@ -116,9 +116,7 @@ export function LeaderGuide({
       </section>
 
       <section className="panel">
-        <h2 className="text-lg font-medium tracking-tight">
-          Everyone&apos;s board
-        </h2>
+        <h2 className="text-body font-medium">Everyone&apos;s board</h2>
         <p className="note mt-4 leading-relaxed">
           You can open any other venue and see what they uploaded. One team
           seeing another&apos;s work raises the bar for everyone.

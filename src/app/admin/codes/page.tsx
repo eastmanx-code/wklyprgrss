@@ -27,9 +27,7 @@ export default async function AdminCodesPage() {
     <main className="mx-auto max-w-2xl">
       <header className="mb-6">
         <p className="label">Admin</p>
-        <h1 className="mt-2 text-2xl font-medium tracking-tight">
-          Admin codes
-        </h1>
+        <h1 className="mt-2 text-metric font-medium">Admin codes</h1>
       </header>
 
       <AdminPins pins={(adminPins ?? []) as AdminPin[]} />

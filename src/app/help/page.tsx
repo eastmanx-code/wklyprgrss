@@ -23,9 +23,7 @@ export default async function HelpPage() {
 
       <header className="mt-4 mb-6">
         <p className="label">{APP_NAME}</p>
-        <h1 className="mt-2 text-2xl font-medium tracking-tight">
-          How to use this
-        </h1>
+        <h1 className="mt-2 text-metric font-medium">How to use this</h1>
       </header>
 
       <LeaderGuide target={WEEKLY_ITEM_TARGET} deadlineLabel={deadlineLabel} />

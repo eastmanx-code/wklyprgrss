@@ -95,9 +95,7 @@ export default async function AdminVenuePage({
 
       <header className="mt-4 mb-6">
         <p className="label">Venue</p>
-        <h1 className="mt-2 font-mono text-2xl font-medium tracking-tight">
-          {venue.code}
-        </h1>
+        <h1 className="mt-2 font-mono text-metric font-medium">{venue.code}</h1>
         <div className="mt-3 flex items-center gap-2">
           <StatusPill status={status} />
           <span className="label">
@@ -156,7 +154,7 @@ export default async function AdminVenuePage({
                   ) : null}
                 </div>
 
-                <p className="caps mt-3 text-xs leading-snug font-medium">
+                <p className="caps mt-3 text-body leading-snug font-medium">
                   {item.title}
                 </p>
                 <p className="label mt-1">
@@ -167,7 +165,7 @@ export default async function AdminVenuePage({
 
                 {submission ? (
                   <>
-                    <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed">
+                    <p className="mt-1.5 line-clamp-3 text-body leading-relaxed">
                       {submission.comment}
                     </p>
                     <Attribution
@@ -259,7 +257,7 @@ export default async function AdminVenuePage({
           <h2 className="label mb-3">Items</h2>
 
           {items.length === 0 ? (
-            <p className="text-sm text-muted">
+            <p className="text-body text-muted">
               No items yet. Add the first above.
             </p>
           ) : (
@@ -335,7 +333,7 @@ export default async function AdminVenuePage({
                       </summary>
 
                       {history.length === 0 ? (
-                        <p className="mt-3 text-sm text-muted">
+                        <p className="mt-3 text-body text-muted">
                           Nothing submitted yet.
                         </p>
                       ) : (
@@ -363,7 +361,7 @@ export default async function AdminVenuePage({
                                     />
                                   </div>
                                 ) : null}
-                                <p className="mt-3 text-sm leading-relaxed whitespace-pre-wrap">
+                                <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
                                   {submission.comment}
                                 </p>
                                 <Attribution

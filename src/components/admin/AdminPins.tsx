@@ -70,10 +70,10 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
               key={entry.id}
               className="panel flex flex-wrap items-center gap-3 px-5 py-3"
             >
-              <span className="caps flex-1 text-sm font-medium">
+              <span className="caps flex-1 text-body font-medium">
                 {entry.label}
               </span>
-              <span className="font-mono text-sm tracking-[0.3em] tabular-nums">
+              <span className="font-mono text-body tracking-[0.3em] tabular-nums">
                 {revealed === entry.id ? entry.pin : "••••••"}
               </span>
               <button
