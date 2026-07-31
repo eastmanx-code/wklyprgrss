@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { compressToJpeg, decodeMessage } from "@/lib/compress";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -196,6 +197,7 @@ export function CloseChecklist({
     }
 
     setDone((c) => ({ ...c, [item.number]: true }));
+    void persistTick(item, true);
   }
 
   async function onCapture(
@@ -207,13 +209,30 @@ export function CloseChecklist({
     const kind = item.proof[shotIndex].kind;
     if (kind === "note") return;
 
-    const url = URL.createObjectURL(file);
+    setSaving(true);
+
+    let upload = file;
+    if (kind === "photo") {
+      try {
+        upload = await compressToJpeg(file);
+      } catch (error) {
+        setSaving(false);
+        setShortfall(decodeMessage(error));
+        return;
+      }
+    }
+    const url = URL.createObjectURL(upload);
     objectUrls.current.push(url);
 
     // Straight to storage, then a row pointing at it — the action only ever
     // carries text, the same shape the weekly photos use.
-    setSaving(true);
-    const target = await captureTarget(slug, item.id ?? "", shotIndex, kind);
+    const target = await captureTarget(
+      slug,
+      item.id ?? "",
+      shotIndex,
+      kind,
+      kind === "video" ? (file.name.split(".").pop() ?? "") : "",
+    );
     if (target.error || !target.signedUrl || !target.path) {
       setSaving(false);
       setShortfall(target.error ?? "Could not start the upload.");
@@ -222,8 +241,13 @@ export function CloseChecklist({
     try {
       const response = await fetch(target.signedUrl, {
         method: "PUT",
-        headers: { "content-type": file.type || "application/octet-stream" },
-        body: file,
+        headers: {
+          "content-type":
+            kind === "photo"
+              ? "image/jpeg"
+              : upload.type || "application/octet-stream",
+        },
+        body: upload,
       });
       if (!response.ok) throw new Error(String(response.status));
     } catch {
@@ -255,6 +279,7 @@ export function CloseChecklist({
       );
       if (all) {
         setDone((c) => ({ ...c, [item.number]: true }));
+        void persistTick(item, true);
       }
       return next;
     });
@@ -264,7 +289,7 @@ export function CloseChecklist({
     if (locked) return;
     const missing: string[] = [];
     if (!certifier.trim()) missing.push("your name");
-    if (!signed) missing.push("your signature");
+    if (!signed || !signatureRef.current) missing.push("your signature");
     if (missing.length > 0) {
       setShortfall(`Still needed: ${missing.join(" and ")}.`);
       return;
@@ -283,7 +308,7 @@ export function CloseChecklist({
       data.set("slug", slug);
       data.set("certifiedBy", certifier.trim());
       data.set("attestation", attestationText);
-      data.set("signature", signatureRef.current ?? "drawn");
+      data.set("signature", signatureRef.current ?? "");
       data.set(
         "openAtSigning",
         JSON.stringify(openItems.map((i) => `${i.number} · ${i.title}`)),
@@ -564,9 +589,20 @@ export function CloseChecklist({
                                 setSaving(true);
                                 const r = await saveNote({ error: null }, data);
                                 setSaving(false);
-                                if (r.error) setShortfall(r.error);
-                                else if ((notes[key] ?? "").trim())
-                                  void persistTick(item, true);
+                                if (r.error) {
+                                  setShortfall(r.error);
+                                  return;
+                                }
+                                const all = shots.every((other, otherIndex) =>
+                                  otherIndex === index
+                                    ? Boolean((notes[key] ?? "").trim())
+                                    : shotFilled(
+                                        item.number,
+                                        otherIndex,
+                                        other.kind,
+                                      ),
+                                );
+                                if (all) void persistTick(item, true);
                               }}
                             />
                           </div>
@@ -844,8 +880,14 @@ function SignaturePad({
             drawing.current = false;
             onInk(event.currentTarget.toDataURL("image/png"));
           }}
-          onPointerCancel={() => {
+          onPointerCancel={(event) => {
             drawing.current = false;
+            onInk(event.currentTarget.toDataURL("image/png"));
+          }}
+          onPointerLeave={(event) => {
+            if (!drawing.current) return;
+            drawing.current = false;
+            onInk(event.currentTarget.toDataURL("image/png"));
           }}
         />
         {!signed ? (
