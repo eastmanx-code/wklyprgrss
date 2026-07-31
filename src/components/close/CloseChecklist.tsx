@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
@@ -8,6 +9,7 @@ import {
   captureTarget,
   certifyNight,
   recordCapture,
+  reopenNight,
   saveNote,
   tickItem,
 } from "@/app/close/actions";
@@ -19,6 +21,12 @@ export type SavedNight = {
   proof: Record<string, { kind: string; body: string | null; url: string | null }>;
   certifiedBy: string | null;
   certifiedAt: string | null;
+  /** Certifications this night has already had, oldest first. */
+  history: {
+    certifiedBy: string | null;
+    certifiedAt: string | null;
+    reason: string | null;
+  }[];
 };
 
 type Capture = { url: string; kind: "photo" | "video" };
@@ -46,6 +54,7 @@ export function CloseChecklist({
   items: CloseItem[];
   saved: SavedNight;
 }) {
+  const router = useRouter();
   const CLOSE_CHECKLIST = items;
   const CLOSE_TOTAL = items.length;
   const shotsOfKind = (kind: ProofKind) =>
@@ -103,6 +112,9 @@ export function CloseChecklist({
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
+  const [reopenPin, setReopenPin] = useState("");
+  const [reopenReason, setReopenReason] = useState("");
+  const [reopenError, setReopenError] = useState<string | null>(null);
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
   const notesRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
@@ -328,6 +340,37 @@ export function CloseChecklist({
     );
   }
 
+  /**
+   * Back to a working night. The ticks and the proof stay — reopening exists
+   * because one thing was wrong, and making everyone redo the other nine is
+   * how you teach a crew to sign first and check later.
+   */
+  async function reopen() {
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("pin", reopenPin);
+    data.set("reason", reopenReason);
+    setSaving(true);
+    const result = await reopenNight({ error: null }, data);
+    setSaving(false);
+    if (result.error) {
+      setReopenError(result.error);
+      return;
+    }
+    setReopenError(null);
+    setReopenPin("");
+    setReopenReason("");
+    setCertified(null);
+    setSigned(false);
+    setCertifier("");
+    signatureRef.current = null;
+    // Local state unlocks the page immediately; the refresh is what brings
+    // back the history the server just wrote. Without it the night reopens
+    // and shows no sign it was ever signed, which is the opposite of the
+    // point.
+    router.refresh();
+  }
+
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
   const attestationText =
     doneCount === CLOSE_TOTAL
@@ -346,6 +389,51 @@ export function CloseChecklist({
           <p className="text-label mt-1 tracking-[0.08em] opacity-70">
             Closed out and locked. Nothing on this night can change now.
           </p>
+
+          {/* Behind a disclosure, not a button on the banner. Reopening a
+              signed night should take a decision, and the person who needs it
+              will find it — the person who does not should not trip over it. */}
+          <details className="mt-3">
+            <summary className="text-label inline-flex min-h-11 cursor-pointer items-center tracking-[0.08em] underline underline-offset-4 opacity-70">
+              Reopen with a manager PIN
+            </summary>
+
+            <div className="mt-3 space-y-3">
+              <p className="text-label leading-relaxed tracking-[0.08em] opacity-70">
+                The signature already on this night is kept. The record will
+                show it was certified, reopened, and certified again.
+              </p>
+              <input
+                className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="Manager PIN"
+                type="password"
+                value={reopenPin}
+                onChange={(event) => setReopenPin(event.target.value)}
+              />
+              <input
+                className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
+                autoComplete="off"
+                placeholder="Why (optional, kept with the record)"
+                value={reopenReason}
+                onChange={(event) => setReopenReason(event.target.value)}
+              />
+              {reopenError ? (
+                <p role="alert" className="text-body text-warn">
+                  {reopenError}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className="bg-warn text-on-warn inline-flex min-h-11 items-center rounded px-4 text-body tracking-[0.08em]"
+                disabled={saving}
+                onClick={() => void reopen()}
+              >
+                {saving ? "Unlocking…" : "Unlock this night"}
+              </button>
+            </div>
+          </details>
         </section>
       ) : null}
 
@@ -694,6 +782,33 @@ export function CloseChecklist({
             ? `Still open · ${openItems.length}`
             : `All ${CLOSE_TOTAL} complete`}
         </p>
+
+        {/* A reopened night says so, on its face. The record is only worth
+            keeping if somebody can read it without database access — and a
+            second signature with no sign of the first is exactly the thing
+            this was built to avoid. */}
+        {saved.history.length > 0 ? (
+          <div className="border-warn/40 mt-3 rounded-[8px] border p-4">
+            <p className="label text-warn">
+              Reopened {saved.history.length === 1 ? "once" : `${saved.history.length} times`}
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {saved.history.map((entry, index) => (
+                <li key={index} className="label leading-snug">
+                  Certified by {entry.certifiedBy ?? "—"}
+                  {entry.certifiedAt
+                    ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString("en-US", {
+                        timeZone: "America/Los_Angeles",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}`
+                    : ""}
+                  {entry.reason ? ` · ${entry.reason}` : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <div className="border-ink mt-2.5 border-l-2 pl-4">
           <p className="attest">{attestationText}</p>
