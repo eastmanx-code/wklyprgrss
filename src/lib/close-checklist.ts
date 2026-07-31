@@ -17,6 +17,8 @@ export type ProofKind = "photo" | "video" | "note";
 export type Shot = { kind: ProofKind; prompt: string };
 
 export type CloseItem = {
+  /** Row id once the list comes from the table. */
+  id?: string;
   /** Displayed, and how MODs already refer to these to each other. */
   number: number;
   title: string;

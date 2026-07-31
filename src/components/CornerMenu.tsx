@@ -32,8 +32,8 @@ export async function CornerMenu() {
        collapsed state is genuinely small. */
     <nav className="fixed right-4 bottom-4 z-50">
       <details className="ww-menu">
-        <summary className="border-card-border bg-surface/90 text-ink flex h-14 cursor-pointer items-center gap-2 rounded-[8px] border px-3 backdrop-blur-md">
-          <span className="label text-ink">Menu</span>
+        <summary className="border-warn/60 bg-surface text-warn flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[8px] border px-4">
+          <span className="label text-warn">Menu</span>
           <span className="ww-menu-caret" aria-hidden />
         </summary>
 

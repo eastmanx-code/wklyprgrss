@@ -3,6 +3,22 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
+import {
+  captureTarget,
+  certifyNight,
+  recordCapture,
+  saveNote,
+  tickItem,
+} from "@/app/close/actions";
+
+export type SavedNight = {
+  /** item id -> initials */
+  ticks: Record<string, string>;
+  /** "itemId:shotIndex" -> what was captured */
+  proof: Record<string, { kind: string; body: string | null; url: string | null }>;
+  certifiedBy: string | null;
+  certifiedAt: string | null;
+};
 
 type Capture = { url: string; kind: "photo" | "video" };
 
@@ -20,7 +36,15 @@ const slotKey = (item: number, shot: number) => `${item}:${shot}`;
  * legible afterwards — four people work a close, and "who did the restrooms"
  * has to have an answer.
  */
-export function CloseChecklist({ items }: { items: CloseItem[] }) {
+export function CloseChecklist({
+  slug,
+  items,
+  saved,
+}: {
+  slug: string;
+  items: CloseItem[];
+  saved: SavedNight;
+}) {
   const CLOSE_CHECKLIST = items;
   const CLOSE_TOTAL = items.length;
   const shotsOfKind = (kind: ProofKind) =>
@@ -30,16 +54,52 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
   const VIDEO_SHOTS = shotsOfKind("video");
   const NOTE_SHOTS = shotsOfKind("note");
 
-  const [done, setDone] = useState<Record<number, boolean>>({});
-  const [captures, setCaptures] = useState<Record<string, Capture>>({});
-  const [notes, setNotes] = useState<Record<string, string>>({});
-  const [rowInitials, setRowInitials] = useState<Record<number, string>>({});
+  const [done, setDone] = useState<Record<number, boolean>>(() =>
+    Object.fromEntries(
+      items.map((item) => [item.number, Boolean(saved.ticks[item.id ?? ""])]),
+    ),
+  );
+  const [captures, setCaptures] = useState<Record<string, Capture>>(() =>
+    Object.fromEntries(
+      Object.entries(saved.proof)
+        .filter(([, v]) => v.kind !== "note" && v.url)
+        .map(([k, v]) => {
+          const [itemId, shot] = k.split(":");
+          const item = items.find((i) => i.id === itemId);
+          return [
+            slotKey(item?.number ?? 0, Number(shot)),
+            { url: v.url as string, kind: v.kind as "photo" | "video" },
+          ];
+        }),
+    ),
+  );
+  const [notes, setNotes] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      Object.entries(saved.proof)
+        .filter(([, v]) => v.kind === "note" && v.body)
+        .map(([k, v]) => {
+          const [itemId, shot] = k.split(":");
+          const item = items.find((i) => i.id === itemId);
+          return [slotKey(item?.number ?? 0, Number(shot)), v.body as string];
+        }),
+    ),
+  );
+  const [rowInitials, setRowInitials] = useState<Record<number, string>>(() =>
+    Object.fromEntries(
+      items
+        .filter((item) => saved.ticks[item.id ?? ""])
+        .map((item) => [item.number, saved.ticks[item.id ?? ""]]),
+    ),
+  );
+  const [saving, setSaving] = useState(false);
   const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
   /** Tapped, and waiting on its initials before it does anything. */
   const [pending, setPending] = useState<number | null>(null);
-  const [certifier, setCertifier] = useState("");
-  const [signed, setSigned] = useState(false);
-  const [certified, setCertified] = useState<string | null>(null);
+  const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
+  const [signed, setSigned] = useState(Boolean(saved.certifiedAt));
+  const [certified, setCertified] = useState<string | null>(
+    saved.certifiedAt ? `Certified by ${saved.certifiedBy ?? "—"}` : null,
+  );
   const [shortfall, setShortfall] = useState<string | null>(null);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
 
@@ -48,6 +108,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
   const initialsRefs = useRef<Record<number, HTMLInputElement | null>>({});
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
+  const signatureRef = useRef<string | null>(null);
 
   useEffect(() => {
     const urls = objectUrls.current;
@@ -85,6 +146,18 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
     return false;
   }
 
+  async function persistTick(item: CloseItem, on: boolean) {
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("itemId", item.id ?? "");
+    data.set("initials", initialsFor(item.number));
+    data.set("on", String(on));
+    setSaving(true);
+    const result = await tickItem({ error: null }, data);
+    setSaving(false);
+    if (result.error) setShortfall(result.error);
+  }
+
   function toggle(item: CloseItem) {
     if (locked) return;
     if (done[item.number]) {
@@ -101,6 +174,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
           return next;
         });
       }
+      void persistTick(item, false);
       return;
     }
 
@@ -124,12 +198,53 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
     setDone((c) => ({ ...c, [item.number]: true }));
   }
 
-  function onCapture(item: CloseItem, shotIndex: number, file: File | undefined) {
+  async function onCapture(
+    item: CloseItem,
+    shotIndex: number,
+    file: File | undefined,
+  ) {
     if (locked || !file || !item.proof) return;
-    const url = URL.createObjectURL(file);
-    objectUrls.current.push(url);
     const kind = item.proof[shotIndex].kind;
     if (kind === "note") return;
+
+    const url = URL.createObjectURL(file);
+    objectUrls.current.push(url);
+
+    // Straight to storage, then a row pointing at it — the action only ever
+    // carries text, the same shape the weekly photos use.
+    setSaving(true);
+    const target = await captureTarget(slug, item.id ?? "", shotIndex, kind);
+    if (target.error || !target.signedUrl || !target.path) {
+      setSaving(false);
+      setShortfall(target.error ?? "Could not start the upload.");
+      return;
+    }
+    try {
+      const response = await fetch(target.signedUrl, {
+        method: "PUT",
+        headers: { "content-type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (!response.ok) throw new Error(String(response.status));
+    } catch {
+      setSaving(false);
+      setShortfall("Could not upload that. Check your signal and try again.");
+      return;
+    }
+
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("itemId", item.id ?? "");
+    data.set("shotIndex", String(shotIndex));
+    data.set("kind", kind);
+    data.set("path", target.path);
+    data.set("initials", initialsFor(item.number));
+    const recorded = await recordCapture({ error: null }, data);
+    setSaving(false);
+    if (recorded.error) {
+      setShortfall(recorded.error);
+      return;
+    }
 
     setCaptures((current) => {
       const next = { ...current, [slotKey(item.number, shotIndex)]: { url, kind } };
@@ -163,6 +278,24 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
     }
     setShortfall(null);
     setConfirmingEmpty(false);
+    void (async () => {
+      const data = new FormData();
+      data.set("slug", slug);
+      data.set("certifiedBy", certifier.trim());
+      data.set("attestation", attestationText);
+      data.set("signature", signatureRef.current ?? "drawn");
+      data.set(
+        "openAtSigning",
+        JSON.stringify(openItems.map((i) => `${i.number} · ${i.title}`)),
+      );
+      setSaving(true);
+      const r = await certifyNight({ error: null }, data);
+      setSaving(false);
+      if (r.error) {
+        setShortfall(r.error);
+        setCertified(null);
+      }
+    })();
     setCertified(
       doneCount === CLOSE_TOTAL
         ? "Certified · all ten"
@@ -171,11 +304,15 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
   }
 
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
+  const attestationText =
+    doneCount === CLOSE_TOTAL
+      ? `${who} have completed every item on tonight's close. The venue is secured and ready for the opening team. I hold myself accountable for this team's work tonight.`
+      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following still open. I hold myself accountable for this team's work tonight, including what I am leaving open.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       {/* Compact and pinned: it is on screen the whole way down, and the
           bottom of a phone belongs to the back/out bar. */}
       {locked ? (
@@ -187,7 +324,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
         </section>
       ) : null}
 
-      <section className="panel bg-surface/95 sticky top-2 z-30 px-4 py-3 backdrop-blur-md">
+      <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-1 border-b px-4 py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-title tabular-nums tracking-[0.08em]">
             {doneCount}/{CLOSE_TOTAL} done
@@ -216,7 +353,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
 
       </section>
 
-      <ul className="space-y-2.5">
+      <ul className="space-y-3">
         {CLOSE_CHECKLIST.map((item) => {
           const isDone = Boolean(done[item.number]);
           const shots = item.proof ?? [];
@@ -368,7 +505,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                   rarely in the same place, so each names what it has to show
                   and is taken on its own. */}
               {shots.length > 0 ? (
-                <div className="border-divider space-y-4 border-t px-4 py-4">
+                <div className="border-divider space-y-3.5 border-t px-4 py-5 sm:pl-[3.6rem]">
                   {shots.map((shot, index) => {
                     const key = slotKey(item.number, index);
                     const got = captures[key];
@@ -417,6 +554,20 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                                 }
                               }}
                               aria-label={shot.prompt}
+                              onBlur={async () => {
+                                const data = new FormData();
+                                data.set("slug", slug);
+                                data.set("itemId", item.id ?? "");
+                                data.set("shotIndex", String(index));
+                                data.set("initials", initialsFor(item.number));
+                                data.set("body", notes[key] ?? "");
+                                setSaving(true);
+                                const r = await saveNote({ error: null }, data);
+                                setSaving(false);
+                                if (r.error) setShortfall(r.error);
+                                else if ((notes[key] ?? "").trim())
+                                  void persistTick(item, true);
+                              }}
                             />
                           </div>
                         ) : got ? (
@@ -489,7 +640,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
         })}
       </ul>
 
-      <section className="panel">
+      <section className="panel mt-5">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
             ? `Still open · ${openItems.length}`
@@ -497,11 +648,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
         </p>
 
         <div className="border-ink mt-2.5 border-l-2 pl-4">
-          <p className="attest">
-            {doneCount === CLOSE_TOTAL
-              ? `${who} have completed every item on tonight's close. The venue is secured and ready for the opening team. I hold myself accountable for this team's work tonight.`
-              : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following still open. I hold myself accountable for this team's work tonight, including what I am leaving open.`}
-          </p>
+          <p className="attest">{attestationText}</p>
           {openItems.length > 0 ? (
             <ul className="mt-3 space-y-1.5">
               {openItems.map((item) => (
@@ -540,6 +687,9 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
             signed={signed}
             onSignedChange={setSigned}
             locked={locked}
+            onInk={(dataUrl) => {
+              signatureRef.current = dataUrl;
+            }}
           />
 
           {shortfall ? (
@@ -572,9 +722,11 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
             type="button"
             className="btn w-full"
             onClick={certify}
-            disabled={locked}
+            disabled={locked || saving}
           >
-            {certified ??
+            {saving
+              ? "Saving…"
+              : certified ??
               (doneCount === CLOSE_TOTAL
                 ? "Certify this close"
                 : `Certify with ${CLOSE_TOTAL - doneCount} open`)}
@@ -605,10 +757,12 @@ function SignaturePad({
   signed,
   onSignedChange,
   locked,
+  onInk,
 }: {
   signed: boolean;
   onSignedChange: (value: boolean) => void;
   locked: boolean;
+  onInk: (dataUrl: string) => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<{ x: number; y: number }[][]>([]);
@@ -686,8 +840,9 @@ function SignaturePad({
             strokes.current[strokes.current.length - 1]?.push(pointFrom(event));
             paint();
           }}
-          onPointerUp={() => {
+          onPointerUp={(event) => {
             drawing.current = false;
+            onInk(event.currentTarget.toDataURL("image/png"));
           }}
           onPointerCancel={() => {
             drawing.current = false;

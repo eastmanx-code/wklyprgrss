@@ -1,0 +1,267 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+
+import { getSession } from "@/lib/session";
+import { currentNight } from "@/lib/night";
+import { PHOTO_BUCKET, db } from "@/lib/supabase";
+
+export type CloseState = { error: string | null };
+
+/** The venue this session may work on. */
+async function venueId(): Promise<string | null> {
+  const session = await getSession();
+  if (!session) return null;
+  if (session.role === "leader") return session.venueId;
+  const { data } = await db()
+    .from("venues")
+    .select("id")
+    .eq("code", "HAWK")
+    .maybeSingle();
+  return (data as { id: string } | null)?.id ?? null;
+}
+
+/** The checklist row, if this session may see it. */
+async function checklistFor(slug: string) {
+  const venue = await venueId();
+  if (!venue) return null;
+  const [house, ...rest] = slug.split("-");
+  const phase = rest[rest.length - 1];
+  const role = rest.slice(0, -1).join(" ");
+  const { data } = await db()
+    .from("close_checklists")
+    .select("id, house, role, phase")
+    .eq("venue_id", venue)
+    .ilike("house", house)
+    .ilike("role", role)
+    .eq("phase", phase)
+    .maybeSingle();
+  return data as { id: string } | null;
+}
+
+/**
+ * Tonight's row for a checklist, created on first touch.
+ *
+ * Created eagerly rather than on certify, because the whole point is that a
+ * second person can pick the list up mid-shift — which needs somewhere for the
+ * first person's work to already be.
+ */
+async function nightId(checklistId: string): Promise<string | null> {
+  const night = currentNight();
+  const existing = await db()
+    .from("close_nights")
+    .select("id")
+    .eq("checklist_id", checklistId)
+    .eq("night", night)
+    .maybeSingle();
+  if (existing.data) return (existing.data as { id: string }).id;
+
+  const { data } = await db()
+    .from("close_nights")
+    .insert({ checklist_id: checklistId, night })
+    .select("id")
+    .single();
+  return (data as { id: string } | null)?.id ?? null;
+}
+
+/** A certified night is a record. Nothing may be written to it. */
+async function isLocked(id: string): Promise<boolean> {
+  const { data } = await db()
+    .from("close_nights")
+    .select("certified_at")
+    .eq("id", id)
+    .maybeSingle();
+  return Boolean((data as { certified_at: string | null } | null)?.certified_at);
+}
+
+export async function tickItem(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const itemId = String(formData.get("itemId") ?? "");
+  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+  const on = String(formData.get("on") ?? "") === "true";
+
+  if (!initials) return { error: "Initial it first." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await nightId(list.id);
+  if (!night) return { error: "Could not open tonight." };
+  if (await isLocked(night)) return { error: "Tonight is already certified." };
+
+  if (on) {
+    const { error } = await db()
+      .from("close_ticks")
+      .upsert(
+        { night_id: night, item_id: itemId, initials },
+        { onConflict: "night_id,item_id" },
+      );
+    if (error) return { error: "Could not save that." };
+  } else {
+    await db()
+      .from("close_ticks")
+      .delete()
+      .eq("night_id", night)
+      .eq("item_id", itemId);
+    await db()
+      .from("close_proof")
+      .delete()
+      .eq("night_id", night)
+      .eq("item_id", itemId);
+  }
+
+  revalidatePath(`/close/${slug}`);
+  return { error: null };
+}
+
+/** A written note is proof: same table, words instead of a file. */
+export async function saveNote(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const itemId = String(formData.get("itemId") ?? "");
+  const shotIndex = Number(formData.get("shotIndex") ?? 0);
+  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+  const body = String(formData.get("body") ?? "").trim();
+
+  if (!initials) return { error: "Initial it first." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await nightId(list.id);
+  if (!night) return { error: "Could not open tonight." };
+  if (await isLocked(night)) return { error: "Tonight is already certified." };
+
+  if (!body) {
+    await db()
+      .from("close_proof")
+      .delete()
+      .eq("night_id", night)
+      .eq("item_id", itemId)
+      .eq("shot_index", shotIndex);
+  } else {
+    await db().from("close_proof").upsert(
+      {
+        night_id: night,
+        item_id: itemId,
+        shot_index: shotIndex,
+        kind: "note",
+        body,
+        initials,
+      },
+      { onConflict: "night_id,item_id,shot_index" },
+    );
+  }
+
+  revalidatePath(`/close/${slug}`);
+  return { error: null };
+}
+
+/**
+ * A short-lived, path-scoped upload URL, so the file goes straight to storage
+ * and the action only ever carries text — the same shape the weekly photos
+ * use. The path is generated here, never accepted from the browser.
+ */
+export async function captureTarget(
+  slug: string,
+  itemId: string,
+  shotIndex: number,
+  kind: "photo" | "video",
+): Promise<{ error: string | null; path?: string; signedUrl?: string }> {
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await nightId(list.id);
+  if (!night) return { error: "Could not open tonight." };
+  if (await isLocked(night)) return { error: "Tonight is already certified." };
+
+  const path = `close/${night}/${itemId}/${shotIndex}-${Date.now()}.${
+    kind === "video" ? "mp4" : "jpg"
+  }`;
+  const { data, error } = await db()
+    .storage.from(PHOTO_BUCKET)
+    .createSignedUploadUrl(path);
+  if (error || !data) return { error: "Could not start the upload." };
+  return { error: null, path, signedUrl: data.signedUrl };
+}
+
+/** Records a capture once the file itself is already in storage. */
+export async function recordCapture(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const itemId = String(formData.get("itemId") ?? "");
+  const shotIndex = Number(formData.get("shotIndex") ?? 0);
+  const kind = String(formData.get("kind") ?? "photo");
+  const path = String(formData.get("path") ?? "");
+  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+
+  if (!initials) return { error: "Initial it first." };
+  if (kind !== "photo" && kind !== "video") return { error: "Bad capture." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await nightId(list.id);
+  if (!night) return { error: "Could not open tonight." };
+  if (await isLocked(night)) return { error: "Tonight is already certified." };
+  if (!path.startsWith(`close/${night}/${itemId}/`)) {
+    return { error: "Something went wrong. Try again." };
+  }
+
+  await db().from("close_proof").upsert(
+    {
+      night_id: night,
+      item_id: itemId,
+      shot_index: shotIndex,
+      kind,
+      storage_path: path,
+      initials,
+    },
+    { onConflict: "night_id,item_id,shot_index" },
+  );
+
+  revalidatePath(`/close/${slug}`);
+  return { error: null };
+}
+
+/** Signing closes the night out. After this it is a record, not a document. */
+export async function certifyNight(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const who = String(formData.get("certifiedBy") ?? "").trim();
+  const attestation = String(formData.get("attestation") ?? "").trim();
+  const signature = String(formData.get("signature") ?? "");
+  const openAtSigning = String(formData.get("openAtSigning") ?? "[]");
+
+  if (!who) return { error: "Say who is certifying." };
+  if (!signature) return { error: "A signature is required." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await nightId(list.id);
+  if (!night) return { error: "Could not open tonight." };
+  if (await isLocked(night)) return { error: "Tonight is already certified." };
+
+  const { error } = await db()
+    .from("close_nights")
+    .update({
+      certified_at: new Date().toISOString(),
+      certified_by: who,
+      // Verbatim: if the wording ever changes, the record still shows what
+      // this person put their name to.
+      attestation,
+      signature,
+      open_at_signing: JSON.parse(openAtSigning),
+    })
+    .eq("id", night);
+
+  if (error) return { error: "Could not certify that. Try again." };
+
+  revalidatePath(`/close/${slug}`);
+  return { error: null };
+}
