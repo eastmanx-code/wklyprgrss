@@ -27,10 +27,11 @@ export async function CornerMenu() {
     /* Solid surface with a blur behind it: floating over a dot grid, the old
        translucent buttons picked up the pattern and read as damaged. Grouped
        status | nav | exit so the eye lands on three things, not six. */
-    <nav className="border-card-border bg-surface/90 fixed right-4 bottom-4 z-50 flex h-14 max-w-[calc(100vw-2rem)] items-center gap-4 rounded-[8px] border px-3 backdrop-blur-md">
-      <DeadlineCountdown deadlineMs={deadlineMs} />
-
-      <span className="bg-card-border h-6 w-px" aria-hidden />
+    <nav className="border-card-border bg-surface/90 fixed right-4 bottom-4 left-4 z-50 flex h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:left-auto sm:gap-4 sm:px-3">
+      <span className="hidden sm:contents">
+        <DeadlineCountdown deadlineMs={deadlineMs} />
+        <span className="bg-card-border h-6 w-px" aria-hidden />
+      </span>
 
       {home ? (
         <Link href={home} className="btn-ghost">

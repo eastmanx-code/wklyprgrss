@@ -78,27 +78,22 @@ export function VenueRows({
 
                     <Segments done={row.doneCount} />
 
-                    <span className="text-body w-[72px] shrink-0 text-right tracking-normal tabular-nums">
-                      {finished ? (
-                        <span className="text-ink">
-                          {formatFinish(finished)}
-                        </span>
-                      ) : (
-                        <>
-                          <span className="text-ink">
-                            {row.doneCount}/{WEEKLY_ITEM_TARGET}
-                          </span>
-                          {row.failStreak > 0 ? (
-                            <span className="text-muted">
-                              {" "}
-                              · {row.failStreak}w
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                      {row.venue.id === ownVenueId ? (
-                        <span className="text-muted"> · you</span>
-                      ) : null}
+                    {/* Meta gets its own column. Folded into the 72px count
+                        it wrapped to a second line and broke the 40px row —
+                        "THU 5:36 PM" is eleven characters in a slot that fits
+                        about eight. Hidden on phones, where the count and the
+                        bar are the whole story. */}
+                    <span className="label hidden w-24 shrink-0 truncate text-right sm:block">
+                      {finished
+                        ? formatFinish(finished)
+                        : row.failStreak > 0
+                          ? `${row.failStreak}w missed`
+                          : ""}
+                      {row.venue.id === ownVenueId ? " · you" : ""}
+                    </span>
+
+                    <span className="text-body text-ink w-[72px] shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
+                      {row.doneCount}/{WEEKLY_ITEM_TARGET}
                     </span>
                   </Link>
                 </li>

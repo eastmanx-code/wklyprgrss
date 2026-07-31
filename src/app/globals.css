@@ -441,6 +441,7 @@ p {
   }
 
   .btn {
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -478,6 +479,7 @@ p {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
     gap: 0.5rem;
     min-height: 32px;
     padding: 0 16px;
