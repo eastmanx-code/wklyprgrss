@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { PhotoView } from "@/components/PhotoView";
+
 import {
   approveAllForVenue,
   moveItem,
@@ -363,14 +365,10 @@ export default async function AdminVenuePage({
                                   </p>
                                 </div>
                                 {url ? (
-                                  <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-surface">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                      src={url}
-                                      alt=""
-                                      className="h-full w-full object-contain"
-                                    />
-                                  </div>
+                                  <PhotoView
+                                    src={url}
+                                    className="mt-3 aspect-[4/3] rounded-[8px]"
+                                  />
                                 ) : null}
                                 <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
                                   {submission.comment}

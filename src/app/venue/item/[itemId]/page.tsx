@@ -202,11 +202,10 @@ export default async function ItemPage({
                       <figure>
                         <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
                           {beforeUrl ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                             
+                            <PhotoView
                               src={beforeUrl}
-                              alt=""
-                              className="h-full w-full object-contain"
+                              className="h-full w-full"
                             />
                           ) : (
                             <PurgedPhoto aspect="wide" />
@@ -218,14 +217,10 @@ export default async function ItemPage({
 
                     <figure>
                       {url ? (
-                        <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={url}
-                            alt=""
-                            className="h-full w-full object-contain"
-                          />
-                        </div>
+                        <PhotoView
+                          src={url}
+                          className="aspect-[4/3] rounded-[8px]"
+                        />
                       ) : (
                         <PurgedPhoto aspect="wide" />
                       )}
