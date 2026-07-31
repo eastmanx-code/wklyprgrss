@@ -89,7 +89,7 @@ export default async function ChecklistPage({
   const night = currentNight();
   const { data: nightRow } = await db()
     .from("close_nights")
-    .select("id, certified_at, certified_by")
+    .select("id, certified_at, certified_by, history")
     .eq("checklist_id", list.id)
     .eq("night", night)
     .maybeSingle();
@@ -97,6 +97,7 @@ export default async function ChecklistPage({
     id: string;
     certified_at: string | null;
     certified_by: string | null;
+    history: { certified_by?: string; certified_at?: string; reason?: string }[] | null;
   } | null;
 
   let ticks: { item_id: string; initials: string }[] = [];
@@ -154,6 +155,14 @@ export default async function ChecklistPage({
           ),
           certifiedBy: tonight?.certified_by ?? null,
           certifiedAt: tonight?.certified_at ?? null,
+          // Every certification this night has already had. Usually empty; a
+          // reopened night carries the signature it was reopened from, and
+          // that is the whole reason reopening is an unlock and not a delete.
+          history: (tonight?.history ?? []).map((entry) => ({
+            certifiedBy: entry.certified_by ?? null,
+            certifiedAt: entry.certified_at ?? null,
+            reason: entry.reason ?? null,
+          })),
         }}
       />
 

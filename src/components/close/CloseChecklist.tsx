@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
@@ -20,6 +21,12 @@ export type SavedNight = {
   proof: Record<string, { kind: string; body: string | null; url: string | null }>;
   certifiedBy: string | null;
   certifiedAt: string | null;
+  /** Certifications this night has already had, oldest first. */
+  history: {
+    certifiedBy: string | null;
+    certifiedAt: string | null;
+    reason: string | null;
+  }[];
 };
 
 type Capture = { url: string; kind: "photo" | "video" };
@@ -47,6 +54,7 @@ export function CloseChecklist({
   items: CloseItem[];
   saved: SavedNight;
 }) {
+  const router = useRouter();
   const CLOSE_CHECKLIST = items;
   const CLOSE_TOTAL = items.length;
   const shotsOfKind = (kind: ProofKind) =>
@@ -356,6 +364,11 @@ export function CloseChecklist({
     setSigned(false);
     setCertifier("");
     signatureRef.current = null;
+    // Local state unlocks the page immediately; the refresh is what brings
+    // back the history the server just wrote. Without it the night reopens
+    // and shows no sign it was ever signed, which is the opposite of the
+    // point.
+    router.refresh();
   }
 
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
@@ -769,6 +782,33 @@ export function CloseChecklist({
             ? `Still open · ${openItems.length}`
             : `All ${CLOSE_TOTAL} complete`}
         </p>
+
+        {/* A reopened night says so, on its face. The record is only worth
+            keeping if somebody can read it without database access — and a
+            second signature with no sign of the first is exactly the thing
+            this was built to avoid. */}
+        {saved.history.length > 0 ? (
+          <div className="border-warn/40 mt-3 rounded-[8px] border p-4">
+            <p className="label text-warn">
+              Reopened {saved.history.length === 1 ? "once" : `${saved.history.length} times`}
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {saved.history.map((entry, index) => (
+                <li key={index} className="label leading-snug">
+                  Certified by {entry.certifiedBy ?? "—"}
+                  {entry.certifiedAt
+                    ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString("en-US", {
+                        timeZone: "America/Los_Angeles",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}`
+                    : ""}
+                  {entry.reason ? ` · ${entry.reason}` : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
 
         <div className="border-ink mt-2.5 border-l-2 pl-4">
           <p className="attest">{attestationText}</p>
