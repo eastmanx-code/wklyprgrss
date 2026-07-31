@@ -18,7 +18,9 @@ export default async function ClosePage() {
   if (!(await getSession())) redirect("/");
 
   return (
-    <main className="mx-auto max-w-2xl">
+    /* A reading measure on a phone; the tablet gets the room it has, because
+       that is where the signing panel goes alongside the list. */
+    <main className="mx-auto max-w-2xl lg:max-w-none">
       <BackLink href="/venue">Back</BackLink>
 
       <header className="mt-4 mb-6">

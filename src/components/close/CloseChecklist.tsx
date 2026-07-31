@@ -90,33 +90,35 @@ export function CloseChecklist() {
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
 
   return (
-    <div className="space-y-4">
-      <section className="panel">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <p className="label">Tonight</p>
-          <p className="label">
-            {Math.round((doneCount / CLOSE_TOTAL) * 100)}% complete
-          </p>
-        </div>
-        <p className="mt-2 text-metric tabular-nums">
-          {doneCount}/{CLOSE_TOTAL} done
-        </p>
-        <div className="mt-3 flex gap-[3px]" aria-hidden>
-          {CLOSE_CHECKLIST.map((item, index) => (
-            <span
-              key={item.number}
-              className={`h-1.5 flex-1 rounded-[1px] ${
-                index < doneCount ? "bg-ink" : "bg-inset"
-              }`}
-            />
-          ))}
-        </div>
-        <p className="label mt-3">
-          3 photos · 1 video · nothing here is timed
-        </p>
-      </section>
+    /* Phone first: one column, and on a tablet the signing panel moves
+       alongside instead of sitting under a screen's worth of scrolling.
+       Two columns are never used for the items themselves — a close is done
+       in order, and order is the one thing columns destroy. */
+    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start lg:gap-6">
+      <div className="space-y-2.5">
+        {/* Sticky at the top rather than the bottom: the bottom of a phone
+            already belongs to the corner menu. Compact, because it is on
+            screen the whole way down. */}
+        <section className="panel bg-surface/95 sticky top-2 z-30 px-4 py-3 backdrop-blur-md">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+            <p className="text-title tabular-nums tracking-[0.08em]">
+              {doneCount}/{CLOSE_TOTAL} done
+            </p>
+            <p className="label">3 photos · 1 video · nothing is timed</p>
+          </div>
+          <div className="mt-2.5 flex gap-[3px]" aria-hidden>
+            {CLOSE_CHECKLIST.map((item, index) => (
+              <span
+                key={item.number}
+                className={`h-1.5 flex-1 rounded-[1px] ${
+                  index < doneCount ? "bg-ink" : "bg-inset"
+                }`}
+              />
+            ))}
+          </div>
+        </section>
 
-      <ul className="space-y-2.5">
+        <ul className="space-y-2.5">
         {CLOSE_CHECKLIST.map((item) => {
           const isDone = Boolean(done[item.number]);
           const capture = captures[item.number];
@@ -171,13 +173,19 @@ export function CloseChecklist() {
                     </span>
                   </span>
 
-                  <span className="text-muted flex flex-col gap-1 text-body leading-snug">
-                    {item.detail.map((line) => (
-                      <span key={line} className="break-words">
-                        {line}
-                      </span>
-                    ))}
-                  </span>
+                  {/* The standard folds away once met. Ten items with their
+                      detail open is about eleven feet of phone; collapsing
+                      what's done means the list shortens as the night does,
+                      and what's left is what you can still see. */}
+                  {isDone ? null : (
+                    <span className="text-muted flex flex-col gap-1 text-body leading-snug">
+                      {item.detail.map((line) => (
+                        <span key={line} className="break-words">
+                          {line}
+                        </span>
+                      ))}
+                    </span>
+                  )}
 
                   {item.proof ? (
                     <span
@@ -220,9 +228,10 @@ export function CloseChecklist() {
             </li>
           );
         })}
-      </ul>
+        </ul>
+      </div>
 
-      <section className="panel">
+      <section className="panel mt-2.5 lg:sticky lg:top-2 lg:mt-0">
         <p className="label">What you are signing</p>
         <div className="border-ink mt-2.5 border-l-2 pl-4">
           <p className="attest">
