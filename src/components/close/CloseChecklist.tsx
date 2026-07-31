@@ -2,22 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import {
-  CLOSE_CHECKLIST,
-  CLOSE_TOTAL,
-  type CloseItem,
-  type ProofKind,
-} from "@/lib/close-checklist";
+import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 
 type Capture = { url: string; kind: "photo" | "video" };
 
 /** One capture slot: item number and which of that item's shots. */
 const slotKey = (item: number, shot: number) => `${item}:${shot}`;
 
-const ALL_SHOTS = CLOSE_CHECKLIST.flatMap((item) => item.proof ?? []);
-const PHOTO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "photo").length;
-const VIDEO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "video").length;
-const NOTE_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "note").length;
+
 
 /**
  * A close checklist, for review. Nothing is saved yet.
@@ -28,7 +20,16 @@ const NOTE_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "note").length;
  * legible afterwards — four people work a close, and "who did the restrooms"
  * has to have an answer.
  */
-export function CloseChecklist() {
+export function CloseChecklist({ items }: { items: CloseItem[] }) {
+  const CLOSE_CHECKLIST = items;
+  const CLOSE_TOTAL = items.length;
+  const shotsOfKind = (kind: ProofKind) =>
+    items.flatMap((item) => item.proof ?? []).filter((s) => s.kind === kind)
+      .length;
+  const PHOTO_SHOTS = shotsOfKind("photo");
+  const VIDEO_SHOTS = shotsOfKind("video");
+  const NOTE_SHOTS = shotsOfKind("note");
+
   const [done, setDone] = useState<Record<number, boolean>>({});
   const [captures, setCaptures] = useState<Record<string, Capture>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
@@ -85,6 +86,7 @@ export function CloseChecklist() {
   }
 
   function toggle(item: CloseItem) {
+    if (locked) return;
     if (done[item.number]) {
       setDone((c) => ({ ...c, [item.number]: false }));
       if (item.proof) {
@@ -123,7 +125,7 @@ export function CloseChecklist() {
   }
 
   function onCapture(item: CloseItem, shotIndex: number, file: File | undefined) {
-    if (!file || !item.proof) return;
+    if (locked || !file || !item.proof) return;
     const url = URL.createObjectURL(file);
     objectUrls.current.push(url);
     const kind = item.proof[shotIndex].kind;
@@ -144,6 +146,7 @@ export function CloseChecklist() {
   }
 
   function certify() {
+    if (locked) return;
     const missing: string[] = [];
     if (!certifier.trim()) missing.push("your name");
     if (!signed) missing.push("your signature");
@@ -168,19 +171,36 @@ export function CloseChecklist() {
   }
 
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
+  /** Signed is finished. Nothing about the night moves after it is certified. */
+  const locked = certified !== null;
 
   return (
     <div className="space-y-2.5">
       {/* Compact and pinned: it is on screen the whole way down, and the
           bottom of a phone belongs to the back/out bar. */}
+      {locked ? (
+        <section className="panel border-ink bg-ink text-paper px-4 py-3">
+          <p className="text-title tracking-[0.08em]">{certified}</p>
+          <p className="text-label mt-1 tracking-[0.08em] opacity-70">
+            Closed out and locked. Nothing on this night can change now.
+          </p>
+        </section>
+      ) : null}
+
       <section className="panel bg-surface/95 sticky top-2 z-30 px-4 py-3 backdrop-blur-md">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-title tabular-nums tracking-[0.08em]">
             {doneCount}/{CLOSE_TOTAL} done
           </p>
           <p className="label">
-            {PHOTO_SHOTS} photos · {VIDEO_SHOTS} video · {NOTE_SHOTS} written ·
-            nothing is timed
+            {[
+              PHOTO_SHOTS ? `${PHOTO_SHOTS} photos` : null,
+              VIDEO_SHOTS ? `${VIDEO_SHOTS} video` : null,
+              NOTE_SHOTS ? `${NOTE_SHOTS} written` : null,
+              "nothing is timed",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
         </div>
         <div className="mt-2.5 flex gap-[3px]" aria-hidden>
@@ -292,21 +312,29 @@ export function CloseChecklist() {
               {/* At the end of the line it belongs to. Not inside the button —
                   an input cannot live in one — so it sits beside it, aligned
                   to the title. */}
-              <span className="flex shrink-0 flex-col items-end gap-2 py-4 pr-5 pb-5 pl-2">
+              {/* The whole cell lights up until it is filled, rather than a
+                  stripe on the box — the thing being asked for is the area,
+                  and a border on a dark field is easy to miss. Fixed width so
+                  the boxes stay in a column whether or not the prompt shows,
+                  and centred so the prompt sits under the box instead of
+                  hanging off its edge. */}
+              <span
+                className={`m-2 flex w-[5.5rem] shrink-0 flex-col items-center gap-2 rounded-lg py-2 ${
+                  wanted ? "bg-warn/15 ring-warn/50 ring-1" : ""
+                }`}
+              >
                 <input
                   ref={(node) => {
                     initialsRefs.current[item.number] = node;
                   }}
-                  className={`field h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] ${
-                    wanted ? "border-warn" : ""
-                  }`}
+                  className="field h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em]"
                   placeholder="––"
                   maxLength={4}
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
                   value={mine}
-                  disabled={isDone}
+                  disabled={isDone || locked}
                   aria-label={`Initials for ${item.title}`}
                   onChange={(event) => {
                     setRowInitials((c) => ({
@@ -331,7 +359,7 @@ export function CloseChecklist() {
                   }}
                 />
                 {wanted ? (
-                  <span className="label text-warn pr-0.5 text-right">Initial it</span>
+                  <span className="label text-warn text-center">Initial it</span>
                 ) : null}
               </span>
               </div>
@@ -359,7 +387,9 @@ export function CloseChecklist() {
                           }
                         />
 
-                        {shot.kind === "note" ? (
+                        {locked && !got && shot.kind !== "note" ? (
+                          <p className="label text-muted">Not captured</p>
+                        ) : shot.kind === "note" ? (
                           <div>
                             <textarea
                               ref={(node) => {
@@ -367,6 +397,7 @@ export function CloseChecklist() {
                               }}
                               rows={3}
                               className="field w-full resize-none"
+                              disabled={locked}
                               placeholder="What was said"
                               value={notes[key] ?? ""}
                               onChange={(event) => {
@@ -393,16 +424,18 @@ export function CloseChecklist() {
                             <span className="pill pill-done">
                               {shot.kind === "video" ? "Recorded" : "Taken"}
                             </span>
-                            <button
-                              type="button"
-                              className="btn-ghost"
-                              onClick={() => {
-                                if (!haveInitials(item.number)) return;
-                                inputs.current[key]?.click();
-                              }}
-                            >
-                              Retake
-                            </button>
+                            {locked ? null : (
+                              <button
+                                type="button"
+                                className="btn-ghost"
+                                onClick={() => {
+                                  if (!haveInitials(item.number)) return;
+                                  inputs.current[key]?.click();
+                                }}
+                              >
+                                Retake
+                              </button>
+                            )}
                           </div>
                         ) : (
                           <button
@@ -494,11 +527,16 @@ export function CloseChecklist() {
               autoCorrect="off"
               spellCheck={false}
               value={certifier}
+              disabled={locked}
               onChange={(event) => setCertifier(event.target.value)}
             />
           </div>
 
-          <SignaturePad signed={signed} onSignedChange={setSigned} />
+          <SignaturePad
+            signed={signed}
+            onSignedChange={setSigned}
+            locked={locked}
+          />
 
           {shortfall ? (
             <p role="alert" className="text-body text-warn">
@@ -526,7 +564,12 @@ export function CloseChecklist() {
             </div>
           ) : null}
 
-          <button type="button" className="btn w-full" onClick={certify}>
+          <button
+            type="button"
+            className="btn w-full"
+            onClick={certify}
+            disabled={locked}
+          >
             {certified ??
               (doneCount === CLOSE_TOTAL
                 ? "Certify this close"
@@ -557,9 +600,11 @@ function CaptureGlyph({ kind }: { kind: "photo" | "video" }) {
 function SignaturePad({
   signed,
   onSignedChange,
+  locked,
 }: {
   signed: boolean;
   onSignedChange: (value: boolean) => void;
+  locked: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<{ x: number; y: number }[][]>([]);
@@ -607,23 +652,26 @@ function SignaturePad({
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="label">Signature (required)</p>
-        <button
-          type="button"
-          className="btn-ghost"
-          onClick={() => {
-            strokes.current = [];
-            onSignedChange(false);
-            paint();
-          }}
-        >
-          Clear
-        </button>
+        {locked ? null : (
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() => {
+              strokes.current = [];
+              onSignedChange(false);
+              paint();
+            }}
+          >
+            Clear
+          </button>
+        )}
       </div>
       <div className="bg-panel border-card-border relative touch-none overflow-hidden rounded-lg border">
         <canvas
           ref={canvasRef}
           className="block h-40 w-full"
           onPointerDown={(event) => {
+            if (locked) return;
             drawing.current = true;
             onSignedChange(true);
             strokes.current.push([pointFrom(event)]);
