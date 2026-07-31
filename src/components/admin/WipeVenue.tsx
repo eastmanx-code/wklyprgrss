@@ -22,20 +22,32 @@ export function WipeVenue({
 }) {
   const [armed, setArmed] = useState(false);
 
+  // At rest this states what it does, rather than sitting under a one-word
+  // label as a quiet ghost button. Somebody reaching this row should be able
+  // to read the consequence without having to press anything to find it out.
   if (!armed) {
     return (
-      <button
-        type="button"
-        onClick={() => setArmed(true)}
-        className="btn-ghost text-warn"
-      >
-        Wipe {venueCode}
-      </button>
+      <div className="border-warn/40 rounded-[8px] border p-5">
+        <p className="label text-warn">Destructive · cannot be undone</p>
+        <p className="note text-muted mt-2 max-w-prose leading-relaxed">
+          Deletes every photo file for {venueCode} and retires its whole list.
+          Comments, names, dates and pass/fail history are kept.
+        </p>
+        <button
+          type="button"
+          onClick={() => setArmed(true)}
+          className="btn-ghost text-warn ring-warn/50 mt-4 ring-1"
+        >
+          Wipe {venueCode}
+        </button>
+      </div>
     );
   }
 
   return (
-    <div className="border-fail/60 bg-warn/5 rounded-[20px] border p-6">
+    /* border-warn: this read border-fail, and there is no fail token — so the
+       panel that exists to look alarming had no border at all. */
+    <div className="border-warn/60 bg-warn/5 rounded-[8px] border p-6">
       <p className="label text-warn">Destructive · cannot be undone</p>
 
       <h3 className="text-warn mt-3 text-metric leading-tight font-medium">

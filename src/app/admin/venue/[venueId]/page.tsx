@@ -394,9 +394,10 @@ export default async function AdminVenuePage({
           <VenuePinForm venueId={venue.id} pin={venue.pin} />
         </section>
 
-        {/* Last thing on the page, behind the disclosure, behind a warning. */}
+        {/* Last thing on the page, behind the disclosure. The warning states
+            itself now, so it no longer needs a one-word heading to carry the
+            weight. */}
         <section className="mt-10">
-          <h2 className="label text-warn mb-3">Danger</h2>
           <WipeVenue
             venueId={venue.id}
             venueCode={venue.code}
