@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { ADMIN_PINS } from "@/lib/env";
+import { isAdminPin } from "@/lib/admin-pin";
 import {
   endSession,
   pinMatches,
@@ -10,7 +10,6 @@ import {
   startLeaderSession,
 } from "@/lib/session";
 import { getVenue } from "@/lib/status";
-import { db } from "@/lib/supabase";
 
 export type FormState = { error: string | null };
 
@@ -39,19 +38,7 @@ export async function adminLogin(
   formData: FormData,
 ): Promise<FormState> {
   const pin = String(formData.get("pin") ?? "");
-  // The env key is the master and can't be removed from the UI; the rest are
-  // codes added in the app. Every candidate is compared, so timing doesn't
-  // reveal which one matched.
-  const { data: stored } = await db().from("admin_pins").select("pin");
-  const candidates = [
-    ...ADMIN_PINS(),
-    ...(stored ?? []).map((row) => row.pin as string),
-  ];
-  const matched = candidates.reduce(
-    (found, candidate) => pinMatches(pin, candidate) || found,
-    false,
-  );
-  if (!pin || !matched) return { error: GENERIC_ERROR };
+  if (!(await isAdminPin(pin))) return { error: GENERIC_ERROR };
 
   await startAdminSession();
   redirect("/admin");

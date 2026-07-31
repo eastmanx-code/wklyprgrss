@@ -8,6 +8,7 @@ import {
   captureTarget,
   certifyNight,
   recordCapture,
+  reopenNight,
   saveNote,
   tickItem,
 } from "@/app/close/actions";
@@ -103,6 +104,9 @@ export function CloseChecklist({
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
+  const [reopenPin, setReopenPin] = useState("");
+  const [reopenReason, setReopenReason] = useState("");
+  const [reopenError, setReopenError] = useState<string | null>(null);
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
   const notesRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
@@ -328,6 +332,32 @@ export function CloseChecklist({
     );
   }
 
+  /**
+   * Back to a working night. The ticks and the proof stay — reopening exists
+   * because one thing was wrong, and making everyone redo the other nine is
+   * how you teach a crew to sign first and check later.
+   */
+  async function reopen() {
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("pin", reopenPin);
+    data.set("reason", reopenReason);
+    setSaving(true);
+    const result = await reopenNight({ error: null }, data);
+    setSaving(false);
+    if (result.error) {
+      setReopenError(result.error);
+      return;
+    }
+    setReopenError(null);
+    setReopenPin("");
+    setReopenReason("");
+    setCertified(null);
+    setSigned(false);
+    setCertifier("");
+    signatureRef.current = null;
+  }
+
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
   const attestationText =
     doneCount === CLOSE_TOTAL
@@ -346,6 +376,51 @@ export function CloseChecklist({
           <p className="text-label mt-1 tracking-[0.08em] opacity-70">
             Closed out and locked. Nothing on this night can change now.
           </p>
+
+          {/* Behind a disclosure, not a button on the banner. Reopening a
+              signed night should take a decision, and the person who needs it
+              will find it — the person who does not should not trip over it. */}
+          <details className="mt-3">
+            <summary className="text-label inline-flex min-h-11 cursor-pointer items-center tracking-[0.08em] underline underline-offset-4 opacity-70">
+              Reopen with a manager PIN
+            </summary>
+
+            <div className="mt-3 space-y-3">
+              <p className="text-label leading-relaxed tracking-[0.08em] opacity-70">
+                The signature already on this night is kept. The record will
+                show it was certified, reopened, and certified again.
+              </p>
+              <input
+                className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="Manager PIN"
+                type="password"
+                value={reopenPin}
+                onChange={(event) => setReopenPin(event.target.value)}
+              />
+              <input
+                className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
+                autoComplete="off"
+                placeholder="Why (optional, kept with the record)"
+                value={reopenReason}
+                onChange={(event) => setReopenReason(event.target.value)}
+              />
+              {reopenError ? (
+                <p role="alert" className="text-body text-warn">
+                  {reopenError}
+                </p>
+              ) : null}
+              <button
+                type="button"
+                className="bg-warn text-on-warn inline-flex min-h-11 items-center rounded px-4 text-body tracking-[0.08em]"
+                disabled={saving}
+                onClick={() => void reopen()}
+              >
+                {saving ? "Unlocking…" : "Unlock this night"}
+              </button>
+            </div>
+          </details>
         </section>
       ) : null}
 

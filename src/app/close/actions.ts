@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { isAdminPin } from "@/lib/admin-pin";
 import { getSession } from "@/lib/session";
 import { currentNight } from "@/lib/night";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -295,6 +296,90 @@ export async function certifyNight(
     .eq("id", night);
 
   if (error) return { error: "Could not certify that. Try again." };
+
+  revalidatePath(`/close/${slug}`);
+  return { error: null };
+}
+
+/**
+ * Unlocks a certified night, on a manager's PIN.
+ *
+ * Someone signs at 1am, then finds the back door was never actually checked.
+ * Without this the only honest options are to leave the record wrong or to
+ * call whoever has database access, and the first one is what actually
+ * happens.
+ *
+ * The signature is not discarded. It moves into history, so the record shows
+ * that Brian certified at 1:04, a manager reopened it, and it was certified
+ * again — which is more useful than either version alone, and is the reason
+ * this is an unlock rather than a delete.
+ *
+ * Admin PINs for now. A manager who is not an admin cannot do this yet, and
+ * that is the next question to answer rather than something to guess at.
+ */
+export async function reopenNight(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const pin = String(formData.get("pin") ?? "");
+  const reason = String(formData.get("reason") ?? "").trim();
+
+  if (!(await isAdminPin(pin))) {
+    return { error: "That PIN doesn't match. Try again." };
+  }
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+
+  const { data } = await db()
+    .from("close_nights")
+    .select("id, certified_at, certified_by, attestation, signature, open_at_signing, history")
+    .eq("checklist_id", list.id)
+    .eq("night", currentNight())
+    .maybeSingle();
+
+  const row = data as {
+    id: string;
+    certified_at: string | null;
+    certified_by: string | null;
+    attestation: string | null;
+    signature: string | null;
+    open_at_signing: unknown;
+    history: unknown[] | null;
+  } | null;
+
+  if (!row) return { error: "Nothing has been recorded tonight." };
+  if (!row.certified_at) return { error: "Tonight is not locked." };
+
+  const { error } = await db()
+    .from("close_nights")
+    .update({
+      history: [
+        ...(row.history ?? []),
+        {
+          certified_at: row.certified_at,
+          certified_by: row.certified_by,
+          attestation: row.attestation,
+          signature: row.signature,
+          open_at_signing: row.open_at_signing,
+          reopened_at: new Date().toISOString(),
+          reason: reason || null,
+        },
+      ],
+      certified_at: null,
+      certified_by: null,
+      attestation: null,
+      signature: null,
+      open_at_signing: null,
+    })
+    .eq("id", row.id)
+    // Only unlock the night we just read. Two managers on the same PIN would
+    // otherwise write history twice and the second would archive an empty
+    // signature over the first.
+    .not("certified_at", "is", null);
+
+  if (error) return { error: "Could not reopen that. Try again." };
 
   revalidatePath(`/close/${slug}`);
   return { error: null };
