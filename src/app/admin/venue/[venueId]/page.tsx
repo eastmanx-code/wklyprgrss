@@ -248,12 +248,7 @@ export default async function AdminVenuePage({
           {/* Fillable in place — the board is where you can see what's
                 missing, so it's where it should be added. */}
           {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
-            <AddItemSlot
-              key={`slot-${slot}`}
-              venueId={venue.id}
-              index={slot}
-              uploadPrefix="/venue/item/"
-            />
+            <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
           ))}
         </ul>
       </section>
