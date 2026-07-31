@@ -129,12 +129,27 @@
   outline: none;
 }
 
-/* The corner menu: a chip that opens on hover where there is a pointer, and on
-   a tap where there isn't. <details> supplies the tap; the hover rule is what
-   means a mouse never has to click to see the destinations. The open panel is
-   laid over the chip rather than beside it, so nothing shifts as it appears. */
+/* The corner menu.
+ *
+ * Opens on hover where there is a pointer and on a tap where there isn't:
+ * <details> supplies the tap, one rule adds the hover. The panel sits beside
+ * the button rather than over it, because laid on top it covered the only
+ * thing that could close it again.
+ *
+ * No :focus-within rule. It looks like accessibility and behaves like a bug —
+ * the summary keeps focus after a tap, so the menu could be opened and never
+ * shut. A summary is keyboard-operable on its own; [open] is enough.
+ */
+.ww-menu {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 8px;
+}
+
 .ww-menu > summary {
   list-style: none;
+  cursor: pointer;
 }
 
 .ww-menu > summary::-webkit-details-marker {
@@ -148,26 +163,6 @@
 
 .ww-menu[open] .ww-menu-items,
 .ww-menu:hover .ww-menu-items {
-  display: flex;
-}
-
-/* Points up when shut, down when open. The glyph is a rotated corner, so it
-   is nudged rather than margin-hacked — a margin moved the whole thing off the
-   label's centre line. */
-.ww-menu-caret {
-  width: 7px;
-  height: 7px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: translateY(1px) rotate(-135deg);
-}
-
-.ww-menu[open] .ww-menu-caret {
-  transform: translateY(-2px) rotate(45deg);
-}
-
-/* A menu that opens on hover must not be reachable only that way. */
-.ww-menu:focus-within .ww-menu-items {
   display: flex;
 }
 

@@ -12,6 +12,7 @@
     "preflight": "node --env-file=.env.local scripts/preflight.mjs",
     "demo": "node --env-file=.env.local scripts/demo.mjs",
     "purge": "node --env-file=.env.local scripts/purge-photos.mjs",
+    "reset-close": "node --env-file=.env.local scripts/reset-close.mjs",
     "report": "node --env-file=.env.local scripts/report.mjs",
     "set-items": "node --env-file=.env.local scripts/set-items.mjs",
     "predev": "node --env-file=.env.local scripts/preflight.mjs || true",
