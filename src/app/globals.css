@@ -115,6 +115,20 @@
   outline-offset: 2px;
 }
 
+/* A pill that is one control made of two elements — a field and the button
+   that commits it. Focus belongs on the pill as a whole. Left to the rule
+   above it drew a second box around the field alone, ending hard against the
+   arrow, so a name long enough to fill the field read as typing over it.
+   Unlayered and more specific, because the rule it has to beat is both. */
+.pill-field:focus-within {
+  outline: 1px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.pill-field input:focus-visible {
+  outline: none;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;

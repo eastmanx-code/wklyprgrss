@@ -55,10 +55,10 @@ export function AddItemSlot({
           {/* Solid pill on the grid, the same treatment as the "photo needed"
               marker — it holds contrast against the ruled ground where a
               bordered surface field washed out. */}
-          <label className="bg-paper flex w-full items-center rounded-full py-1.5 pl-3">
+          <label className="pill-field bg-paper flex w-full items-center rounded-full py-1.5 pl-3">
             <input
               name="title"
-              className="label text-ink placeholder:text-muted w-full min-w-0 flex-1 border-0 bg-transparent outline-none"
+              className="label text-ink placeholder:text-muted w-full min-w-0 flex-1 border-0 bg-transparent pr-2 outline-none"
               placeholder="Task name"
               autoComplete="off"
               autoCorrect="off"
