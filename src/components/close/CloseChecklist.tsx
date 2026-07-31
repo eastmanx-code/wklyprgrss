@@ -373,7 +373,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                     const key = slotKey(item.number, index);
                     const got = captures[key];
                     return (
-                      <div key={key}>
+                      <div key={key} className="flex flex-wrap items-start gap-x-3 gap-y-2">
                         <input
                           ref={(node) => {
                             inputs.current[key] = node;
@@ -390,7 +390,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                         {locked && !got && shot.kind !== "note" ? (
                           <p className="label text-muted">Not captured</p>
                         ) : shot.kind === "note" ? (
-                          <div>
+                          <div className="w-full">
                             <textarea
                               ref={(node) => {
                                 notesRefs.current[key] = node;
@@ -451,28 +451,32 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                           </button>
                         )}
 
-                        {/* The framing spec sits under the control, not inside
-                            it — a button label should be one verb. */}
-                        <p className="text-ink/50 mt-2 text-[12px] leading-snug">
+                        {/* Beside the control, not under it. The spec is the
+                            mechanism, so it keeps its width; putting it on the
+                            same line as the button is what stops three shots
+                            from costing half a screen. */}
+                        <p className="text-ink/50 min-w-0 flex-1 self-center text-[12px] leading-snug">
                           {shot.prompt}
                         </p>
 
                         {got && shot.kind !== "note" ? (
-                          got.kind === "video" ? (
+                          <div className="w-full">
+                          {got.kind === "video" ? (
                             <video
                               src={got.url}
                               controls
                               playsInline
-                              className="bg-inset mt-2 max-h-72 w-full rounded-lg"
+                              className="bg-inset max-h-72 w-full rounded-lg"
                             />
                           ) : (
                             /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                               src={got.url}
                               alt=""
-                              className="bg-inset mt-2 max-h-72 w-full rounded-lg object-contain"
+                              className="bg-inset max-h-72 w-full rounded-lg object-contain"
                             />
-                          )
+                          )}
+                          </div>
                         ) : null}
                       </div>
                     );

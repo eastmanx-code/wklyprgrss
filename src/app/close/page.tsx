@@ -38,6 +38,16 @@ export default async function ChecklistsPage() {
         <p className="label mt-2">
           {built} of {total} built
         </p>
+
+        {/* The report is the reason for the checklists, so it is reachable
+            from the top of them rather than buried. */}
+        <Link
+          href="/close/rollup"
+          className="ring-card-border text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+        >
+          What&apos;s getting missed
+          <span className="text-muted">last 30 nights</span>
+        </Link>
       </header>
 
       <div className="space-y-5">
