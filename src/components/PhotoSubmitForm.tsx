@@ -20,6 +20,48 @@ const MAX_EDGE = 1600;
 const TARGET_BYTES = 300 * 1024;
 const QUALITY_STEPS = [0.82, 0.72, 0.62, 0.52, 0.42];
 
+/**
+ * How long to let a photo decode before giving up on it.
+ *
+ * Neither of the two browser calls below is guaranteed to settle. toBlob takes
+ * a callback the browser is free never to invoke, and createImageBitmap has
+ * hung outright on iOS Safari for HEIC captures. A promise that never settles
+ * leaves `processing` stuck true, and `processing` disables every control on
+ * this form — the photo wells, both progress buttons, the two text fields and
+ * submit. The whole screen goes dead with nothing said, which is exactly what
+ * "the submit button isn't clickable" looks like from the outside.
+ *
+ * Generous: a big capture on a slow phone is legitimately a few seconds, and
+ * this only needs to catch the case that is never coming back.
+ */
+const DECODE_TIMEOUT_MS = 30_000;
+
+/**
+ * Shorter, because failing this one isn't fatal — it just moves to the <img>
+ * decoder. createImageBitmap on a phone photo is normally well under a second,
+ * so this is already generous, and it decides how long someone stares at a
+ * frozen well before the fallback quietly rescues them.
+ */
+const FIRST_DECODER_TIMEOUT_MS = 8_000;
+
+class DecodeTimeout extends Error {}
+
+function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new DecodeTimeout()), ms);
+    work.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 function toBlob(
   canvas: HTMLCanvasElement,
   quality: number,
@@ -30,29 +72,74 @@ function toBlob(
 }
 
 /**
+ * The older way to decode a picture: hand it to an <img> and wait for load.
+ *
+ * Kept as the fallback because it is the path that works where the modern one
+ * doesn't. createImageBitmap is faster and handles EXIF rotation explicitly,
+ * but on iOS Safari it refuses HEIC — the format every iPhone shoots by
+ * default — sometimes by rejecting and sometimes by never settling at all. An
+ * <img> renders the same file, because that is the decoder Safari uses to show
+ * photos in the first place. Orientation comes out right too: browsers apply
+ * EXIF rotation to <img> by default, and drawImage inherits it.
+ */
+function decodeViaImgElement(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image decode failed"));
+    };
+    img.src = url;
+  });
+}
+
+/** Whichever decoder can actually read this file, modern one first. */
+async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
+  try {
+    return await withTimeout(
+      createImageBitmap(file, { imageOrientation: "from-image" }),
+      FIRST_DECODER_TIMEOUT_MS,
+    );
+  } catch {
+    // Falling through on *any* failure, timeout included: the point is to try
+    // the other decoder, and which way the first one failed doesn't change
+    // that. If this one fails too the error reaches the caller.
+    return withTimeout(decodeViaImgElement(file), DECODE_TIMEOUT_MS);
+  }
+}
+
+/**
  * Re-encode to JPEG at max 1600px on the long edge, stepping quality down until
  * the file is around 300KB. Going through a canvas is also what converts an
  * iPhone HEIC capture into something every browser can render.
  */
 async function compressToJpeg(file: File): Promise<File> {
-  const bitmap = await createImageBitmap(file, {
-    imageOrientation: "from-image",
-  });
-  const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
-  const width = Math.max(1, Math.round(bitmap.width * scale));
-  const height = Math.max(1, Math.round(bitmap.height * scale));
+  const source = await decode(file);
+  const sourceWidth =
+    source instanceof HTMLImageElement ? source.naturalWidth : source.width;
+  const sourceHeight =
+    source instanceof HTMLImageElement ? source.naturalHeight : source.height;
+
+  const scale = Math.min(1, MAX_EDGE / Math.max(sourceWidth, sourceHeight));
+  const width = Math.max(1, Math.round(sourceWidth * scale));
+  const height = Math.max(1, Math.round(sourceHeight * scale));
 
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas unavailable");
-  ctx.drawImage(bitmap, 0, 0, width, height);
-  bitmap.close();
+  ctx.drawImage(source, 0, 0, width, height);
+  if (source instanceof ImageBitmap) source.close();
 
   let blob: Blob | null = null;
   for (const quality of QUALITY_STEPS) {
-    blob = await toBlob(canvas, quality);
+    blob = await withTimeout(toBlob(canvas, quality), DECODE_TIMEOUT_MS);
     if (blob && blob.size <= TARGET_BYTES) break;
   }
   if (!blob) throw new Error("Could not encode that image");
@@ -63,6 +150,32 @@ async function compressToJpeg(file: File): Promise<File> {
 function formatKb(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
 }
+
+function decodeMessage(error: unknown): string {
+  // A photo that never came back is almost always a library HEIC the browser
+  // won't decode, so point at the camera rather than saying "try again" about
+  // something that will fail the same way twice.
+  if (error instanceof DecodeTimeout) {
+    return "That photo took too long to read. Take a new one with the camera instead of picking it from the library.";
+  }
+  return "Couldn't read that photo. Try taking it again.";
+}
+
+/** "a photo, your name and a comment" — a sentence, not a bulleted list. */
+function listOut(entries: string[]): string {
+  if (entries.length < 2) return entries[0] ?? "";
+  return `${entries.slice(0, -1).join(", ")} and ${entries[entries.length - 1]}`;
+}
+
+/** The four things a week needs, in the order they appear on the form. */
+type Needed = "photo" | "progress" | "author" | "comment";
+
+const NEEDED_LABEL: Record<Needed, string> = {
+  photo: "a photo",
+  progress: "where this is at",
+  author: "your name",
+  comment: "a comment",
+};
 
 const initialState: SubmitState = { error: null };
 
@@ -130,8 +243,15 @@ export function PhotoSubmitForm({
   );
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  // What a submit press found missing. Only ever set by pressing submit, so
+  // the form doesn't scold anyone for fields they haven't reached yet.
+  const [pressed, setPressed] = useState<Needed[]>([]);
   const previewRef = useRef<string | null>(null);
   const beforePreviewRef = useRef<string | null>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const authorRef = useRef<HTMLInputElement>(null);
+  const commentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     return () => {
@@ -154,6 +274,9 @@ export function PhotoSubmitForm({
     setProcessing(true);
     setLocalError(null);
     try {
+      // No timeout out here: every call inside that can hang carries its own,
+      // and a ceiling on the whole pipeline would cut the fallback decoder off
+      // before it got its turn.
       const compressed = await compressToJpeg(original);
       if (beforePreviewRef.current)
         URL.revokeObjectURL(beforePreviewRef.current);
@@ -161,8 +284,8 @@ export function PhotoSubmitForm({
       beforePreviewRef.current = url;
       setBeforePhoto(compressed);
       setBeforePreview(url);
-    } catch {
-      setLocalError("Couldn't read that photo. Try taking it again.");
+    } catch (error) {
+      setLocalError(decodeMessage(error));
     } finally {
       setProcessing(false);
     }
@@ -181,8 +304,8 @@ export function PhotoSubmitForm({
       previewRef.current = url;
       setPhoto(compressed);
       setPreview(url);
-    } catch {
-      setLocalError("Couldn't read that photo. Try taking it again.");
+    } catch (error) {
+      setLocalError(decodeMessage(error));
       setPhoto(null);
       setPreview(null);
     } finally {
@@ -192,7 +315,32 @@ export function PhotoSubmitForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!photo || !comment.trim() || !author.trim() || !progress) return;
+
+    // Say what is missing, mark it, and go to it — rather than refusing to
+    // move. The button used to be disabled until all four were in, which on a
+    // phone reads as a broken submit: someone who skipped "where is this at" —
+    // the one field that is buttons rather than a box, and so the easiest to
+    // scroll past — tapped a dead control, got nothing back, and left thinking
+    // the week was filed.
+    if (!photo || !progress || !author.trim() || !comment.trim()) {
+      setPressed(unmet);
+      const first = unmet[0];
+      const target = {
+        photo: photoRef,
+        progress: progressRef,
+        author: authorRef,
+        comment: commentRef,
+      }[first].current;
+      // scroll-behavior is set globally and already answers to
+      // prefers-reduced-motion, so this is smooth or instant to taste.
+      target?.scrollIntoView({ block: "center" });
+      // Only the two text fields; focus means nothing on a photo well or a
+      // pair of buttons, and on a phone it would open a keyboard over them.
+      if (first === "author" || first === "comment") target?.focus();
+      return;
+    }
+
+    setPressed([]);
 
     try {
       localStorage.setItem(
@@ -251,13 +399,29 @@ export function PhotoSubmitForm({
     }
   }
 
-  const ready =
-    Boolean(photo) &&
-    comment.trim().length > 0 &&
-    author.trim().length > 0 &&
-    progress !== null;
+  const unmet: Needed[] = [];
+  if (!photo) unmet.push("photo");
+  if (!progress) unmet.push("progress");
+  if (!author.trim()) unmet.push("author");
+  if (!comment.trim()) unmet.push("comment");
+
+  // Derived, not stored: a mark clears the moment its field is filled, so
+  // nobody is left staring at a warning about something they've just done.
+  const flagged = pressed.filter((need) => unmet.includes(need));
+  const marked = (need: Needed) => flagged.includes(need);
+
   const busy = pending || processing || uploading;
-  const error = localError ?? state.error;
+  // A week already submitted shows its photo in the well, so "a photo" would
+  // read as a lie — what's missing is a fresh one for this submission.
+  const needLabel = (need: Needed) =>
+    need === "photo" && currentPhotoUrl ? "a new photo" : NEEDED_LABEL[need];
+  const shortfall =
+    flagged.length > 0
+      ? `Still needed: ${listOut(flagged.map(needLabel))}.`
+      : null;
+  // The shortfall wins: if it's set, the submit never ran, so anything below
+  // it is from an earlier attempt.
+  const error = shortfall ?? localError ?? state.error;
 
   return (
     <form onSubmit={handleSubmit} className="panel space-y-5">
@@ -295,9 +459,14 @@ export function PhotoSubmitForm({
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <span className="label">
+      <div className="space-y-2" ref={photoRef}>
+        <span className={marked("photo") ? "label text-warn" : "label"}>
           {beforePhoto ? "After (required)" : "Photo (required)"}
+          {marked("photo")
+            ? currentPhotoUrl
+              ? " · take a new one"
+              : " · still needed"
+            : ""}
         </span>
 
         <label className="block cursor-pointer">
@@ -308,7 +477,11 @@ export function PhotoSubmitForm({
             onChange={handlePick}
             disabled={busy}
           />
-          <div className="bg-panel relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
+          <div
+            className={`bg-panel relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl ${
+              marked("photo") ? "ring-warn ring-1" : ""
+            }`}
+          >
             {preview || currentPhotoUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -340,14 +513,21 @@ export function PhotoSubmitForm({
 
       {/* The leader decides this, not the admin. Nothing can be approved until
           they've said the work is actually finished. */}
-      <div className="space-y-2">
-        <span className="label">Where is this at? (required)</span>
+      <div className="space-y-2" ref={progressRef}>
+        <span className={marked("progress") ? "label text-warn" : "label"}>
+          Where is this at? (required)
+          {marked("progress") ? " · pick one" : ""}
+        </span>
+        {/* A ring rather than a border: it draws outside the box, so marking
+            these can't shift the two buttons around. */}
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <button
             type="button"
             onClick={() => setProgress("done")}
             aria-pressed={progress === "done"}
-            className={progress === "done" ? "btn" : "btn-ghost"}
+            className={`${progress === "done" ? "btn" : "btn-ghost"} ${
+              marked("progress") ? "ring-warn ring-1" : ""
+            }`}
             disabled={busy}
           >
             This is done
@@ -356,7 +536,9 @@ export function PhotoSubmitForm({
             type="button"
             onClick={() => setProgress("another_cycle")}
             aria-pressed={progress === "another_cycle"}
-            className={progress === "another_cycle" ? "btn" : "btn-ghost"}
+            className={`${progress === "another_cycle" ? "btn" : "btn-ghost"} ${
+              marked("progress") ? "ring-warn ring-1" : ""
+            }`}
             disabled={busy}
           >
             One more cycle
@@ -371,13 +553,19 @@ export function PhotoSubmitForm({
       </div>
 
       <div className="space-y-2">
-        <label className="label" htmlFor="author">
+        <label
+          className={marked("author") ? "label text-warn" : "label"}
+          htmlFor="author"
+        >
           Who wrote this (required)
+          {marked("author") ? " · still needed" : ""}
         </label>
         <input
           id="author"
           name="author"
-          className="field"
+          ref={authorRef}
+          className={`field ${marked("author") ? "border-warn" : ""}`}
+          aria-invalid={marked("author")}
           placeholder="Your name"
           autoComplete="name"
           value={author}
@@ -411,14 +599,22 @@ export function PhotoSubmitForm({
       </div>
 
       <div className="space-y-2">
-        <label className="label" htmlFor="comment">
+        <label
+          className={marked("comment") ? "label text-warn" : "label"}
+          htmlFor="comment"
+        >
           Comment on progress (required)
+          {marked("comment") ? " · still needed" : ""}
         </label>
         <textarea
           id="comment"
           name="comment"
           rows={4}
-          className="field resize-none"
+          ref={commentRef}
+          className={`field resize-none ${
+            marked("comment") ? "border-warn" : ""
+          }`}
+          aria-invalid={marked("comment")}
           placeholder="What changed this week?"
           value={comment}
           onChange={(event) => setComment(event.target.value)}
@@ -432,7 +628,9 @@ export function PhotoSubmitForm({
         </p>
       ) : null}
 
-      <button type="submit" className="btn w-full" disabled={!ready || busy}>
+      {/* Only disabled while something is actually in flight. Incomplete is
+          handled on press, with a message naming what's left. */}
+      <button type="submit" className="btn w-full" disabled={busy}>
         {uploading ? "Uploading…" : pending ? "Saving…" : "Submit this week"}
       </button>
     </form>

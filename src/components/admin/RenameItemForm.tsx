@@ -24,9 +24,11 @@ export function RenameItemForm({
       <input type="hidden" name="itemId" value={itemId} />
       <input type="hidden" name="venueId" value={venueId} />
       <div className="flex gap-2">
+        {/* min-w-0: an input's intrinsic minimum is about twenty characters
+            wide, so without this the Save button pushes it off a phone. */}
         <input
           name="title"
-          className="field"
+          className="field min-w-0"
           value={value}
           onChange={(event) => setValue(event.target.value)}
           disabled={pending}

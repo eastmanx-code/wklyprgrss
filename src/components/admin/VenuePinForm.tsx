@@ -33,7 +33,20 @@ export function VenuePinForm({
   const [revealed, setRevealed] = useState(false);
 
   return (
-    <form action={formAction} className="flex flex-wrap items-center gap-2">
+    <form
+      action={formAction}
+      /* Compact rows sit in a list twenty-seven long. Left-packed, the pills
+         ended a third of the way across and the whole section hung off the
+         left of a column whose panels and rule run full width. Pushed to the
+         far edge they line up with the admin code row directly above.
+
+         From sm up only: a phone has just enough width for the pill, Show and
+         Save on one line, and reserving any of it for alignment wraps Save
+         onto a line of its own. */
+      className={`flex flex-wrap items-center gap-2 ${
+        compact ? "sm:justify-end" : ""
+      }`}
+    >
       <input type="hidden" name="venueId" value={venueId} />
 
       {compact ? null : (
