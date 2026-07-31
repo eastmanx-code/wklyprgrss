@@ -248,12 +248,7 @@ export default async function AdminVenuePage({
           {/* Fillable in place — the board is where you can see what's
                 missing, so it's where it should be added. */}
           {emptySlots(activeItems.length, WEEKLY_ITEM_TARGET).map((slot) => (
-            <AddItemSlot
-              key={`slot-${slot}`}
-              venueId={venue.id}
-              index={slot}
-              uploadPrefix="/venue/item/"
-            />
+            <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
           ))}
         </ul>
       </section>
@@ -399,9 +394,10 @@ export default async function AdminVenuePage({
           <VenuePinForm venueId={venue.id} pin={venue.pin} />
         </section>
 
-        {/* Last thing on the page, behind the disclosure, behind a warning. */}
+        {/* Last thing on the page, behind the disclosure. The warning states
+            itself now, so it no longer needs a one-word heading to carry the
+            weight. */}
         <section className="mt-10">
-          <h2 className="label text-warn mb-3">Danger</h2>
           <WipeVenue
             venueId={venue.id}
             venueCode={venue.code}

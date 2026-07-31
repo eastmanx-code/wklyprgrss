@@ -15,7 +15,13 @@ export function AddItemForm({ venueId }: { venueId: string }) {
   }, [pending, state]);
 
   return (
-    <form ref={formRef} action={formAction} className="panel space-y-3">
+    /* Capped: an item name is a few words, and a field running the width of a
+       laptop reads as expecting a paragraph. */
+    <form
+      ref={formRef}
+      action={formAction}
+      className="panel max-w-xl space-y-3"
+    >
       <label className="label" htmlFor="new-item">
         Add item
       </label>

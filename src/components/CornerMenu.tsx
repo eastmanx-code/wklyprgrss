@@ -45,6 +45,16 @@ export async function CornerMenu() {
         </Link>
       ) : null}
 
+      {/* Under review, not in service. Sits with the other destinations
+          because the people whose opinion is wanted are the ones already
+          reaching for this bar — but it says Preview so nobody mistakes it
+          for the night's record. */}
+      {session ? (
+        <Link href="/close" className="btn-ghost">
+          Close · preview
+        </Link>
+      ) : null}
+
       <Link href="/help" className="btn-ghost">
         How to
       </Link>

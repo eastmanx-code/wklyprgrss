@@ -49,8 +49,11 @@ export function VenuePinForm({
     >
       <input type="hidden" name="venueId" value={venueId} />
 
+      {/* Its own line rather than a 64px column beside the controls, where
+          "Venue PIN" wrapped to two lines and then sat off-centre against a
+          32px pill. */}
       {compact ? null : (
-        <label className="label w-16 shrink-0" htmlFor={`venue-pin-${venueId}`}>
+        <label className="label w-full" htmlFor={`venue-pin-${venueId}`}>
           Venue PIN
         </label>
       )}
