@@ -13,6 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  /**
+   * Without this, Next resolves og:image against localhost and ships
+   * "http://localhost:3000/opengraph-image" to production — which is why link
+   * previews showed a generic icon: iMessage and Slack could fetch the page
+   * but never the image. Netlify sets URL to the site's primary address.
+   */
+  metadataBase: new URL(
+    process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? "https://wklyprgrss.com",
+  ),
   title: "WKLY > PRGRSS",
   description: "Weekly progress photos for venue leaders.",
 };
