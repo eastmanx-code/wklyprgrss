@@ -56,7 +56,7 @@ export default async function ChecklistsPage() {
                         <li key={list.slug}>
                           <Link
                             href={`/close/${list.slug}`}
-                            className="bg-ink text-paper inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+                            className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
                           >
                             {phaseName(list.phase)}
                             <span className="opacity-60">

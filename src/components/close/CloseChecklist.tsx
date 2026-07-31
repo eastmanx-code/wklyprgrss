@@ -444,7 +444,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                               if (!haveInitials(item.number)) return;
                               inputs.current[key]?.click();
                             }}
-                            className="bg-ink text-paper inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
+                            className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
                           >
                             <CaptureGlyph kind={shot.kind} />
                             {shot.kind === "video" ? "Record" : "Photograph"}
