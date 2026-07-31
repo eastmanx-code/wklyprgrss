@@ -56,7 +56,7 @@ export default async function AdminCodesPage() {
                   {venue.code}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <VenuePinForm venueId={venue.id} pin={venue.pin} />
+                  <VenuePinForm venueId={venue.id} pin={venue.pin} compact />
                 </span>
               </li>
             ),

@@ -122,29 +122,19 @@ export default async function OpengraphImage() {
       >
         <Asterisk size={photo ? 84 : 120} stroke={photo ? 13 : 18} />
 
-        {/* Two lines rather than one: the full string is 37 characters, and
-              at a size that fills the card it runs off the right edge. */}
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div
-            style={{
-              fontSize: 64,
-              letterSpacing: "0.04em",
-              color: "#f1f1ef",
-              lineHeight: 1.2,
-            }}
-          >
-            {APP_NAME}
-          </div>
-          <div
-            style={{
-              fontSize: 30,
-              letterSpacing: "0.08em",
-              color: "rgba(255,255,255,0.75)",
-              marginTop: 16,
-            }}
-          >
-            {TAGLINE}
-          </div>
+        {/* Tagline only. The wordmark sat here too, but every platform
+            renders og:title and the domain directly beneath the image, so the
+            name appeared twice in one bubble. The chrome says who it is; the
+            image says what it stands for. */}
+        <div
+          style={{
+            fontSize: 46,
+            letterSpacing: "0.08em",
+            color: "#f1f1ef",
+            lineHeight: 1.2,
+          }}
+        >
+          {TAGLINE}
         </div>
       </div>
     </div>,

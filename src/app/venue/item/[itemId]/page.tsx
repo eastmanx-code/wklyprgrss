@@ -202,7 +202,6 @@ export default async function ItemPage({
                       <figure>
                         <div className="aspect-[4/3] overflow-hidden rounded-xl bg-panel">
                           {beforeUrl ? (
-                             
                             <PhotoView
                               src={beforeUrl}
                               className="h-full w-full"

@@ -14,9 +14,17 @@ const initialState: AdminState = { error: null };
 export function VenuePinForm({
   venueId,
   pin,
+  compact = false,
 }: {
   venueId: string;
   pin: string;
+  /**
+   * Drops the per-row label and hint. On a single venue's page they belong;
+   * in a list of twenty-seven they repeat "VENUE PIN" and "6 digits, shared
+   * with the whole venue" twenty-seven times, which is most of what makes
+   * that list feel cramped. The section states it once instead.
+   */
+  compact?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(
     updateVenuePin,
@@ -28,12 +36,14 @@ export function VenuePinForm({
     <form action={formAction} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="venueId" value={venueId} />
 
-      <label className="label w-16 shrink-0" htmlFor="venue-pin">
-        Venue PIN
-      </label>
+      {compact ? null : (
+        <label className="label w-16 shrink-0" htmlFor={`venue-pin-${venueId}`}>
+          Venue PIN
+        </label>
+      )}
 
       <input
-        id="venue-pin"
+        id={`venue-pin-${venueId}`}
         name="pin"
         type={revealed ? "text" : "password"}
         className="bg-panel text-ink h-8 w-28 rounded-full px-3 text-center font-mono text-body tracking-[0.3em] outline-none focus:ring-1 focus:ring-current"
@@ -62,7 +72,7 @@ export function VenuePinForm({
         <p role="alert" className="label text-warn w-full">
           {state.error}
         </p>
-      ) : (
+      ) : compact ? null : (
         <p className="label w-full">6 digits · shared with the whole venue.</p>
       )}
     </form>
