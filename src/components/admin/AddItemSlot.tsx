@@ -55,6 +55,10 @@ export function AddItemSlot({
               name="title"
               className="label text-ink placeholder:text-muted w-full min-w-0 flex-1 border-0 bg-transparent outline-none"
               placeholder="Task name"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="words"
+              spellCheck={false}
               maxLength={120}
               disabled={pending}
               aria-label={`Task's name for slot ${index}`}
