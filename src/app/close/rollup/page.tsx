@@ -15,9 +15,19 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/**
+ * A severity ramp, not a good/bad flag.
+ *
+ * The grid read backwards: a complete night was a solid white block and a
+ * night nobody certified was a small yellow one, so twenty-four blocks
+ * shouting "fine" drowned the six that were the point of the page. Quiet grey
+ * for the nights that went well, and one hue rising through it for the two
+ * that didn't — soft where a night was signed with gaps, full where nobody
+ * signed at all.
+ */
 const NIGHT_STATE: Record<string, string> = {
-  c: "bg-ink",
-  g: "ring-ink ring-1 ring-inset",
+  c: "bg-ink/20",
+  g: "bg-warn/40",
   m: "bg-warn",
 };
 
@@ -27,7 +37,9 @@ function Bar({ done, of }: { done: number; of: number }) {
     <span className="flex min-w-0 flex-1 items-center gap-3">
       <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
         <span
-          className={`block h-full rounded-[1px] ${pct < 75 ? "bg-warn" : "bg-ink"}`}
+          className={`block h-full rounded-[1px] ${
+            pct < 75 ? "bg-warn" : pct < 90 ? "bg-warn/40" : "bg-ink/30"
+          }`}
           style={{ width: `${pct}%` }}
         />
       </span>
@@ -63,7 +75,7 @@ export default async function RollupPage() {
         <section className="panel">
           <p className="label">Nights certified</p>
           <p className="mt-2 text-metric tabular-nums">24 of {SAMPLE_NIGHTS}</p>
-          <div className="mt-3 grid grid-cols-10 gap-[5px]" aria-hidden>
+          <div className="mt-3 grid max-w-[26rem] grid-cols-10 gap-1.5" aria-hidden>
             {SAMPLE_STRIP.split("").map((code, index) => (
               <span
                 key={index}
@@ -73,11 +85,11 @@ export default async function RollupPage() {
           </div>
           <div className="mt-3 flex flex-wrap gap-4">
             <span className="label flex items-center gap-2">
-              <span className="bg-ink size-3 rounded-[2px]" />
+              <span className="bg-ink/20 size-3 rounded-[2px]" />
               All complete
             </span>
             <span className="label flex items-center gap-2">
-              <span className="ring-ink size-3 rounded-[2px] ring-1 ring-inset" />
+              <span className="bg-warn/40 size-3 rounded-[2px]" />
               Signed with gaps
             </span>
             <span className="label flex items-center gap-2">
