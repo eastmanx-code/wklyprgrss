@@ -11,6 +11,7 @@ import {
 } from "@/lib/checklists";
 import { currentNight, formatNight } from "@/lib/night";
 import { getSession } from "@/lib/session";
+import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,30 @@ export default async function ChecklistsPage() {
   if (!session) redirect("/");
 
   const night = currentNight();
-  const { built, total } = builtCount();
+
+  // Which lists actually exist, from the table. The tree in code is the shape;
+  // the rows are the truth.
+  let venue: string | null = null;
+  if (session.role === "leader") venue = session.venueId;
+  else {
+    const { data } = await db().from("venues").select("id").eq("code", "HAWK").maybeSingle();
+    venue = (data as { id: string } | null)?.id ?? null;
+  }
+  const { data: liveRows } = venue
+    ? await db()
+        .from("close_checklists")
+        .select("house, role, phase")
+        .eq("venue_id", venue)
+        .eq("active", true)
+    : { data: [] };
+  const live = new Set(
+    ((liveRows ?? []) as { house: string; role: string; phase: string }[]).map(
+      (r) => `${r.house}|${r.role}|${r.phase}`.toLowerCase(),
+    ),
+  );
+
+  const total = builtCount().total;
+  const built = live.size;
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
@@ -62,16 +86,15 @@ export default async function ChecklistsPage() {
 
                   <ul className="mt-2 flex flex-wrap gap-2">
                     {forRole(house.key, role).map((list) =>
-                      list.items.length > 0 ? (
+                      live.has(
+                        `${list.house}|${list.role}|${list.phase}`.toLowerCase(),
+                      ) ? (
                         <li key={list.slug}>
                           <Link
                             href={`/close/${list.slug}`}
                             className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
                           >
                             {phaseName(list.phase)}
-                            <span className="opacity-60">
-                              {list.items.length} items
-                            </span>
                           </Link>
                         </li>
                       ) : (
