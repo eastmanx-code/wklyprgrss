@@ -175,7 +175,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
   const locked = certified !== null;
 
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-3">
       {/* Compact and pinned: it is on screen the whole way down, and the
           bottom of a phone belongs to the back/out bar. */}
       {locked ? (
@@ -187,7 +187,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
         </section>
       ) : null}
 
-      <section className="panel bg-surface/95 sticky top-2 z-30 px-4 py-3 backdrop-blur-md">
+      <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-1 border-b px-4 py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-title tabular-nums tracking-[0.08em]">
             {doneCount}/{CLOSE_TOTAL} done
@@ -216,7 +216,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
 
       </section>
 
-      <ul className="space-y-2.5">
+      <ul className="space-y-3">
         {CLOSE_CHECKLIST.map((item) => {
           const isDone = Boolean(done[item.number]);
           const shots = item.proof ?? [];
@@ -368,7 +368,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
                   rarely in the same place, so each names what it has to show
                   and is taken on its own. */}
               {shots.length > 0 ? (
-                <div className="border-divider space-y-4 border-t px-4 py-4">
+                <div className="border-divider space-y-3.5 border-t px-4 py-5 sm:pl-[3.6rem]">
                   {shots.map((shot, index) => {
                     const key = slotKey(item.number, index);
                     const got = captures[key];
@@ -489,7 +489,7 @@ export function CloseChecklist({ items }: { items: CloseItem[] }) {
         })}
       </ul>
 
-      <section className="panel">
+      <section className="panel mt-5">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
             ? `Still open · ${openItems.length}`
