@@ -365,17 +365,29 @@ export function CloseChecklist({
               .join(" · ")}
           </p>
         </div>
+        {/* One block per item, in order, showing which are open rather than how
+            many. Filled left to right it read as a progress bar and item 7
+            being the one nobody ever does was invisible. */}
         <div className="mt-2.5 flex gap-[3px]" aria-hidden>
-          {CLOSE_CHECKLIST.map((item, index) => (
+          {CLOSE_CHECKLIST.map((item) => (
             <span
               key={item.number}
               className={`h-1.5 flex-1 rounded-[1px] ${
-                index < doneCount ? "bg-ink" : "bg-inset"
+                done[item.number] ? "bg-ink" : "bg-warn/50"
               }`}
             />
           ))}
         </div>
 
+        {/* Named, in the header, the whole way down the page. It was only in
+            the panel at the bottom, which means you saw what you had missed
+            after you had decided you were finished. */}
+        {openItems.length > 0 ? (
+          <p className="text-warn mt-2 text-[12px] leading-snug tracking-[0.08em]">
+            <span className="opacity-70">Still open</span>{" "}
+            {openItems.map((item) => item.number).join(" · ")}
+          </p>
+        ) : null}
       </section>
 
       <ul className="space-y-3">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { logout } from "@/app/actions";
+import { MissedList } from "@/components/close/MissedList";
 import { BackLink } from "@/components/ui";
 import { getSession } from "@/lib/session";
 import {
@@ -100,26 +101,11 @@ export default async function RollupPage() {
         </section>
 
         {/* The point of the whole exercise. */}
-        <section className="panel">
+        <section className="panel border-warn/30">
           <p className="label">What keeps getting left open</p>
-          <ul className="mt-3">
-            {SAMPLE_MISSED.map((row) => (
-              <li
-                key={`${row.role}-${row.item}`}
-                className="border-divider flex items-baseline justify-between gap-4 border-t py-3 first:border-t-0"
-              >
-                <span className="min-w-0">
-                  <span className="text-body break-words">{row.item}</span>
-                  <span className="label mt-1 block">
-                    {row.house} · {row.role} · {row.phase}
-                  </span>
-                </span>
-                <span className="label text-warn tabular-nums shrink-0">
-                  {row.open} of {row.of}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-3">
+            <MissedList rows={SAMPLE_MISSED} />
+          </div>
           <p className="label mt-3">
             Ranked by how often the item was still open at signature.
           </p>

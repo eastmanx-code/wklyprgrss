@@ -32,12 +32,25 @@ export async function CornerMenu() {
        collapsed state is genuinely small. */
     <nav className="fixed right-4 bottom-4 z-50">
       <details className="ww-menu">
-        <summary className="border-warn/60 bg-surface text-warn flex h-14 cursor-pointer items-center justify-center gap-2 rounded-[8px] border px-4">
-          <span className="label text-warn">Menu</span>
-          <span className="ww-menu-caret" aria-hidden />
+        {/* A filled disc, the word running around its rim. The accent is the
+            button, not the lettering on it — a yellow word on a dark chip was
+            the quietest thing in the corner. */}
+        {/* Two lines rather than a word bent round the rim: at a size you can
+            read on a phone, curved type needed a disc half again as big. The
+            accent is the button itself, not the lettering on it. */}
+        <summary className="bg-warn text-on-warn grid size-16 shrink-0 place-items-center rounded-full leading-none">
+          <span className="text-center text-[15px] leading-[1.05] font-medium tracking-[0.06em]">
+            ME
+            <br />
+            NU
+          </span>
+          <span className="sr-only">Menu</span>
         </summary>
 
-        <div className="border-card-border bg-surface/90 ww-menu-items absolute right-0 bottom-0 h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:gap-3 sm:px-3">
+        {/* In flow beside the button, not laid over it. Absolute, it covered the
+            only control that could close it again — which is why the menu
+            opened and then never shut. */}
+        <div className="border-card-border bg-surface/90 ww-menu-items h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:gap-3 sm:px-3">
           <span className="hidden sm:contents">
             <DeadlineCountdown deadlineMs={deadlineMs} />
             <span className="bg-card-border h-6 w-px" aria-hidden />
