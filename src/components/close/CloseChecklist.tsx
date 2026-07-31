@@ -122,11 +122,130 @@ export function CloseChecklist({
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
   const signatureRef = useRef<string | null>(null);
+  /** True for a few seconds after this device does something, so a poll that
+      set off before the change landed cannot come back and undo it. A flag on
+      a timer rather than a timestamp: reading the clock during render is not
+      allowed, and the question here is only "recently?". */
+  const justTouched = useRef(false);
+  const quiet = useRef<number | null>(null);
 
   useEffect(() => {
     const urls = objectUrls.current;
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, []);
+
+  /**
+   * Four people work a close on four phones. Everything already persists, but
+   * a device that was sitting on this page when someone else ticked item 3 had
+   * no way to find out — so two MODs could each believe they were looking at
+   * the night and be looking at different ones.
+   *
+   * Polled rather than subscribed. A close runs a couple of hours on a handful
+   * of devices; fifteen seconds is well inside the time it takes to walk to
+   * the next thing, and it costs one query rather than a realtime connection
+   * to hold open on a phone that keeps sleeping. Only while the tab is
+   * actually in front of someone.
+   */
+  useEffect(() => {
+    const pull = () => {
+      if (document.visibilityState === "visible") router.refresh();
+    };
+    const id = window.setInterval(pull, 15_000);
+    document.addEventListener("visibilitychange", pull);
+    window.addEventListener("focus", pull);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener("visibilitychange", pull);
+      window.removeEventListener("focus", pull);
+    };
+  }, [router]);
+
+  /**
+   * Server state, merged in.
+   *
+   * Not while a save is in flight, and not within a few seconds of this
+   * person's own last action: a poll that set off before their tick landed
+   * would come back without it and undo it in front of them.
+   *
+   * Ticks follow the server exactly, including removals — someone un-ticking
+   * the restrooms because they were not actually done has to reach the other
+   * phones, or the next person signs an attestation that says ten of ten when
+   * the record says nine. Captures and notes are only ever added: replacing a
+   * photo this device just took would swap a local file for a signed URL and
+   * reload the image for nothing, and rewriting a note would fight whoever is
+   * typing it.
+   */
+  useEffect(() => {
+    if (saving || justTouched.current) return;
+
+    setDone((current) => {
+      let changed = false;
+      const next = { ...current };
+      for (const item of items) {
+        const on = Boolean(saved.ticks[item.id ?? ""]);
+        if (on !== Boolean(next[item.number])) {
+          next[item.number] = on;
+          changed = true;
+        }
+      }
+      return changed ? next : current;
+    });
+
+    setRowInitials((current) => {
+      let changed = false;
+      const next = { ...current };
+      for (const item of items) {
+        const theirs = saved.ticks[item.id ?? ""];
+        if (theirs && next[item.number] !== theirs) {
+          next[item.number] = theirs;
+          changed = true;
+        }
+      }
+      return changed ? next : current;
+    });
+
+    setCaptures((current) => {
+      let changed = false;
+      const next = { ...current };
+      for (const [key, value] of Object.entries(saved.proof)) {
+        if (value.kind === "note" || !value.url) continue;
+        const [itemId, shot] = key.split(":");
+        const number = items.find((i) => i.id === itemId)?.number;
+        if (number === undefined) continue;
+        const slot = slotKey(number, Number(shot));
+        if (!next[slot]) {
+          next[slot] = { url: value.url, kind: value.kind as "photo" | "video" };
+          changed = true;
+        }
+      }
+      return changed ? next : current;
+    });
+
+    setNotes((current) => {
+      let changed = false;
+      const next = { ...current };
+      for (const [key, value] of Object.entries(saved.proof)) {
+        if (value.kind !== "note" || !value.body) continue;
+        const [itemId, shot] = key.split(":");
+        const number = items.find((i) => i.id === itemId)?.number;
+        if (number === undefined) continue;
+        const slot = slotKey(number, Number(shot));
+        if (!next[slot]) {
+          next[slot] = value.body;
+          changed = true;
+        }
+      }
+      return changed ? next : current;
+    });
+
+    // Somebody else signed it. Lock, so this device cannot keep working a
+    // night that is already a record.
+    setCertified((current) =>
+      saved.certifiedAt && current === null
+        ? `Certified by ${saved.certifiedBy ?? "—"}`
+        : current,
+    );
+  }, [saved, saving, items]);
 
   /** A shot is met by a capture, or — for a note — by words in the box. */
   const shotFilled = (item: number, index: number, kind: ProofKind) =>
@@ -171,8 +290,18 @@ export function CloseChecklist({
     if (result.error) setShortfall(result.error);
   }
 
+  /** Marks the moment, so the next poll defers to this device. */
+  function touch() {
+    justTouched.current = true;
+    if (quiet.current !== null) window.clearTimeout(quiet.current);
+    quiet.current = window.setTimeout(() => {
+      justTouched.current = false;
+    }, 4_000);
+  }
+
   function toggle(item: CloseItem) {
     if (locked) return;
+    touch();
     if (done[item.number]) {
       setDone((c) => ({ ...c, [item.number]: false }));
       if (item.proof) {
@@ -221,6 +350,7 @@ export function CloseChecklist({
     const kind = item.proof[shotIndex].kind;
     if (kind === "note") return;
 
+    touch();
     setSaving(true);
 
     let upload = file;
@@ -489,7 +619,14 @@ export function CloseChecklist({
 
           return (
             <li key={item.number} className="panel p-0">
-              <div className="flex items-start">
+              {/* Stacked on a phone, side by side from sm up.
+                  The initials box is 88px of a 358px card, and beside a 28px
+                  checkbox it left about 180px for the title — "Full close
+                  restroom walkthrough" in four words a line. On a phone the
+                  box drops to its own row under the task and the title gets
+                  the whole width; on a tablet there is room for both and the
+                  column of boxes is worth keeping. */}
+              <div className="flex flex-col items-stretch sm:flex-row sm:items-start">
               <button
                 type="button"
                 onPointerDown={() => {
@@ -503,7 +640,7 @@ export function CloseChecklist({
                   byPointer.current = false;
                 }}
                 aria-pressed={isDone}
-                className="flex w-full items-start gap-3.5 p-4 text-left"
+                className="flex w-full items-start gap-3.5 p-4 pb-2 text-left sm:pb-4"
               >
                 <span
                   aria-hidden
@@ -571,17 +708,16 @@ export function CloseChecklist({
                 </span>
               </button>
 
-              {/* At the end of the line it belongs to. Not inside the button —
-                  an input cannot live in one — so it sits beside it, aligned
-                  to the title. */}
-              {/* The whole cell lights up until it is filled, rather than a
-                  stripe on the box — the thing being asked for is the area,
-                  and a border on a dark field is easy to miss. Fixed width so
-                  the boxes stay in a column whether or not the prompt shows,
-                  and centred so the prompt sits under the box instead of
-                  hanging off its edge. */}
+              {/* Not inside the button — an input cannot live in one — so it
+                  sits beside it on a tablet and below it on a phone.
+
+                  The whole cell lights up until it is filled, rather than a
+                  stripe on the box: the thing being asked for is the area, and
+                  a border on a dark field is easy to miss. On sm and up it is
+                  a fixed width so the boxes hold a column whether or not the
+                  prompt shows. */}
               <span
-                className={`m-2 flex w-[5.5rem] shrink-0 flex-col items-center gap-2 rounded-lg py-2 ${
+                className={`mx-3 mb-3 flex shrink-0 items-center justify-end gap-3 rounded-lg px-2 py-1.5 sm:m-2 sm:w-[5.5rem] sm:flex-col sm:justify-start sm:gap-2 sm:px-0 sm:py-2 ${
                   wanted ? "bg-warn/15 ring-warn/50 ring-1" : ""
                 }`}
               >
@@ -589,7 +725,7 @@ export function CloseChecklist({
                   ref={(node) => {
                     initialsRefs.current[item.number] = node;
                   }}
-                  className="field h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em]"
+                  className="field order-2 h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] sm:order-1"
                   placeholder="––"
                   maxLength={4}
                   autoComplete="off"
@@ -620,8 +756,12 @@ export function CloseChecklist({
                     }
                   }}
                 />
+                {/* Left of the box on a phone, under it on a tablet — either
+                    way it reads into the thing it is asking for. */}
                 {wanted ? (
-                  <span className="label text-warn text-center">Initial it</span>
+                  <span className="label text-warn order-1 text-center sm:order-2">
+                    Initial it
+                  </span>
                 ) : null}
               </span>
               </div>
@@ -664,6 +804,7 @@ export function CloseChecklist({
                               value={notes[key] ?? ""}
                               onChange={(event) => {
                                 const text = event.target.value;
+                                touch();
                                 setNotes((c) => ({ ...c, [key]: text }));
                                 // Written words are the capture. Completing the
                                 // last shot completes the item, same as a photo.

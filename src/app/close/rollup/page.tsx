@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { logout } from "@/app/actions";
+import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { BackLink } from "@/components/ui";
 import { getSession } from "@/lib/session";
@@ -169,16 +168,7 @@ export default async function RollupPage() {
         It becomes real the night the first checklist is stored.
       </p>
 
-      <nav className="border-card-border bg-surface/90 fixed right-4 bottom-4 left-4 z-50 flex h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:left-auto sm:gap-3 sm:px-3">
-        <Link href="/close" className="btn-ghost">
-          Back
-        </Link>
-        <form action={logout}>
-          <button type="submit" className="btn-ghost">
-            Out
-          </button>
-        </form>
-      </nav>
+      <CloseBar back="/close" />
     </main>
   );
 }
