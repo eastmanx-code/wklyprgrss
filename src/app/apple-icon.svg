@@ -1,6 +1,9 @@
+<!-- No corner radius of our own; iOS masks home-screen icons. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-  <!-- Home-screen icon: no rounded corners of our own, iOS masks it. -->
-  <rect width="180" height="180" fill="#0b0b0a"/>
-  <path d="M62 50 L112 90 L62 130" fill="none" stroke="#f1f1ef"
-        stroke-width="24" stroke-linecap="square" stroke-linejoin="miter"/>
+  <rect width="180" height="180" rx="0" fill="#0b0b0a"/>
+  <g stroke="#f1f1ef" stroke-width="26" stroke-linecap="butt">
+  <line x1="90.00" y1="146.00" x2="90.00" y2="34.00"/>
+  <line x1="138.50" y1="118.00" x2="41.50" y2="62.00"/>
+  <line x1="138.50" y1="62.00" x2="41.50" y2="118.00"/>
+  </g>
 </svg>
