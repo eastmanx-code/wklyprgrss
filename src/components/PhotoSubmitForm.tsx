@@ -64,6 +64,22 @@ function formatKb(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
 }
 
+/** "a photo, your name and a comment" — a sentence, not a bulleted list. */
+function listOut(entries: string[]): string {
+  if (entries.length < 2) return entries[0] ?? "";
+  return `${entries.slice(0, -1).join(", ")} and ${entries[entries.length - 1]}`;
+}
+
+/** The four things a week needs, in the order they appear on the form. */
+type Needed = "photo" | "progress" | "author" | "comment";
+
+const NEEDED_LABEL: Record<Needed, string> = {
+  photo: "a photo",
+  progress: "where this is at",
+  author: "your name",
+  comment: "a comment",
+};
+
 const initialState: SubmitState = { error: null };
 
 const AUTHOR_KEY = "ww_author";
@@ -130,8 +146,15 @@ export function PhotoSubmitForm({
   );
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  // What a submit press found missing. Only ever set by pressing submit, so
+  // the form doesn't scold anyone for fields they haven't reached yet.
+  const [pressed, setPressed] = useState<Needed[]>([]);
   const previewRef = useRef<string | null>(null);
   const beforePreviewRef = useRef<string | null>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const authorRef = useRef<HTMLInputElement>(null);
+  const commentRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     return () => {
@@ -192,7 +215,32 @@ export function PhotoSubmitForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!photo || !comment.trim() || !author.trim() || !progress) return;
+
+    // Say what is missing, mark it, and go to it — rather than refusing to
+    // move. The button used to be disabled until all four were in, which on a
+    // phone reads as a broken submit: someone who skipped "where is this at" —
+    // the one field that is buttons rather than a box, and so the easiest to
+    // scroll past — tapped a dead control, got nothing back, and left thinking
+    // the week was filed.
+    if (!photo || !progress || !author.trim() || !comment.trim()) {
+      setPressed(unmet);
+      const first = unmet[0];
+      const target = {
+        photo: photoRef,
+        progress: progressRef,
+        author: authorRef,
+        comment: commentRef,
+      }[first].current;
+      // scroll-behavior is set globally and already answers to
+      // prefers-reduced-motion, so this is smooth or instant to taste.
+      target?.scrollIntoView({ block: "center" });
+      // Only the two text fields; focus means nothing on a photo well or a
+      // pair of buttons, and on a phone it would open a keyboard over them.
+      if (first === "author" || first === "comment") target?.focus();
+      return;
+    }
+
+    setPressed([]);
 
     try {
       localStorage.setItem(
@@ -251,13 +299,25 @@ export function PhotoSubmitForm({
     }
   }
 
-  const ready =
-    Boolean(photo) &&
-    comment.trim().length > 0 &&
-    author.trim().length > 0 &&
-    progress !== null;
+  const unmet: Needed[] = [];
+  if (!photo) unmet.push("photo");
+  if (!progress) unmet.push("progress");
+  if (!author.trim()) unmet.push("author");
+  if (!comment.trim()) unmet.push("comment");
+
+  // Derived, not stored: a mark clears the moment its field is filled, so
+  // nobody is left staring at a warning about something they've just done.
+  const flagged = pressed.filter((need) => unmet.includes(need));
+  const marked = (need: Needed) => flagged.includes(need);
+
   const busy = pending || processing || uploading;
-  const error = localError ?? state.error;
+  const shortfall =
+    flagged.length > 0
+      ? `Still needed: ${listOut(flagged.map((need) => NEEDED_LABEL[need]))}.`
+      : null;
+  // The shortfall wins: if it's set, the submit never ran, so anything below
+  // it is from an earlier attempt.
+  const error = shortfall ?? localError ?? state.error;
 
   return (
     <form onSubmit={handleSubmit} className="panel space-y-5">
@@ -295,9 +355,10 @@ export function PhotoSubmitForm({
         ) : null}
       </div>
 
-      <div className="space-y-2">
-        <span className="label">
+      <div className="space-y-2" ref={photoRef}>
+        <span className={marked("photo") ? "label text-warn" : "label"}>
           {beforePhoto ? "After (required)" : "Photo (required)"}
+          {marked("photo") ? " · still needed" : ""}
         </span>
 
         <label className="block cursor-pointer">
@@ -308,7 +369,11 @@ export function PhotoSubmitForm({
             onChange={handlePick}
             disabled={busy}
           />
-          <div className="bg-panel relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
+          <div
+            className={`bg-panel relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl ${
+              marked("photo") ? "ring-warn ring-1" : ""
+            }`}
+          >
             {preview || currentPhotoUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -340,14 +405,21 @@ export function PhotoSubmitForm({
 
       {/* The leader decides this, not the admin. Nothing can be approved until
           they've said the work is actually finished. */}
-      <div className="space-y-2">
-        <span className="label">Where is this at? (required)</span>
+      <div className="space-y-2" ref={progressRef}>
+        <span className={marked("progress") ? "label text-warn" : "label"}>
+          Where is this at? (required)
+          {marked("progress") ? " · pick one" : ""}
+        </span>
+        {/* A ring rather than a border: it draws outside the box, so marking
+            these can't shift the two buttons around. */}
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <button
             type="button"
             onClick={() => setProgress("done")}
             aria-pressed={progress === "done"}
-            className={progress === "done" ? "btn" : "btn-ghost"}
+            className={`${progress === "done" ? "btn" : "btn-ghost"} ${
+              marked("progress") ? "ring-warn ring-1" : ""
+            }`}
             disabled={busy}
           >
             This is done
@@ -356,7 +428,9 @@ export function PhotoSubmitForm({
             type="button"
             onClick={() => setProgress("another_cycle")}
             aria-pressed={progress === "another_cycle"}
-            className={progress === "another_cycle" ? "btn" : "btn-ghost"}
+            className={`${progress === "another_cycle" ? "btn" : "btn-ghost"} ${
+              marked("progress") ? "ring-warn ring-1" : ""
+            }`}
             disabled={busy}
           >
             One more cycle
@@ -371,13 +445,19 @@ export function PhotoSubmitForm({
       </div>
 
       <div className="space-y-2">
-        <label className="label" htmlFor="author">
+        <label
+          className={marked("author") ? "label text-warn" : "label"}
+          htmlFor="author"
+        >
           Who wrote this (required)
+          {marked("author") ? " · still needed" : ""}
         </label>
         <input
           id="author"
           name="author"
-          className="field"
+          ref={authorRef}
+          className={`field ${marked("author") ? "border-warn" : ""}`}
+          aria-invalid={marked("author")}
           placeholder="Your name"
           autoComplete="name"
           value={author}
@@ -411,14 +491,22 @@ export function PhotoSubmitForm({
       </div>
 
       <div className="space-y-2">
-        <label className="label" htmlFor="comment">
+        <label
+          className={marked("comment") ? "label text-warn" : "label"}
+          htmlFor="comment"
+        >
           Comment on progress (required)
+          {marked("comment") ? " · still needed" : ""}
         </label>
         <textarea
           id="comment"
           name="comment"
           rows={4}
-          className="field resize-none"
+          ref={commentRef}
+          className={`field resize-none ${
+            marked("comment") ? "border-warn" : ""
+          }`}
+          aria-invalid={marked("comment")}
           placeholder="What changed this week?"
           value={comment}
           onChange={(event) => setComment(event.target.value)}
@@ -432,7 +520,9 @@ export function PhotoSubmitForm({
         </p>
       ) : null}
 
-      <button type="submit" className="btn w-full" disabled={!ready || busy}>
+      {/* Only disabled while something is actually in flight. Incomplete is
+          handled on press, with a message naming what's left. */}
+      <button type="submit" className="btn w-full" disabled={busy}>
         {uploading ? "Uploading…" : pending ? "Saving…" : "Submit this week"}
       </button>
     </form>
