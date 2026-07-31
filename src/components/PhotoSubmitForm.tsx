@@ -97,9 +97,12 @@ function readSavedAuthor(): string {
 const noSavedAuthor = () => "";
 
 export function PhotoSubmitForm({
+  doneHref,
   itemId,
   currentPhotoUrl = null,
 }: {
+  /** Where to land after submitting — the board the person came from. */
+  doneHref: string;
   itemId: string;
   /** This week's photo, if one is already in. Shown so the well isn't empty. */
   currentPhotoUrl?: string | null;
@@ -141,8 +144,8 @@ export function PhotoSubmitForm({
   useEffect(() => {
     // Pure navigation, not state — the action reports success and the client
     // moves, so a redirect thrown from the action can't blank the screen.
-    if (state.ok) router.push("/venue");
-  }, [state.ok, router]);
+    if (state.ok) router.push(doneHref);
+  }, [state.ok, router, doneHref]);
 
   async function handleBeforePick(event: React.ChangeEvent<HTMLInputElement>) {
     const original = event.target.files?.[0];

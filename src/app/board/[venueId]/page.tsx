@@ -126,7 +126,7 @@ export default async function BoardVenuePage({
 
               {latest ? (
                 <>
-                  <p className="mt-2 line-clamp-3 text-body leading-relaxed">
+                  <p className="text-muted mt-2 line-clamp-3 text-body leading-relaxed">
                     {latest.comment}
                   </p>
                   <Attribution

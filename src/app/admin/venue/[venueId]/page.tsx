@@ -171,7 +171,7 @@ export default async function AdminVenuePage({
 
                 {submission ? (
                   <>
-                    <p className="mt-1.5 line-clamp-3 text-body leading-relaxed">
+                    <p className="text-muted mt-1.5 line-clamp-3 text-body leading-relaxed">
                       {submission.comment}
                     </p>
                     <Attribution

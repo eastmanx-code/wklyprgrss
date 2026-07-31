@@ -1,5 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
+import { PhotoView } from "@/components/PhotoView";
+
 import { setItemActive } from "@/app/admin/actions";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
@@ -113,13 +115,11 @@ export default async function ItemPage({
             <p className="label">Before · last photo</p>
             <p className="label">{formatWeekStart(previous.week_start)}</p>
           </div>
-          <div className="mt-3 aspect-[4/3] overflow-hidden rounded-xl bg-panel">
+          <div className="mt-3">
             {previousUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <PhotoView
                 src={previousUrl}
-                alt=""
-                className="h-full w-full object-contain"
+                className="aspect-[4/3] rounded-[8px]"
               />
             ) : (
               <PurgedPhoto aspect="wide" />
@@ -135,6 +135,9 @@ export default async function ItemPage({
       ) : null}
 
       <PhotoSubmitForm
+        doneHref={
+          session.role === "admin" ? `/admin/venue/${item.venue_id}` : "/venue"
+        }
         itemId={item.id}
         currentPhotoUrl={
           current && !sentBack ? (photos.get(current.photo_url) ?? null) : null
