@@ -1,5 +1,5 @@
 /**
- * Seeds the 27 venues with random 6-digit PINs.
+ * Seeds the 26 venues with random 6-digit PINs.
  *
  *   npm run seed
  *
@@ -14,7 +14,7 @@ import { createClient } from "@supabase/supabase-js";
 const CODES = [
   "BORN", "ISFO", "LAFA", "MORN", "STOC", "STAR", "FLSE", "FSON", "CRFT",
   "LEIL", "HOOD", "NOBL", "POLT", "PTLV", "UBLI", "UBNP", "BDPB", "LOUS",
-  "WLVS", "YNBL", "JNTS", "GUTT", "GTTR", "QUIX", "BABY", "FLLN", "HAWK",
+  "WLVS", "YNBL", "JNTS", "GUTT", "QUIX", "BABY", "FLLN", "HAWK",
 ];
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

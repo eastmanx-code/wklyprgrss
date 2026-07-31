@@ -1,8 +1,8 @@
 # WKLY > PRGRSS
 
-Weekly progress photos for a 27-venue hospitality group.
+Weekly progress photos for a 26-venue hospitality group.
 
-Replaces the Figma progress board for a 27-venue hospitality group. Each venue
+Replaces the Figma progress board for a 26-venue hospitality group. Each venue
 leader updates their items weekly with a new photo and a new comment before the
 deadline. Miss any item and the week fails.
 
@@ -42,7 +42,7 @@ Thursday 4pm Pacific is `DEADLINE_DAY=4`, `DEADLINE_HOUR=16`.
 npm run seed
 ```
 
-Inserts the 27 venue codes with random 6-digit PINs and prints them **once**.
+Inserts the 26 venue codes with random 6-digit PINs and prints them **once**.
 Copy them before closing the terminal. Re-running is safe; existing venues are
 left alone. Items start empty — the admin adds them per venue.
 
@@ -64,7 +64,7 @@ npm run dev
 | Command | What it does |
 | --- | --- |
 | `npm run preflight` | Verifies the database connection, schema and bucket |
-| `npm run seed` | Creates the 27 venues with random 6-digit PINs, printed once |
+| `npm run seed` | Creates the 26 venues with random 6-digit PINs, printed once |
 | `npm run set-items -- --file items.txt` | Applies a standard item list to every venue (add `CODE ...` to limit, `--replace` to retire anything else) |
 | `npm run report` | Writes `reports/walkthrough-DATE.csv`, one row per venue per week |
 | `npm run purge` | Dry run of photo retention; add `--yes` to delete, `--weeks N` to change the window |
@@ -147,7 +147,7 @@ Objects are stored at `VENUE/ITEM/WEEK-unique.jpg` in the private bucket.
 `submissions.photo_url` holds that **storage path**, not a URL — the URL is
 signed per request and expires in an hour.
 
-At ~300KB and 270 photos a week that's ~81MB a week, so the 1GB free tier holds
+At ~300KB and 260 photos a week that's ~78MB a week, so the 1GB free tier holds
 about 12 weeks and would otherwise force the $25/mo Pro plan.
 
 `npm run purge` clears image **files** older than the retention window (8 weeks
