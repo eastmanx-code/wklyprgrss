@@ -20,6 +20,40 @@ const MAX_EDGE = 1600;
 const TARGET_BYTES = 300 * 1024;
 const QUALITY_STEPS = [0.82, 0.72, 0.62, 0.52, 0.42];
 
+/**
+ * How long to let a photo decode before giving up on it.
+ *
+ * Neither of the two browser calls below is guaranteed to settle. toBlob takes
+ * a callback the browser is free never to invoke, and createImageBitmap has
+ * hung outright on iOS Safari for HEIC captures. A promise that never settles
+ * leaves `processing` stuck true, and `processing` disables every control on
+ * this form — the photo wells, both progress buttons, the two text fields and
+ * submit. The whole screen goes dead with nothing said, which is exactly what
+ * "the submit button isn't clickable" looks like from the outside.
+ *
+ * Generous: a big capture on a slow phone is legitimately a few seconds, and
+ * this only needs to catch the case that is never coming back.
+ */
+const DECODE_TIMEOUT_MS = 30_000;
+
+class DecodeTimeout extends Error {}
+
+function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new DecodeTimeout()), ms);
+    work.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
 function toBlob(
   canvas: HTMLCanvasElement,
   quality: number,
@@ -62,6 +96,16 @@ async function compressToJpeg(file: File): Promise<File> {
 
 function formatKb(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
+}
+
+function decodeMessage(error: unknown): string {
+  // A photo that never came back is almost always a library HEIC the browser
+  // won't decode, so point at the camera rather than saying "try again" about
+  // something that will fail the same way twice.
+  if (error instanceof DecodeTimeout) {
+    return "That photo took too long to read. Take a new one with the camera instead of picking it from the library.";
+  }
+  return "Couldn't read that photo. Try taking it again.";
 }
 
 /** "a photo, your name and a comment" — a sentence, not a bulleted list. */
@@ -177,15 +221,18 @@ export function PhotoSubmitForm({
     setProcessing(true);
     setLocalError(null);
     try {
-      const compressed = await compressToJpeg(original);
+      const compressed = await withTimeout(
+        compressToJpeg(original),
+        DECODE_TIMEOUT_MS,
+      );
       if (beforePreviewRef.current)
         URL.revokeObjectURL(beforePreviewRef.current);
       const url = URL.createObjectURL(compressed);
       beforePreviewRef.current = url;
       setBeforePhoto(compressed);
       setBeforePreview(url);
-    } catch {
-      setLocalError("Couldn't read that photo. Try taking it again.");
+    } catch (error) {
+      setLocalError(decodeMessage(error));
     } finally {
       setProcessing(false);
     }
@@ -198,14 +245,17 @@ export function PhotoSubmitForm({
     setProcessing(true);
     setLocalError(null);
     try {
-      const compressed = await compressToJpeg(original);
+      const compressed = await withTimeout(
+        compressToJpeg(original),
+        DECODE_TIMEOUT_MS,
+      );
       if (previewRef.current) URL.revokeObjectURL(previewRef.current);
       const url = URL.createObjectURL(compressed);
       previewRef.current = url;
       setPhoto(compressed);
       setPreview(url);
-    } catch {
-      setLocalError("Couldn't read that photo. Try taking it again.");
+    } catch (error) {
+      setLocalError(decodeMessage(error));
       setPhoto(null);
       setPreview(null);
     } finally {
@@ -311,9 +361,13 @@ export function PhotoSubmitForm({
   const marked = (need: Needed) => flagged.includes(need);
 
   const busy = pending || processing || uploading;
+  // A week already submitted shows its photo in the well, so "a photo" would
+  // read as a lie — what's missing is a fresh one for this submission.
+  const needLabel = (need: Needed) =>
+    need === "photo" && currentPhotoUrl ? "a new photo" : NEEDED_LABEL[need];
   const shortfall =
     flagged.length > 0
-      ? `Still needed: ${listOut(flagged.map((need) => NEEDED_LABEL[need]))}.`
+      ? `Still needed: ${listOut(flagged.map(needLabel))}.`
       : null;
   // The shortfall wins: if it's set, the submit never ran, so anything below
   // it is from an earlier attempt.
@@ -358,7 +412,11 @@ export function PhotoSubmitForm({
       <div className="space-y-2" ref={photoRef}>
         <span className={marked("photo") ? "label text-warn" : "label"}>
           {beforePhoto ? "After (required)" : "Photo (required)"}
-          {marked("photo") ? " · still needed" : ""}
+          {marked("photo")
+            ? currentPhotoUrl
+              ? " · take a new one"
+              : " · still needed"
+            : ""}
         </span>
 
         <label className="block cursor-pointer">
