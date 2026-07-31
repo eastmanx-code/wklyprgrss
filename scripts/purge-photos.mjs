@@ -57,18 +57,55 @@ if (error) {
   process.exit(1);
 }
 
-if (!stale?.length) {
-  console.log(
-    `\n  Nothing to purge. No un-purged photos from before ${cutoff}.\n`,
-  );
+/*
+ * Close-checklist proof, on the same clock.
+ *
+ * This was the quiet leak. The close flow writes to the same bucket under
+ * close/, and this script only knew about weekly submissions — so a venue
+ * photographing three restrooms and a back door every night was filling the
+ * tier with files nothing would ever delete.
+ *
+ * Counted here, beside the weekly total, rather than after the deletes: the
+ * script used to stop the moment there were no stale submissions, which with
+ * the close files added would have meant the loudest source of storage was
+ * the one thing a dry run never mentioned.
+ */
+const closeCutoff = new Date(Date.now() - RETENTION_WEEKS * 7 * 86_400_000)
+  .toISOString()
+  .slice(0, 10);
+
+const closePaths = await (async () => {
+  const { data: nights } = await db
+    .from("close_nights")
+    .select("id")
+    .lt("night", closeCutoff);
+  const ids = (nights ?? []).map((n) => n.id);
+  if (!ids.length) return [];
+  const { data: proof } = await db
+    .from("close_proof")
+    .select("storage_path")
+    .in("night_id", ids)
+    .not("storage_path", "is", null);
+  return (proof ?? []).map((row) => row.storage_path).filter(Boolean);
+})();
+
+if (!stale?.length && !closePaths.length) {
+  console.log(`\n  Nothing to purge. Nothing older than ${cutoff}.\n`);
   process.exit(0);
 }
 
-const bytesEstimate = ((stale.length * 300) / 1024).toFixed(1);
-console.log(
-  `\n  ${stale.length} photos from weeks before ${cutoff} (~${bytesEstimate} MB).`,
-);
-console.log(`  Retention window: ${RETENTION_WEEKS} weeks.`);
+console.log(`\n  Retention window: ${RETENTION_WEEKS} weeks.`);
+if (stale?.length) {
+  const bytesEstimate = ((stale.length * 300) / 1024).toFixed(1);
+  console.log(
+    `  ${stale.length} weekly photos from before ${cutoff} (~${bytesEstimate} MB).`,
+  );
+}
+if (closePaths.length) {
+  console.log(
+    `  ${closePaths.length} close proof files from nights before ${closeCutoff}.`,
+  );
+}
 
 if (!confirmed) {
   console.log("\n  Dry run. Re-run with --yes to actually delete.\n");
@@ -78,7 +115,7 @@ if (!confirmed) {
 // Storage deletes are chunked; the rows are only marked once the files are gone.
 const CHUNK = 100;
 let removed = 0;
-for (let i = 0; i < stale.length; i += CHUNK) {
+for (let i = 0; i < (stale?.length ?? 0); i += CHUNK) {
   const batch = stale.slice(i, i + CHUNK);
   const paths = batch.flatMap((s) =>
     s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
@@ -105,4 +142,21 @@ for (let i = 0; i < stale.length; i += CHUNK) {
   removed += batch.length;
 }
 
-console.log(`\n  Purged ${removed} photos. All ${stale.length} rows kept.\n`);
+// Same rule the weekly photos follow: the files go, the rows stay. Which item
+// was proved, by whose initials, on which night is the record; the photograph
+// was only ever how it got proved. A row whose file is gone still answers
+// everything the rollup asks.
+let closeRemoved = 0;
+for (let i = 0; i < closePaths.length; i += CHUNK) {
+  const batch = closePaths.slice(i, i + CHUNK);
+  const { error: closeError } = await db.storage.from("photos").remove(batch);
+  if (closeError) {
+    console.error(`  close storage delete failed: ${closeError.message}`);
+    continue;
+  }
+  closeRemoved += batch.length;
+}
+
+console.log(
+  `\n  Purged ${removed} weekly photos and ${closeRemoved} close proof files. All rows kept.\n`,
+);
