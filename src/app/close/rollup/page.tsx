@@ -72,34 +72,43 @@ export default async function RollupPage() {
         <h1 className="mt-2 text-metric font-medium">What&apos;s getting missed</h1>
       </header>
 
-      <div className="space-y-4">
-        <section className="panel">
+      {/* Pinned. Every figure below it is a way of asking the same question,
+          and the answer is easier to hold onto when the month is still on
+          screen while you read them — the two yellow squares are what the rest
+          of the page is explaining. Laid out tight and full-bleed, because a
+          header that costs half a phone screen is not a header. */}
+      <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
+        <div className="flex items-baseline justify-between gap-4">
           <p className="label">Nights certified</p>
-          <p className="mt-2 text-metric tabular-nums">24 of {SAMPLE_NIGHTS}</p>
-          <div className="mt-3 grid max-w-[26rem] grid-cols-10 gap-1.5" aria-hidden>
-            {SAMPLE_STRIP.split("").map((code, index) => (
-              <span
-                key={index}
-                className={`aspect-square rounded-[2px] ${NIGHT_STATE[code] ?? "bg-inset"}`}
-              />
-            ))}
-          </div>
-          <div className="mt-3 flex flex-wrap gap-4">
-            <span className="label flex items-center gap-2">
-              <span className="bg-ink/20 size-3 rounded-[2px]" />
-              All complete
-            </span>
-            <span className="label flex items-center gap-2">
-              <span className="bg-warn/40 size-3 rounded-[2px]" />
-              Signed with gaps
-            </span>
-            <span className="label flex items-center gap-2">
-              <span className="bg-warn size-3 rounded-[2px]" />
-              Never certified
-            </span>
-          </div>
-        </section>
+          <p className="text-title tabular-nums tracking-[0.08em]">
+            24 of {SAMPLE_NIGHTS}
+          </p>
+        </div>
+        <div className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1" aria-hidden>
+          {SAMPLE_STRIP.split("").map((code, index) => (
+            <span
+              key={index}
+              className={`aspect-square rounded-[2px] ${NIGHT_STATE[code] ?? "bg-inset"}`}
+            />
+          ))}
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+          <span className="label flex items-center gap-2">
+            <span className="bg-ink/20 size-3 rounded-[2px]" />
+            All complete
+          </span>
+          <span className="label flex items-center gap-2">
+            <span className="bg-warn/40 size-3 rounded-[2px]" />
+            Signed with gaps
+          </span>
+          <span className="label flex items-center gap-2">
+            <span className="bg-warn size-3 rounded-[2px]" />
+            Never certified
+          </span>
+        </div>
+      </section>
 
+      <div className="space-y-4">
         {/* The point of the whole exercise. */}
         <section className="panel border-warn/30">
           <p className="label">What keeps getting left open</p>
