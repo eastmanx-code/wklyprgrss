@@ -1,7 +1,9 @@
 /**
- * The completion dial. The one number anyone opens the app for, so it stays
- * the largest thing on the page — but bare, with no tile around it: the panel
- * it used to sit in added a box the design doesn't need.
+ * The completion ring — the only centred element on the board, per the layout
+ * rule that everything else inside a card is left-aligned.
+ *
+ * 56px hero numeral, no tracking: letter-spacing is reserved for 11px labels,
+ * and on large figures it reads as a gap rather than as style.
  */
 export function Dial({
   percent,
@@ -13,17 +15,19 @@ export function Dial({
   tone?: string;
 }) {
   return (
-    <div
-      className="relative mx-auto aspect-square w-[190px] shrink-0 rounded-full sm:mx-0 sm:w-[240px]"
-      style={{
-        background: `conic-gradient(${tone} ${percent}%, color-mix(in srgb, var(--ink) 10%, var(--paper)) 0)`,
-      }}
-    >
-      <div className="bg-paper absolute inset-[13%] flex flex-col items-center justify-center rounded-full">
-        <span className="font-mono text-5xl leading-none tabular-nums">
-          {percent}%
-        </span>
-        <span className="label mt-2">{caption}</span>
+    <div className="flex flex-1 items-center justify-center">
+      <div
+        className="relative aspect-square w-full max-w-[192px] rounded-full"
+        style={{
+          background: `conic-gradient(${tone} ${percent}%, var(--divider) 0)`,
+        }}
+      >
+        <div className="bg-surface absolute inset-[16%] flex flex-col items-center justify-center rounded-full">
+          <span className="text-hero text-ink leading-[1.2] tracking-normal tabular-nums">
+            {percent}%
+          </span>
+          <span className="label mt-2">{caption}</span>
+        </div>
       </div>
     </div>
   );

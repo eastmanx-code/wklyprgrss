@@ -8,8 +8,9 @@
   --surface: #1c1c1a;
   --panel: #2b2b28;
   --ink: #f1f1ef;
-  --muted: #94948c;
-  --line: #3d3d38;
+  --muted: rgba(255, 255, 255, 0.45);
+  --line: rgba(255, 255, 255, 0.08);
+  --divider: rgba(255, 255, 255, 0.08);
   --fail: #bcbc1e;
   --on-fail: #0d0d0d;
   --dot: rgba(255, 255, 255, 0.1);
@@ -21,12 +22,24 @@
   --surface: #ffffff;
   --panel: #eaeae7;
   --ink: #0d0d0d;
-  --muted: #7c7c74;
-  --line: #e2e2dd;
+  --muted: rgba(0, 0, 0, 0.45);
+  --line: rgba(0, 0, 0, 0.08);
+  --divider: rgba(0, 0, 0, 0.08);
   --fail: #6f6f0f;
   --on-fail: #ffffff;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);
+}
+
+/* Four type roles, fixed. Every text element maps to the nearest one.
+   Letter-spacing lives on the 11px label role alone. */
+:root {
+  --t-label: 11px;
+  --t-body: 14px;
+  --t-metric: 28px;
+  --t-hero: 56px;
+  --track-label: 0.08em;
+  --rule: 1px solid var(--divider);
 }
 
 @theme inline {
@@ -37,6 +50,12 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-fail: var(--fail);
+  --color-divider: var(--divider);
+
+  --text-label: 11px;
+  --text-body: 14px;
+  --text-metric: 28px;
+  --text-hero: 56px;
   --color-on-fail: var(--on-fail);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
@@ -110,17 +129,21 @@ button {
 /* Uppercase is the house style. Headings, controls and short helper lines all
    set in caps; the one exception is leaders' own comments, which stay in the
    case they typed them — see .copy below. */
-h1,
-h2,
-h3 {
-  text-transform: uppercase;
-  /* Mono runs wide; pull it back so headings stay compact. */
-  letter-spacing: -0.02em;
+@layer base {
+  h1,
+  h2,
+  h3 {
+    text-transform: uppercase;
+    /* Zero: tracking is reserved for the 11px label role. Layered so that
+       .label can still opt back in — unlayered, this beat it outright. */
+    letter-spacing: 0;
+    line-height: 1.2;
+  }
 }
 
 /* Mono body copy needs a little more line height to stay readable. */
 p {
-  line-height: 1.55;
+  line-height: 1.5;
 }
 
 /* Motion. Deliberately small: a short rise on entry, a little feedback on
@@ -310,22 +333,23 @@ p {
   /* Item titles, venue names, and other short display strings. */
   .caps {
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0;
   }
 
   /* Short helper and status lines. */
   .note {
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-size: 13px;
+    letter-spacing: 0;
+    font-size: var(--t-body);
+    line-height: 1.5;
   }
 
   /* Small tracked mono caption — the modernist plate label. */
   .label {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: var(--t-label);
     line-height: 1.2;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--track-label);
     text-transform: uppercase;
     color: var(--color-muted);
   }
@@ -335,8 +359,8 @@ p {
   .panel {
     background: var(--color-surface);
     border: 1px solid var(--color-line);
-    border-radius: 20px;
-    padding: 1.25rem;
+    border-radius: 16px;
+    padding: 24px;
   }
 
   /* Empty photo wells: a denser dot field so a missing photo still reads as a
@@ -369,10 +393,10 @@ p {
     border-radius: 999px;
     background: var(--color-ink);
     color: var(--color-paper);
-    font-size: 13px;
+    font-size: var(--t-body);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0;
     border: none;
     cursor: pointer;
     transition: opacity 0.15s ease;
@@ -387,10 +411,10 @@ p {
      a leader's primary action on a phone, not for a dense review grid. These
      scale with the viewport instead of staying fixed while the cards grow. */
   .btn-sm {
-    min-height: clamp(28px, 2.4vw, 34px);
-    padding: 0 clamp(0.7rem, 1.1vw, 1.1rem);
-    font-size: clamp(9px, 0.72vw, 11px);
-    letter-spacing: 0.12em;
+    min-height: 32px;
+    padding: 0 16px;
+    font-size: var(--t-label);
+    letter-spacing: var(--track-label);
   }
 
   .btn-ghost {
@@ -398,15 +422,15 @@ p {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: clamp(30px, 2.5vw, 36px);
-    padding: 0 clamp(0.7rem, 1.1vw, 1.1rem);
+    min-height: 32px;
+    padding: 0 16px;
     border-radius: 999px;
     background: var(--color-panel);
     color: var(--color-ink);
-    font-size: clamp(9px, 0.72vw, 11px);
+    font-size: var(--t-label);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: var(--track-label);
     border: none;
     cursor: pointer;
   }
@@ -424,14 +448,14 @@ p {
     justify-content: center;
     gap: 0.5rem;
     min-height: 48px;
-    padding: 0 1.5rem;
+    padding: 0 24px;
     border-radius: 999px;
     background: var(--color-panel);
     color: var(--color-ink);
-    font-size: 13px;
+    font-size: var(--t-body);
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0;
     border: none;
     cursor: pointer;
   }
@@ -439,8 +463,8 @@ p {
   .field {
     width: 100%;
     min-height: 48px;
-    padding: 0.75rem 1rem;
-    border-radius: 14px;
+    padding: 16px;
+    border-radius: 16px;
     background: var(--color-panel);
     border: 1px solid transparent;
     color: var(--color-ink);
@@ -454,8 +478,8 @@ p {
   .field::placeholder {
     color: var(--color-muted);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    font-size: 13px;
+    letter-spacing: 0;
+    font-size: var(--t-body);
   }
 
   /* Centred, sized to its content. No max-height and no scroll: if it doesn't
@@ -465,7 +489,7 @@ p {
     margin: auto;
     padding: 0;
     border: 1px solid var(--color-line);
-    border-radius: 24px;
+    border-radius: 16px;
     background: var(--color-paper);
     color: var(--color-ink);
   }
@@ -476,7 +500,7 @@ p {
   }
 
   .ww-dialog-body {
-    padding: 1.5rem;
+    padding: 24px;
   }
 
   /* Status pills. Monochrome by design; FAIL is the one place colour earns
@@ -484,12 +508,12 @@ p {
   .pill {
     display: inline-flex;
     align-items: center;
-    height: 17px;
-    padding: 0 0.45rem;
+    height: 24px;
+    padding: 0 8px;
     border-radius: 999px;
     font-family: var(--font-mono);
-    font-size: 9px;
-    letter-spacing: 0.08em;
+    font-size: var(--t-label);
+    letter-spacing: var(--track-label);
     text-transform: uppercase;
     white-space: nowrap;
   }

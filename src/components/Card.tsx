@@ -1,15 +1,13 @@
 /**
- * A contained metric: a header block, a rule, then the figure.
+ * A contained metric: header, rule, figure.
  *
- * The header has a floor height so the rules line up across a row. Without it
- * a card whose hint wraps to two lines pushed its rule 15px below its
- * neighbour's, and a row of cards read as slightly broken rather than as a
- * grid.
+ * Every value here is from the shared scales — 24px padding, a 1px divider
+ * with 16px either side, and the header on a 48px floor so the rules line up
+ * across a row rather than stepping with the title length.
  *
  * The hint is not decoration: a number with no definition gets read as
  * whatever the viewer assumes, and "failing" in particular needs to say what
- * it counts before anyone acts on it. It stays short — a paragraph of
- * uppercase is a wall.
+ * it counts before anyone acts on it.
  */
 export function Card({
   title,
@@ -23,12 +21,13 @@ export function Card({
   className?: string;
 }) {
   return (
-    <section className={`panel flex flex-col overflow-hidden p-0 ${className}`}>
-      <header className="border-line flex min-h-[5.25rem] flex-col justify-center border-b px-6 py-4">
-        <h2 className="label text-ink font-medium">{title}</h2>
-        {hint ? <p className="label text-muted mt-1.5">{hint}</p> : null}
+    <section className={`panel flex flex-col ${className}`}>
+      <header className="flex min-h-12 flex-col justify-start">
+        <h2 className="label text-ink">{title}</h2>
+        {hint ? <p className="label mt-2">{hint}</p> : null}
       </header>
-      <div className="flex flex-1 flex-col justify-start p-6">{children}</div>
+      <hr className="border-divider my-4 border-0 border-t" />
+      <div className="flex flex-1 flex-col">{children}</div>
     </section>
   );
 }

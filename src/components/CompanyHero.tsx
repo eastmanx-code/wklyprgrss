@@ -5,21 +5,26 @@ import { Trend } from "./Trend";
 import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
-/** Label above, number below — the number is the thing, the label names it. */
+/**
+ * Secondary metric: 11px label in the one grey, 28px value in white.
+ * Left-aligned — only the ring is centred.
+ */
 function Stat({
   label,
   value,
-  tone = "",
+  accent = false,
 }: {
   label: string;
   value: React.ReactNode;
-  tone?: string;
+  accent?: boolean;
 }) {
   return (
     <div>
       <p className="label">{label}</p>
       <p
-        className={`mt-3 font-mono text-4xl leading-none tabular-nums ${tone}`}
+        className={`text-metric mt-2 leading-[1.2] tracking-normal tabular-nums ${
+          accent ? "text-fail" : "text-ink"
+        }`}
       >
         {value}
       </p>
@@ -28,12 +33,11 @@ function Stat({
 }
 
 /**
- * The company's week as a grid of contained metrics, each in the form that
- * suits it: a radial for the one headline proportion, a curve for the trend,
- * plain numerals for counts, a list for the venues.
+ * The company's week on a 12-column grid: 4/8 then 8/4, so the rows read as a
+ * grid rather than as a stack of differently-proportioned slabs.
  *
- * Every card says what it measures. A dashboard of bare numbers gets read as
- * whatever the viewer assumes, and "failing" in particular needs to state what
+ * Every card states what it measures. A dashboard of bare numbers gets read as
+ * whatever the viewer assumes, and "failing" in particular needs to say what
  * it counts before anyone acts on it.
  */
 export function CompanyHero({
@@ -65,87 +69,80 @@ export function CompanyHero({
   const last = finishes[finishes.length - 1];
 
   return (
-    <div className="mb-3 grid items-start gap-3 sm:grid-cols-3">
+    <div className="mb-12 grid grid-cols-12 gap-4">
       <Card
         title="Completion"
         hint={`New photo + comment on all ${WEEKLY_ITEM_TARGET}, every week`}
+        className="col-span-12 sm:col-span-4"
       >
-        <div className="flex h-full items-center justify-center">
-          <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
-        </div>
+        <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
       </Card>
 
       {history.length > 1 ? (
         <Card
           title="Completion by week"
           hint="Last 8 weeks · fixed 0–100 scale"
-          className="sm:col-span-2"
+          className="col-span-12 sm:col-span-8"
         >
-          <div className="flex h-full flex-col justify-end">
-            <Trend
-              points={history}
-              labelLeft={formatWeekStart(history[0].weekStart)}
-              labelRight="This week"
-            />
-          </div>
+          <Trend
+            points={history}
+            labelLeft={formatWeekStart(history[0].weekStart)}
+            labelRight="This week"
+          />
         </Card>
       ) : null}
 
       <Card
         title="Where venues stand"
-        hint={`Passing has all ${WEEKLY_ITEM_TARGET} · Not set up has no items yet`}
-        className="sm:col-span-2"
+        hint={`Passing has all ${WEEKLY_ITEM_TARGET} · not set up has no items yet`}
+        className="col-span-12 sm:col-span-8"
       >
-        <div
-          className={`grid gap-6 ${
-            setup ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"
-          }`}
-        >
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           <Stat label="Passing" value={passing} />
           <Stat label="Pending" value={pending} />
-          <Stat
-            label="Failing"
-            value={failing}
-            tone={failing ? "text-fail" : ""}
-          />
-          {setup ? <Stat label="Not set up" value={setup} /> : null}
+          <Stat label="Failing" value={failing} accent={failing > 0} />
+          <Stat label="Not set up" value={setup} />
         </div>
       </Card>
 
-      <Card title="Deadline" hint={deadlineLabel}>
-        <p className="font-mono text-4xl leading-none tabular-nums">
+      <Card
+        title="Deadline"
+        hint={deadlineLabel}
+        className="col-span-12 sm:col-span-4"
+      >
+        <p className="text-metric text-ink leading-[1.2] tracking-normal tabular-nums">
           <Countdown deadlineMs={deadlineMs} />
         </p>
-        <p className="label mt-4">
+        <p className="label mt-6">
           <Clock />
         </p>
-        <p className="label mt-1">
+        <p className="label mt-2">
           <Weather />
         </p>
       </Card>
 
-      {/* Hidden until someone has finished — an empty card teaches nothing and
+      {/* Hidden until someone has finished: an empty card teaches nothing and
           takes the same room. */}
       {first ? (
         <Card
           title="Turnaround"
           hint={`When the ${WEEKLY_ITEM_TARGET}th photo landed`}
-          className="sm:col-span-3"
+          className="col-span-12"
         >
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <p className="label">First in</p>
-              <p className="mt-3 font-mono text-2xl">
+              <p className="text-metric text-ink mt-2 leading-[1.2] tracking-normal tabular-nums">
                 {first.code}
-                <span className="text-muted"> · {formatFinish(first.at)}</span>
+                <span className="text-muted"> {formatFinish(first.at)}</span>
               </p>
             </div>
             {last && last.code !== first.code ? (
               <div>
                 <p className="label">Last in</p>
-                <p className="mt-3 font-mono text-2xl">
+                <p className="text-metric text-ink mt-2 leading-[1.2] tracking-normal tabular-nums">
                   {last.code}
-                  <span className="text-muted"> · {formatFinish(last.at)}</span>
+                  <span className="text-muted"> {formatFinish(last.at)}</span>
                 </p>
               </div>
             ) : null}

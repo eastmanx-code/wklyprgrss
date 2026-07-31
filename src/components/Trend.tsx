@@ -42,11 +42,11 @@ export function Trend({
   const latest = points[points.length - 1];
 
   return (
-    <div>
+    <div className="flex flex-1 flex-col justify-end">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
-        className="h-28 w-full"
+        className="h-full min-h-32 w-full flex-1"
         aria-hidden
       >
         <path d={area} fill="var(--ink)" opacity="0.08" />
@@ -68,7 +68,7 @@ export function Trend({
         />
       </svg>
 
-      <div className="mt-2 flex justify-between">
+      <div className="mt-4 flex justify-between">
         <span className="label">{labelLeft}</span>
         <span className="label">{labelRight}</span>
       </div>

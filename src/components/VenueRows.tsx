@@ -31,6 +31,7 @@ export function VenueRows({
 }) {
   return (
     <Card
+      className="col-span-12"
       title="Every venue"
       hint={`Photos done out of ${WEEKLY_ITEM_TARGET} · finish time, or missed-week run`}
     >
@@ -43,17 +44,17 @@ export function VenueRows({
             <li
               key={row.venue.id}
               id={`venue-${row.venue.code}`}
-              className="border-ink/10 scroll-mt-4 border-b last:border-0"
+              className="border-divider scroll-mt-4 border-b last:border-0"
             >
               <Link
                 href={`${hrefPrefix}${row.venue.id}`}
-                className="hover:bg-ink/5 -mx-2 flex items-center gap-4 rounded-lg px-2 py-3 transition-colors"
+                className="hover:bg-ink/5 -mx-2 flex items-center gap-4 rounded-lg px-2 py-4 transition-colors"
               >
-                <span className="w-14 shrink-0 font-mono text-sm font-medium">
+                <span className="text-body text-ink w-16 shrink-0 tracking-normal">
                   {row.venue.code}
                 </span>
 
-                <span className="bg-ink/10 h-1.5 min-w-0 flex-1 overflow-hidden rounded-full">
+                <span className="bg-divider h-2 min-w-0 flex-1 overflow-hidden rounded-full">
                   <span
                     className={`block h-full rounded-full ${
                       row.status === "FAIL" ? "bg-fail" : "bg-ink"
@@ -62,7 +63,7 @@ export function VenueRows({
                   />
                 </span>
 
-                <span className="label w-32 shrink-0 text-right">
+                <span className="label w-32 shrink-0 text-right tabular-nums">
                   {row.status === "SETUP"
                     ? "Not set up"
                     : finished
