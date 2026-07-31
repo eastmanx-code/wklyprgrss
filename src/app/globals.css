@@ -17,8 +17,6 @@
   --divider: rgba(255, 255, 255, 0.08);
   --warn: #bcbc1e;
   --on-warn: #0d0d0d;
-  --accent: #6cc6d4;
-  --on-accent: #062229;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
 }
@@ -36,8 +34,6 @@
   --divider: rgba(0, 0, 0, 0.08);
   --warn: #6f6f0f;
   --on-warn: #ffffff;
-  --accent: #11707e;
-  --on-accent: #ffffff;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);
 }
@@ -62,8 +58,6 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-warn: var(--warn);
-  --color-accent: var(--accent);
-  --color-on-accent: var(--on-accent);
   --color-card-border: var(--card-border);
   --color-inset: var(--inset);
   --color-hover: var(--hover);
@@ -133,6 +127,48 @@
 
 .pill-field input:focus-visible {
   outline: none;
+}
+
+/* The corner menu: a chip that opens on hover where there is a pointer, and on
+   a tap where there isn't. <details> supplies the tap; the hover rule is what
+   means a mouse never has to click to see the destinations. The open panel is
+   laid over the chip rather than beside it, so nothing shifts as it appears. */
+.ww-menu > summary {
+  list-style: none;
+}
+
+.ww-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.ww-menu-items {
+  display: none;
+  white-space: nowrap;
+}
+
+.ww-menu[open] .ww-menu-items,
+.ww-menu:hover .ww-menu-items {
+  display: flex;
+}
+
+/* Points up when shut, down when open. */
+.ww-menu-caret {
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--color-muted);
+  border-bottom: 1px solid var(--color-muted);
+  transform: rotate(-135deg);
+  margin-top: 3px;
+}
+
+.ww-menu[open] .ww-menu-caret {
+  transform: rotate(45deg);
+  margin-top: -3px;
+}
+
+/* A menu that opens on hover must not be reachable only that way. */
+.ww-menu:focus-within .ww-menu-items {
+  display: flex;
 }
 
 /* The close flow brings its own bar. The global one carries the weekly

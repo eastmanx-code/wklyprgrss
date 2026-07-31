@@ -6,6 +6,7 @@ import {
   CLOSE_CHECKLIST,
   CLOSE_TOTAL,
   type CloseItem,
+  type ProofKind,
 } from "@/lib/close-checklist";
 
 type Capture = { url: string; kind: "photo" | "video" };
@@ -16,6 +17,7 @@ const slotKey = (item: number, shot: number) => `${item}:${shot}`;
 const ALL_SHOTS = CLOSE_CHECKLIST.flatMap((item) => item.proof ?? []);
 const PHOTO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "photo").length;
 const VIDEO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "video").length;
+const NOTE_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "note").length;
 
 /**
  * A close checklist, for review. Nothing is saved yet.
@@ -29,6 +31,7 @@ const VIDEO_SHOTS = ALL_SHOTS.filter((shot) => shot.kind === "video").length;
 export function CloseChecklist() {
   const [done, setDone] = useState<Record<number, boolean>>({});
   const [captures, setCaptures] = useState<Record<string, Capture>>({});
+  const [notes, setNotes] = useState<Record<string, string>>({});
   const [rowInitials, setRowInitials] = useState<Record<number, string>>({});
   const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
   /** Tapped, and waiting on its initials before it does anything. */
@@ -40,6 +43,7 @@ export function CloseChecklist() {
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
+  const notesRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
   const initialsRefs = useRef<Record<number, HTMLInputElement | null>>({});
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
@@ -49,10 +53,17 @@ export function CloseChecklist() {
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, []);
 
+  /** A shot is met by a capture, or — for a note — by words in the box. */
+  const shotFilled = (item: number, index: number, kind: ProofKind) =>
+    kind === "note"
+      ? Boolean(notes[slotKey(item, index)]?.trim())
+      : Boolean(captures[slotKey(item, index)]);
+
   /** An item owing proof is complete only when every one of its shots is in. */
   const shotsTaken = (item: CloseItem) =>
-    (item.proof ?? []).filter((_, index) => captures[slotKey(item.number, index)])
-      .length;
+    (item.proof ?? []).filter((shot, index) =>
+      shotFilled(item.number, index, shot.kind),
+    ).length;
   const doneCount = CLOSE_CHECKLIST.filter((item) => done[item.number]).length;
   const openItems = CLOSE_CHECKLIST.filter((item) => !done[item.number]);
   const untouched = doneCount === 0;
@@ -82,6 +93,11 @@ export function CloseChecklist() {
           item.proof!.forEach((_, index) => delete next[slotKey(item.number, index)]);
           return next;
         });
+        setNotes((c) => {
+          const next = { ...c };
+          item.proof!.forEach((_, index) => delete next[slotKey(item.number, index)]);
+          return next;
+        });
       }
       return;
     }
@@ -91,10 +107,15 @@ export function CloseChecklist() {
     // Evidence is the check. Tapping the card jumps to the first shot still
     // outstanding rather than ticking anything.
     if (item.proof) {
-      const next = item.proof.findIndex(
-        (_, index) => !captures[slotKey(item.number, index)],
+      const at = Math.max(
+        0,
+        item.proof.findIndex(
+          (shot, index) => !shotFilled(item.number, index, shot.kind),
+        ),
       );
-      inputs.current[slotKey(item.number, Math.max(0, next))]?.click();
+      const key = slotKey(item.number, at);
+      if (item.proof[at].kind === "note") notesRefs.current[key]?.focus();
+      else inputs.current[key]?.click();
       return;
     }
 
@@ -106,10 +127,15 @@ export function CloseChecklist() {
     const url = URL.createObjectURL(file);
     objectUrls.current.push(url);
     const kind = item.proof[shotIndex].kind;
+    if (kind === "note") return;
 
     setCaptures((current) => {
       const next = { ...current, [slotKey(item.number, shotIndex)]: { url, kind } };
-      const all = item.proof!.every((_, index) => next[slotKey(item.number, index)]);
+      const all = item.proof!.every((shot, index) =>
+        shot.kind === "note"
+          ? Boolean(notes[slotKey(item.number, index)]?.trim())
+          : Boolean(next[slotKey(item.number, index)]),
+      );
       if (all) {
         setDone((c) => ({ ...c, [item.number]: true }));
       }
@@ -153,7 +179,8 @@ export function CloseChecklist() {
             {doneCount}/{CLOSE_TOTAL} done
           </p>
           <p className="label">
-            {PHOTO_SHOTS} photos · {VIDEO_SHOTS} video · nothing is timed
+            {PHOTO_SHOTS} photos · {VIDEO_SHOTS} video · {NOTE_SHOTS} written ·
+            nothing is timed
           </p>
         </div>
         <div className="mt-2.5 flex gap-[3px]" aria-hidden>
@@ -226,7 +253,9 @@ export function CloseChecklist() {
                           ? `${taken}/${shots.length} ${shots[0].kind === "video" ? "videos" : "photos"}`
                           : shots[0].kind === "video"
                             ? "Video"
-                            : "Photo"}
+                            : shots[0].kind === "note"
+                              ? "Written"
+                              : "Photo"}
                       </span>
                     ) : null}
                   </span>
@@ -263,7 +292,7 @@ export function CloseChecklist() {
               {/* At the end of the line it belongs to. Not inside the button —
                   an input cannot live in one — so it sits beside it, aligned
                   to the title. */}
-              <span className="flex shrink-0 flex-col items-end gap-1 py-4 pr-4 pl-1">
+              <span className="flex shrink-0 flex-col items-end gap-2 py-4 pr-5 pb-5 pl-2">
                 <input
                   ref={(node) => {
                     initialsRefs.current[item.number] = node;
@@ -302,7 +331,7 @@ export function CloseChecklist() {
                   }}
                 />
                 {wanted ? (
-                  <span className="label text-warn text-right">Initial it</span>
+                  <span className="label text-warn pr-0.5 text-right">Initial it</span>
                 ) : null}
               </span>
               </div>
@@ -330,9 +359,38 @@ export function CloseChecklist() {
                           }
                         />
 
-                        {got ? (
+                        {shot.kind === "note" ? (
+                          <div>
+                            <textarea
+                              ref={(node) => {
+                                notesRefs.current[key] = node;
+                              }}
+                              rows={3}
+                              className="field w-full resize-none"
+                              placeholder="What was said"
+                              value={notes[key] ?? ""}
+                              onChange={(event) => {
+                                const text = event.target.value;
+                                setNotes((c) => ({ ...c, [key]: text }));
+                                // Written words are the capture. Completing the
+                                // last shot completes the item, same as a photo.
+                                const all = shots.every((other, otherIndex) =>
+                                  otherIndex === index
+                                    ? Boolean(text.trim())
+                                    : shotFilled(item.number, otherIndex, other.kind),
+                                );
+                                if (all && initialsFor(item.number).trim()) {
+                                  setDone((c) => ({ ...c, [item.number]: true }));
+                                } else if (!all) {
+                                  setDone((c) => ({ ...c, [item.number]: false }));
+                                }
+                              }}
+                              aria-label={shot.prompt}
+                            />
+                          </div>
+                        ) : got ? (
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="bg-accent text-on-accent pill">
+                            <span className="pill pill-done">
                               {shot.kind === "video" ? "Recorded" : "Taken"}
                             </span>
                             <button
@@ -353,7 +411,7 @@ export function CloseChecklist() {
                               if (!haveInitials(item.number)) return;
                               inputs.current[key]?.click();
                             }}
-                            className="ring-accent/70 text-accent inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em] ring-1"
+                            className="bg-ink text-paper inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
                           >
                             <CaptureGlyph kind={shot.kind} />
                             {shot.kind === "video" ? "Record" : "Photograph"}
@@ -366,7 +424,7 @@ export function CloseChecklist() {
                           {shot.prompt}
                         </p>
 
-                        {got ? (
+                        {got && shot.kind !== "note" ? (
                           got.kind === "video" ? (
                             <video
                               src={got.url}

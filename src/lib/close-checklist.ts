@@ -7,7 +7,11 @@
  * in, and the shape is what we still have questions about.
  */
 
-export type ProofKind = "photo" | "video";
+/**
+ * A note is proof too. Some of this checklist has nothing to photograph — what
+ * a crew member actually said is the record, and a tick alone loses it.
+ */
+export type ProofKind = "photo" | "video" | "note";
 
 /** One capture, with the thing it has to show. */
 export type Shot = { kind: ProofKind; prompt: string };
@@ -39,6 +43,13 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
     title: "Positive moment check-ins",
     detail: [
       "Checked in with at least 2 crew members about a positive moment from their shift.",
+    ],
+    proof: [
+      {
+        kind: "note",
+        prompt:
+          "Who you spoke to and what the moment was. Dictate it with the mic on your keyboard if that is quicker.",
+      },
     ],
   },
   {
