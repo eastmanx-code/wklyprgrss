@@ -104,7 +104,7 @@ export default async function VenuePage() {
         ))}
       </ul>
 
-      <p className="mt-8 text-center">
+      <p className="mt-8">
         <Link href="/board" className="label hover:text-ink">
           See how every venue is doing
         </Link>

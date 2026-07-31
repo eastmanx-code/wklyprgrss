@@ -32,7 +32,7 @@ export default async function AdminCodesPage() {
 
       <AdminPins pins={(adminPins ?? []) as AdminPin[]} />
 
-      <p className="mt-8 text-center">
+      <p className="mt-8">
         <Link href="/admin" className="label hover:text-ink">
           ← All venues
         </Link>
