@@ -24,8 +24,13 @@ export default async function VenuePage() {
   if (!venue) redirect("/");
 
   const board = await getLeaderBoard(venue.id);
+  // Both shots, not just the headline one. A tile that showed only the after
+  // made a before uploaded the same week invisible, which a leader read as the
+  // second photo overriding the first.
   const thumbs = await signedUrls(
-    [...board.latest.values()].map((s) => s.photo_url),
+    [...board.latest.values()].flatMap((s) =>
+      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    ),
   );
 
   return (
@@ -58,6 +63,9 @@ export default async function VenuePage() {
         {board.items.map((item) => {
           const latest = board.latest.get(item.id);
           const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
+          const beforeThumb = latest?.before_photo_url
+            ? thumbs.get(latest.before_photo_url)
+            : undefined;
           const done = board.doneItemIds.has(item.id);
 
           return (
@@ -74,6 +82,19 @@ export default async function VenuePage() {
                       alt=""
                       className="h-full w-full object-cover"
                     />
+                    {/* The pair, inset. Small on purpose — the current state is
+                        still the headline; this only says a before exists and
+                        is one tap away. */}
+                    {beforeThumb ? (
+                      <span className="border-paper/80 absolute bottom-2 left-2 block size-12 overflow-hidden rounded-lg border-2 shadow-sm">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={beforeThumb}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </span>
+                    ) : null}
                   </div>
                 ) : (
                   <PhotoPlaceholder />
