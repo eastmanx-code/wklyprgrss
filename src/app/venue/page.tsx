@@ -67,6 +67,8 @@ export default async function VenuePage() {
             ? thumbs.get(latest.before_photo_url)
             : undefined;
           const done = board.doneItemIds.has(item.id);
+          const stale = board.staleWeeks.get(item.id) ?? 0;
+          const rolling = board.rollingWeeks.get(item.id) ?? 0;
 
           return (
             <li key={item.id}>
@@ -102,11 +104,25 @@ export default async function VenuePage() {
                 <p className="caps mt-3 text-body leading-snug font-medium break-words">
                   {item.title}
                 </p>
+                {/* When it was submitted, and whether that is a problem.
+                    "Jul 14 · 19d" makes you do the arithmetic; the second
+                    line is the answer the arithmetic was for. Two weeks is
+                    the threshold because one week behind is simply this week
+                    not being done yet, which the pill below already says. */}
                 <p className="label mt-1">
                   {latest
                     ? `Last photo · ${formatLastUpload(latest.created_at)}`
                     : "No photo yet"}
                 </p>
+                {latest && stale >= 2 ? (
+                  <p className="label text-warn mt-1">
+                    No new photo in {stale} weeks
+                  </p>
+                ) : rolling >= 3 ? (
+                  <p className="label text-warn mt-1">
+                    Rolling {rolling} weeks
+                  </p>
+                ) : null}
                 <div className="mt-2">
                   {board.sentBackItemIds.has(item.id) ? (
                     <span className="pill pill-warn">Redo</span>

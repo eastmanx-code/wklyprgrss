@@ -156,7 +156,13 @@ export default async function ItemPage({
               Cancel
             </Link>
           </div>
+          {/* Keyed, so switching into amend actually remounts the form.
+              Without it React reuses the instance across the navigation, the
+              useState initialisers never run again, and the prefilled comment
+              arrives as an empty box — which is the exact re-typing this was
+              built to remove. */}
           <PhotoSubmitForm
+            key="amend"
             doneHref={
               session.role === "admin"
                 ? `/admin/venue/${item.venue_id}`
@@ -194,6 +200,7 @@ export default async function ItemPage({
           ) : null}
 
           <PhotoSubmitForm
+            key="new"
             doneHref={
               session.role === "admin"
                 ? `/admin/venue/${item.venue_id}`

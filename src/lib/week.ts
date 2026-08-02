@@ -97,6 +97,17 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
 }
 
 /**
+ * Whole weeks between two week starts. Both are Mondays, so this is exact
+ * division rather than a rounding question — and it stays right across a DST
+ * boundary because week starts are dates, not instants.
+ */
+export function weeksBetween(from: string, to: string): number {
+  return Math.round(
+    (isoDateToUtcMidnight(to) - isoDateToUtcMidnight(from)) / (7 * DAY_MS),
+  );
+}
+
+/**
  * The deadline instant for a given week. DEADLINE_DAY is 0=Sun..6=Sat Pacific,
  * resolved inside the Monday-anchored week (so Sunday is the last day, not the
  * first).

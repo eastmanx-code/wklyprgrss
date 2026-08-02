@@ -14,6 +14,7 @@ import {
   isDeadlinePassed,
   mostRecentCompletedWeek,
   shiftWeeks,
+  weeksBetween,
 } from "./week";
 
 /**
@@ -148,6 +149,19 @@ export type LeaderBoard = {
   /** Items the leader flagged as needing another cycle. */
   rollingItemIds: Set<string>;
   latest: Map<string, Submission>;
+  /**
+   * Weeks since this item last had a photo. 0 means one landed this week.
+   * A card that says "Jul 14 · 19d" makes you do the arithmetic; this is the
+   * number the arithmetic was for.
+   */
+  staleWeeks: Map<string, number>;
+  /**
+   * Consecutive weeks ending with this one where the item was filed as
+   * needing another cycle. An item rolling for six weeks and one rolling
+   * since yesterday read identically otherwise, and only one of them is a
+   * problem.
+   */
+  rollingWeeks: Map<string, number>;
   status: WeekStatus;
 };
 
@@ -180,13 +194,53 @@ export async function getLeaderBoard(
       .map((s) => s.item_id),
   );
 
+  const latest = latestByItem(allSubmissions);
+
+  const staleWeeks = new Map<string, number>();
+  for (const [itemId, submission] of latest) {
+    staleWeeks.set(itemId, weeksBetween(submission.week_start, weekStart));
+  }
+
+  // The newest submission of each week, per item — then walk back from this
+  // week while every one of them says another cycle.
+  const newestPerWeek = new Map<string, Map<string, Submission>>();
+  for (const submission of allSubmissions) {
+    const weeks = newestPerWeek.get(submission.item_id) ?? new Map();
+    const held = weeks.get(submission.week_start);
+    if (!held || submission.created_at > held.created_at) {
+      weeks.set(submission.week_start, submission);
+    }
+    newestPerWeek.set(submission.item_id, weeks);
+  }
+
+  const rollingWeeks = new Map<string, number>();
+  for (const [itemId, weeks] of newestPerWeek) {
+    let run = 0;
+    let cursor = weekStart;
+    for (;;) {
+      const submission = weeks.get(cursor);
+      if (
+        !submission ||
+        submission.review === "sent_back" ||
+        submission.progress !== "another_cycle"
+      ) {
+        break;
+      }
+      run += 1;
+      cursor = shiftWeeks(cursor, -1);
+    }
+    if (run > 0) rollingWeeks.set(itemId, run);
+  }
+
   return {
     weekStart,
     items,
     doneItemIds,
     sentBackItemIds,
     rollingItemIds,
-    latest: latestByItem(allSubmissions),
+    latest,
+    staleWeeks,
+    rollingWeeks,
     status: statusFor(doneItemIds.size, items.length, weekStart, now),
   };
 }
