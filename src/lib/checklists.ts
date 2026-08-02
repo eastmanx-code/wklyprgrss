@@ -1,5 +1,3 @@
-import { CLOSE_CHECKLIST, type CloseItem } from "./close-checklist";
-
 /**
  * The shape of a venue's checklists.
  *
@@ -8,9 +6,14 @@ import { CLOSE_CHECKLIST, type CloseItem } from "./close-checklist";
  * actually does is flip to theirs, the way they would through a clipboard.
  * So the unit is the checklist, and the tree is how you reach it.
  *
- * Still in code rather than in tables. The tree is the part that needs
- * agreeing before it is worth a migration, and a wrong taxonomy is far more
- * expensive to undo in Postgres than here.
+ * What lives here now is only the vocabulary: the two houses, the three
+ * phases, and how a list becomes a URL. The roles used to live here too, as a
+ * guess at how a shift splits — MOD, Bartender, Barback — and every venue got
+ * the same forty slots whether or not any of them made sense for that venue.
+ *
+ * They are gone. A venue writes its own roles, because a venue knows how its
+ * own shift splits and this file never did. The rows in close_checklists are
+ * the truth; this is just the words they are made of.
  */
 
 export type House = "FOH" | "HOH";
@@ -27,75 +30,40 @@ export const PHASES: { key: Phase; name: string }[] = [
   { key: "close", name: "Close" },
 ];
 
-export type Checklist = {
-  slug: string;
-  venueCode: string;
-  house: House;
-  role: string;
-  phase: Phase;
-  /** Empty until someone builds it — the same "not set up" the weekly board uses. */
-  items: CloseItem[];
-};
-
-/**
- * Roles are a first guess and the thing most likely to be wrong. They are the
- * one part of this taxonomy that came from nowhere but common restaurant
- * practice, so they are worth checking against how Night Hawk actually splits
- * a shift before any of this becomes a table.
- */
-const FOH_ROLES = ["MOD", "Bartender", "Server", "Barback", "Host"];
-const HOH_ROLES = ["Kitchen MOD", "Line", "Prep", "Dish"];
-
-function build(): Checklist[] {
-  const out: Checklist[] = [];
-  for (const { key: house } of HOUSES) {
-    for (const role of house === "FOH" ? FOH_ROLES : HOH_ROLES) {
-      for (const { key: phase } of PHASES) {
-        const slug = `${house}-${role}-${phase}`
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-");
-        out.push({
-          slug,
-          venueCode: "HAWK",
-          house,
-          role,
-          phase,
-          // The one that exists. Everything else is a slot waiting for its list.
-          items: house === "FOH" && role === "MOD" && phase === "close"
-            ? CLOSE_CHECKLIST
-            : [],
-        });
-      }
-    }
-  }
-  return out;
-}
-
-export const CHECKLISTS: Checklist[] = build();
-
-export function checklistBySlug(slug: string): Checklist | undefined {
-  return CHECKLISTS.find((list) => list.slug === slug);
-}
-
-export function rolesIn(house: House): string[] {
-  return [...new Set(CHECKLISTS.filter((c) => c.house === house).map((c) => c.role))];
-}
-
-export function forRole(house: House, role: string): Checklist[] {
-  const order = PHASES.map((p) => p.key);
-  return CHECKLISTS.filter((c) => c.house === house && c.role === role).sort(
-    (a, b) => order.indexOf(a.phase) - order.indexOf(b.phase),
-  );
-}
-
-/** How many of a venue's lists have actually been built. */
-export function builtCount(): { built: number; total: number } {
-  return {
-    built: CHECKLISTS.filter((c) => c.items.length > 0).length,
-    total: CHECKLISTS.length,
-  };
-}
-
 export function phaseName(phase: Phase): string {
   return PHASES.find((p) => p.key === phase)?.name ?? phase;
 }
+
+export function houseName(house: House): string {
+  return HOUSES.find((h) => h.key === house)?.name ?? house;
+}
+
+export const PHASE_ORDER: Phase[] = PHASES.map((p) => p.key);
+
+/**
+ * A list's address. Lower case and hyphenated, so "Kitchen MOD" and
+ * "kitchen mod" reach the same place — a leader typing a role twice with
+ * different capitals should not end up with two lists.
+ */
+export function slugFor(house: House, role: string, phase: Phase): string {
+  return `${house}-${role}-${phase}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
+
+/**
+ * Back out of a slug. The role is the middle, which is why it may contain
+ * hyphens and the house and phase may not — they come from fixed lists.
+ */
+export function parseSlug(
+  slug: string,
+): { house: string; role: string; phase: string } | null {
+  const parts = slug.split("-");
+  if (parts.length < 3) return null;
+  return {
+    house: parts[0],
+    role: parts.slice(1, -1).join(" "),
+    phase: parts[parts.length - 1],
+  };
+}
+
+/** The one rule about roles: it has to be something, and not an essay. */
+export const MAX_ROLE_LENGTH = 40;
