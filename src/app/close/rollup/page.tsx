@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { BackLink } from "@/components/ui";
+import { groupRollup, venueRollup } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
+import { db } from "@/lib/supabase";
 import {
   SAMPLE_BY_ROLE,
   SAMPLE_CERTIFIERS,
@@ -61,13 +63,37 @@ export default async function RollupPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
+  // Real figures the moment there are any. The sample stays as the fallback
+  // rather than being deleted, because a venue in its first week would
+  // otherwise meet a page of confident zeroes and learn nothing about what the
+  // report is for — and a screen of zeroes is its own kind of lie.
+  let venue: string | null = null;
+  if (session.role === "leader") venue = session.venueId;
+  else {
+    const { data } = await db().from("venues").select("id").eq("code", "HAWK").maybeSingle();
+    venue = (data as { id: string } | null)?.id ?? null;
+  }
+
+  const real = venue ? await venueRollup(venue) : null;
+  const group = real ? await groupRollup() : null;
+
+  const nights = real?.nights ?? SAMPLE_NIGHTS;
+  const strip = real?.strip ?? SAMPLE_STRIP;
+  const certified = real?.certified ?? 24;
+  const missed = real?.missed ?? SAMPLE_MISSED;
+  const byRole = real?.byRole ?? SAMPLE_BY_ROLE;
+  const certifiers = real?.certifiers ?? SAMPLE_CERTIFIERS;
+  const venues = group ?? SAMPLE_VENUES;
+
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <BackLink href="/close">All checklists</BackLink>
 
       <header className="mt-4 mb-5">
-        <span className="pill pill-warn">Sample figures · nothing recorded yet</span>
-        <p className="label mt-3">Night Hawk · last {SAMPLE_NIGHTS} nights</p>
+        {real ? null : (
+          <span className="pill pill-warn">Sample figures · nothing recorded yet</span>
+        )}
+        <p className="label mt-3">Night Hawk · last {nights} nights</p>
         <h1 className="mt-2 text-metric font-medium">What&apos;s getting missed</h1>
       </header>
 
@@ -80,11 +106,11 @@ export default async function RollupPage() {
         <div className="flex items-baseline justify-between gap-4">
           <p className="label">Nights certified</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
-            24 of {SAMPLE_NIGHTS}
+            {certified} of {nights}
           </p>
         </div>
         <div className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1" aria-hidden>
-          {SAMPLE_STRIP.split("").map((code, index) => (
+          {strip.split("").map((code, index) => (
             <span
               key={index}
               className={`aspect-square rounded-[2px] ${NIGHT_STATE[code] ?? "bg-inset"}`}
@@ -112,17 +138,25 @@ export default async function RollupPage() {
         <section className="panel border-warn/30">
           <p className="label">What keeps getting left open</p>
           <div className="mt-3">
-            <MissedList rows={SAMPLE_MISSED} />
+            <MissedList rows={missed.slice(0, 12)} />
           </div>
-          <p className="label mt-3">
-            Ranked by how often the item was still open at signature.
-          </p>
+          {missed.length === 0 ? (
+            <p className="note text-muted mt-1">
+              Nothing has been left open in the window. That is the whole goal,
+              and it is rare enough to be worth checking the list is being used.
+            </p>
+          ) : (
+            <p className="label mt-3">
+              Ranked by how many nights the item finished with no tick against
+              it.
+            </p>
+          )}
         </section>
 
         <section className="panel">
           <p className="label">By role · items completed</p>
           <ul className="mt-3 space-y-3">
-            {SAMPLE_BY_ROLE.map((row) => (
+            {byRole.map((row) => (
               <li key={row.role} className="flex items-center gap-3">
                 <span className="label w-24 shrink-0">{row.role}</span>
                 <Bar done={row.done} of={row.of} />
@@ -134,7 +168,12 @@ export default async function RollupPage() {
         <section className="panel">
           <p className="label">Certified by</p>
           <ul className="mt-3">
-            {SAMPLE_CERTIFIERS.map((row) => (
+            {certifiers.length === 0 ? (
+              <li className="note text-muted">
+                Nobody has signed a night in this window.
+              </li>
+            ) : null}
+            {certifiers.map((row) => (
               <li
                 key={row.who}
                 className="border-divider flex items-baseline justify-between gap-4 border-t py-2.5 first:border-t-0"
@@ -150,10 +189,12 @@ export default async function RollupPage() {
         <section className="panel">
           <p className="label">Across the group</p>
           <p className="note text-muted mt-2">
-            The same report, asked of 26 venues rather than one.
+            {group
+              ? `The same report, asked of ${venues.length} ${venues.length === 1 ? "venue" : "venues"} rather than one.`
+              : "The same report, asked of 26 venues rather than one."}
           </p>
           <ul className="mt-3 space-y-3">
-            {SAMPLE_VENUES.map((row) => (
+            {venues.map((row) => (
               <li key={row.code} className="flex items-center gap-3">
                 <span className="label w-16 shrink-0">{row.code}</span>
                 <Bar done={row.done} of={row.of} />
@@ -164,8 +205,9 @@ export default async function RollupPage() {
       </div>
 
       <p className="label mt-6">
-        Every figure on this page is invented, to show the shape of the report.
-        It becomes real the night the first checklist is stored.
+        {real
+          ? `Counted over the last ${nights} nights. An item is open on a night with no tick against it, and every night in the window counts — including the ones nobody opened the list.`
+          : "Every figure on this page is invented, to show the shape of the report. It becomes real the night the first checklist is stored."}
       </p>
 
       <CloseBar back="/close" />

@@ -24,8 +24,13 @@ export default async function VenuePage() {
   if (!venue) redirect("/");
 
   const board = await getLeaderBoard(venue.id);
+  // Both shots, not just the headline one. A tile that showed only the after
+  // made a before uploaded the same week invisible, which a leader read as the
+  // second photo overriding the first.
   const thumbs = await signedUrls(
-    [...board.latest.values()].map((s) => s.photo_url),
+    [...board.latest.values()].flatMap((s) =>
+      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    ),
   );
 
   return (
@@ -58,7 +63,12 @@ export default async function VenuePage() {
         {board.items.map((item) => {
           const latest = board.latest.get(item.id);
           const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
+          const beforeThumb = latest?.before_photo_url
+            ? thumbs.get(latest.before_photo_url)
+            : undefined;
           const done = board.doneItemIds.has(item.id);
+          const stale = board.staleWeeks.get(item.id) ?? 0;
+          const rolling = board.rollingWeeks.get(item.id) ?? 0;
 
           return (
             <li key={item.id}>
@@ -74,6 +84,19 @@ export default async function VenuePage() {
                       alt=""
                       className="h-full w-full object-cover"
                     />
+                    {/* The pair, inset. Small on purpose — the current state is
+                        still the headline; this only says a before exists and
+                        is one tap away. */}
+                    {beforeThumb ? (
+                      <span className="border-paper/80 absolute bottom-2 left-2 block size-12 overflow-hidden rounded-lg border-2 shadow-sm">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={beforeThumb}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </span>
+                    ) : null}
                   </div>
                 ) : (
                   <PhotoPlaceholder />
@@ -81,11 +104,25 @@ export default async function VenuePage() {
                 <p className="caps mt-3 text-body leading-snug font-medium break-words">
                   {item.title}
                 </p>
+                {/* When it was submitted, and whether that is a problem.
+                    "Jul 14 · 19d" makes you do the arithmetic; the second
+                    line is the answer the arithmetic was for. Two weeks is
+                    the threshold because one week behind is simply this week
+                    not being done yet, which the pill below already says. */}
                 <p className="label mt-1">
                   {latest
                     ? `Last photo · ${formatLastUpload(latest.created_at)}`
                     : "No photo yet"}
                 </p>
+                {latest && stale >= 2 ? (
+                  <p className="label text-warn mt-1">
+                    No new photo in {stale} weeks
+                  </p>
+                ) : rolling >= 3 ? (
+                  <p className="label text-warn mt-1">
+                    Rolling {rolling} weeks
+                  </p>
+                ) : null}
                 <div className="mt-2">
                   {board.sentBackItemIds.has(item.id) ? (
                     <span className="pill pill-warn">Redo</span>

@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .netlify
+
+# npm run check-rollup compiles the pure module here
+.rollup-check

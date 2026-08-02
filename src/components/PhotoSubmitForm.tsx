@@ -13,9 +13,21 @@ import { useRouter } from "next/navigation";
 import { compressToJpeg, decodeMessage, formatKb } from "@/lib/compress";
 import {
   createUploadTargets,
+  editSubmission,
   submitItem,
   type SubmitState,
 } from "@/app/venue/actions";
+
+/** The entry being amended, when this form is opened to fix one. */
+export type Editing = {
+  submissionId: string;
+  comment: string;
+  author: string;
+  assistedBy: string;
+  progress: "done" | "another_cycle";
+  beforeUrl: string | null;
+  wasApproved: boolean;
+};
 
 /** "a photo, your name and a comment" — a sentence, not a bulleted list. */
 function listOut(entries: string[]): string {
@@ -69,21 +81,32 @@ export function PhotoSubmitForm({
   doneHref,
   itemId,
   currentPhotoUrl = null,
+  editing = null,
 }: {
   /** Where to land after submitting — the board the person came from. */
   doneHref: string;
   itemId: string;
   /** This week's photo, if one is already in. Shown so the well isn't empty. */
   currentPhotoUrl?: string | null;
+  /**
+   * Set when this form is amending an existing entry rather than adding one.
+   * The photos become optional — leave them and the ones already filed stay.
+   */
+  editing?: Editing | null;
 }) {
   const router = useRouter();
-  const [state, formAction, pending] = useActionState(submitItem, initialState);
+  const [state, formAction, pending] = useActionState(
+    editing ? editSubmission : submitItem,
+    initialState,
+  );
   const [uploading, setUploading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [beforePhoto, setBeforePhoto] = useState<File | null>(null);
   const [beforePreview, setBeforePreview] = useState<string | null>(null);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(editing?.comment ?? "");
+  /** Cleared explicitly, rather than just not re-picked. */
+  const [beforeDropped, setBeforeDropped] = useState(false);
   // Ten items a week is a lot of retyping, so the name is remembered. `null`
   // means untouched — fall back to whatever was saved last time.
   const savedAuthor = useSyncExternalStore(
@@ -92,10 +115,10 @@ export function PhotoSubmitForm({
     noSavedAuthor,
   );
   const [typedAuthor, setTypedAuthor] = useState<string | null>(null);
-  const author = typedAuthor ?? savedAuthor;
-  const [assistedBy, setAssistedBy] = useState("");
+  const author = typedAuthor ?? editing?.author ?? savedAuthor;
+  const [assistedBy, setAssistedBy] = useState(editing?.assistedBy ?? "");
   const [progress, setProgress] = useState<"done" | "another_cycle" | null>(
-    null,
+    editing?.progress ?? null,
   );
   const [processing, setProcessing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -178,7 +201,7 @@ export function PhotoSubmitForm({
     // the one field that is buttons rather than a box, and so the easiest to
     // scroll past — tapped a dead control, got nothing back, and left thinking
     // the week was filed.
-    if (!photo || !progress || !author.trim() || !comment.trim()) {
+    if (unmet.length > 0) {
       setPressed(unmet);
       const first = unmet[0];
       const target = {
@@ -197,6 +220,8 @@ export function PhotoSubmitForm({
     }
 
     setPressed([]);
+    // unmet already covers this; the compiler needs it said out loud.
+    if (!progress) return;
 
     try {
       localStorage.setItem(
@@ -211,8 +236,13 @@ export function PhotoSubmitForm({
     setUploading(true);
     try {
       // Photos go straight to storage; the action only ever carries text.
-      const targets = await createUploadTargets(itemId, Boolean(beforePhoto));
-      if (targets.error || !targets.after) {
+      // When amending, only the wells that were actually re-picked need a
+      // target — the rest of the entry keeps what it already points at.
+      const targets =
+        photo || beforePhoto
+          ? await createUploadTargets(itemId, Boolean(beforePhoto))
+          : { error: null, after: undefined, before: undefined };
+      if (targets.error || (photo && !targets.after)) {
         setLocalError(targets.error ?? "Couldn't start the upload.");
         return;
       }
@@ -228,16 +258,21 @@ export function PhotoSubmitForm({
         }
       };
 
-      await put(targets.after, photo);
+      if (photo && targets.after) await put(targets.after, photo);
       if (beforePhoto && targets.before) await put(targets.before, beforePhoto);
 
       const data = new FormData();
-      data.set("itemId", itemId);
+      if (editing) {
+        data.set("submissionId", editing.submissionId);
+        if (beforeDropped && !beforePhoto) data.set("dropBefore", "true");
+      } else {
+        data.set("itemId", itemId);
+      }
       data.set("comment", comment);
       data.set("author", author);
       data.set("assistedBy", assistedBy);
       data.set("progress", progress);
-      data.set("photoPath", targets.after.path);
+      if (photo && targets.after) data.set("photoPath", targets.after.path);
       if (beforePhoto && targets.before) {
         data.set("beforePhotoPath", targets.before.path);
       }
@@ -256,7 +291,9 @@ export function PhotoSubmitForm({
   }
 
   const unmet: Needed[] = [];
-  if (!photo) unmet.push("photo");
+  // Amending keeps the photo already filed unless a new one is picked, so an
+  // untouched well is not a missing photo.
+  if (!photo && !editing) unmet.push("photo");
   if (!progress) unmet.push("progress");
   if (!author.trim()) unmet.push("author");
   if (!comment.trim()) unmet.push("comment");
@@ -295,10 +332,13 @@ export function PhotoSubmitForm({
             disabled={busy}
           />
           <div className="dotfield relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
-            {beforePreview ? (
+            {beforePreview ?? (beforeDropped ? null : editing?.beforeUrl) ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={beforePreview}
+                src={
+                  beforePreview ??
+                  (beforeDropped ? "" : (editing?.beforeUrl ?? ""))
+                }
                 alt=""
                 className="h-full w-full object-contain"
               />
@@ -313,11 +353,46 @@ export function PhotoSubmitForm({
         {beforePhoto ? (
           <p className="label">Before ready · {formatKb(beforePhoto.size)}</p>
         ) : null}
+
+        {/* Only when amending: a before attached by mistake had no way off
+            the entry except filing a whole second one. */}
+        {editing?.beforeUrl && !beforePhoto && !beforeDropped ? (
+          <button
+            type="button"
+            className="btn-ghost"
+            disabled={busy}
+            onClick={() => setBeforeDropped(true)}
+          >
+            Remove before
+          </button>
+        ) : null}
+        {beforeDropped && !beforePhoto ? (
+          <p className="label">
+            Before will be removed ·{" "}
+            <button
+              type="button"
+              className="underline underline-offset-4"
+              onClick={() => setBeforeDropped(false)}
+            >
+              keep it
+            </button>
+          </p>
+        ) : null}
       </div>
 
       <div className="space-y-2" ref={photoRef}>
+        {/* "After" only when the work is actually finished. A leader logging
+            a job mid-week was being asked for an After of something not yet
+            done, and the honest thing to shoot — where it stands right now —
+            had no name on the form. The label follows the done / another
+            cycle answer below, so the pair reads Before and In progress until
+            the week it reads Before and After. */}
         <span className={marked("photo") ? "label text-warn" : "label"}>
-          {beforePhoto ? "After (required)" : "Photo (required)"}
+          {progress === "another_cycle"
+            ? "In progress (required)"
+            : beforePhoto || editing?.beforeUrl
+              ? "After (required)"
+              : "Photo (required)"}
           {marked("photo")
             ? currentPhotoUrl
               ? " · take a new one"
@@ -486,8 +561,24 @@ export function PhotoSubmitForm({
 
       {/* Only disabled while something is actually in flight. Incomplete is
           handled on press, with a message naming what's left. */}
+      {editing ? (
+        <p className="label">
+          Amending this week&apos;s entry. Leave a photo alone to keep the one
+          already filed.
+          {editing.wasApproved
+            ? " It was approved, so saving sends it back for review."
+            : ""}
+        </p>
+      ) : null}
+
       <button type="submit" className="btn w-full" disabled={busy}>
-        {uploading ? "Uploading…" : pending ? "Saving…" : "Submit this week"}
+        {uploading
+          ? "Uploading…"
+          : pending
+            ? "Saving…"
+            : editing
+              ? "Save changes"
+              : "Submit this week"}
       </button>
     </form>
   );

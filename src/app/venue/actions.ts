@@ -177,3 +177,140 @@ export async function submitItem(
   // blank error screen with nothing to diagnose.
   return { error: null, ok: true };
 }
+
+/**
+ * Amends this week's entry in place.
+ *
+ * Everything here used to be append-only, so fixing a typo meant re-typing the
+ * comment, re-picking both photos, and ending up with two entries under the
+ * same week — which reads in the history as two separate weeks of work. A
+ * leader described exactly that. Correcting a record you just wrote is not a
+ * second week of work and should not look like one.
+ *
+ * Only the newest entry of the current week, and only while it is pending or
+ * already approved. Photos are optional: leave them alone and the existing
+ * ones stay. An amended entry that had been approved goes back to pending —
+ * the admin approved what it said before, not what it says now.
+ *
+ * A sent-back entry is deliberately not editable. That flow already asks for a
+ * fresh photo and comment, and quietly editing the rejected one past a review
+ * is not the same thing.
+ */
+export async function editSubmission(
+  _prev: SubmitState,
+  formData: FormData,
+): Promise<SubmitState> {
+  const submissionId = String(formData.get("submissionId") ?? "");
+  const comment = String(formData.get("comment") ?? "").trim();
+  const author = String(formData.get("author") ?? "").trim();
+  const assistedRaw = String(formData.get("assistedBy") ?? "").trim();
+  const assistedBy = assistedRaw || null;
+  const progress = String(formData.get("progress") ?? "");
+  const photoUrl = String(formData.get("photoPath") ?? "").trim();
+  const beforeRaw = String(formData.get("beforePhotoPath") ?? "").trim();
+  const dropBefore = String(formData.get("dropBefore") ?? "") === "true";
+
+  if (progress !== "done" && progress !== "another_cycle") {
+    return { error: "Say whether this is done or needs another cycle." };
+  }
+  if (!author) return { error: "Say who wrote this update." };
+  if (author.length > MAX_NAME_LENGTH)
+    return { error: "That name is too long." };
+  if (assistedBy && assistedBy.length > MAX_NAME_LENGTH) {
+    return { error: "That assisted-by list is too long." };
+  }
+  if (!comment) return { error: "A comment is required." };
+  if (comment.length > MAX_COMMENT_LENGTH) {
+    return { error: "That comment is too long." };
+  }
+
+  const { data: row } = await db()
+    .from("submissions")
+    .select("id, item_id, week_start, photo_url, before_photo_url, review")
+    .eq("id", submissionId)
+    .maybeSingle();
+
+  const existing = row as {
+    id: string;
+    item_id: string;
+    week_start: string;
+    photo_url: string;
+    before_photo_url: string | null;
+    review: string;
+  } | null;
+  if (!existing) return { error: "That entry is no longer available." };
+
+  const item = await ownedItem(existing.item_id);
+  if (!item) return { error: "That item is no longer available." };
+
+  if (existing.week_start !== currentWeekStart()) {
+    return { error: "Only this week's entry can be edited." };
+  }
+  if (existing.review === "sent_back") {
+    return { error: "That entry was sent back. Submit a new one instead." };
+  }
+
+  // Newest wins everywhere else in the app; editing an older entry of the same
+  // week would change something no screen is showing.
+  const { data: newest } = await db()
+    .from("submissions")
+    .select("id")
+    .eq("item_id", item.id)
+    .eq("week_start", existing.week_start)
+    .order("created_at", { ascending: false })
+    .limit(1);
+  if ((newest as { id: string }[] | null)?.[0]?.id !== existing.id) {
+    return { error: "A newer entry has been added. Edit that one instead." };
+  }
+
+  const prefix = `${await venueCode(item.venue_id)}/${item.id}/`;
+  if (photoUrl && !photoUrl.startsWith(prefix)) {
+    return { error: "Something went wrong. Try again." };
+  }
+  if (beforeRaw && !beforeRaw.startsWith(prefix)) {
+    return { error: "Something went wrong. Try again." };
+  }
+
+  const nextBefore = dropBefore ? null : beforeRaw || existing.before_photo_url;
+
+  const { error: updateError } = await db()
+    .from("submissions")
+    .update({
+      comment,
+      author,
+      assisted_by: assistedBy,
+      progress,
+      photo_url: photoUrl || existing.photo_url,
+      before_photo_url: nextBefore,
+      // Back to pending only if it had been approved — the admin signed off on
+      // what this said before.
+      ...(existing.review === "approved"
+        ? { review: "pending", reviewed_at: null }
+        : {}),
+    })
+    .eq("id", existing.id);
+
+  if (updateError) {
+    // The new files are already up; drop them rather than leave them orphaned.
+    const orphans = [photoUrl, beforeRaw].filter(Boolean) as string[];
+    if (orphans.length) {
+      await db().storage.from(PHOTO_BUCKET).remove(orphans);
+    }
+    return { error: "Could not save that. Try again." };
+  }
+
+  // Replaced photos are dead the moment the row stops pointing at them.
+  const replaced = [
+    photoUrl && existing.photo_url !== photoUrl ? existing.photo_url : null,
+    existing.before_photo_url && existing.before_photo_url !== nextBefore
+      ? existing.before_photo_url
+      : null,
+  ].filter(Boolean) as string[];
+  if (replaced.length) {
+    await db().storage.from(PHOTO_BUCKET).remove(replaced);
+  }
+
+  revalidatePath("/venue");
+  revalidatePath(`/venue/item/${item.id}`);
+  return { error: null, ok: true };
+}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { PhotoView } from "@/components/PhotoView";
@@ -17,10 +18,13 @@ export const dynamic = "force-dynamic";
 
 export default async function ItemPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ itemId: string }>;
+  searchParams: Promise<{ edit?: string }>;
 }) {
   const { itemId } = await params;
+  const { edit } = await searchParams;
 
   // A leader may open their own venue's items; an admin may open any. Same
   // screen for both — the two roles differ only in who can approve.
@@ -55,6 +59,11 @@ export default async function ItemPage({
   const sentBack = current?.review === "sent_back";
   const rolling = !sentBack && current?.progress === "another_cycle";
   const doneThisWeek = Boolean(current) && !sentBack;
+  // A sent-back entry is not amended — that flow asks for a fresh photo and
+  // comment, and quietly editing the rejected one past a review is a different
+  // thing. Everything else this week can be corrected in place.
+  const editable = Boolean(current) && !sentBack;
+  const amending = editable && edit === "1";
 
   // On an ongoing item the most recent earlier photo is the before. Uses the
   // last photo rather than strictly last week's, so a gap doesn't blank it.
@@ -134,15 +143,78 @@ export default async function ItemPage({
         </section>
       ) : null}
 
-      <PhotoSubmitForm
-        doneHref={
-          session.role === "admin" ? `/admin/venue/${item.venue_id}` : "/venue"
-        }
-        itemId={item.id}
-        currentPhotoUrl={
-          current && !sentBack ? (photos.get(current.photo_url) ?? null) : null
-        }
-      />
+      {/* Amend, rather than file a second entry.
+          Fixing a typo used to mean re-typing the comment, re-picking both
+          photos, and leaving two entries under one week — which reads in the
+          history as two weeks of work. Correcting what you just wrote is not a
+          second week. */}
+      {amending ? (
+        <>
+          <div className="panel-quiet mb-3 flex flex-wrap items-center justify-between gap-3">
+            <p className="note">Editing this week&apos;s entry.</p>
+            <Link href={`/venue/item/${item.id}`} className="btn-ghost">
+              Cancel
+            </Link>
+          </div>
+          {/* Keyed, so switching into amend actually remounts the form.
+              Without it React reuses the instance across the navigation, the
+              useState initialisers never run again, and the prefilled comment
+              arrives as an empty box — which is the exact re-typing this was
+              built to remove. */}
+          <PhotoSubmitForm
+            key="amend"
+            doneHref={
+              session.role === "admin"
+                ? `/admin/venue/${item.venue_id}`
+                : "/venue"
+            }
+            itemId={item.id}
+            currentPhotoUrl={photos.get(current.photo_url) ?? null}
+            editing={{
+              submissionId: current.id,
+              comment: current.comment,
+              author: current.author,
+              assistedBy: current.assisted_by ?? "",
+              progress: current.progress,
+              beforeUrl: current.before_photo_url
+                ? (photos.get(current.before_photo_url) ?? null)
+                : null,
+              wasApproved: current.review === "approved",
+            }}
+          />
+        </>
+      ) : (
+        <>
+          {editable ? (
+            <div className="mb-3">
+              <Link
+                href={`/venue/item/${item.id}?edit=1`}
+                className="btn-ghost"
+              >
+                Edit this week&apos;s entry
+              </Link>
+              <p className="label mt-2">
+                Fix the comment or swap a photo without filing a second entry.
+              </p>
+            </div>
+          ) : null}
+
+          <PhotoSubmitForm
+            key="new"
+            doneHref={
+              session.role === "admin"
+                ? `/admin/venue/${item.venue_id}`
+                : "/venue"
+            }
+            itemId={item.id}
+            currentPhotoUrl={
+              current && !sentBack
+                ? (photos.get(current.photo_url) ?? null)
+                : null
+            }
+          />
+        </>
+      )}
 
       <section className="mt-8">
         <form action={setItemActive}>
