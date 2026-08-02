@@ -1,9 +1,10 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { CloseBar } from "@/components/close/CloseBar";
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
-import { phaseName, type Phase } from "@/lib/checklists";
+import { parseSlug, phaseName, type Phase } from "@/lib/checklists";
 import type { CloseItem, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
@@ -45,25 +46,25 @@ export default async function ChecklistPage({
   }
   if (!venue) notFound();
 
-  const [house, ...rest] = slug.split("-");
-  const phase = rest[rest.length - 1];
-  const role = rest.slice(0, -1).join(" ");
+  const parsed = parseSlug(slug);
+  if (!parsed) notFound();
 
-  const { data: listRow } = await db()
+  // Matched in JS rather than with ilike: the slug is user input and ilike
+  // treats % and _ as wildcards, so foh-%-close would match whatever role came
+  // back first. A venue has a handful of lists.
+  const { data: listRows } = await db()
     .from("close_checklists")
     .select("id, house, role, phase")
     .eq("venue_id", venue)
-    .ilike("house", house)
-    .ilike("role", role)
-    .eq("phase", phase)
-    .maybeSingle();
+    .eq("active", true);
 
-  const list = listRow as {
-    id: string;
-    house: string;
-    role: string;
-    phase: Phase;
-  } | null;
+  const list =
+    ((listRows ?? []) as { id: string; house: string; role: string; phase: Phase }[]).find(
+      (row) =>
+        row.house.toLowerCase() === parsed.house.toLowerCase() &&
+        row.role.toLowerCase() === parsed.role.toLowerCase() &&
+        row.phase.toLowerCase() === parsed.phase.toLowerCase(),
+    ) ?? null;
   if (!list) notFound();
 
   const { data: itemRows } = await db()
@@ -74,7 +75,6 @@ export default async function ChecklistPage({
     .order("position");
 
   const rows = (itemRows ?? []) as Row[];
-  if (rows.length === 0) notFound();
 
   const items: CloseItem[] = rows.map((row) => ({
     id: row.id,
@@ -132,11 +132,30 @@ export default async function ChecklistPage({
         <p className="label">
           {list.house} · {list.role} · {formatNight(night)}
         </p>
-        <h1 className="mt-2 text-metric font-medium">
-          {phaseName(list.phase)} checklist
-        </h1>
+        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
+          <h1 className="text-metric font-medium">
+            {phaseName(list.phase)} checklist
+          </h1>
+          {/* The venue owns this list, so the way to change it is on it —
+              not in an admin screen somebody has to be told about. */}
+          <Link href={`/close/${slug}/edit`} className="btn-ghost min-h-11">
+            Edit the list
+          </Link>
+        </div>
       </header>
 
+      {rows.length === 0 ? (
+        <section className="panel">
+          <p className="note text-muted leading-relaxed">
+            This list has no items yet. Nothing can be walked or signed until
+            it does — an empty list that could be certified would report a
+            venue as covered for doing nothing.
+          </p>
+          <Link href={`/close/${slug}/edit`} className="btn mt-4 inline-flex">
+            Write the list
+          </Link>
+        </section>
+      ) : (
       <CloseChecklist
         slug={slug}
         items={items}
@@ -164,6 +183,7 @@ export default async function ChecklistPage({
           })),
         }}
       />
+      )}
 
       <CloseBar back="/close" />
     </main>
