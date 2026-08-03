@@ -314,3 +314,130 @@ export async function editSubmission(
   revalidatePath(`/venue/item/${item.id}`);
   return { error: null, ok: true };
 }
+
+/**
+ * The venue this session may clear, or null.
+ *
+ * A leader clears their own; an admin clears whichever venue they are looking
+ * at. Same rule as item management — the venue owns its own list.
+ */
+async function ownedVenue(venueId: string): Promise<string | null> {
+  const session = await getSession();
+  if (!session) return null;
+  if (session.role === "admin") return venueId || null;
+  return session.venueId === venueId ? venueId : null;
+}
+
+/**
+ * Deletes entries and the photographs they point at.
+ *
+ * Approved entries are skipped. Once an admin has signed off on a week, that
+ * entry is the record of it, and a leader deleting their own record is the one
+ * thing this product cannot allow. Everything still pending is fair game —
+ * which is exactly the mess a first week of testing leaves behind.
+ *
+ * Returns how many went.
+ */
+async function purge(ids: string[]): Promise<number> {
+  if (ids.length === 0) return 0;
+
+  const { data } = await db()
+    .from("submissions")
+    .select("id, photo_url, before_photo_url, review")
+    .in("id", ids)
+    .neq("review", "approved");
+
+  const rows = (data ?? []) as {
+    id: string;
+    photo_url: string;
+    before_photo_url: string | null;
+    review: string;
+  }[];
+  if (rows.length === 0) return 0;
+
+  const paths = rows.flatMap((row) =>
+    row.before_photo_url ? [row.photo_url, row.before_photo_url] : [row.photo_url],
+  );
+  // Chunked: storage rejects very large delete batches.
+  for (let i = 0; i < paths.length; i += 100) {
+    await db().storage.from(PHOTO_BUCKET).remove(paths.slice(i, i + 100));
+  }
+
+  await db()
+    .from("submissions")
+    .delete()
+    .in(
+      "id",
+      rows.map((row) => row.id),
+    );
+
+  return rows.length;
+}
+
+/** Removes one entry a leader filed and did not mean to keep. */
+export async function deleteSubmission(
+  _prev: SubmitState,
+  formData: FormData,
+): Promise<SubmitState> {
+  const submissionId = String(formData.get("submissionId") ?? "");
+  if (!submissionId) return { error: "That entry is not available." };
+
+  const { data } = await db()
+    .from("submissions")
+    .select("id, item_id, review")
+    .eq("id", submissionId)
+    .maybeSingle();
+  const row = data as { id: string; item_id: string; review: string } | null;
+  if (!row) return { error: "That entry is not available." };
+
+  const item = await ownedItem(row.item_id);
+  if (!item) return { error: "That entry is not available." };
+  if (row.review === "approved") {
+    return { error: "That one is approved. Ask an admin to change it." };
+  }
+
+  const gone = await purge([row.id]);
+  if (gone === 0) return { error: "Could not delete that. Try again." };
+
+  revalidatePath("/venue");
+  revalidatePath(`/venue/item/${row.item_id}`);
+  revalidatePath("/board");
+  return { error: null, ok: true };
+}
+
+/**
+ * Clears everything this venue has filed that nobody has approved yet.
+ *
+ * The button a first week needs. A new leader's first act is to test with
+ * whatever is in front of them, and until now the only way to undo that lived
+ * on an admin screen they cannot open — so the mess stayed on their board and
+ * they had to ask someone to remove it.
+ */
+export async function clearUnapproved(
+  _prev: SubmitState,
+  formData: FormData,
+): Promise<SubmitState> {
+  const venueId = await ownedVenue(String(formData.get("venueId") ?? ""));
+  if (!venueId) return { error: "That venue is not available." };
+
+  // Retired items too: their entries are just as much a leftover test.
+  const { data: items } = await db()
+    .from("items")
+    .select("id")
+    .eq("venue_id", venueId);
+  const itemIds = ((items ?? []) as { id: string }[]).map((row) => row.id);
+  if (itemIds.length === 0) return { error: null, ok: true };
+
+  const { data: subs } = await db()
+    .from("submissions")
+    .select("id")
+    .in("item_id", itemIds)
+    .neq("review", "approved");
+
+  await purge(((subs ?? []) as { id: string }[]).map((row) => row.id));
+
+  revalidatePath("/venue");
+  revalidatePath("/board");
+  revalidatePath(`/board/${venueId}`);
+  return { error: null, ok: true };
+}

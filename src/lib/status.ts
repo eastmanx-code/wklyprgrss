@@ -33,11 +33,18 @@ const STREAK_LOOKBACK_WEEKS = 26;
  */
 export const WEEKLY_ITEM_TARGET = 10;
 
-/** Venue list without PINs — safe for the dropdown, the board and the dashboard. */
+/**
+ * Venue list without PINs — safe for the dropdown, the board and the dashboard.
+ *
+ * Stood-down venues are left out. The test venue is a real row so development
+ * runs the same code paths production does, which also put it in the login
+ * dropdown in front of every leader in the company.
+ */
 export async function getVenues(): Promise<VenueSummary[]> {
   const { data, error } = await db()
     .from("venues")
     .select("id, code, name")
+    .eq("active", true)
     .order("code");
   if (error) throw new Error(error.message);
   return (data ?? []) as VenueSummary[];
@@ -470,4 +477,26 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       .filter((row) => row.activeCount < WEEKLY_ITEM_TARGET)
       .map((row) => row.venue.code),
   };
+}
+
+/**
+ * How many entries this venue has filed that nobody has approved yet.
+ *
+ * Only used to decide whether to offer a leader the way to clear them, and to
+ * say how many rather than making them guess.
+ */
+export async function countUnapproved(venueId: string): Promise<number> {
+  const { data: items } = await db()
+    .from("items")
+    .select("id")
+    .eq("venue_id", venueId);
+  const itemIds = ((items ?? []) as { id: string }[]).map((row) => row.id);
+  if (itemIds.length === 0) return 0;
+
+  const { count } = await db()
+    .from("submissions")
+    .select("id", { count: "exact", head: true })
+    .in("item_id", itemIds)
+    .neq("review", "approved");
+  return count ?? 0;
 }
