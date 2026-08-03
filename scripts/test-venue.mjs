@@ -4,17 +4,25 @@
  *
  *   npm run test-venue          create it, or print it if it exists
  *   npm run test-venue -- --clear   delete its submissions, keep the venue
+ *   npm run test-venue -- --show    put it back in the login picker
+ *   npm run test-venue -- --hide    take it out again
  *
  * Code ZZTEST so it sorts to the bottom of the venue picker and is obvious in
  * any list. It is a normal venue row in every other respect — the point is to
  * exercise the same code paths the real ones use, not a special case the app
  * knows about.
+ *
+ * It ships inactive, because "obvious in any list" still meant every leader in
+ * the company saw it on the login screen. --show is how a test session gets it
+ * back; hide it again when you are done.
  */
 import { createClient } from "@supabase/supabase-js";
 
 const CODE = "ZZTEST";
 const PIN = "424242";
 const clearOnly = process.argv.includes("--clear");
+const show = process.argv.includes("--show");
+const hide = process.argv.includes("--hide");
 
 const db = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -37,7 +45,7 @@ if (!venueId) {
   }
   const { data, error } = await db
     .from("venues")
-    .insert({ code: CODE, name: "Test venue", pin: PIN })
+    .insert({ code: CODE, name: "Test venue", pin: PIN, active: false })
     .select("id")
     .single();
   if (error) {
@@ -45,6 +53,16 @@ if (!venueId) {
     process.exit(1);
   }
   venueId = data.id;
+}
+
+if (show || hide) {
+  await db.from("venues").update({ active: show }).eq("id", venueId);
+  console.log(
+    `\n  ${CODE} is ${show ? "in" : "out of"} the login picker.${
+      show ? "  Hide it again with --hide when you are done." : ""
+    }\n`,
+  );
+  if (!clearOnly) process.exit(0);
 }
 
 const { data: itemRows } = await db

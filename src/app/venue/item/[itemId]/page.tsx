@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { PhotoView } from "@/components/PhotoView";
 
 import { setItemActive } from "@/app/admin/actions";
+import { DeleteEntry } from "@/components/DeleteEntry";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { Attribution, BackLink, DonePill, PurgedPhoto } from "@/components/ui";
@@ -307,6 +308,11 @@ export default async function ItemPage({
                     author={submission.author}
                     assistedBy={submission.assisted_by}
                   />
+                  {/* Approved entries are the record of a week and stay put.
+                      Everything else is still the venue's to take back. */}
+                  {submission.review === "approved" ? null : (
+                    <DeleteEntry submissionId={submission.id} />
+                  )}
                 </li>
               );
             })}

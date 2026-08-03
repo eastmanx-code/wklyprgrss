@@ -1,12 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { StartOver } from "@/components/StartOver";
 import { VenueHero } from "@/components/VenueHero";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
+import {
+  WEEKLY_ITEM_TARGET,
+  countUnapproved,
+  getLeaderBoard,
+  getVenue,
+} from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -24,6 +30,7 @@ export default async function VenuePage() {
   if (!venue) redirect("/");
 
   const board = await getLeaderBoard(venue.id);
+  const unapproved = await countUnapproved(venue.id);
   // Both shots, not just the headline one. A tile that showed only the after
   // made a before uploaded the same week invisible, which a leader read as the
   // second photo overriding the first.
@@ -141,6 +148,8 @@ export default async function VenuePage() {
           <AddItemSlot key={`slot-${slot}`} venueId={venue.id} index={slot} />
         ))}
       </ul>
+
+      <StartOver venueId={venue.id} pending={unapproved} />
 
       <p className="mt-8">
         <Link href="/board" className="label hover:text-ink">
