@@ -61,7 +61,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Score is what you approved · a second figure means fewer were filed"
+          hint="Score is items completed and signed off · a second figure means fewer were filed"
         >
           <ul>
             {active.map((row) => {
@@ -92,7 +92,7 @@ export function VenueRows({
                       {row.venue.id === ownVenueId ? " · you" : ""}
                     </span>
 
-                    <span className="text-body w-[104px] shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
+                    <span className="text-body w-40 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
                       <span className="text-ink">
                         {row.approvedCount}/{WEEKLY_ITEM_TARGET}
                       </span>

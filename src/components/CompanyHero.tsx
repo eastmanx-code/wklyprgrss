@@ -103,7 +103,7 @@ export function CompanyHero({
 
       <Card
         title="The week"
-        hint={`${winRate}% of venues at ${WIN_THRESHOLD} or better`}
+        hint={`Signed off · ${winRate}% of venues at ${WIN_THRESHOLD} or better`}
         className="col-span-12 sm:col-span-8"
       >
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
