@@ -70,7 +70,11 @@ export default async function RollupPage() {
   let venue: string | null = null;
   if (session.role === "leader") venue = session.venueId;
   else {
-    const { data } = await db().from("venues").select("id").eq("code", "HAWK").maybeSingle();
+    const { data } = await db()
+      .from("venues")
+      .select("id")
+      .eq("code", "HAWK")
+      .maybeSingle();
     venue = (data as { id: string } | null)?.id ?? null;
   }
 
@@ -91,10 +95,14 @@ export default async function RollupPage() {
 
       <header className="mt-4 mb-5">
         {real ? null : (
-          <span className="pill pill-warn">Sample figures · nothing recorded yet</span>
+          <span className="pill pill-warn">
+            Sample figures · nothing recorded yet
+          </span>
         )}
         <p className="label mt-3">Night Hawk · last {nights} nights</p>
-        <h1 className="mt-2 text-metric font-medium">What&apos;s getting missed</h1>
+        <h1 className="mt-2 text-metric font-medium">
+          What&apos;s getting missed
+        </h1>
       </header>
 
       {/* Pinned. Every figure below it is a way of asking the same question,
@@ -109,7 +117,10 @@ export default async function RollupPage() {
             {certified} of {nights}
           </p>
         </div>
-        <div className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1" aria-hidden>
+        <div
+          className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1"
+          aria-hidden
+        >
           {strip.split("").map((code, index) => (
             <span
               key={index}

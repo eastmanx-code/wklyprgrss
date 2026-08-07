@@ -4,7 +4,13 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { createChecklist, type ManageState } from "@/app/close/manage";
-import { HOUSES, PHASES, slugFor, type House, type Phase } from "@/lib/checklists";
+import {
+  HOUSES,
+  PHASES,
+  slugFor,
+  type House,
+  type Phase,
+} from "@/lib/checklists";
 
 const initial: ManageState = { error: null };
 
@@ -45,7 +51,9 @@ export function NewChecklistForm() {
                 type="button"
                 onClick={() => setHouse(option.key)}
                 aria-pressed={house === option.key}
-                className={house === option.key ? "btn btn-sm" : "btn-ghost min-h-11"}
+                className={
+                  house === option.key ? "btn btn-sm" : "btn-ghost min-h-11"
+                }
               >
                 {option.name}
               </button>
@@ -83,7 +91,9 @@ export function NewChecklistForm() {
                 type="button"
                 onClick={() => setPhase(option.key)}
                 aria-pressed={phase === option.key}
-                className={phase === option.key ? "btn btn-sm" : "btn-ghost min-h-11"}
+                className={
+                  phase === option.key ? "btn btn-sm" : "btn-ghost min-h-11"
+                }
               >
                 {option.name}
               </button>

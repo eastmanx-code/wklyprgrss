@@ -117,7 +117,8 @@ function readShots(formData: FormData): Shot[] | string {
     if (prompt.length > MAX_PROMPT) return "That prompt is too long.";
     shots.push({ kind, prompt });
   }
-  if (shots.length > MAX_SHOTS) return "That is more proof than one item needs.";
+  if (shots.length > MAX_SHOTS)
+    return "That is more proof than one item needs.";
   return shots;
 }
 
@@ -148,9 +149,11 @@ export async function createChecklist(
   if (house !== "FOH" && house !== "HOH") {
     return { error: "Pick front of house or heart of house." };
   }
-  if (!PHASE_ORDER.includes(phase)) return { error: "Pick open, mid or close." };
+  if (!PHASE_ORDER.includes(phase))
+    return { error: "Pick open, mid or close." };
   if (!role) return { error: "Name the role this list belongs to." };
-  if (role.length > MAX_ROLE_LENGTH) return { error: "That role name is too long." };
+  if (role.length > MAX_ROLE_LENGTH)
+    return { error: "That role name is too long." };
 
   // Reactivating rather than inserting: a venue that retires a list and then
   // wants it back should get its history, not a fresh empty one beside it.
@@ -166,7 +169,10 @@ export async function createChecklist(
   const found = existing as { id: string; active: boolean } | null;
   if (found) {
     if (found.active) return { error: "That list already exists." };
-    await db().from("close_checklists").update({ active: true }).eq("id", found.id);
+    await db()
+      .from("close_checklists")
+      .update({ active: true })
+      .eq("id", found.id);
     revalidateFor({ house, role, phase });
     return { error: null, ok: true };
   }
@@ -195,7 +201,10 @@ export async function retireChecklist(
   const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
   if (!list) return { error: "That list is not available." };
 
-  await db().from("close_checklists").update({ active: false }).eq("id", list.id);
+  await db()
+    .from("close_checklists")
+    .update({ active: false })
+    .eq("id", list.id);
   revalidateFor(list);
   return { error: null, ok: true };
 }
@@ -208,7 +217,10 @@ export async function restoreChecklist(
   const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
   if (!list) return { error: "That list is not available." };
 
-  await db().from("close_checklists").update({ active: true }).eq("id", list.id);
+  await db()
+    .from("close_checklists")
+    .update({ active: true })
+    .eq("id", list.id);
   revalidateFor(list);
   return { error: null, ok: true };
 }
@@ -237,7 +249,8 @@ export async function addItem(
     .eq("checklist_id", list.id)
     .order("position", { ascending: false })
     .limit(1);
-  const position = ((last as { position: number }[] | null)?.[0]?.position ?? 0) + 1;
+  const position =
+    ((last as { position: number }[] | null)?.[0]?.position ?? 0) + 1;
 
   const { error } = await db()
     .from("close_items")
@@ -285,7 +298,10 @@ export async function retireItem(
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
-  await db().from("close_items").update({ active: false }).eq("id", owned.item.id);
+  await db()
+    .from("close_items")
+    .update({ active: false })
+    .eq("id", owned.item.id);
   revalidateFor(owned.list);
   return { error: null, ok: true };
 }
@@ -297,7 +313,10 @@ export async function restoreItem(
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
-  await db().from("close_items").update({ active: true }).eq("id", owned.item.id);
+  await db()
+    .from("close_items")
+    .update({ active: true })
+    .eq("id", owned.item.id);
   revalidateFor(owned.list);
   return { error: null, ok: true };
 }
@@ -333,8 +352,14 @@ export async function moveItem(
 
   const mine = rows[index];
   await db().from("close_items").update({ position: -1 }).eq("id", swapWith.id);
-  await db().from("close_items").update({ position: swapWith.position }).eq("id", mine.id);
-  await db().from("close_items").update({ position: mine.position }).eq("id", swapWith.id);
+  await db()
+    .from("close_items")
+    .update({ position: swapWith.position })
+    .eq("id", mine.id);
+  await db()
+    .from("close_items")
+    .update({ position: mine.position })
+    .eq("id", swapWith.id);
 
   revalidateFor(owned.list);
   return { error: null, ok: true };

@@ -46,6 +46,7 @@ export function LeaderLoginForm({
         <input
           id="pin"
           name="pin"
+          autoFocus
           type="password"
           inputMode="numeric"
           autoComplete="off"

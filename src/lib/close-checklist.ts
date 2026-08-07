@@ -129,7 +129,10 @@ export const CLOSE_CHECKLIST: CloseItem[] = [
       "Recorded everything valuable for openers. This is the note the AM MOD reviews and signs in Open Daily. Include anything the next shift needs.",
     ],
     proof: [
-      { kind: "photo", prompt: "The written closing report, readable end to end" },
+      {
+        kind: "photo",
+        prompt: "The written closing report, readable end to end",
+      },
     ],
   },
   {

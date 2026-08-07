@@ -25,8 +25,13 @@ export type { GroupRow, Rollup };
 export { WINDOW_NIGHTS };
 
 /** The window, oldest first, ending with the night in progress. */
-export function nightWindow(count = WINDOW_NIGHTS, from = currentNight()): string[] {
-  return Array.from({ length: count }, (_, i) => shiftNights(from, i - (count - 1)));
+export function nightWindow(
+  count = WINDOW_NIGHTS,
+  from = currentNight(),
+): string[] {
+  return Array.from({ length: count }, (_, i) =>
+    shiftNights(from, i - (count - 1)),
+  );
 }
 
 /** Everything the window needs, in four queries rather than one per night. */
@@ -100,7 +105,10 @@ export async function groupRollup(): Promise<GroupRow[] | null> {
 
   const { data: venueRows } = await db().from("venues").select("id, code");
   const codeOf = new Map(
-    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [v.id, v.code]),
+    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [
+      v.id,
+      v.code,
+    ]),
   );
 
   return computeGroup(data, window, codeOf);

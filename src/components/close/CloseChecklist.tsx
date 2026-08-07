@@ -18,7 +18,10 @@ export type SavedNight = {
   /** item id -> initials */
   ticks: Record<string, string>;
   /** "itemId:shotIndex" -> what was captured */
-  proof: Record<string, { kind: string; body: string | null; url: string | null }>;
+  proof: Record<
+    string,
+    { kind: string; body: string | null; url: string | null }
+  >;
   certifiedBy: string | null;
   certifiedAt: string | null;
   /** Certifications this night has already had, oldest first. */
@@ -33,8 +36,6 @@ type Capture = { url: string; kind: "photo" | "video" };
 
 /** One capture slot: item number and which of that item's shots. */
 const slotKey = (item: number, shot: number) => `${item}:${shot}`;
-
-
 
 /**
  * A close checklist, for review. Nothing is saved yet.
@@ -214,7 +215,10 @@ export function CloseChecklist({
         if (number === undefined) continue;
         const slot = slotKey(number, Number(shot));
         if (!next[slot]) {
-          next[slot] = { url: value.url, kind: value.kind as "photo" | "video" };
+          next[slot] = {
+            url: value.url,
+            kind: value.kind as "photo" | "video",
+          };
           changed = true;
         }
       }
@@ -307,12 +311,16 @@ export function CloseChecklist({
       if (item.proof) {
         setCaptures((c) => {
           const next = { ...c };
-          item.proof!.forEach((_, index) => delete next[slotKey(item.number, index)]);
+          item.proof!.forEach(
+            (_, index) => delete next[slotKey(item.number, index)],
+          );
           return next;
         });
         setNotes((c) => {
           const next = { ...c };
-          item.proof!.forEach((_, index) => delete next[slotKey(item.number, index)]);
+          item.proof!.forEach(
+            (_, index) => delete next[slotKey(item.number, index)],
+          );
           return next;
         });
       }
@@ -413,7 +421,10 @@ export function CloseChecklist({
     }
 
     setCaptures((current) => {
-      const next = { ...current, [slotKey(item.number, shotIndex)]: { url, kind } };
+      const next = {
+        ...current,
+        [slotKey(item.number, shotIndex)]: { url, kind },
+      };
       const all = item.proof!.every((shot, index) =>
         shot.kind === "note"
           ? Boolean(notes[slotKey(item.number, index)]?.trim())
@@ -627,88 +638,88 @@ export function CloseChecklist({
                   the whole width; on a tablet there is room for both and the
                   column of boxes is worth keeping. */}
               <div className="flex flex-col items-stretch sm:flex-row sm:items-start">
-              <button
-                type="button"
-                onPointerDown={() => {
-                  byPointer.current = true;
-                }}
-                onClick={(event) => {
-                  toggle(item);
-                  // Keyboard focus keeps its ring; a tap does not leave one
-                  // behind on the card it just acted on.
-                  if (byPointer.current) event.currentTarget.blur();
-                  byPointer.current = false;
-                }}
-                aria-pressed={isDone}
-                className="flex w-full items-start gap-3.5 p-4 pb-2 text-left sm:pb-4"
-              >
-                <span
-                  aria-hidden
-                  className={`mt-px grid size-7 shrink-0 place-items-center rounded border ${
-                    isDone ? "bg-ink border-ink" : "border-muted"
-                  }`}
+                <button
+                  type="button"
+                  onPointerDown={() => {
+                    byPointer.current = true;
+                  }}
+                  onClick={(event) => {
+                    toggle(item);
+                    // Keyboard focus keeps its ring; a tap does not leave one
+                    // behind on the card it just acted on.
+                    if (byPointer.current) event.currentTarget.blur();
+                    byPointer.current = false;
+                  }}
+                  aria-pressed={isDone}
+                  className="flex w-full items-start gap-3.5 p-4 pb-2 text-left sm:pb-4"
                 >
-                  {isDone ? (
-                    <span className="text-paper text-sm leading-none">✓</span>
-                  ) : null}
-                </span>
-
-                <span className="flex min-w-0 flex-1 flex-col gap-2">
-                  <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-                    <span className="label shrink-0 tabular-nums">
-                      {item.number}
-                    </span>
-                    {/* Title stays white when checked — the card records what
-                        was done, and a greyed title reads as cancelled. */}
-                    <span className="text-title leading-tight tracking-[0.08em] break-words">
-                      {item.title}
-                    </span>
-                    {/* Says how many, because three separate photographs is a
-                        different job from one and a MOD scanning the list
-                        should see that before opening the card. */}
-                    {shots.length > 0 ? (
-                      <span className="text-muted ring-muted/60 inline-flex h-[22px] shrink-0 items-center rounded px-2 text-label tracking-[0.08em] ring-1 ring-inset">
-                        {shots.length > 1
-                          ? `${taken}/${shots.length} ${shots[0].kind === "video" ? "videos" : "photos"}`
-                          : shots[0].kind === "video"
-                            ? "Video"
-                            : shots[0].kind === "note"
-                              ? "Written"
-                              : "Photo"}
-                      </span>
+                  <span
+                    aria-hidden
+                    className={`mt-px grid size-7 shrink-0 place-items-center rounded border ${
+                      isDone ? "bg-ink border-ink" : "border-muted"
+                    }`}
+                  >
+                    {isDone ? (
+                      <span className="text-paper text-sm leading-none">✓</span>
                     ) : null}
                   </span>
 
-                  {/* Caps throughout — house style, no exceptions. Bulleted
-                      when there is more than one line. */}
-                  {item.detail.length === 1 ? (
-                    <span
-                      className={`text-[14px] leading-relaxed ${
-                        isDone ? "text-ink/40" : "text-ink/65"
-                      }`}
-                    >
-                      {item.detail[0]}
-                    </span>
-                  ) : (
-                    <span
-                      className={`flex flex-col gap-1 text-[13px] leading-snug ${
-                        isDone ? "text-ink/40" : "text-ink/65"
-                      }`}
-                    >
-                      {item.detail.map((line) => (
-                        <span
-                          key={line}
-                          className="relative break-words pl-3.5 before:absolute before:top-[0.62em] before:left-0 before:h-px before:w-1.5 before:bg-current"
-                        >
-                          {line}
+                  <span className="flex min-w-0 flex-1 flex-col gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                      <span className="label shrink-0 tabular-nums">
+                        {item.number}
+                      </span>
+                      {/* Title stays white when checked — the card records what
+                        was done, and a greyed title reads as cancelled. */}
+                      <span className="text-title leading-tight tracking-[0.08em] break-words">
+                        {item.title}
+                      </span>
+                      {/* Says how many, because three separate photographs is a
+                        different job from one and a MOD scanning the list
+                        should see that before opening the card. */}
+                      {shots.length > 0 ? (
+                        <span className="text-muted ring-muted/60 inline-flex h-[22px] shrink-0 items-center rounded px-2 text-label tracking-[0.08em] ring-1 ring-inset">
+                          {shots.length > 1
+                            ? `${taken}/${shots.length} ${shots[0].kind === "video" ? "videos" : "photos"}`
+                            : shots[0].kind === "video"
+                              ? "Video"
+                              : shots[0].kind === "note"
+                                ? "Written"
+                                : "Photo"}
                         </span>
-                      ))}
+                      ) : null}
                     </span>
-                  )}
-                </span>
-              </button>
 
-              {/* Not inside the button — an input cannot live in one — so it
+                    {/* Caps throughout — house style, no exceptions. Bulleted
+                      when there is more than one line. */}
+                    {item.detail.length === 1 ? (
+                      <span
+                        className={`text-[14px] leading-relaxed ${
+                          isDone ? "text-ink/40" : "text-ink/65"
+                        }`}
+                      >
+                        {item.detail[0]}
+                      </span>
+                    ) : (
+                      <span
+                        className={`flex flex-col gap-1 text-[13px] leading-snug ${
+                          isDone ? "text-ink/40" : "text-ink/65"
+                        }`}
+                      >
+                        {item.detail.map((line) => (
+                          <span
+                            key={line}
+                            className="relative break-words pl-3.5 before:absolute before:top-[0.62em] before:left-0 before:h-px before:w-1.5 before:bg-current"
+                          >
+                            {line}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                  </span>
+                </button>
+
+                {/* Not inside the button — an input cannot live in one — so it
                   sits beside it on a tablet and below it on a phone.
 
                   The whole cell lights up until it is filled, rather than a
@@ -716,54 +727,57 @@ export function CloseChecklist({
                   a border on a dark field is easy to miss. On sm and up it is
                   a fixed width so the boxes hold a column whether or not the
                   prompt shows. */}
-              <span
-                className={`mx-3 mb-3 flex shrink-0 items-center justify-end gap-3 rounded-lg px-2 py-1.5 sm:m-2 sm:w-[5.5rem] sm:flex-col sm:justify-start sm:gap-2 sm:px-0 sm:py-2 ${
-                  wanted ? "bg-warn/15 ring-warn/50 ring-1" : ""
-                }`}
-              >
-                <input
-                  ref={(node) => {
-                    initialsRefs.current[item.number] = node;
-                  }}
-                  className="field order-2 h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] sm:order-1"
-                  placeholder="––"
-                  maxLength={4}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  value={mine}
-                  disabled={isDone || locked}
-                  aria-label={`Initials for ${item.title}`}
-                  onChange={(event) => {
-                    setRowInitials((c) => ({
-                      ...c,
-                      [item.number]: event.target.value,
-                    }));
-                    if (event.target.value.trim()) setInitialsWanted(null);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      event.currentTarget.blur();
-                    }
-                  }}
-                  onBlur={() => {
-                    // Tapped first, initialled second — finish what the tap
-                    // started rather than making them tap the card again.
-                    if (pending === item.number && initialsFor(item.number).trim()) {
-                      setPending(null);
-                      toggle(item);
-                    }
-                  }}
-                />
-                {/* Left of the box on a phone, under it on a tablet — either
+                <span
+                  className={`mx-3 mb-3 flex shrink-0 items-center justify-end gap-3 rounded-lg px-2 py-1.5 sm:m-2 sm:w-[5.5rem] sm:flex-col sm:justify-start sm:gap-2 sm:px-0 sm:py-2 ${
+                    wanted ? "bg-warn/15 ring-warn/50 ring-1" : ""
+                  }`}
+                >
+                  <input
+                    ref={(node) => {
+                      initialsRefs.current[item.number] = node;
+                    }}
+                    className="field order-2 h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] sm:order-1"
+                    placeholder="––"
+                    maxLength={4}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    value={mine}
+                    disabled={isDone || locked}
+                    aria-label={`Initials for ${item.title}`}
+                    onChange={(event) => {
+                      setRowInitials((c) => ({
+                        ...c,
+                        [item.number]: event.target.value,
+                      }));
+                      if (event.target.value.trim()) setInitialsWanted(null);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                      }
+                    }}
+                    onBlur={() => {
+                      // Tapped first, initialled second — finish what the tap
+                      // started rather than making them tap the card again.
+                      if (
+                        pending === item.number &&
+                        initialsFor(item.number).trim()
+                      ) {
+                        setPending(null);
+                        toggle(item);
+                      }
+                    }}
+                  />
+                  {/* Left of the box on a phone, under it on a tablet — either
                     way it reads into the thing it is asking for. */}
-                {wanted ? (
-                  <span className="label text-warn order-1 text-center sm:order-2">
-                    Initial it
-                  </span>
-                ) : null}
-              </span>
+                  {wanted ? (
+                    <span className="label text-warn order-1 text-center sm:order-2">
+                      Initial it
+                    </span>
+                  ) : null}
+                </span>
               </div>
 
               {/* One control per shot. Two things that both need proving are
@@ -775,7 +789,10 @@ export function CloseChecklist({
                     const key = slotKey(item.number, index);
                     const got = captures[key];
                     return (
-                      <div key={key} className="flex flex-wrap items-start gap-x-3 gap-y-2">
+                      <div
+                        key={key}
+                        className="flex flex-wrap items-start gap-x-3 gap-y-2"
+                      >
                         <input
                           ref={(node) => {
                             inputs.current[key] = node;
@@ -811,12 +828,22 @@ export function CloseChecklist({
                                 const all = shots.every((other, otherIndex) =>
                                   otherIndex === index
                                     ? Boolean(text.trim())
-                                    : shotFilled(item.number, otherIndex, other.kind),
+                                    : shotFilled(
+                                        item.number,
+                                        otherIndex,
+                                        other.kind,
+                                      ),
                                 );
                                 if (all && initialsFor(item.number).trim()) {
-                                  setDone((c) => ({ ...c, [item.number]: true }));
+                                  setDone((c) => ({
+                                    ...c,
+                                    [item.number]: true,
+                                  }));
                                 } else if (!all) {
-                                  setDone((c) => ({ ...c, [item.number]: false }));
+                                  setDone((c) => ({
+                                    ...c,
+                                    [item.number]: false,
+                                  }));
                                 }
                               }}
                               aria-label={shot.prompt}
@@ -889,21 +916,21 @@ export function CloseChecklist({
 
                         {got && shot.kind !== "note" ? (
                           <div className="w-full">
-                          {got.kind === "video" ? (
-                            <video
-                              src={got.url}
-                              controls
-                              playsInline
-                              className="bg-inset max-h-72 w-full rounded-lg"
-                            />
-                          ) : (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img
-                              src={got.url}
-                              alt=""
-                              className="bg-inset max-h-72 w-full rounded-lg object-contain"
-                            />
-                          )}
+                            {got.kind === "video" ? (
+                              <video
+                                src={got.url}
+                                controls
+                                playsInline
+                                className="bg-inset max-h-72 w-full rounded-lg"
+                              />
+                            ) : (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={got.url}
+                                alt=""
+                                className="bg-inset max-h-72 w-full rounded-lg object-contain"
+                              />
+                            )}
                           </div>
                         ) : null}
                       </div>
@@ -911,7 +938,6 @@ export function CloseChecklist({
                   })}
                 </div>
               ) : null}
-
             </li>
           );
         })}
@@ -931,18 +957,24 @@ export function CloseChecklist({
         {saved.history.length > 0 ? (
           <div className="border-warn/40 mt-3 rounded-[8px] border p-4">
             <p className="label text-warn">
-              Reopened {saved.history.length === 1 ? "once" : `${saved.history.length} times`}
+              Reopened{" "}
+              {saved.history.length === 1
+                ? "once"
+                : `${saved.history.length} times`}
             </p>
             <ul className="mt-2 space-y-1.5">
               {saved.history.map((entry, index) => (
                 <li key={index} className="label leading-snug">
                   Certified by {entry.certifiedBy ?? "—"}
                   {entry.certifiedAt
-                    ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString("en-US", {
-                        timeZone: "America/Los_Angeles",
-                        hour: "numeric",
-                        minute: "2-digit",
-                      })}`
+                    ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString(
+                        "en-US",
+                        {
+                          timeZone: "America/Los_Angeles",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        },
+                      )}`
                     : ""}
                   {entry.reason ? ` · ${entry.reason}` : ""}
                 </li>
@@ -1030,10 +1062,10 @@ export function CloseChecklist({
           >
             {saving
               ? "Saving…"
-              : certified ??
-              (doneCount === CLOSE_TOTAL
-                ? "Certify this close"
-                : `Certify with ${CLOSE_TOTAL - doneCount} open`)}
+              : (certified ??
+                (doneCount === CLOSE_TOTAL
+                  ? "Certify this close"
+                  : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
           </button>
         </div>
       </section>

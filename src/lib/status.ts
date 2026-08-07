@@ -23,6 +23,12 @@ import {
 /** How many weeks the trend line shows. Must not exceed the query window. */
 const HISTORY_WEEKS = 8;
 
+/**
+ * The first week the board was in use. Weeks before it were not missed — the
+ * app did not exist — so a streak can never reach past this.
+ */
+const PROGRAM_START_WEEK = process.env.PROGRAM_START_WEEK ?? "2026-08-03";
+
 const STREAK_LOOKBACK_WEEKS = 26;
 
 /**
@@ -108,7 +114,11 @@ export async function getSubmissionsForItems(
 export function countsAsDone(submission: {
   review: Submission["review"];
 }): boolean {
-  return submission.review !== "sent_back";
+  // A submission exists, so the information was submitted. Sent back and
+  // "one more cycle" are judgements about the work, made after it was filed —
+  // the only failure is a blank.
+  void submission;
+  return true;
 }
 
 /** Item ids that are genuinely done, ignoring anything sent back. */
@@ -334,7 +344,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         .from("submissions")
         .select("item_id, week_start, created_at")
         .gte("week_start", earliestWeek)
-        .neq("review", "sent_back")
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
         data:
@@ -409,7 +418,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     if (firstWeek && activeCount > 0) {
       let week = completedWeek;
       for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
-        if (week < firstWeek) break;
+        if (week < firstWeek || week < PROGRAM_START_WEEK) break;
         const done = weeks?.get(week)?.size ?? 0;
         if (statusFor(done, activeCount, week, now) !== "FAIL") break;
         failStreak += 1;

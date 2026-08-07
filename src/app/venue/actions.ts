@@ -356,11 +356,15 @@ async function purge(ids: string[]): Promise<number> {
   if (rows.length === 0) return 0;
 
   const paths = rows.flatMap((row) =>
-    row.before_photo_url ? [row.photo_url, row.before_photo_url] : [row.photo_url],
+    row.before_photo_url
+      ? [row.photo_url, row.before_photo_url]
+      : [row.photo_url],
   );
   // Chunked: storage rejects very large delete batches.
   for (let i = 0; i < paths.length; i += 100) {
-    await db().storage.from(PHOTO_BUCKET).remove(paths.slice(i, i + 100));
+    await db()
+      .storage.from(PHOTO_BUCKET)
+      .remove(paths.slice(i, i + 100));
   }
 
   await db()

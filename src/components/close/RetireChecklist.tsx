@@ -30,9 +30,9 @@ export function RetireChecklist({ checklistId }: { checklistId: string }) {
     <section className="panel border-warn/30">
       <p className="label">Retire this list</p>
       <p className="note text-muted mt-2 leading-relaxed">
-        Takes it off the clipboard from tonight. Every night it was signed
-        stays exactly as it was, and bringing it back restores this list rather
-        than starting an empty one.
+        Takes it off the clipboard from tonight. Every night it was signed stays
+        exactly as it was, and bringing it back restores this list rather than
+        starting an empty one.
       </p>
 
       {state.error ? (

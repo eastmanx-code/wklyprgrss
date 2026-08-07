@@ -66,7 +66,6 @@ export type NightRow = {
 };
 export type TickRow = { night_id: string; item_id: string };
 
-
 export type Loaded = {
   checklists: ChecklistRow[];
   items: ItemRow[];
@@ -91,7 +90,8 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
     itemsOf.set(item.checklist_id, list);
   }
   const nightAt = new Map<string, NightRow>();
-  for (const night of nights) nightAt.set(`${night.checklist_id}:${night.night}`, night);
+  for (const night of nights)
+    nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
   // Per night, across every checklist the venue runs.
   let certified = 0;
@@ -107,7 +107,8 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
           continue;
         }
         const owed = itemsOf.get(list.id) ?? [];
-        if (owed.some((item) => !ticked.has(`${row.id}:${item.id}`))) allComplete = false;
+        if (owed.some((item) => !ticked.has(`${row.id}:${item.id}`)))
+          allComplete = false;
       }
       if (allCertified) certified += 1;
       return (allCertified ? (allComplete ? "c" : "g") : "m") as NightState;
@@ -148,7 +149,9 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
         for (const night of window) {
           const row = nightAt.get(`${list.id}:${night}`);
           if (!row) continue;
-          done += owed.filter((item) => ticked.has(`${row.id}:${item.id}`)).length;
+          done += owed.filter((item) =>
+            ticked.has(`${row.id}:${item.id}`),
+          ).length;
         }
       }
       return { role, done, of };
@@ -166,9 +169,15 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
     .map(([who, count]) => ({ who, nights: count }))
     .sort((a, b) => b.nights - a.nights);
 
-  return { nights: window.length, certified, strip, missed, byRole, certifiers };
+  return {
+    nights: window.length,
+    certified,
+    strip,
+    missed,
+    byRole,
+    certifiers,
+  };
 }
-
 
 /** Per venue, over the same window and the same denominator. */
 export function computeGroup(
@@ -179,7 +188,8 @@ export function computeGroup(
   const { checklists, items, nights, ticks } = data;
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
   const nightAt = new Map<string, NightRow>();
-  for (const night of nights) nightAt.set(`${night.checklist_id}:${night.night}`, night);
+  for (const night of nights)
+    nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
   const totals = new Map<string, { done: number; of: number }>();
   for (const list of checklists) {
@@ -190,7 +200,9 @@ export function computeGroup(
     for (const night of window) {
       const row = nightAt.get(`${list.id}:${night}`);
       if (!row) continue;
-      running.done += owed.filter((item) => ticked.has(`${row.id}:${item.id}`)).length;
+      running.done += owed.filter((item) =>
+        ticked.has(`${row.id}:${item.id}`),
+      ).length;
     }
     totals.set(code, running);
   }

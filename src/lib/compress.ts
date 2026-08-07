@@ -140,7 +140,6 @@ export async function compressToJpeg(file: File): Promise<File> {
   return new File([blob], "photo.jpg", { type: "image/jpeg" });
 }
 
-
 export function formatKb(bytes: number): string {
   return `${Math.round(bytes / 1024)} KB`;
 }

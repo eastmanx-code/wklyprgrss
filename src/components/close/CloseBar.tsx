@@ -21,18 +21,27 @@ export function CloseBar({ back }: { back: string }) {
     <>
       {/* Reserves the bar's own height in the flow. A fixed element takes no
           space, and the last item on a checklist was sitting under it. */}
-      <div className="h-[calc(4.5rem+env(safe-area-inset-bottom))]" aria-hidden />
+      <div
+        className="h-[calc(4.5rem+env(safe-area-inset-bottom))]"
+        aria-hidden
+      />
 
       <nav className="border-card-border bg-surface/90 fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-50 flex h-14 items-center gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:left-auto sm:gap-3 sm:px-3">
         {/* min-h-11, not the ghost button's own 32px. These are the two
             controls closest to the bottom edge of a phone held one-handed at
             2am, which is the worst place in the interface to be 12px short of
             a thumb. */}
-        <Link href={back} className="btn-ghost min-h-11 flex-1 sm:min-h-0 sm:flex-none">
+        <Link
+          href={back}
+          className="btn-ghost min-h-11 flex-1 sm:min-h-0 sm:flex-none"
+        >
           Back
         </Link>
         <form action={logout} className="flex-1 sm:flex-none">
-          <button type="submit" className="btn-ghost min-h-11 w-full sm:min-h-0 sm:w-auto">
+          <button
+            type="submit"
+            className="btn-ghost min-h-11 w-full sm:min-h-0 sm:w-auto"
+          >
             Out
           </button>
         </form>

@@ -24,14 +24,70 @@ export const SAMPLE_NIGHTS = 30;
 export const SAMPLE_STRIP = "cccgccccmcccgcccccgcccmccccgcc";
 
 export const SAMPLE_MISSED: MissedRow[] = [
-  { house: "FOH", role: "MOD", phase: "close", item: "Stanchions polished", open: 9, of: 30 },
-  { house: "HOH", role: "Line", phase: "close", item: "Hood filters degreased", open: 8, of: 30 },
-  { house: "FOH", role: "MOD", phase: "close", item: "Maintenance & final walk", open: 7, of: 30 },
-  { house: "FOH", role: "Bartender", phase: "close", item: "Draft lines flushed", open: 6, of: 30 },
-  { house: "FOH", role: "MOD", phase: "close", item: "Full close restroom walkthrough", open: 6, of: 30 },
-  { house: "HOH", role: "Dish", phase: "close", item: "Floor drains flushed", open: 5, of: 30 },
-  { house: "FOH", role: "MOD", phase: "close", item: "Positive moment check-ins", open: 5, of: 30 },
-  { house: "HOH", role: "Prep", phase: "open", item: "Walk-in temp logged", open: 4, of: 30 },
+  {
+    house: "FOH",
+    role: "MOD",
+    phase: "close",
+    item: "Stanchions polished",
+    open: 9,
+    of: 30,
+  },
+  {
+    house: "HOH",
+    role: "Line",
+    phase: "close",
+    item: "Hood filters degreased",
+    open: 8,
+    of: 30,
+  },
+  {
+    house: "FOH",
+    role: "MOD",
+    phase: "close",
+    item: "Maintenance & final walk",
+    open: 7,
+    of: 30,
+  },
+  {
+    house: "FOH",
+    role: "Bartender",
+    phase: "close",
+    item: "Draft lines flushed",
+    open: 6,
+    of: 30,
+  },
+  {
+    house: "FOH",
+    role: "MOD",
+    phase: "close",
+    item: "Full close restroom walkthrough",
+    open: 6,
+    of: 30,
+  },
+  {
+    house: "HOH",
+    role: "Dish",
+    phase: "close",
+    item: "Floor drains flushed",
+    open: 5,
+    of: 30,
+  },
+  {
+    house: "FOH",
+    role: "MOD",
+    phase: "close",
+    item: "Positive moment check-ins",
+    open: 5,
+    of: 30,
+  },
+  {
+    house: "HOH",
+    role: "Prep",
+    phase: "open",
+    item: "Walk-in temp logged",
+    open: 4,
+    of: 30,
+  },
 ];
 
 export const SAMPLE_BY_ROLE: { role: string; done: number; of: number }[] = [

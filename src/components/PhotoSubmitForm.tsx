@@ -332,7 +332,7 @@ export function PhotoSubmitForm({
             disabled={busy}
           />
           <div className="dotfield relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl">
-            {beforePreview ?? (beforeDropped ? null : editing?.beforeUrl) ? (
+            {(beforePreview ?? (beforeDropped ? null : editing?.beforeUrl)) ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={

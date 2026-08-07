@@ -1,10 +1,23 @@
 import { notFound, redirect } from "next/navigation";
 
 import { CloseBar } from "@/components/close/CloseBar";
-import { AddItemForm, ItemRow, type EditableItem } from "@/components/close/ItemEditor";
-import { RestoreChecklist, RetireChecklist } from "@/components/close/RetireChecklist";
+import {
+  AddItemForm,
+  ItemRow,
+  type EditableItem,
+} from "@/components/close/ItemEditor";
+import {
+  RestoreChecklist,
+  RetireChecklist,
+} from "@/components/close/RetireChecklist";
 import { BackLink } from "@/components/ui";
-import { parseSlug, phaseName, slugFor, type House, type Phase } from "@/lib/checklists";
+import {
+  parseSlug,
+  phaseName,
+  slugFor,
+  type House,
+  type Phase,
+} from "@/lib/checklists";
 import type { Shot } from "@/lib/close-checklist";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -31,7 +44,11 @@ export default async function EditChecklistPage({
   let venue: string | null = null;
   if (session.role === "leader") venue = session.venueId;
   else {
-    const { data } = await db().from("venues").select("id").eq("code", "HAWK").maybeSingle();
+    const { data } = await db()
+      .from("venues")
+      .select("id")
+      .eq("code", "HAWK")
+      .maybeSingle();
     venue = (data as { id: string } | null)?.id ?? null;
   }
   if (!venue) notFound();
@@ -50,19 +67,20 @@ export default async function EditChecklistPage({
     .select("id, house, role, phase, active")
     .eq("venue_id", venue);
 
-  const list = ((rows ?? []) as {
-    id: string;
-    house: House;
-    role: string;
-    phase: Phase;
-    active: boolean;
-  }[])
-    .find(
-      (row) =>
-        row.house.toLowerCase() === parsed.house.toLowerCase() &&
-        row.role.toLowerCase() === parsed.role.toLowerCase() &&
-        row.phase.toLowerCase() === parsed.phase.toLowerCase(),
-    );
+  const list = (
+    (rows ?? []) as {
+      id: string;
+      house: House;
+      role: string;
+      phase: Phase;
+      active: boolean;
+    }[]
+  ).find(
+    (row) =>
+      row.house.toLowerCase() === parsed.house.toLowerCase() &&
+      row.role.toLowerCase() === parsed.role.toLowerCase() &&
+      row.phase.toLowerCase() === parsed.phase.toLowerCase(),
+  );
   if (!list) notFound();
 
   const { data: itemRows } = await db()
@@ -71,14 +89,16 @@ export default async function EditChecklistPage({
     .eq("checklist_id", list.id)
     .order("position");
 
-  const items = ((itemRows ?? []) as {
-    id: string;
-    position: number;
-    title: string;
-    detail: string[] | null;
-    proof: Shot[] | null;
-    active: boolean;
-  }[]).map<EditableItem>((row) => ({
+  const items = (
+    (itemRows ?? []) as {
+      id: string;
+      position: number;
+      title: string;
+      detail: string[] | null;
+      proof: Shot[] | null;
+      active: boolean;
+    }[]
+  ).map<EditableItem>((row) => ({
     id: row.id,
     position: row.position,
     title: row.title,

@@ -102,7 +102,9 @@ async function isLocked(id: string): Promise<boolean> {
     .select("certified_at")
     .eq("id", id)
     .maybeSingle();
-  return Boolean((data as { certified_at: string | null } | null)?.certified_at);
+  return Boolean(
+    (data as { certified_at: string | null } | null)?.certified_at,
+  );
 }
 
 export async function tickItem(
@@ -111,7 +113,9 @@ export async function tickItem(
 ): Promise<CloseState> {
   const slug = String(formData.get("slug") ?? "");
   const itemId = String(formData.get("itemId") ?? "");
-  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+  const initials = String(formData.get("initials") ?? "")
+    .trim()
+    .toUpperCase();
   const on = String(formData.get("on") ?? "") === "true";
 
   if (!initials) return { error: "Initial it first." };
@@ -155,7 +159,9 @@ export async function saveNote(
   const slug = String(formData.get("slug") ?? "");
   const itemId = String(formData.get("itemId") ?? "");
   const shotIndex = Number(formData.get("shotIndex") ?? 0);
-  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+  const initials = String(formData.get("initials") ?? "")
+    .trim()
+    .toUpperCase();
   const body = String(formData.get("body") ?? "").trim();
 
   if (!initials) return { error: "Initial it first." };
@@ -212,7 +218,10 @@ export async function captureTarget(
 
   // Photos are re-encoded to JPEG in the browser before they get here, so
   // that extension is always true. Video is uploaded as shot.
-  const safe = extension.replace(/[^a-z0-9]/gi, "").slice(0, 5).toLowerCase();
+  const safe = extension
+    .replace(/[^a-z0-9]/gi, "")
+    .slice(0, 5)
+    .toLowerCase();
   const ext = kind === "photo" ? "jpg" : safe || "mov";
   const path = `close/${night}/${itemId}/${shotIndex}-${Date.now()}.${ext}`;
   const { data, error } = await db()
@@ -232,7 +241,9 @@ export async function recordCapture(
   const shotIndex = Number(formData.get("shotIndex") ?? 0);
   const kind = String(formData.get("kind") ?? "photo");
   const path = String(formData.get("path") ?? "");
-  const initials = String(formData.get("initials") ?? "").trim().toUpperCase();
+  const initials = String(formData.get("initials") ?? "")
+    .trim()
+    .toUpperCase();
 
   if (!initials) return { error: "Initial it first." };
   if (kind !== "photo" && kind !== "video") return { error: "Bad capture." };
@@ -334,7 +345,9 @@ export async function reopenNight(
 
   const { data } = await db()
     .from("close_nights")
-    .select("id, certified_at, certified_by, attestation, signature, open_at_signing, history")
+    .select(
+      "id, certified_at, certified_by, attestation, signature, open_at_signing, history",
+    )
     .eq("checklist_id", list.id)
     .eq("night", currentNight())
     .maybeSingle();

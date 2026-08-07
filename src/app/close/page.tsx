@@ -41,7 +41,11 @@ export default async function ChecklistsPage() {
   let venue: string | null = null;
   if (session.role === "leader") venue = session.venueId;
   else {
-    const { data } = await db().from("venues").select("id").eq("code", "HAWK").maybeSingle();
+    const { data } = await db()
+      .from("venues")
+      .select("id")
+      .eq("code", "HAWK")
+      .maybeSingle();
     venue = (data as { id: string } | null)?.id ?? null;
   }
 
@@ -77,13 +81,20 @@ export default async function ChecklistsPage() {
   const windowNights = real?.nights ?? SAMPLE_NIGHTS;
 
   const byHouse = (house: House) => {
-    const roles = [...new Set(lists.filter((l) => l.house === house).map((l) => l.role))];
-    return roles.sort((a, b) => a.localeCompare(b)).map((role) => ({
-      role,
-      phases: lists
-        .filter((l) => l.house === house && l.role === role)
-        .sort((a, b) => PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase)),
-    }));
+    const roles = [
+      ...new Set(lists.filter((l) => l.house === house).map((l) => l.role)),
+    ];
+    return roles
+      .sort((a, b) => a.localeCompare(b))
+      .map((role) => ({
+        role,
+        phases: lists
+          .filter((l) => l.house === house && l.role === role)
+          .sort(
+            (a, b) =>
+              PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
+          ),
+      }));
   };
 
   return (
@@ -151,7 +162,11 @@ export default async function ChecklistsPage() {
 
                       <ul className="mt-2 flex flex-wrap gap-2">
                         {phases.map((list) => {
-                          const slug = slugFor(list.house, list.role, list.phase);
+                          const slug = slugFor(
+                            list.house,
+                            list.role,
+                            list.phase,
+                          );
                           const count = counts.get(list.id) ?? 0;
                           return (
                             <li key={list.id}>

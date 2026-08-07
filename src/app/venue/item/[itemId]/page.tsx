@@ -73,7 +73,13 @@ export default async function ItemPage({
 
   return (
     <main className="mx-auto max-w-2xl">
-      <BackLink href="/venue">All items</BackLink>
+      <BackLink
+        href={
+          session.role === "admin" ? `/admin/venue/${item.venue_id}` : "/venue"
+        }
+      >
+        All items
+      </BackLink>
 
       <header className="mt-4 mb-6">
         <p className="label">Item</p>

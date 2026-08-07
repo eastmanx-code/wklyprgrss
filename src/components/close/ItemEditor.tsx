@@ -26,7 +26,11 @@ export type EditableItem = {
 const KINDS: { key: ProofKind; label: string; help: string }[] = [
   { key: "photo", label: "Photo", help: "A picture of the thing, taken now." },
   { key: "video", label: "Video", help: "A walk-through, narrated." },
-  { key: "note", label: "Written", help: "Words are the record — what was said." },
+  {
+    key: "note",
+    label: "Written",
+    help: "Words are the record — what was said.",
+  },
 ];
 
 /**
@@ -138,7 +142,9 @@ function DetailField({ detail }: { detail: string[] }) {
         name="detail"
         rows={4}
         className="field resize-y"
-        placeholder={"One line per standard.\nThey are shown, never separately ticked."}
+        placeholder={
+          "One line per standard.\nThey are shown, never separately ticked."
+        }
         defaultValue={detail.join("\n")}
       />
     </div>
@@ -210,7 +216,11 @@ export function ItemRow({
           ) : (
             <form action={restore}>
               <input type="hidden" name="itemId" value={item.id} />
-              <button type="submit" className="btn-ghost min-h-11" disabled={restoring}>
+              <button
+                type="submit"
+                className="btn-ghost min-h-11"
+                disabled={restoring}
+              >
                 Bring back
               </button>
             </form>
@@ -266,7 +276,11 @@ export function ItemRow({
             <button type="submit" className="btn" disabled={pending}>
               {pending ? "Saving…" : "Save"}
             </button>
-            <button type="button" className="btn-ghost min-h-11" onClick={() => setOpen(false)}>
+            <button
+              type="button"
+              className="btn-ghost min-h-11"
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </button>
           </div>
@@ -276,7 +290,11 @@ export function ItemRow({
       {open && item.active ? (
         <form action={retire} className="border-divider mt-4 border-t pt-4">
           <input type="hidden" name="itemId" value={item.id} />
-          <button type="submit" className="btn-ghost min-h-11" disabled={retiring}>
+          <button
+            type="submit"
+            className="btn-ghost min-h-11"
+            disabled={retiring}
+          >
             Retire this item
           </button>
           {/* Said plainly, because "retire" sounds like a soft delete and the
