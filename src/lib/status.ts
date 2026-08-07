@@ -37,8 +37,15 @@ const STREAK_LOOKBACK_WEEKS = 26;
  * only 3 items set up still owes 10, and that gap should be visible, not
  * silently divided away.
  */
-/** Eight approved is a win. Below that but above zero is partial. */
-export const WIN_THRESHOLD = 8;
+/**
+ * Eight in ten signed off is a win, held as a ratio so it means the same on a
+ * board of five as on a board of ten.
+ */
+export const WIN_RATIO = 0.8;
+
+export function isWin(approvedCount: number, activeCount: number): boolean {
+  return activeCount > 0 && approvedCount / activeCount >= WIN_RATIO;
+}
 
 export const WEEKLY_ITEM_TARGET = 10;
 
@@ -141,9 +148,13 @@ export function statusFor(
   weekStart: string,
   now: Date,
 ): WeekStatus {
-  if (doneCount >= WEEKLY_ITEM_TARGET) return "PASS";
   // Nothing to walk means nothing to miss.
   if (activeCount === 0) return "SETUP";
+  // The bar is the board a venue is actually running. LAFA keeps a rolling
+  // list of live problems and retires them as they are fixed; against a fixed
+  // ten it could file every item it had and still fail. A short board is
+  // surfaced on the row rather than punished in the score.
+  if (doneCount >= activeCount) return "PASS";
   return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
 }
 

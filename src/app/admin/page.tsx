@@ -5,7 +5,7 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
-import { WIN_THRESHOLD, getDashboard } from "@/lib/status";
+import { getDashboard, isWin } from "@/lib/status";
 import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -23,11 +23,12 @@ export default async function AdminDashboardPage() {
   const setup = rows.filter((row) => row.status === "SETUP").length;
   // Scored on approvals, in the buckets the weekly note is written in.
   const scored = rows.filter((row) => row.status !== "SETUP");
-  const wins = scored.filter(
-    (row) => row.approvedCount >= WIN_THRESHOLD,
+  const wins = scored.filter((row) =>
+    isWin(row.approvedCount, row.activeCount),
   ).length;
   const partial = scored.filter(
-    (row) => row.approvedCount > 0 && row.approvedCount < WIN_THRESHOLD,
+    (row) =>
+      row.approvedCount > 0 && !isWin(row.approvedCount, row.activeCount),
   ).length;
   const missed = scored.filter((row) => row.approvedCount === 0).length;
   const winRate = scored.length ? Math.round((wins / scored.length) * 100) : 0;

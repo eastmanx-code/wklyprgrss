@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { formatFinish } from "@/lib/week";
 import type { VenueWeekSummary } from "@/lib/types";
 
@@ -14,10 +13,10 @@ import type { VenueWeekSummary } from "@/lib/types";
  * past due, failing and missed-week runs, and a yellow progress bar would say
  * "progress is bad".
  */
-function Segments({ done }: { done: number }) {
+function Segments({ done, total }: { done: number; total: number }) {
   return (
     <span className="flex min-w-0 flex-1 gap-[2px]">
-      {Array.from({ length: WEEKLY_ITEM_TARGET }, (_, i) => (
+      {Array.from({ length: Math.max(total, 1) }, (_, i) => (
         <span
           key={i}
           className={`h-2 flex-1 rounded-[1px] ${
@@ -61,7 +60,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Score is items completed and signed off · a second figure means fewer were filed"
+          hint="Signed off, out of the board each venue runs · a second figure means fewer were filed"
         >
           <ul>
             {active.map((row) => {
@@ -76,7 +75,10 @@ export function VenueRows({
                       {row.venue.code}
                     </span>
 
-                    <Segments done={row.approvedCount} />
+                    <Segments
+                      done={row.approvedCount}
+                      total={row.activeCount}
+                    />
 
                     {/* Meta gets its own column. Folded into the 72px count
                         it wrapped to a second line and broke the 40px row —
@@ -94,11 +96,11 @@ export function VenueRows({
 
                     <span className="text-body w-40 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
                       <span className="text-ink">
-                        {row.approvedCount}/{WEEKLY_ITEM_TARGET}
+                        {row.approvedCount}/{row.activeCount}
                       </span>
                       {row.doneCount === 0 ? (
                         <span className="text-warn"> · none filed</span>
-                      ) : row.doneCount < WEEKLY_ITEM_TARGET ? (
+                      ) : row.doneCount < row.activeCount ? (
                         <span className="text-warn">
                           {" "}
                           · {row.doneCount} filed

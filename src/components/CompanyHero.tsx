@@ -2,7 +2,7 @@ import { Card } from "./Card";
 import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
-import { WEEKLY_ITEM_TARGET, WIN_THRESHOLD } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET } from "@/lib/status";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
 /**
@@ -103,7 +103,7 @@ export function CompanyHero({
 
       <Card
         title="The week"
-        hint={`Signed off · ${winRate}% of venues at ${WIN_THRESHOLD} or better`}
+        hint={`Signed off · ${winRate}% of venues cleared their board`}
         className="col-span-12 sm:col-span-8"
       >
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
