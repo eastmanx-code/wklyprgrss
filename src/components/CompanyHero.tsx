@@ -2,7 +2,7 @@ import { Card } from "./Card";
 import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
-import { WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET, WIN_THRESHOLD } from "@/lib/status";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
 /**
@@ -75,8 +75,8 @@ export function CompanyHero({
   return (
     <>
       <Card
-        title="Completion"
-        hint={`New photo + comment on all ${WEEKLY_ITEM_TARGET}, every week`}
+        title="Filed this week"
+        hint={`A new photo and comment on all ${WEEKLY_ITEM_TARGET}, every week`}
         className="col-span-12 sm:col-span-4"
       >
         <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
@@ -89,8 +89,8 @@ export function CompanyHero({
 
       {history.length > 1 ? (
         <Card
-          title="Completion by week"
-          hint="Last 8 weeks · fixed 0–100 scale"
+          title="Filed by week"
+          hint="Eight weeks on a fixed scale, so a bad week looks like one"
           className="col-span-12 sm:col-span-8"
         >
           <Trend
@@ -102,8 +102,8 @@ export function CompanyHero({
       ) : null}
 
       <Card
-        title="Where venues stand"
-        hint={`Scored on what you approved · ${winRate}% at a full ${WEEKLY_ITEM_TARGET}`}
+        title="The week"
+        hint={`${winRate}% of venues at ${WIN_THRESHOLD} or better`}
         className="col-span-12 sm:col-span-8"
       >
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
@@ -132,7 +132,7 @@ export function CompanyHero({
           had. */}
       <Card
         title="Turnaround"
-        hint={`When the ${WEEKLY_ITEM_TARGET}th photo landed`}
+        hint="Who filed a full board first, and who filed last"
         className="col-span-12"
       >
         {first ? (

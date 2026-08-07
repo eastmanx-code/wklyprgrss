@@ -60,8 +60,8 @@ export function VenueRows({
       {active.length > 0 ? (
         <Card
           className="col-span-12"
-          title="Active venues"
-          hint={`Approved out of ${WEEKLY_ITEM_TARGET} · a second figure means fewer were handed in`}
+          title="This week"
+          hint="Score is what you approved · a second figure means fewer were filed"
         >
           <ul>
             {active.map((row) => {
@@ -87,7 +87,7 @@ export function VenueRows({
                       {finished
                         ? formatFinish(finished)
                         : row.failStreak > 0
-                          ? `${row.failStreak}w missed`
+                          ? `missed ${row.failStreak}w`
                           : ""}
                       {row.venue.id === ownVenueId ? " · you" : ""}
                     </span>
@@ -96,8 +96,13 @@ export function VenueRows({
                       <span className="text-ink">
                         {row.approvedCount}/{WEEKLY_ITEM_TARGET}
                       </span>
-                      {row.doneCount < WEEKLY_ITEM_TARGET ? (
-                        <span className="text-warn"> · {row.doneCount} in</span>
+                      {row.doneCount === 0 ? (
+                        <span className="text-warn"> · none filed</span>
+                      ) : row.doneCount < WEEKLY_ITEM_TARGET ? (
+                        <span className="text-warn">
+                          {" "}
+                          · {row.doneCount} filed
+                        </span>
                       ) : null}
                     </span>
                   </Link>
@@ -111,8 +116,8 @@ export function VenueRows({
       {notSetUp.length > 0 ? (
         <Card
           className="col-span-12"
-          title="Not set up"
-          hint="No items yet — nothing to miss"
+          title="No board yet"
+          hint="Nothing set up, so nothing to miss"
         >
           <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6">
             {notSetUp.map((row) => (
