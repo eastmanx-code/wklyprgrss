@@ -68,7 +68,10 @@ export type WeekStatus = "PASS" | "PENDING" | "FAIL" | "SETUP";
 
 export type VenueWeekSummary = {
   venue: VenueSummary;
+  /** Submitted this week — the pass/fail gate. */
   doneCount: number;
+  /** Approved this week — the score. */
+  approvedCount: number;
   activeCount: number;
   status: WeekStatus;
   failStreak: number;

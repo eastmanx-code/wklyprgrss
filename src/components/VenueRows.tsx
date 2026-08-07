@@ -61,7 +61,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="Active venues"
-          hint={`Photos done out of ${WEEKLY_ITEM_TARGET}`}
+          hint={`Approved out of ${WEEKLY_ITEM_TARGET} · a second figure means fewer were handed in`}
         >
           <ul>
             {active.map((row) => {
@@ -76,7 +76,7 @@ export function VenueRows({
                       {row.venue.code}
                     </span>
 
-                    <Segments done={row.doneCount} />
+                    <Segments done={row.approvedCount} />
 
                     {/* Meta gets its own column. Folded into the 72px count
                         it wrapped to a second line and broke the 40px row —
@@ -92,8 +92,13 @@ export function VenueRows({
                       {row.venue.id === ownVenueId ? " · you" : ""}
                     </span>
 
-                    <span className="text-body text-ink w-[72px] shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
-                      {row.doneCount}/{WEEKLY_ITEM_TARGET}
+                    <span className="text-body w-[104px] shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
+                      <span className="text-ink">
+                        {row.approvedCount}/{WEEKLY_ITEM_TARGET}
+                      </span>
+                      {row.doneCount < WEEKLY_ITEM_TARGET ? (
+                        <span className="text-warn"> · {row.doneCount} in</span>
+                      ) : null}
                     </span>
                   </Link>
                 </li>

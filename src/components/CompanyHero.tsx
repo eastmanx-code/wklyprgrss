@@ -48,6 +48,7 @@ export function CompanyHero({
   pending,
   failing,
   setup,
+  winRate,
   deadlineLabel,
   deadlineMs,
   finishes,
@@ -60,6 +61,7 @@ export function CompanyHero({
   pending: number;
   failing: number;
   setup: number;
+  winRate: number;
   deadlineLabel: string;
   deadlineMs: number;
   finishes: { code: string; at: string }[];
@@ -101,13 +103,13 @@ export function CompanyHero({
 
       <Card
         title="Where venues stand"
-        hint={`Passing has all ${WEEKLY_ITEM_TARGET} · not set up has no items yet`}
+        hint={`Scored on what you approved · ${winRate}% at a full ${WEEKLY_ITEM_TARGET}`}
         className="col-span-12 sm:col-span-8"
       >
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <Stat label="Passing" value={passing} />
-          <Stat label="Pending" value={pending} />
-          <Stat label="Failing" value={failing} accent={failing > 0} />
+          <Stat label="Wins" value={passing} />
+          <Stat label="Partial" value={pending} />
+          <Stat label="Missed" value={failing} accent={failing > 0} />
           <Stat label="Not set up" value={setup} />
         </div>
       </Card>

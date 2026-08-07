@@ -37,6 +37,9 @@ const STREAK_LOOKBACK_WEEKS = 26;
  * only 3 items set up still owes 10, and that gap should be visible, not
  * silently divided away.
  */
+/** Eight approved is a win. Below that but above zero is partial. */
+export const WIN_THRESHOLD = 8;
+
 export const WEEKLY_ITEM_TARGET = 10;
 
 /**
@@ -337,17 +340,21 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   // Sent-back submissions are filtered in SQL so they never count anywhere.
   const submissions = await selectAll<
-    Pick<Submission, "item_id" | "week_start" | "created_at">
+    Pick<Submission, "item_id" | "week_start" | "created_at" | "review">
   >(
     (from, to) =>
       db()
         .from("submissions")
-        .select("item_id, week_start, created_at")
+        .select("item_id, week_start, created_at, review")
         .gte("week_start", earliestWeek)
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
         data:
-          Pick<Submission, "item_id" | "week_start" | "created_at">[] | null;
+          | Pick<
+              Submission,
+              "item_id" | "week_start" | "created_at" | "review"
+            >[]
+          | null;
         error: { message: string } | null;
       }>,
   );
@@ -357,6 +364,15 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   const firstWeekByVenue = new Map<string, string>();
   // venueId -> every submission this week, to be walked in time order below
   const thisWeekByVenue = new Map<string, { item: string; at: string }[]>();
+
+  // itemId -> newest submission this week, for scoring approvals.
+  const newestThisWeek = new Map<string, (typeof submissions)[number]>();
+  for (const s of submissions) {
+    if (s.week_start !== weekStart) continue;
+    const held = newestThisWeek.get(s.item_id);
+    if (!held || s.created_at > held.created_at)
+      newestThisWeek.set(s.item_id, s);
+  }
 
   for (const s of submissions) {
     const venueId = itemToVenue.get(s.item_id);
@@ -426,9 +442,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       }
     }
 
+    // The score: what you signed off, not what was handed in.
+    const approvedCount = doneThisWeek
+      ? [...doneThisWeek].filter(
+          (id) =>
+            activeItemIds.has(id) &&
+            newestThisWeek.get(id)?.review === "approved",
+        ).length
+      : 0;
+
     return {
       venue,
       doneCount,
+      approvedCount,
       activeCount,
       status: statusFor(doneCount, activeCount, weekStart, now),
       failStreak,

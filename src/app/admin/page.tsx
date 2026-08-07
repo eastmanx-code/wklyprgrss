@@ -5,7 +5,7 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
-import { getDashboard } from "@/lib/status";
+import { WIN_THRESHOLD, getDashboard } from "@/lib/status";
 import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +20,17 @@ export default async function AdminDashboardPage() {
 
   const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
     await getDashboard();
-  const passing = rows.filter((row) => row.status === "PASS").length;
-  const failing = rows.filter((row) => row.status === "FAIL").length;
   const setup = rows.filter((row) => row.status === "SETUP").length;
-  const pendingCount = rows.filter((row) => row.status === "PENDING").length;
+  // Scored on approvals, in the buckets the weekly note is written in.
+  const scored = rows.filter((row) => row.status !== "SETUP");
+  const wins = scored.filter(
+    (row) => row.approvedCount >= WIN_THRESHOLD,
+  ).length;
+  const partial = scored.filter(
+    (row) => row.approvedCount > 0 && row.approvedCount < WIN_THRESHOLD,
+  ).length;
+  const missed = scored.filter((row) => row.approvedCount === 0).length;
+  const winRate = scored.length ? Math.round((wins / scored.length) * 100) : 0;
 
   return (
     <main>
@@ -54,14 +61,15 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-12 gap-4">
         <CompanyHero
+          winRate={winRate}
           percent={
             itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0
           }
           itemsDone={itemsDone}
           itemsTarget={itemsTarget}
-          passing={passing}
-          pending={pendingCount}
-          failing={failing}
+          passing={wins}
+          pending={partial}
+          failing={missed}
           setup={setup}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
