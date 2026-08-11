@@ -599,3 +599,23 @@ export async function countUnapproved(venueId: string): Promise<number> {
     .eq("review", "pending");
   return count ?? 0;
 }
+
+/**
+ * The grade on a venue's most recently finished week, if there is one.
+ *
+ * Reset Board waits on this. A venue clearing its board before the week has
+ * been judged is exactly what leaders were told would not happen.
+ */
+export async function gradeFor(
+  venueId: string,
+  weekStart: string,
+): Promise<{ gradedAt: string; gradedBy: string } | null> {
+  const { data } = await db()
+    .from("graded_weeks")
+    .select("graded_at, graded_by")
+    .eq("venue_id", venueId)
+    .eq("week_start", weekStart)
+    .maybeSingle();
+  const row = data as { graded_at: string; graded_by: string } | null;
+  return row ? { gradedAt: row.graded_at, gradedBy: row.graded_by } : null;
+}

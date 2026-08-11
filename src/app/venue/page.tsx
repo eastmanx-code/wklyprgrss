@@ -13,12 +13,14 @@ import {
   countUnapproved,
   getLeaderBoard,
   getVenue,
+  gradeFor,
 } from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
   formatLastUpload,
   formatWeekStart,
+  mostRecentCompletedWeek,
 } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +34,10 @@ export default async function VenuePage() {
 
   const board = await getLeaderBoard(venue.id);
   const unapproved = await countUnapproved(venue.id);
+  // Reset waits on the grade for the week that has actually finished — the one
+  // the signed-off work belongs to, not the one just started.
+  const gradedWeek = mostRecentCompletedWeek();
+  const grade = await gradeFor(venue.id, gradedWeek);
   // Both shots, not just the headline one. A tile that showed only the after
   // made a before uploaded the same week invisible, which a leader read as the
   // second photo overriding the first.
@@ -65,6 +71,9 @@ export default async function VenuePage() {
       <ClearFinished
         venueId={venue.id}
         finished={board.approvedItemIds.size}
+        graded={Boolean(grade)}
+        gradedBy={grade?.gradedBy ?? null}
+        weekLabel={formatWeekStart(gradedWeek)}
       />
 
       {/* Always ten tiles. A venue with four items set up should read as six

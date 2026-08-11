@@ -28,14 +28,40 @@ const initial: SubmitState = { error: null };
 export function ClearFinished({
   venueId,
   finished,
+  graded,
+  gradedBy,
+  weekLabel,
 }: {
   venueId: string;
   finished: number;
+  /** Whether the admin has graded the week this finished work belongs to. */
+  graded: boolean;
+  gradedBy: string | null;
+  weekLabel: string;
 }) {
   const [state, action, pending] = useActionState(clearApproved, initial);
   const [by, setBy] = useState("");
 
   if (finished === 0) return null;
+
+  // Waiting on the grade. Leaders were told reset comes "once graded", and a
+  // board cleared before the week has been judged as a whole is the thing that
+  // promise was made against.
+  if (!graded) {
+    return (
+      <section className="panel mb-5">
+        <p className="card-title">Reset board · waiting on the grade</p>
+        <p className="note text-muted mt-1 leading-relaxed">
+          {finished === 1
+            ? "One task is signed off."
+            : `${finished} tasks are signed off.`}{" "}
+          You can clear them and take new jobs once the week of {weekLabel} has
+          been graded. Everything else works as normal in the meantime — file
+          photos, redo anything sent back.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="panel border-ink/30 mb-5">
@@ -47,6 +73,9 @@ export function ClearFinished({
         Resetting clears the finished work and frees the slots for this
         week&apos;s. Open tasks stay, anything sent back stays and still needs
         redoing, and every photo and comment stays in the record.
+      </p>
+      <p className="label mt-2">
+        Week of {weekLabel} graded{gradedBy ? ` by ${gradedBy}` : ""}.
       </p>
 
       <form action={action} className="mt-4 flex flex-wrap items-end gap-3">
