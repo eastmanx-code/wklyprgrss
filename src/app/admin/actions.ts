@@ -408,3 +408,43 @@ export async function ungradeWeek(formData: FormData) {
 
   refresh(venueId);
 }
+
+/**
+ * Grades the finished week for every active venue at once.
+ *
+ * Grading one venue at a time is twenty-one taps of bookkeeping on top of the
+ * review that already happened — and the first week it existed it was missed
+ * entirely, which left every board reading "waiting on the grade" while the
+ * admin had in fact graded on the Thursday.
+ *
+ * The record stays per venue, so a single venue can still be graded or ungraded
+ * on its own. This just closes the week in one move, which is how it is
+ * actually done.
+ */
+export async function gradeAllVenues(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const weekStart = String(formData.get("weekStart") ?? "");
+  const by = String(formData.get("by") ?? "").trim() || "admin";
+  if (!weekStart) return;
+  if (!isDeadlinePassed(weekStart)) return;
+
+  const { data: venues } = await db()
+    .from("venues")
+    .select("id")
+    .eq("active", true);
+  const rows = ((venues ?? []) as { id: string }[]).map((venue) => ({
+    venue_id: venue.id,
+    week_start: weekStart,
+    graded_by: by,
+  }));
+  if (rows.length === 0) return;
+
+  await db()
+    .from("graded_weeks")
+    .upsert(rows, { onConflict: "venue_id,week_start" });
+
+  revalidatePath("/admin");
+  revalidatePath("/venue");
+  revalidatePath("/board");
+}

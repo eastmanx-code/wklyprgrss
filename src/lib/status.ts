@@ -619,3 +619,12 @@ export async function gradeFor(
   const row = data as { graded_at: string; graded_by: string } | null;
   return row ? { gradedAt: row.graded_at, gradedBy: row.graded_by } : null;
 }
+
+/** How many active venues have had a given week graded. */
+export async function gradedCount(weekStart: string): Promise<number> {
+  const { count } = await db()
+    .from("graded_weeks")
+    .select("id", { count: "exact", head: true })
+    .eq("week_start", weekStart);
+  return count ?? 0;
+}
