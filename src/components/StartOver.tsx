@@ -14,9 +14,10 @@ const initial: SubmitState = { error: null };
  * way to undo that lived on an admin screen a leader cannot open, so the mess
  * stayed on their board until somebody else removed it.
  *
- * Approved entries are never touched, which is what makes this safe to hand
- * over: the worst a full week of this can cost is work nobody has looked at
- * yet.
+ * Only entries nobody has judged are touched, which is what makes this safe to
+ * hand over: approved work is the record of a signed-off week, a rejection is
+ * the instruction to do the job again, and the worst this can cost is work
+ * nobody has looked at yet.
  */
 export function StartOver({
   venueId,
@@ -35,9 +36,10 @@ export function StartOver({
       <p className="label text-warn">Start over</p>
       <p className="note text-muted mt-2 leading-relaxed">
         {waiting === 1
-          ? "Takes the one entry nobody has approved yet off your board."
-          : `Takes all ${waiting} entries nobody has approved yet off your board.`}{" "}
-        Anything already approved stays, and so do your items and their names.
+          ? "Takes the one entry nobody has judged yet off your board."
+          : `Takes all ${waiting} entries nobody has judged yet off your board.`}{" "}
+        Anything signed off stays, anything sent back stays and still needs
+        redoing, and so do your items and their names.
         Nothing is destroyed — a cleared entry leaves the board and the score,
         and an admin can still put it back.
       </p>
@@ -74,7 +76,7 @@ export function StartOver({
           className="btn-ghost min-h-11 mt-3"
           onClick={() => setConfirming(true)}
         >
-          Clear unapproved entries
+          Clear unjudged entries
         </button>
       )}
     </section>
