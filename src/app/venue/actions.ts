@@ -345,6 +345,7 @@ async function purge(ids: string[]): Promise<number> {
     .from("submissions")
     .select("id, photo_url, before_photo_url, review")
     .in("id", ids)
+    .is("cleared_at", null)
     .neq("review", "approved");
 
   const rows = (data ?? []) as {
@@ -355,21 +356,13 @@ async function purge(ids: string[]): Promise<number> {
   }[];
   if (rows.length === 0) return 0;
 
-  const paths = rows.flatMap((row) =>
-    row.before_photo_url
-      ? [row.photo_url, row.before_photo_url]
-      : [row.photo_url],
-  );
-  // Chunked: storage rejects very large delete batches.
-  for (let i = 0; i < paths.length; i += 100) {
-    await db()
-      .storage.from(PHOTO_BUCKET)
-      .remove(paths.slice(i, i + 100));
-  }
-
+  // Stamped, not deleted. Every read filters on this, so the board, the
+  // history and every score behave exactly as they would if the row were
+  // gone — and the row is not gone. The photographs stay where they are and
+  // age out on the same retention the rest of them use.
   await db()
     .from("submissions")
-    .delete()
+    .update({ cleared_at: new Date().toISOString() })
     .in(
       "id",
       rows.map((row) => row.id),
@@ -439,6 +432,69 @@ export async function clearUnapproved(
     .neq("review", "approved");
 
   await purge(((subs ?? []) as { id: string }[]).map((row) => row.id));
+
+  revalidatePath("/venue");
+  revalidatePath("/board");
+  revalidatePath(`/board/${venueId}`);
+  return { error: null, ok: true };
+}
+
+/**
+ * Clears every finished task off the board.
+ *
+ * Monday's move. A task that has been signed off is done — the job happened,
+ * it was photographed, an admin agreed — and the only thing left is to take it
+ * off so the slot can hold the next job. Doing that one task at a time, buried
+ * on each item's own screen, is how a board ends up ten-deep in finished work
+ * and reading 0/10 on a Monday morning.
+ *
+ * Retire, not delete: the week it was part of keeps every photograph and
+ * comment, which is the entire record this thing exists to build.
+ */
+export async function clearApproved(
+  _prev: SubmitState,
+  formData: FormData,
+): Promise<SubmitState> {
+  const venueId = await ownedVenue(String(formData.get("venueId") ?? ""));
+  if (!venueId) return { error: "That venue is not available." };
+
+  // Whoever resets signs off on it. A board changing shape is the one action
+  // here that nobody can see the author of afterwards — the tasks are simply
+  // gone from the grid — so the name is taken at the point of doing it.
+  const by = String(formData.get("by") ?? "").trim();
+  if (!by) return { error: "Say who is resetting the board." };
+  if (by.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
+
+  const { data: items } = await db()
+    .from("items")
+    .select("id")
+    .eq("venue_id", venueId)
+    .eq("active", true);
+  const itemIds = ((items ?? []) as { id: string }[]).map((row) => row.id);
+  if (itemIds.length === 0) return { error: null, ok: true };
+
+  const { data: subs } = await db()
+    .from("submissions")
+    .select("item_id, review, created_at")
+    .in("item_id", itemIds)
+    .is("cleared_at", null)
+    .order("created_at", { ascending: false });
+
+  // Newest per task decides it. An older approval that a later photograph has
+  // already replaced is not the state of the task.
+  const newest = new Map<string, string>();
+  for (const row of (subs ?? []) as { item_id: string; review: string }[]) {
+    if (!newest.has(row.item_id)) newest.set(row.item_id, row.review);
+  }
+
+  // Approved only. Anything sent back stays put and stays locked — a task the
+  // admin rejected is the one thing a reset must not be able to make disappear.
+  const finished = [...newest.entries()]
+    .filter(([, review]) => review === "approved")
+    .map(([itemId]) => itemId);
+  if (finished.length === 0) return { error: null, ok: true };
+
+  await db().from("items").update({ active: false }).in("id", finished);
 
   revalidatePath("/venue");
   revalidatePath("/board");

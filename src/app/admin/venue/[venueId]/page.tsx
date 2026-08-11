@@ -71,10 +71,22 @@ export default async function AdminVenuePage({
 
   // Newest surviving submission per item — the one under review.
   const latestThisWeek = latestByItem(thisWeek);
-  // Only work the leader has called done is actually reviewable.
-  const awaitingReview = [...latestThisWeek.values()].filter(
-    (s) => s.review === "pending" && s.progress === "done",
-  ).length;
+  /**
+   * And the newest of any week, for tasks that carried over.
+   *
+   * A task that was not finished stays on the board into the new week, so the
+   * work under review is not always this week's. Reading only the current week
+   * meant that at midnight on Monday this screen went blind: no photograph, no
+   * review pill, no approve or send-back, and a card that said "last photo Aug
+   * 4" directly above "nothing submitted yet".
+   */
+  const latestEver = latestByItem(submissions);
+  // Only work the leader has called done is actually reviewable — and a
+  // carried-over task is every bit as reviewable as one filed this morning.
+  const awaitingReview = activeItems.filter((item) => {
+    const s = latestThisWeek.get(item.id) ?? latestEver.get(item.id);
+    return s?.review === "pending" && s.progress === "done";
+  }).length;
   const activeDone = activeItems.filter((item) =>
     doneThisWeek.has(item.id),
   ).length;
@@ -129,7 +141,14 @@ export default async function AdminVenuePage({
             narrow for a task name. */}
         <ul className="stagger grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {activeItems.map((item) => {
-            const submission = latestThisWeek.get(item.id);
+            // This week's if there is one, otherwise the task as it stands —
+            // an unfinished task carries into the new week and is still the
+            // thing being judged.
+            const submission =
+              latestThisWeek.get(item.id) ?? latestEver.get(item.id);
+            const carried = submission
+              ? submission.week_start !== weekStart
+              : false;
             const url = submission
               ? photos.get(submission.photo_url)
               : undefined;
@@ -171,6 +190,11 @@ export default async function AdminVenuePage({
                       ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
                       : "No photo yet"}
                   </p>
+                  {carried ? (
+                    <p className="label text-warn mt-1">
+                      Carried from {formatWeekStart(submission!.week_start)}
+                    </p>
+                  ) : null}
                 </Link>
 
                 {submission ? (
@@ -239,7 +263,7 @@ export default async function AdminVenuePage({
                     </div>
                   </>
                 ) : (
-                  <p className="label mt-2">Nothing submitted yet</p>
+                  <p className="label mt-2">Never submitted</p>
                 )}
               </li>
             );

@@ -182,6 +182,7 @@ export async function reviewSubmission(formData: FormData) {
       .from("submissions")
       .select("progress")
       .eq("id", submissionId)
+      .is("cleared_at", null)
       .maybeSingle();
     if (!submission || submission.progress !== "done") return;
   }
@@ -209,11 +210,16 @@ export async function approveAllForVenue(formData: FormData) {
   // Only the newest submission per item counts. Approving every pending row
   // for the week would sign off submissions a later one has already replaced —
   // including ones whose current state is "another cycle".
+  // Every week, not just this one. An unfinished task carries forward, so the
+  // work waiting on a decision is not always the work filed this week — and a
+  // button reading "approve all" that silently skipped last week's backlog was
+  // the reason the backlog kept growing.
+  void weekStart;
   const { data: week } = await db()
     .from("submissions")
     .select("id, item_id, review, progress, created_at")
     .in("item_id", itemIds)
-    .eq("week_start", weekStart)
+    .is("cleared_at", null)
     .order("created_at", { ascending: false });
 
   const newestPerItem = new Map<

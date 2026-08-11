@@ -13,10 +13,18 @@ export function StatusPill({ status }: { status: WeekStatus }) {
   return <span className={className}>{status}</span>;
 }
 
+/**
+ * Whether this week's photo has been taken. Not a review state.
+ *
+ * It read "Pending", which is the same word the review uses for waiting on an
+ * admin. A leader who had filed a full week and been approved came back on
+ * Monday, saw every tile say Pending, and read it as her work being stuck in a
+ * queue — when it only ever meant the new week hadn't started yet.
+ */
 export function DonePill({ done }: { done: boolean }) {
   return (
     <span className={done ? "pill pill-done" : "pill pill-pending"}>
-      {done ? "Done" : "Pending"}
+      {done ? "Done" : "To do"}
     </span>
   );
 }

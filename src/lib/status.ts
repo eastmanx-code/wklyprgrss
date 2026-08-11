@@ -105,7 +105,8 @@ export async function getSubmissionsForItems(
       .select(
         "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
       )
-      .in("item_id", itemIds);
+      .in("item_id", itemIds)
+      .is("cleared_at", null);
     if (weekStart) query = query.eq("week_start", weekStart);
     return query
       .order("created_at", { ascending: false })
@@ -177,6 +178,12 @@ export type LeaderBoard = {
   doneItemIds: Set<string>;
   /** Items the admin sent back — the leader has to redo these. */
   sentBackItemIds: Set<string>;
+  /**
+   * Tasks the admin has signed off. They stay on the board wearing the
+   * approval until the leader clears them, which is what frees the slot for
+   * the next job — the board is ten open tasks, not ten permanent ones.
+   */
+  approvedItemIds: Set<string>;
   /** Items the leader flagged as needing another cycle. */
   rollingItemIds: Set<string>;
   latest: Map<string, Submission>;
@@ -212,20 +219,48 @@ export async function getLeaderBoard(
 
   const doneItemIds = doneItemIdsFrom(thisWeek);
 
-  // Sent back only matters when nothing newer has replaced it.
+  const latest = latestByItem(allSubmissions);
+
+  /**
+   * Sent back is a state of the item, not of the week it was filed in.
+   *
+   * This read the current week only, so every Redo flag in the company
+   * vanished at midnight on Monday: twenty-four items were sent back on a
+   * Friday, and by the following week the leaders who had to redo them saw an
+   * ordinary empty tile with nothing to say the work had been rejected.
+   *
+   * Measured against the newest submission instead, whichever week that is.
+   * An admin asking for something again does not stop applying because the
+   * calendar turned, and it clears the moment anything newer is filed.
+   */
   const sentBackItemIds = new Set(
-    [...latestByItem(thisWeek).values()]
+    [...latest.values()]
       .filter((s) => s.review === "sent_back")
       .map((s) => s.item_id),
   );
 
+  /**
+   * Finished, and waiting to be cleared off.
+   *
+   * Measured across weeks for the same reason sent-back is: a task approved on
+   * Friday read "To do" again on Monday and asked for another photograph of a
+   * job that was signed off. Every task here is a different job somewhere else
+   * in the building, so re-shooting a finished one is pure waste.
+   */
+  const approvedItemIds = new Set(
+    [...latest.values()]
+      .filter((s) => s.review === "approved")
+      .map((s) => s.item_id),
+  );
+
+  // Rolling stays inside the week: "one more cycle" is a note about this
+  // week's pass, and a fresh photo is owed either way. The streak across weeks
+  // is carried by rollingWeeks below.
   const rollingItemIds = new Set(
     [...latestByItem(thisWeek).values()]
       .filter((s) => s.review !== "sent_back" && s.progress === "another_cycle")
       .map((s) => s.item_id),
   );
-
-  const latest = latestByItem(allSubmissions);
 
   const staleWeeks = new Map<string, number>();
   for (const [itemId, submission] of latest) {
@@ -268,6 +303,7 @@ export async function getLeaderBoard(
     items,
     doneItemIds,
     sentBackItemIds,
+    approvedItemIds,
     rollingItemIds,
     latest,
     staleWeeks,
@@ -331,15 +367,10 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
    * filled bar next to "not set up" on any venue whose only items were
    * retired.
    *
-   * This week asks "how much of what you have now is done", so it counts
-   * active items alone. Past weeks ask "did you complete that week", and the
-   * config back then is unrecorded, so those count every item — the photos
-   * genuinely happened.
+   * Both questions count every photograph that was filed. What changes is the
+   * denominator: how many tasks the venue has open now. A photograph that was
+   * taken is not un-taken by the task later coming off the board.
    */
-  const activeItemIds = new Set(
-    allItems.filter((i) => i.active).map((i) => i.id),
-  );
-
   // Active-only, because this answers "is this venue set up right now".
   const activeCountByVenue = new Map<string, number>();
   for (const item of allItems.filter((i) => i.active)) {
@@ -357,6 +388,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       db()
         .from("submissions")
         .select("item_id, week_start, created_at, review")
+        .is("cleared_at", null)
         .gte("week_start", earliestWeek)
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
@@ -423,7 +455,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     entries.sort((a, b) => a.at.localeCompare(b.at));
     const seen = new Set<string>();
     for (const entry of entries) {
-      if (!activeItemIds.has(entry.item)) continue;
       seen.add(entry.item);
       if (seen.size === WEEKLY_ITEM_TARGET) {
         finishedAtByVenue.set(venueId, entry.at);
@@ -433,12 +464,30 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   }
 
   const rows: VenueWeekSummary[] = venues.map((venue) => {
-    const activeCount = activeCountByVenue.get(venue.id) ?? 0;
+    /**
+     * How many tasks this week involved: what is open now, or what was filed,
+     * whichever is larger.
+     *
+     * Open tasks alone made a reset board read "3/2" — three jobs filed
+     * against two still open, because clearing the finished ones shrank the
+     * denominator under work that had already happened. A venue cannot owe
+     * fewer tasks than it did.
+     */
+    const openNow = activeCountByVenue.get(venue.id) ?? 0;
     const weeks = doneByVenueWeek.get(venue.id);
     const doneThisWeek = weeks?.get(weekStart);
-    const doneCount = doneThisWeek
-      ? [...doneThisWeek].filter((id) => activeItemIds.has(id)).length
-      : 0;
+    /**
+     * What was filed this week, whether or not the task is still on the board.
+     *
+     * This filtered by active, so retiring a finished task took its photograph
+     * out of the score with it and a graded 10/10 fell to 9/10 the moment a
+     * venue tidied up. Leaders were told to freeze their boards until Monday
+     * because of it. The work happened; a board edit afterwards is not a
+     * confession that it did not.
+     */
+    const doneCount = doneThisWeek ? doneThisWeek.size : 0;
+
+    const activeCount = Math.max(openNow, doneCount);
 
     let failStreak = 0;
     const firstWeek = firstWeekByVenue.get(venue.id);
@@ -453,12 +502,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       }
     }
 
-    // The score: what you signed off, not what was handed in.
+    // The score: what you signed off, not what was handed in. Same rule as
+    // doneCount — an approval survives the task being cleared off the board.
     const approvedCount = doneThisWeek
       ? [...doneThisWeek].filter(
-          (id) =>
-            activeItemIds.has(id) &&
-            newestThisWeek.get(id)?.review === "approved",
+          (id) => newestThisWeek.get(id)?.review === "approved",
         ).length
       : 0;
 
@@ -543,6 +591,7 @@ export async function countUnapproved(venueId: string): Promise<number> {
     .from("submissions")
     .select("id", { count: "exact", head: true })
     .in("item_id", itemIds)
+    .is("cleared_at", null)
     .neq("review", "approved");
   return count ?? 0;
 }
