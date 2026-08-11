@@ -216,9 +216,30 @@ export default async function AdminVenuePage({
                     {/* Stacked and bottom-aligned: at five columns a tile is
                           too narrow for two pills side by side, and pushing them
                           down keeps every card's actions on the same line. */}
+                    {/* A decision already made is not a decision to make.
+                        Every card carried a review button regardless of state,
+                        so a screen reading "0 awaiting review" still offered
+                        ten of them — and Approve on a rejected task would have
+                        signed off work that was never redone.
+
+                        Buttons appear on work that is genuinely undecided,
+                        whichever week it came from — a task filed last week and
+                        never reviewed still needs a verdict. A verdict already
+                        given is reopened by a new photograph, not by a button
+                        that quietly overwrites it. */}
                     <div className="mt-auto flex flex-col gap-2 pt-3">
+                      {submission.review !== "pending" ? (
+                        <p className="label">
+                          {submission.review === "sent_back"
+                            ? "Waiting on a new photo"
+                            : submission.review === "approved"
+                              ? "Signed off"
+                              : "Waiting on review"}
+                        </p>
+                      ) : null}
+
                       {/* Can't approve work the leader hasn't called done. */}
-                      {submission.review !== "approved" &&
+                      {submission.review === "pending" &&
                       submission.progress === "done" ? (
                         <form action={reviewSubmission}>
                           <input
@@ -238,7 +259,7 @@ export default async function AdminVenuePage({
                         </form>
                       ) : null}
 
-                      {submission.review !== "sent_back" ? (
+                      {submission.review === "pending" ? (
                         <form action={reviewSubmission}>
                           <input
                             type="hidden"
