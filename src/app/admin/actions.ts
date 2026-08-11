@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { getSession } from "@/lib/session";
+import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { Item } from "@/lib/types";
 
@@ -373,6 +374,12 @@ export async function gradeWeek(formData: FormData) {
   const weekStart = String(formData.get("weekStart") ?? "");
   const by = String(formData.get("by") ?? "").trim() || "admin";
   if (!venueId || !weekStart) return;
+
+  // Not before the week is over. Grading a week still being worked closes it
+  // on people who have until Thursday 4pm to file — and the reset it unlocks
+  // would let a venue clear a board it is still meant to be filling. The
+  // screen only ever offers a finished week; this is the rule behind that.
+  if (!isDeadlinePassed(weekStart)) return;
 
   // Idempotent: grading twice is not two grades.
   await db()
