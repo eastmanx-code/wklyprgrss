@@ -10,6 +10,7 @@ import {
   setItemActive,
 } from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
+import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
@@ -229,13 +230,11 @@ export default async function AdminVenuePage({
                         that quietly overwrites it. */}
                     <div className="mt-auto flex flex-col gap-2 pt-3">
                       {submission.review !== "pending" ? (
-                        <p className="label">
-                          {submission.review === "sent_back"
-                            ? "Waiting on a new photo"
-                            : submission.review === "approved"
-                              ? "Signed off"
-                              : "Waiting on review"}
-                        </p>
+                        <ChangeVerdict
+                          submissionId={submission.id}
+                          venueId={venue.id}
+                          review={submission.review}
+                        />
                       ) : null}
 
                       {/* Can't approve work the leader hasn't called done. */}
