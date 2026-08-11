@@ -6,7 +6,7 @@ import { photoPath } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { Item } from "@/lib/types";
-import { currentWeekStart } from "@/lib/week";
+import { currentWeekStart, mostRecentCompletedWeek } from "@/lib/week";
 
 export type SubmitState = { error: string | null; ok?: boolean };
 
@@ -473,6 +473,18 @@ export async function clearApproved(
   const by = String(formData.get("by") ?? "").trim();
   if (!by) return { error: "Say who is resetting the board." };
   if (by.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
+
+  // The gate, enforced here and not only by hiding the button: a venue may not
+  // clear its board until the finished week has been graded.
+  const { data: graded } = await db()
+    .from("graded_weeks")
+    .select("id")
+    .eq("venue_id", venueId)
+    .eq("week_start", mostRecentCompletedWeek())
+    .maybeSingle();
+  if (!graded) {
+    return { error: "That week has not been graded yet." };
+  }
 
   const { data: items } = await db()
     .from("items")

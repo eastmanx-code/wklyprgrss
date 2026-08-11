@@ -11,6 +11,7 @@ import {
 } from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
 import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
+import { GradeWeek } from "@/components/admin/GradeWeek";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
@@ -32,6 +33,7 @@ import {
   getItems,
   getSubmissionsForItems,
   getVenue,
+  gradeFor,
   latestByItem,
   statusFor,
 } from "@/lib/status";
@@ -40,6 +42,7 @@ import {
   formatLastUpload,
   formatTimestamp,
   formatWeekStart,
+  mostRecentCompletedWeek,
 } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -98,6 +101,10 @@ export default async function AdminVenuePage({
     new Date(),
   );
 
+  // The week the venue is waiting on a grade for.
+  const gradedWeek = mostRecentCompletedWeek();
+  const grade = await gradeFor(venue.id, gradedWeek);
+
   const byItem = new Map<string, typeof submissions>();
   for (const submission of submissions) {
     const list = byItem.get(submission.item_id) ?? [];
@@ -120,6 +127,15 @@ export default async function AdminVenuePage({
           </span>
         </div>
       </header>
+
+      {/* The grade gates their reset, so it leads — it is the thing a venue is
+          waiting on, not a footnote under the review grid. */}
+      <GradeWeek
+        venueId={venue.id}
+        weekStart={gradedWeek}
+        weekLabel={formatWeekStart(gradedWeek)}
+        gradedBy={grade?.gradedBy ?? null}
+      />
 
       {/* This week at a glance: see it, approve it, or send it back. */}
       <section className="mb-8">

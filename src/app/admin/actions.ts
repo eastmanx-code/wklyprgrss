@@ -354,3 +354,50 @@ export async function updateVenuePin(
   refresh(venueId);
   return OK;
 }
+
+/**
+ * Marks a venue's week graded.
+ *
+ * Leaders were told "once graded, one tap clears finished work". Until now
+ * nothing in the app meant graded, so Reset Board was available the moment a
+ * single task was approved — a venue could clear its board before the week had
+ * been looked at as a whole, which is the opposite of what they were promised.
+ *
+ * Admin only, and it carries a name: a grade is somebody's judgement of a
+ * week's work, and the venue it lands on should be able to see whose.
+ */
+export async function gradeWeek(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const weekStart = String(formData.get("weekStart") ?? "");
+  const by = String(formData.get("by") ?? "").trim() || "admin";
+  if (!venueId || !weekStart) return;
+
+  // Idempotent: grading twice is not two grades.
+  await db()
+    .from("graded_weeks")
+    .upsert(
+      { venue_id: venueId, week_start: weekStart, graded_by: by },
+      { onConflict: "venue_id,week_start" },
+    );
+
+  refresh(venueId);
+}
+
+/** Takes a grade back, if it went on the wrong week. */
+export async function ungradeWeek(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const weekStart = String(formData.get("weekStart") ?? "");
+  if (!venueId || !weekStart) return;
+
+  await db()
+    .from("graded_weeks")
+    .delete()
+    .eq("venue_id", venueId)
+    .eq("week_start", weekStart);
+
+  refresh(venueId);
+}
