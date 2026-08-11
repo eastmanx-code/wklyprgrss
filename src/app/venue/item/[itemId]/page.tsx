@@ -57,7 +57,11 @@ export default async function ItemPage({
   // Newest submission decides the state — same rule as the grid, so the two
   // screens can never disagree.
   const current = thisWeek[0];
-  const sentBack = current?.review === "sent_back";
+  // Sent back is measured against the newest entry of any week, not just this
+  // one. Reading only the current week meant a rejection stopped being visible
+  // the moment the week turned, and the leader who had to act on it saw a
+  // blank tile instead.
+  const sentBack = submissions[0]?.review === "sent_back";
   const rolling = !sentBack && current?.progress === "another_cycle";
   const doneThisWeek = Boolean(current) && !sentBack;
   // A sent-back entry is not amended — that flow asks for a fresh photo and

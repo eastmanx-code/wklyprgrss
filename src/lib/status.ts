@@ -213,20 +213,34 @@ export async function getLeaderBoard(
 
   const doneItemIds = doneItemIdsFrom(thisWeek);
 
-  // Sent back only matters when nothing newer has replaced it.
+  const latest = latestByItem(allSubmissions);
+
+  /**
+   * Sent back is a state of the item, not of the week it was filed in.
+   *
+   * This read the current week only, so every Redo flag in the company
+   * vanished at midnight on Monday: twenty-four items were sent back on a
+   * Friday, and by the following week the leaders who had to redo them saw an
+   * ordinary empty tile with nothing to say the work had been rejected.
+   *
+   * Measured against the newest submission instead, whichever week that is.
+   * An admin asking for something again does not stop applying because the
+   * calendar turned, and it clears the moment anything newer is filed.
+   */
   const sentBackItemIds = new Set(
-    [...latestByItem(thisWeek).values()]
+    [...latest.values()]
       .filter((s) => s.review === "sent_back")
       .map((s) => s.item_id),
   );
 
+  // Rolling stays inside the week: "one more cycle" is a note about this
+  // week's pass, and a fresh photo is owed either way. The streak across weeks
+  // is carried by rollingWeeks below.
   const rollingItemIds = new Set(
     [...latestByItem(thisWeek).values()]
       .filter((s) => s.review !== "sent_back" && s.progress === "another_cycle")
       .map((s) => s.item_id),
   );
-
-  const latest = latestByItem(allSubmissions);
 
   const staleWeeks = new Map<string, number>();
   for (const [itemId, submission] of latest) {
