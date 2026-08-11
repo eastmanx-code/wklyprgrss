@@ -108,11 +108,37 @@ export default async function ItemPage({
       </header>
 
       {sentBack ? (
-        <div className="panel-quiet mb-5">
-          <p className="note">
-            Sent back by the admin. Submit a new photo and comment to clear it.
+        /* The photograph that was rejected, not a note about it.
+           Every task here is a different job somewhere else in the building,
+           so "sent back" on its own tells somebody nothing about what to walk
+           to. The shot they filed is the only thing that says which corner,
+           which shelf, which door — and without it they are guessing at a task
+           they may have done a week ago. */
+        <section className="panel border-warn/30 mb-5">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="label text-warn">Sent back · take a new photo</p>
+            <p className="label">
+              {formatWeekStart(submissions[0].week_start)}
+            </p>
+          </div>
+          <div className="mt-3">
+            {photos.get(submissions[0].photo_url) ? (
+              <PhotoView
+                src={photos.get(submissions[0].photo_url)!}
+                className="aspect-[4/3] rounded-[8px]"
+              />
+            ) : (
+              <PurgedPhoto aspect="wide" />
+            )}
+          </div>
+          <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
+            {submissions[0].comment}
           </p>
-        </div>
+          <p className="label mt-2">
+            This is what you sent. Do the job again and file a new photo and
+            comment to clear it.
+          </p>
+        </section>
       ) : rolling ? (
         <div className="panel-quiet mb-5">
           <p className="note">
@@ -129,7 +155,7 @@ export default async function ItemPage({
         </div>
       ) : null}
 
-      {previous ? (
+      {previous && !sentBack ? (
         <section className="panel mb-3">
           <div className="flex items-baseline justify-between gap-3">
             <p className="label">Before · last photo</p>
