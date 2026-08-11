@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { ClearFinished } from "@/components/ClearFinished";
 import { StartOver } from "@/components/StartOver";
 import { VenueHero } from "@/components/VenueHero";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
@@ -57,6 +58,13 @@ export default async function VenuePage() {
         status={board.status}
         deadlineMs={deadlineFor(board.weekStart).getTime()}
         deadlineLabel={formatDeadline(board.weekStart)}
+      />
+
+      {/* Monday's move, at the top where it belongs — the board is ten open
+          jobs, and finished ones have to come off before new ones go on. */}
+      <ClearFinished
+        venueId={venue.id}
+        finished={board.approvedItemIds.size}
       />
 
       {/* Always ten tiles. A venue with four items set up should read as six
@@ -130,9 +138,15 @@ export default async function VenuePage() {
                     Rolling {rolling} weeks
                   </p>
                 ) : null}
+                {/* The task as it stands, not what happened this week.
+                    Every one of these is a different job in a different part
+                    of the building, so a task signed off on Friday asking for
+                    another photograph on Monday is asking for waste. */}
                 <div className="mt-2">
                   {board.sentBackItemIds.has(item.id) ? (
                     <span className="pill pill-warn">Redo</span>
+                  ) : board.approvedItemIds.has(item.id) ? (
+                    <span className="pill pill-done">Approved</span>
                   ) : board.rollingItemIds.has(item.id) ? (
                     <span className="pill pill-rolling">Rolling</span>
                   ) : (

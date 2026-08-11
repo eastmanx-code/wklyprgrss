@@ -178,6 +178,12 @@ export type LeaderBoard = {
   doneItemIds: Set<string>;
   /** Items the admin sent back — the leader has to redo these. */
   sentBackItemIds: Set<string>;
+  /**
+   * Tasks the admin has signed off. They stay on the board wearing the
+   * approval until the leader clears them, which is what frees the slot for
+   * the next job — the board is ten open tasks, not ten permanent ones.
+   */
+  approvedItemIds: Set<string>;
   /** Items the leader flagged as needing another cycle. */
   rollingItemIds: Set<string>;
   latest: Map<string, Submission>;
@@ -233,6 +239,20 @@ export async function getLeaderBoard(
       .map((s) => s.item_id),
   );
 
+  /**
+   * Finished, and waiting to be cleared off.
+   *
+   * Measured across weeks for the same reason sent-back is: a task approved on
+   * Friday read "To do" again on Monday and asked for another photograph of a
+   * job that was signed off. Every task here is a different job somewhere else
+   * in the building, so re-shooting a finished one is pure waste.
+   */
+  const approvedItemIds = new Set(
+    [...latest.values()]
+      .filter((s) => s.review === "approved")
+      .map((s) => s.item_id),
+  );
+
   // Rolling stays inside the week: "one more cycle" is a note about this
   // week's pass, and a fresh photo is owed either way. The streak across weeks
   // is carried by rollingWeeks below.
@@ -283,6 +303,7 @@ export async function getLeaderBoard(
     items,
     doneItemIds,
     sentBackItemIds,
+    approvedItemIds,
     rollingItemIds,
     latest,
     staleWeeks,

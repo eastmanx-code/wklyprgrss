@@ -438,3 +438,57 @@ export async function clearUnapproved(
   revalidatePath(`/board/${venueId}`);
   return { error: null, ok: true };
 }
+
+/**
+ * Clears every finished task off the board.
+ *
+ * Monday's move. A task that has been signed off is done — the job happened,
+ * it was photographed, an admin agreed — and the only thing left is to take it
+ * off so the slot can hold the next job. Doing that one task at a time, buried
+ * on each item's own screen, is how a board ends up ten-deep in finished work
+ * and reading 0/10 on a Monday morning.
+ *
+ * Retire, not delete: the week it was part of keeps every photograph and
+ * comment, which is the entire record this thing exists to build.
+ */
+export async function clearApproved(
+  _prev: SubmitState,
+  formData: FormData,
+): Promise<SubmitState> {
+  const venueId = await ownedVenue(String(formData.get("venueId") ?? ""));
+  if (!venueId) return { error: "That venue is not available." };
+
+  const { data: items } = await db()
+    .from("items")
+    .select("id")
+    .eq("venue_id", venueId)
+    .eq("active", true);
+  const itemIds = ((items ?? []) as { id: string }[]).map((row) => row.id);
+  if (itemIds.length === 0) return { error: null, ok: true };
+
+  const { data: subs } = await db()
+    .from("submissions")
+    .select("item_id, review, created_at")
+    .in("item_id", itemIds)
+    .is("cleared_at", null)
+    .order("created_at", { ascending: false });
+
+  // Newest per task decides it. An older approval that a later photograph has
+  // already replaced is not the state of the task.
+  const newest = new Map<string, string>();
+  for (const row of (subs ?? []) as { item_id: string; review: string }[]) {
+    if (!newest.has(row.item_id)) newest.set(row.item_id, row.review);
+  }
+
+  const finished = [...newest.entries()]
+    .filter(([, review]) => review === "approved")
+    .map(([itemId]) => itemId);
+  if (finished.length === 0) return { error: null, ok: true };
+
+  await db().from("items").update({ active: false }).in("id", finished);
+
+  revalidatePath("/venue");
+  revalidatePath("/board");
+  revalidatePath(`/board/${venueId}`);
+  return { error: null, ok: true };
+}
