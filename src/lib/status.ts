@@ -574,7 +574,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 }
 
 /**
- * How many entries this venue has filed that nobody has approved yet.
+ * How many entries this venue has filed that nobody has judged yet.
+ *
+ * Pending only. Approved work is the record of a signed-off week and a
+ * rejection is the instruction to redo the job — neither is a leader's to
+ * clear away.
  *
  * Only used to decide whether to offer a leader the way to clear them, and to
  * say how many rather than making them guess.
@@ -592,6 +596,6 @@ export async function countUnapproved(venueId: string): Promise<number> {
     .select("id", { count: "exact", head: true })
     .in("item_id", itemIds)
     .is("cleared_at", null)
-    .neq("review", "approved");
+    .eq("review", "pending");
   return count ?? 0;
 }

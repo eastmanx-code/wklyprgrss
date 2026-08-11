@@ -341,12 +341,15 @@ async function ownedVenue(venueId: string): Promise<string | null> {
 async function purge(ids: string[]): Promise<number> {
   if (ids.length === 0) return 0;
 
+  // Pending only. Approved work is the record of a signed-off week, and a
+  // rejection is the instruction to do the job again — clearing either would
+  // let a leader delete the very thing they owe.
   const { data } = await db()
     .from("submissions")
     .select("id, photo_url, before_photo_url, review")
     .in("id", ids)
     .is("cleared_at", null)
-    .neq("review", "approved");
+    .eq("review", "pending");
 
   const rows = (data ?? []) as {
     id: string;
@@ -392,6 +395,12 @@ export async function deleteSubmission(
   if (row.review === "approved") {
     return { error: "That one is approved. Ask an admin to change it." };
   }
+  if (row.review === "sent_back") {
+    return {
+      error:
+        "That one was sent back. File a new photo to replace it — clearing it would take away what you have to redo.",
+    };
+  }
 
   const gone = await purge([row.id]);
   if (gone === 0) return { error: "Could not delete that. Try again." };
@@ -429,7 +438,7 @@ export async function clearUnapproved(
     .from("submissions")
     .select("id")
     .in("item_id", itemIds)
-    .neq("review", "approved");
+    .eq("review", "pending");
 
   await purge(((subs ?? []) as { id: string }[]).map((row) => row.id));
 
