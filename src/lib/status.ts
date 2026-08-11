@@ -105,7 +105,8 @@ export async function getSubmissionsForItems(
       .select(
         "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
       )
-      .in("item_id", itemIds);
+      .in("item_id", itemIds)
+      .is("cleared_at", null);
     if (weekStart) query = query.eq("week_start", weekStart);
     return query
       .order("created_at", { ascending: false })
@@ -357,6 +358,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       db()
         .from("submissions")
         .select("item_id, week_start, created_at, review")
+        .is("cleared_at", null)
         .gte("week_start", earliestWeek)
         .order("week_start")
         .range(from, to) as unknown as PromiseLike<{
@@ -543,6 +545,7 @@ export async function countUnapproved(venueId: string): Promise<number> {
     .from("submissions")
     .select("id", { count: "exact", head: true })
     .in("item_id", itemIds)
+    .is("cleared_at", null)
     .neq("review", "approved");
   return count ?? 0;
 }

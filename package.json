@@ -18,7 +18,8 @@
     "predev": "node --env-file=.env.local scripts/preflight.mjs || true",
     "prebuild": "node --env-file=.env.local scripts/preflight.mjs 2>/dev/null || true",
     "check-rollup": "tsc src/lib/rollup-math.ts --outDir .rollup-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-rollup.mjs",
-    "test-venue": "node --env-file=.env.local scripts/test-venue.mjs"
+    "test-venue": "node --env-file=.env.local scripts/test-venue.mjs",
+    "cleared": "node --env-file=.env.local scripts/cleared.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

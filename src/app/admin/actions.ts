@@ -182,6 +182,7 @@ export async function reviewSubmission(formData: FormData) {
       .from("submissions")
       .select("progress")
       .eq("id", submissionId)
+      .is("cleared_at", null)
       .maybeSingle();
     if (!submission || submission.progress !== "done") return;
   }
@@ -213,6 +214,7 @@ export async function approveAllForVenue(formData: FormData) {
     .from("submissions")
     .select("id, item_id, review, progress, created_at")
     .in("item_id", itemIds)
+    .is("cleared_at", null)
     .eq("week_start", weekStart)
     .order("created_at", { ascending: false });
 

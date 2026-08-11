@@ -345,6 +345,7 @@ async function purge(ids: string[]): Promise<number> {
     .from("submissions")
     .select("id, photo_url, before_photo_url, review")
     .in("id", ids)
+    .is("cleared_at", null)
     .neq("review", "approved");
 
   const rows = (data ?? []) as {
@@ -355,21 +356,13 @@ async function purge(ids: string[]): Promise<number> {
   }[];
   if (rows.length === 0) return 0;
 
-  const paths = rows.flatMap((row) =>
-    row.before_photo_url
-      ? [row.photo_url, row.before_photo_url]
-      : [row.photo_url],
-  );
-  // Chunked: storage rejects very large delete batches.
-  for (let i = 0; i < paths.length; i += 100) {
-    await db()
-      .storage.from(PHOTO_BUCKET)
-      .remove(paths.slice(i, i + 100));
-  }
-
+  // Stamped, not deleted. Every read filters on this, so the board, the
+  // history and every score behave exactly as they would if the row were
+  // gone — and the row is not gone. The photographs stay where they are and
+  // age out on the same retention the rest of them use.
   await db()
     .from("submissions")
-    .delete()
+    .update({ cleared_at: new Date().toISOString() })
     .in(
       "id",
       rows.map((row) => row.id),

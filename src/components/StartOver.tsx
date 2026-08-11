@@ -35,15 +35,16 @@ export function StartOver({
       <p className="label text-warn">Start over</p>
       <p className="note text-muted mt-2 leading-relaxed">
         {waiting === 1
-          ? "Deletes the one entry on this venue that nobody has approved yet, and the photograph with it."
-          : `Deletes all ${waiting} entries on this venue that nobody has approved yet, and the photographs with them.`}{" "}
-        Anything already approved stays. Your items and their names are not
-        touched.
+          ? "Takes the one entry nobody has approved yet off your board."
+          : `Takes all ${waiting} entries nobody has approved yet off your board.`}{" "}
+        Anything already approved stays, and so do your items and their names.
+        Nothing is destroyed — a cleared entry leaves the board and the score,
+        and an admin can still put it back.
       </p>
 
       {state.ok ? (
         <p role="status" className="text-body mt-3">
-          Cleared. Your board is back to empty slots.
+          Cleared. Your board is back to empty slots — nothing was destroyed.
         </p>
       ) : null}
 
