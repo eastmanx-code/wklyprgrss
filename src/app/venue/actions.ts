@@ -458,6 +458,13 @@ export async function clearApproved(
   const venueId = await ownedVenue(String(formData.get("venueId") ?? ""));
   if (!venueId) return { error: "That venue is not available." };
 
+  // Whoever resets signs off on it. A board changing shape is the one action
+  // here that nobody can see the author of afterwards — the tasks are simply
+  // gone from the grid — so the name is taken at the point of doing it.
+  const by = String(formData.get("by") ?? "").trim();
+  if (!by) return { error: "Say who is resetting the board." };
+  if (by.length > MAX_NAME_LENGTH) return { error: "That name is too long." };
+
   const { data: items } = await db()
     .from("items")
     .select("id")
@@ -480,6 +487,8 @@ export async function clearApproved(
     if (!newest.has(row.item_id)) newest.set(row.item_id, row.review);
   }
 
+  // Approved only. Anything sent back stays put and stays locked — a task the
+  // admin rejected is the one thing a reset must not be able to make disappear.
   const finished = [...newest.entries()]
     .filter(([, review]) => review === "approved")
     .map(([itemId]) => itemId);
