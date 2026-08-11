@@ -4,9 +4,15 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
+import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
-import { getDashboard, isWin } from "@/lib/status";
-import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
+import { getDashboard, gradedCount, isWin } from "@/lib/status";
+import {
+  deadlineFor,
+  formatDeadline,
+  formatWeekStart,
+  mostRecentCompletedWeek,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +39,11 @@ export default async function AdminDashboardPage() {
   const missed = scored.filter((row) => row.approvedCount === 0).length;
   const winRate = scored.length ? Math.round((wins / scored.length) * 100) : 0;
 
+  // The finished week, and whether it has been closed for everyone. Grading is
+  // the thing every venue is waiting on before it can reset.
+  const gradedWeek = mostRecentCompletedWeek();
+  const graded = await gradedCount(gradedWeek);
+
   return (
     <main>
       <header className="mb-6 flex items-start justify-between gap-4">
@@ -51,6 +62,13 @@ export default async function AdminDashboardPage() {
           </Link>
         </div>
       </header>
+
+      <GradeAll
+        weekStart={gradedWeek}
+        weekLabel={formatWeekStart(gradedWeek)}
+        graded={graded}
+        total={rows.length}
+      />
 
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
