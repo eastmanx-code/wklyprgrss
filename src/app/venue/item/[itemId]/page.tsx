@@ -7,7 +7,13 @@ import { setItemActive } from "@/app/admin/actions";
 import { DeleteEntry } from "@/components/DeleteEntry";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
-import { Attribution, BackLink, DonePill, PurgedPhoto } from "@/components/ui";
+import {
+  Attribution,
+  BackLink,
+  DonePill,
+  PurgedPhoto,
+  ReviewPill,
+} from "@/components/ui";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { getSubmissionsForItems } from "@/lib/status";
@@ -336,6 +342,24 @@ export default async function ItemPage({
                         <figcaption className="label mt-2">After</figcaption>
                       ) : null}
                     </figure>
+                  </div>
+                  {/* Done or not, on every entry. The state was only ever
+                      printed when the answer was "one more cycle", so a
+                      finished card said nothing and read exactly like a card
+                      nobody had answered. */}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span
+                      className={
+                        submission.progress === "another_cycle"
+                          ? "pill pill-rolling"
+                          : "pill pill-done"
+                      }
+                    >
+                      {submission.progress === "another_cycle"
+                        ? "One more cycle"
+                        : "Done"}
+                    </span>
+                    <ReviewPill review={submission.review} />
                   </div>
                   <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
                     {submission.comment}

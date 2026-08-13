@@ -224,11 +224,15 @@ export default async function AdminVenuePage({
                       assistedBy={submission.assisted_by}
                     />
 
-                    {submission.progress === "another_cycle" ? (
-                      <p className="label mt-1.5">
-                        Leader says: one more cycle
-                      </p>
-                    ) : null}
+                    {/* Printed either way. This only spoke up for "one more
+                        cycle", so a finished card said nothing at all and read
+                        identically to one nobody had answered — on a clean
+                        board of ten, ten silent cards. */}
+                    <p className="label mt-1.5">
+                      {submission.progress === "another_cycle"
+                        ? "Leader says: one more cycle"
+                        : "Leader says: done"}
+                    </p>
 
                     {/* Stacked and bottom-aligned: at five columns a tile is
                           too narrow for two pills side by side, and pushing them
