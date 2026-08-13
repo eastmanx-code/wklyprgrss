@@ -620,11 +620,21 @@ export async function gradeFor(
   return row ? { gradedAt: row.graded_at, gradedBy: row.graded_by } : null;
 }
 
-/** How many active venues have had a given week graded. */
-export async function gradedCount(weekStart: string): Promise<number> {
-  const { count } = await db()
+/**
+ * Which venues have had a given week graded.
+ *
+ * The dashboard needs this per row, not just as a total. A venue whose every
+ * task was sent back has nothing signed off, so read through the approval
+ * count alone a finished review of a failing venue looked exactly like a
+ * venue nobody had opened — which is precisely the venue you most need to
+ * know you have dealt with.
+ */
+export async function gradedVenueIds(weekStart: string): Promise<Set<string>> {
+  const { data, error } = await db()
     .from("graded_weeks")
-    .select("id", { count: "exact", head: true })
+    .select("venue_id")
     .eq("week_start", weekStart);
-  return count ?? 0;
+  if (error) throw new Error(error.message);
+  return new Set((data ?? []).map((row) => row.venue_id as string));
 }
+

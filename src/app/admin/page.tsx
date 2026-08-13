@@ -6,7 +6,7 @@ import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradedCount, isWin } from "@/lib/status";
+import { getDashboard, gradedVenueIds, isWin } from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -42,7 +42,11 @@ export default async function AdminDashboardPage() {
   // The finished week, and whether it has been closed for everyone. Grading is
   // the thing every venue is waiting on before it can reset.
   const gradedWeek = mostRecentCompletedWeek();
-  const graded = await gradedCount(gradedWeek);
+  // The set, not just the total: the rows show the grade venue by venue, and
+  // counting the live ones here keeps "N of 21" honest when a graded venue is
+  // later stood down.
+  const gradedIds = await gradedVenueIds(gradedWeek);
+  const graded = rows.filter((row) => gradedIds.has(row.venue.id)).length;
 
   return (
     <main>
@@ -100,6 +104,7 @@ export default async function AdminDashboardPage() {
           rows={rows}
           hrefPrefix="/admin/venue/"
           finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
+          gradedVenueIds={gradedIds}
         />
       </div>
     </main>

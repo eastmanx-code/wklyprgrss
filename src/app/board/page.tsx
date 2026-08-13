@@ -5,8 +5,13 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
-import { getDashboard, isWin } from "@/lib/status";
-import { deadlineFor, formatDeadline, formatWeekStart } from "@/lib/week";
+import { getDashboard, gradedVenueIds, isWin } from "@/lib/status";
+import {
+  deadlineFor,
+  formatDeadline,
+  formatWeekStart,
+  mostRecentCompletedWeek,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +22,9 @@ export default async function BoardPage() {
   const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
     await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
+  // Leaders see the grade too — it is the thing that gates their reset, so
+  // "has mine been closed out yet" should be answerable from the board.
+  const gradedIds = await gradedVenueIds(mostRecentCompletedWeek());
   const setup = rows.filter((row) => row.status === "SETUP").length;
   // Scored on approvals, in the buckets the weekly note is written in.
   const scored = rows.filter((row) => row.status !== "SETUP");
@@ -78,6 +86,7 @@ export default async function BoardPage() {
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
           finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
+          gradedVenueIds={gradedIds}
         />
       </div>
     </main>

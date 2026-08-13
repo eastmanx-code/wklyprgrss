@@ -44,12 +44,15 @@ export function VenueRows({
   hrefPrefix,
   ownVenueId = null,
   finishedAt = {},
+  gradedVenueIds,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
   /** venue code -> when it reached ten, for the venues that got there. */
   finishedAt?: Record<string, string>;
+  /** Venues whose week has been closed out. */
+  gradedVenueIds?: Set<string>;
 }) {
   const active = rows.filter((row) => row.status !== "SETUP");
   const notSetUp = rows.filter((row) => row.status === "SETUP");
@@ -60,7 +63,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Updated is a new photo and comment · approved is signed off after review"
+          hint="Updated is a new photo and comment · graded is marked once the week is closed, with what was signed off inside it"
         >
           {/* Name the columns once, rather than on every row.
               Two numbers sit on each row now and they mean different things —
@@ -75,13 +78,14 @@ export function VenueRows({
             <span className="label hidden w-24 shrink-0 text-right sm:block">
               Last in
             </span>
-            <span className="label w-20 shrink-0 text-right">Approved</span>
+            <span className="label w-20 shrink-0 text-right">Graded</span>
             <span className="label w-16 shrink-0 text-right">Updated</span>
           </div>
 
           <ul>
             {active.map((row) => {
               const finished = finishedAt[row.venue.code];
+              const graded = gradedVenueIds?.has(row.venue.id) ?? false;
               return (
                 <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                   <Link
@@ -129,17 +133,25 @@ export function VenueRows({
                         done mark — not the alert colour, which here means
                         past due, short, missed. A grade is not a warning.
 
-                        Empty until reviewed, so Monday to Thursday the column
-                        is blank and the board stays quiet, then fills in as
-                        the week is graded.
+                        The chip is the grade, and the number inside it is
+                        what was signed off. Those are two different facts and
+                        showing only the second hid the first: a venue whose
+                        every task was sent back has nothing signed off, so a
+                        closed-out review of a failing venue read exactly like
+                        a venue nobody had opened. A tally with no chip is a
+                        review still in progress.
 
                         Kept on a phone, unlike the timestamp beside it. The
-                        bar loses eighty pixels and still has sixteen per
-                        segment, and the whole point of the column is that it
+                        bar loses eighty pixels and still has ten legible
+                        segments, and the whole point of the column is that it
                         is visible where the reviewing actually happens. */}
                     <span className="flex w-20 shrink-0 justify-end">
-                      {row.approvedCount > 0 ? (
+                      {graded ? (
                         <span className="pill pill-done min-w-9 justify-center tabular-nums">
+                          {row.approvedCount}
+                        </span>
+                      ) : row.approvedCount > 0 ? (
+                        <span className="text-body text-muted tabular-nums">
                           {row.approvedCount}
                         </span>
                       ) : null}
