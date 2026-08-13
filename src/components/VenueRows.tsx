@@ -97,22 +97,26 @@ export function VenueRows({
                       {row.venue.id === ownVenueId ? " · you" : ""}
                     </span>
 
-                    <span className="text-body w-40 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
-                      <span
-                        className={
-                          row.doneCount >= row.activeCount
-                            ? "text-ink"
-                            : "text-warn"
-                        }
-                      >
-                        {row.doneCount}/{row.activeCount}
-                      </span>
-                      {row.approvedCount > 0 ? (
-                        <span className="text-muted">
-                          {" "}
-                          · {row.approvedCount} signed off
-                        </span>
-                      ) : null}
+                    {/* The sign-off tally is its own column too, for the same
+                        reason. Run together with the count it made a 160px
+                        blob that started in a different place on every row —
+                        "10/10", "10/10 · 10 SIGNED OFF", "4/10" — so no two
+                        fractions lined up and the eye had to read each one
+                        rather than scan the column. */}
+                    <span className="label hidden w-28 shrink-0 truncate text-right sm:block">
+                      {row.approvedCount > 0
+                        ? `${row.approvedCount} signed off`
+                        : ""}
+                    </span>
+
+                    <span
+                      className={`text-body w-14 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums ${
+                        row.doneCount >= row.activeCount
+                          ? "text-ink"
+                          : "text-warn"
+                      }`}
+                    >
+                      {row.doneCount}/{row.activeCount}
                     </span>
                   </Link>
                 </li>
