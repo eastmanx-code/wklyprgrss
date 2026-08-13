@@ -60,7 +60,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Signed off, out of the board each venue runs · a second figure means fewer were filed"
+          hint="New photo and comment, out of the board each venue runs · signed off shown once reviewed"
         >
           <ul>
             {active.map((row) => {
@@ -75,10 +75,13 @@ export function VenueRows({
                       {row.venue.code}
                     </span>
 
-                    <Segments
-                      done={row.approvedCount}
-                      total={row.activeCount}
-                    />
+                    {/* The work, not the paperwork. This measured approvals,
+                        so before a review pass every venue in the company read
+                        0/10 — a week where 183 cards were filed looked like a
+                        week where nobody moved. What a crew did is the photo
+                        and the comment; signing off is the admin's job and
+                        belongs second. */}
+                    <Segments done={row.doneCount} total={row.activeCount} />
 
                     {/* Meta gets its own column. Folded into the 72px count
                         it wrapped to a second line and broke the 40px row —
@@ -95,15 +98,19 @@ export function VenueRows({
                     </span>
 
                     <span className="text-body w-40 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
-                      <span className="text-ink">
-                        {row.approvedCount}/{row.activeCount}
+                      <span
+                        className={
+                          row.doneCount >= row.activeCount
+                            ? "text-ink"
+                            : "text-warn"
+                        }
+                      >
+                        {row.doneCount}/{row.activeCount}
                       </span>
-                      {row.doneCount === 0 ? (
-                        <span className="text-warn"> · none filed</span>
-                      ) : row.doneCount < row.activeCount ? (
-                        <span className="text-warn">
+                      {row.approvedCount > 0 ? (
+                        <span className="text-muted">
                           {" "}
-                          · {row.doneCount} filed
+                          · {row.approvedCount} signed off
                         </span>
                       ) : null}
                     </span>
