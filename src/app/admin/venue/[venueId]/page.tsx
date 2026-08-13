@@ -231,7 +231,7 @@ export default async function AdminVenuePage({
                     <p className="label mt-1.5">
                       {submission.progress === "another_cycle"
                         ? "Leader says: one more cycle"
-                        : "Leader says: done"}
+                        : "Leader says: this is done"}
                     </p>
 
                     {/* Stacked and bottom-aligned: at five columns a tile is

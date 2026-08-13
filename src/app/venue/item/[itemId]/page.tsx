@@ -343,10 +343,13 @@ export default async function ItemPage({
                       ) : null}
                     </figure>
                   </div>
-                  {/* Done or not, on every entry. The state was only ever
-                      printed when the answer was "one more cycle", so a
-                      finished card said nothing and read exactly like a card
-                      nobody had answered. */}
+                  {/* Done or not, on every entry, in the leader's own words.
+                      The state was only ever printed when the answer was "one
+                      more cycle", so a finished card said nothing and read
+                      exactly like a card nobody had answered. The wording is
+                      copied from the buttons they actually tapped — "this is
+                      done", "one more cycle" — so the record and the form
+                      cannot drift into two vocabularies for one answer. */}
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <span
                       className={
@@ -357,7 +360,7 @@ export default async function ItemPage({
                     >
                       {submission.progress === "another_cycle"
                         ? "One more cycle"
-                        : "Done"}
+                        : "This is done"}
                     </span>
                     <ReviewPill review={submission.review} />
                   </div>
