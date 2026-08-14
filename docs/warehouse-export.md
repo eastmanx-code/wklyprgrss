@@ -97,6 +97,63 @@ on or after the Thursday. Before a review pass, a fully compliant venue reads
 week should read `filed_count`, and switch to `approved_count` only once
 `graded = true`.
 
+## What a row means depends on when you ask
+
+A week is not a fixed thing that appears finished on Sunday night. It fills in
+over four days, gets judged on the fifth, and the judgement lands after the
+week is already over. Every field below is live at the moment of the request.
+
+| When (Pacific) | What is true | What a tracker should show |
+| --- | --- | --- |
+| Mon 00:00 | New week opens. Every count is zero. | Nothing yet — not a failure. |
+| Mon–Thu | `filed_count` climbs as venues walk their boards. `approved_count` is almost always `0`. | `filed_count / items_on_board`. |
+| Thu 16:00 | `deadline_passed` flips true. `filed_count` is final in practice. | Who made ten, who did not. |
+| Thu eve – Fri | Review happens. `approved_count`, `sent_back_count`, `awaiting_review_count` populate. `graded` flips true per venue. | Switch the headline to `approved_count`. |
+| The following week | Late grading still lands on the **previous** week's rows. | Keep re-reading recent weeks. |
+
+**Do not show `approved_count` as "the score" before the review.** Filing is
+what a venue did; approving is a judgement made about it afterwards. Read
+mid-week, a perfect venue is `filed_count = 10, approved_count = 0`, and a
+tracker keyed on approvals will show the whole company at zero for four days
+out of five. Read `filed_count` until `graded = true`, then `approved_count`.
+
+**Rows are not frozen when the week ends.** Grading happens on or after the
+Thursday, and sometimes days later. A loader that only ever pulls the current
+week will freeze last week's approvals at whatever they were on Sunday and
+never see the grade arrive.
+
+**So pull a window, not a week.** `?weeks=4` daily, upserting on
+`(week_ending, venue_code)`, keeps recent history correct as verdicts land
+while staying small — four weeks is about eighty rows.
+
+## What it can answer
+
+Directly, per venue per week: did they do the work (`filed_count` against
+`items_on_board`), did it pass (`approved_count`, `status`), how much got
+rejected (`sent_back_count`), is anything still undecided
+(`awaiting_review_count`), is the week closed (`graded`, `graded_by`,
+`graded_at`), and when the work was actually filed (`first_filed_at`,
+`last_filed_at`).
+
+Derivable across venues and weeks:
+
+- **Company completion** — `SUM(filed_count) / SUM(items_on_board)`.
+- **Win rate** — venues at or above 80% of their board approved. That ratio is
+  the app's own definition of a win.
+- **Miss streaks** — consecutive weeks a venue failed, from the history.
+- **Turnaround** — `deadline_at - last_filed_at`: how close to the wire a
+  venue finished.
+- **Procrastination** — `first_filed_at` against the Monday. This is the
+  measure that showed thirteen of twenty venues not starting until the
+  deadline day itself.
+- **Grading latency** — `graded_at - deadline_at`: how long review takes after
+  the cutoff.
+- **Rejection rate** — `sent_back_count / filed_count` over time, per venue,
+  which separates a venue filing carelessly from one filing well.
+
+What it cannot answer, by design: what the tasks were, what the photographs
+showed, what anyone wrote, or who did the work. That detail stays in the app.
+
 ## Suggested landing
 
 Following the conventions already in the warehouse — `fct_ctuit_log_completion_weekly`,
