@@ -33,6 +33,7 @@ on the server.
 | `ADMIN_PIN` | Admin PIN, 6 digits. Comma-separate for more than one. |
 | `DEADLINE_DAY` | `0`=Sun … `6`=Sat, Pacific |
 | `DEADLINE_HOUR` | `0`–`23`, Pacific |
+| `SCORES_API_TOKEN` | Optional. Bearer token for `/api/scores`. Unset means the endpoint is off, not open. |
 
 Thursday 4pm Pacific is `DEADLINE_DAY=4`, `DEADLINE_HOUR=16`.
 

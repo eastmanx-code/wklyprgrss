@@ -97,6 +97,42 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
 }
 
 /**
+ * The calendar day an instant fell on, in the venues' own timezone.
+ *
+ * A submission filed at 8pm Pacific on Wednesday is stored as Thursday in UTC.
+ * Counting days off the raw timestamp would move a third of a normal evening's
+ * work into the next day, and on the deadline day it would move it past the
+ * deadline.
+ */
+export function dayInTz(iso: string): string {
+  const p = partsInTz(new Date(iso));
+  return `${String(p.year).padStart(4, "0")}-${String(p.month).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
+}
+
+/** Today, where the venues are. */
+export function todayInTz(now: Date = new Date()): string {
+  return dayInTz(now.toISOString());
+}
+
+/** The seven calendar days of a week, Monday first. */
+export function daysOfWeek(weekStart: string): string[] {
+  const base = isoDateToUtcMidnight(weekStart);
+  return Array.from({ length: 7 }, (_, i) => toIsoDate(base + i * DAY_MS));
+}
+
+/**
+ * The Sunday that closes a week, for the warehouse.
+ *
+ * This app keys a week on the Monday it opens; the CH warehouse keys every
+ * weekly table on the Sunday it ends. Two right answers to the same question,
+ * and a join between them silently matches nothing — so the export carries
+ * both and the warehouse joins on the one it already uses.
+ */
+export function weekEnding(weekStart: string): string {
+  return toIsoDate(isoDateToUtcMidnight(weekStart) + 6 * DAY_MS);
+}
+
+/**
  * Whole weeks between two week starts. Both are Mondays, so this is exact
  * division rather than a rounding question — and it stays right across a DST
  * boundary because week starts are dates, not instants.
