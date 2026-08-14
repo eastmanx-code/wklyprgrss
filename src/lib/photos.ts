@@ -84,6 +84,33 @@ export function forgetSignedUrl(path: string): void {
   cache.delete(path);
 }
 
+/**
+ * The paths worth asking for: everything a set of entries points at, minus
+ * whatever retention has already deleted.
+ *
+ * Signing a path whose object is gone was always wasted work — the screens
+ * show a placeholder for those, driven by the stamp rather than by whether a
+ * URL came back. Holding URLs between renders makes it worse than wasteful:
+ * the retention sweep runs as its own process and cannot reach this cache, so
+ * a URL minted just before a purge would keep being handed out afterwards, and
+ * a deliberate "photo purged" placeholder would show up as a broken image
+ * instead. Not asking in the first place closes that.
+ */
+export function livePhotoPaths(
+  entries: {
+    photo_url: string;
+    before_photo_url: string | null;
+    photo_purged_at: string | null;
+  }[],
+): string[] {
+  return entries.flatMap((entry) => {
+    if (entry.photo_purged_at) return [];
+    return entry.before_photo_url
+      ? [entry.photo_url, entry.before_photo_url]
+      : [entry.photo_url];
+  });
+}
+
 export async function signedUrl(path: string): Promise<string | null> {
   return (await signedUrls([path])).get(path) ?? null;
 }

@@ -6,7 +6,7 @@ import { StartOver } from "@/components/StartOver";
 import { VenueHero } from "@/components/VenueHero";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
-import { signedUrls } from "@/lib/photos";
+import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
@@ -41,11 +41,7 @@ export default async function VenuePage() {
   // Both shots, not just the headline one. A tile that showed only the after
   // made a before uploaded the same week invisible, which a leader read as the
   // second photo overriding the first.
-  const thumbs = await signedUrls(
-    [...board.latest.values()].flatMap((s) =>
-      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
-    ),
-  );
+  const thumbs = await signedUrls(livePhotoPaths([...board.latest.values()]));
 
   return (
     <main>

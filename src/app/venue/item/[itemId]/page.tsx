@@ -14,7 +14,7 @@ import {
   PurgedPhoto,
   ReviewPill,
 } from "@/components/ui";
-import { signedUrls } from "@/lib/photos";
+import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
@@ -52,11 +52,7 @@ export default async function ItemPage({
   }
 
   const submissions = await getSubmissionsForItems([item.id]);
-  const photos = await signedUrls(
-    submissions.flatMap((s) =>
-      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
-    ),
-  );
+  const photos = await signedUrls(livePhotoPaths(submissions));
 
   const weekStart = currentWeekStart();
   const thisWeek = submissions.filter((s) => s.week_start === weekStart);
