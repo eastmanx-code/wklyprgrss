@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# The template carries names only, never values — and the README tells you to
+# copy it, which it could not do while this rule swallowed it too.
+!.env.example
 
 # vercel
 .vercel
