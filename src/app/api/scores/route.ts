@@ -1,11 +1,15 @@
 import { timingSafeEqual } from "node:crypto";
 
-import { venueWeekRows } from "@/lib/scores";
+import { venueDayRows, venueWeekRows } from "@/lib/scores";
 import { currentWeekStart, shiftWeeks } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
 const MAX_WEEKS = 26;
+// Seven rows a day per venue rather than one a week, so the same window is
+// seven times the payload. Held lower to keep a careless ?weeks=26 from
+// returning four thousand rows nobody asked for.
+const MAX_WEEKS_DAILY = 8;
 const WEEK_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -66,6 +70,15 @@ export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
   const single = params.get("week");
   const weeksParam = params.get("weeks");
+  const grain = params.get("grain") ?? "week";
+
+  if (grain !== "week" && grain !== "day") {
+    return Response.json(
+      { error: "grain must be week or day" },
+      { status: 400 },
+    );
+  }
+  const maxWeeks = grain === "day" ? MAX_WEEKS_DAILY : MAX_WEEKS;
 
   let weekStarts: string[];
   if (single) {
@@ -78,9 +91,9 @@ export async function GET(request: Request): Promise<Response> {
     weekStarts = [single];
   } else {
     const asked = weeksParam ? Number(weeksParam) : 1;
-    if (!Number.isInteger(asked) || asked < 1 || asked > MAX_WEEKS) {
+    if (!Number.isInteger(asked) || asked < 1 || asked > maxWeeks) {
       return Response.json(
-        { error: `weeks must be a whole number from 1 to ${MAX_WEEKS}` },
+        { error: `weeks must be a whole number from 1 to ${maxWeeks}` },
         { status: 400 },
       );
     }
@@ -91,11 +104,15 @@ export async function GET(request: Request): Promise<Response> {
     );
   }
 
-  const rows = await venueWeekRows(weekStarts);
+  const rows =
+    grain === "day"
+      ? await venueDayRows(weekStarts)
+      : await venueWeekRows(weekStarts);
 
   return Response.json(
     {
       source: "wklyprgrss",
+      grain,
       generated_at: new Date().toISOString(),
       week_starts: weekStarts,
       row_count: rows.length,

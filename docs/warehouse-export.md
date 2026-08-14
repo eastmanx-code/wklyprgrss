@@ -18,8 +18,9 @@ Authorization: Bearer <token>
 
 | Parameter | Default | Notes |
 | --- | --- | --- |
-| `weeks` | `1` | How many weeks back, ending with the current one. 1–26. |
+| `weeks` | `1` | How many weeks back, ending with the current one. 1–26 weekly, 1–8 daily. |
 | `week` | — | A single week by its Monday, `YYYY-MM-DD`. Overrides `weeks`. |
+| `grain` | `week` | `week` for one row per venue per week, `day` for one row per venue per day. |
 
 Responses: `200` with rows, `400` on a bad parameter, `401` on a bad or
 missing token, `503` if the token is not configured on the server. An unset
@@ -153,6 +154,58 @@ Derivable across venues and weeks:
 
 What it cannot answer, by design: what the tasks were, what the photographs
 showed, what anyone wrote, or who did the work. That detail stays in the app.
+
+## Daily grain
+
+```
+GET https://wklyprgrss.com/api/scores?grain=day&weeks=4
+```
+
+One row per venue per day, keyed on `(date, venue_code)`. Derived from the
+timestamps already on every entry, so it is exact and it reaches backwards
+over all of history — there is nothing to start collecting and nothing lost
+if a load is missed.
+
+Worth being clear about why it is not built by snapshotting the weekly rows
+daily: that series could only ever begin the day it was switched on, and the
+idempotent upsert the weekly grain is designed for would overwrite each day
+with the next.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `date` | DATE | Calendar day, Pacific. |
+| `day_of_week` | STRING | `Monday` … `Sunday`. |
+| `week_start` / `week_ending` | DATE | The week this day belongs to. |
+| `venue_code` | STRING | As above. |
+| `items_on_board` | INT | Tasks on the board. |
+| `entries_filed` | INT | Entries filed that day. Raw activity — a re-file counts again. |
+| `items_covered_to_date` | INT | Distinct tasks with an entry this week, as at the end of that day. **The progress curve.** |
+| `entries_approved` | INT | Verdicts given that day. This is the admin's work, not the venue's. |
+| `entries_sent_back` | INT | Rejections given that day. |
+| `is_deadline_day` | BOOL | Whether that day carries the week's cutoff. |
+
+Days that have not happened yet are not emitted — a zero on a Saturday that
+is still two days away reads as a venue that failed on Saturday.
+
+Dates are Pacific, not UTC. An entry filed at 8pm Pacific on a Wednesday is
+stored as Thursday in UTC; counting off the raw timestamp would move a third
+of a normal evening into the next day, and on the deadline day it would move
+it past the deadline.
+
+**What it shows that the weekly grain cannot.** The week of 2026-08-10, every
+venue together:
+
+| Day | Filed | Approved | Sent back |
+| --- | --- | --- | --- |
+| Mon | 0 | 0 | 0 |
+| Tue | 0 | 0 | 0 |
+| Wed | 61 | 0 | 0 |
+| Thu (deadline) | 134 | 174 | 20 |
+
+Weekly, that is "nineteen of twenty-one passed". Daily, it is a programme
+that runs on Thursday. A venue that walked its building all week and one that
+did everything in sixteen minutes on Thursday afternoon are identical in the
+weekly grain and obvious in this one.
 
 ## Suggested landing
 

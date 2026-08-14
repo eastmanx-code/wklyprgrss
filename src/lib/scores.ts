@@ -3,7 +3,14 @@ import "server-only";
 import { latestByItem, statusFor } from "./status";
 import { db } from "./supabase";
 import type { Submission, WeekStatus } from "./types";
-import { deadlineFor, isDeadlinePassed, weekEnding } from "./week";
+import {
+  dayInTz,
+  daysOfWeek,
+  deadlineFor,
+  isDeadlinePassed,
+  todayInTz,
+  weekEnding,
+} from "./week";
 
 /**
  * One venue's week, flattened for a warehouse.
@@ -144,6 +151,123 @@ export async function venueWeekRows(
         deadline_at: deadlineFor(weekStart).toISOString(),
         deadline_passed: passed,
       });
+    }
+  }
+
+  return rows;
+}
+
+/**
+ * One venue's day.
+ *
+ * Derived from the timestamps already on every entry, so it is exact and it
+ * works backwards over all of history — no snapshotting, nothing to start
+ * collecting, nothing lost if a load is missed. A daily series assembled by
+ * saving the weekly numbers once a day could only ever begin today, and would
+ * be wiped by the idempotent upsert the weekly grain is designed for.
+ */
+export type VenueDayRow = {
+  /** Calendar day, in the venues' own timezone. */
+  date: string;
+  day_of_week: string;
+  week_start: string;
+  week_ending: string;
+  venue_code: string;
+  items_on_board: number;
+  /** Entries filed that day. Raw activity, so a re-file counts again. */
+  entries_filed: number;
+  /** Tasks with at least one entry this week, as at the end of that day. The
+      progress curve toward the board. */
+  items_covered_to_date: number;
+  /** Verdicts given that day — which is the admin's work, not the venue's. */
+  entries_approved: number;
+  entries_sent_back: number;
+  is_deadline_day: boolean;
+};
+
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+export async function venueDayRows(
+  weekStarts: string[],
+  now: Date = new Date(),
+): Promise<VenueDayRow[]> {
+  if (weekStarts.length === 0) return [];
+
+  const { data: venueData, error: venueError } = await db()
+    .from("venues")
+    .select("id, code")
+    .eq("active", true)
+    .order("code");
+  if (venueError) throw new Error(venueError.message);
+  const venues = (venueData ?? []) as { id: string; code: string }[];
+
+  const { data: itemData, error: itemError } = await db()
+    .from("items")
+    .select("id, venue_id, active");
+  if (itemError) throw new Error(itemError.message);
+  const items = (itemData ?? []) as Row[];
+  const venueOfItem = new Map(items.map((i) => [i.id, i.venue_id]));
+  const onBoard = new Map<string, number>();
+  for (const item of items) {
+    if (!item.active) continue;
+    onBoard.set(item.venue_id, (onBoard.get(item.venue_id) ?? 0) + 1);
+  }
+
+  const { data: subData, error: subError } = await db()
+    .from("submissions")
+    .select("item_id, week_start, created_at, reviewed_at, review")
+    .is("cleared_at", null)
+    .in("week_start", weekStarts);
+  if (subError) throw new Error(subError.message);
+  const submissions = (subData ?? []) as Submission[];
+
+  const today = todayInTz(now);
+  const rows: VenueDayRow[] = [];
+
+  for (const weekStart of weekStarts) {
+    const ofWeek = submissions.filter((s) => s.week_start === weekStart);
+    const deadlineDay = dayInTz(deadlineFor(weekStart).toISOString());
+    // A week in progress has no rows for days that have not happened. Zeroes
+    // for a Saturday that is still two days away read as a venue that failed
+    // on Saturday.
+    const days = daysOfWeek(weekStart).filter((d) => d <= today);
+
+    for (const venue of venues) {
+      const mine = ofWeek.filter((s) => venueOfItem.get(s.item_id) === venue.id);
+      const covered = new Set<string>();
+
+      for (const date of days) {
+        const filedToday = mine.filter((s) => dayInTz(s.created_at) === date);
+        for (const s of filedToday) covered.add(s.item_id);
+
+        const judgedToday = mine.filter(
+          (s) => s.reviewed_at && dayInTz(s.reviewed_at) === date,
+        );
+
+        rows.push({
+          date,
+          day_of_week: DAY_NAMES[new Date(`${date}T00:00:00Z`).getUTCDay()],
+          week_start: weekStart,
+          week_ending: weekEnding(weekStart),
+          venue_code: venue.code,
+          items_on_board: onBoard.get(venue.id) ?? 0,
+          entries_filed: filedToday.length,
+          items_covered_to_date: covered.size,
+          entries_approved: judgedToday.filter((s) => s.review === "approved")
+            .length,
+          entries_sent_back: judgedToday.filter((s) => s.review === "sent_back")
+            .length,
+          is_deadline_day: date === deadlineDay,
+        });
+      }
     }
   }
 
