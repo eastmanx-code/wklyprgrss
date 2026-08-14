@@ -39,24 +39,38 @@ export default function Error({
       <div className="panel p-8 text-center">
         <p className="label">Something went wrong</p>
         <h1 className="mt-4 text-metric font-medium">
-          We couldn&apos;t load that
+          {error.digest ? "We couldn't load that" : "That didn't get through"}
         </h1>
+        {/* Two different failures wore one message.
+            Next stamps a digest on anything that breaks while the server is
+            building the page, so a digest means the app has a fault worth
+            reporting. No digest means nothing broke — the request never
+            landed: the connection dropped, or the app was mid-update when the
+            tap went out. Telling someone to report a bug that does not exist
+            wastes their time and hides the one instruction that actually
+            works, which is to do it again. */}
         <p className="note mx-auto mt-5 max-w-xs leading-relaxed text-muted">
-          Try again. If it keeps happening, send it over and it&apos;ll get
-          looked at.
+          {error.digest
+            ? "Try again. If it keeps happening, send it over and it'll get looked at."
+            : "Nothing was saved and nothing is broken — the request didn't reach the server. This is usually a dropped connection or an update landing mid-tap. Try again."}
         </p>
 
         <div className="mt-8 space-y-3">
           <button type="button" onClick={reset} className="btn w-full">
             Try again
           </button>
-          <button
-            type="button"
-            onClick={reportBug}
-            className="btn-secondary w-full"
-          >
-            Email the bug
-          </button>
+          {/* Offered where there is something to report. A request that never
+              arrived leaves nothing to look at, and a mail saying "reference
+              none" is a round trip for both of us. */}
+          {error.digest ? (
+            <button
+              type="button"
+              onClick={reportBug}
+              className="btn-secondary w-full"
+            >
+              Email the bug
+            </button>
+          ) : null}
         </div>
 
         {error.digest ? (
