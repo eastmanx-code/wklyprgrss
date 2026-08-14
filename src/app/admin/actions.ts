@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { forgetSignedUrl } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -38,12 +39,18 @@ async function venueOfItem(itemId: string): Promise<string | null> {
   return (data as { venue_id: string } | null)?.venue_id ?? null;
 }
 
+/**
+ * The two screens the person taking the action is actually on.
+ *
+ * It used to clear five. The other three — the leader board, a venue's board
+ * page, a leader's own screen — are other people in other browsers, and a
+ * revalidate here cannot reach their router cache. Every route in this app is
+ * force-dynamic, so none of them is cached on the server either: those calls
+ * bought nothing and were paid for on every approval.
+ */
 function refresh(venueId: string) {
   revalidatePath("/admin");
   revalidatePath(`/admin/venue/${venueId}`);
-  revalidatePath("/board");
-  revalidatePath(`/board/${venueId}`);
-  revalidatePath("/venue");
 }
 
 async function itemsFor(venueId: string): Promise<Item[]> {
@@ -283,6 +290,11 @@ export async function wipeVenue(formData: FormData) {
         .storage.from(PHOTO_BUCKET)
         .remove(paths.slice(i, i + 100));
     }
+
+    // The one case where a path stops meaning what it meant. Signed URLs are
+    // held between renders because an object is written once and never
+    // rewritten — deleting the object is the exception, so it has to say so.
+    for (const path of paths) forgetSignedUrl(path);
 
     if ((subs ?? []).length > 0) {
       await db()

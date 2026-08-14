@@ -14,6 +14,7 @@ import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
 import { GradeWeek } from "@/components/admin/GradeWeek";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
+import { SubmitButton } from "@/components/admin/SubmitButton";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
 import { WipeVenue } from "@/components/admin/WipeVenue";
 import {
@@ -147,9 +148,9 @@ export default async function AdminVenuePage({
             <form action={approveAllForVenue}>
               <input type="hidden" name="venueId" value={venue.id} />
               <input type="hidden" name="weekStart" value={weekStart} />
-              <button type="submit" className="btn btn-sm">
+              <SubmitButton className="btn btn-sm" pendingLabel="Approving…">
                 Approve all
-              </button>
+              </SubmitButton>
             </form>
           ) : null}
         </div>
@@ -290,9 +291,9 @@ export default async function AdminVenuePage({
                             value={venue.id}
                           />
                           <input type="hidden" name="review" value="approved" />
-                          <button type="submit" className="btn-ghost w-full">
+                          <SubmitButton pendingLabel="Approving…">
                             Approve
-                          </button>
+                          </SubmitButton>
                         </form>
                       ) : null}
 
@@ -313,9 +314,9 @@ export default async function AdminVenuePage({
                             name="review"
                             value="sent_back"
                           />
-                          <button type="submit" className="btn-ghost w-full">
+                          <SubmitButton pendingLabel="Sending back…">
                             Send back
-                          </button>
+                          </SubmitButton>
                         </form>
                       ) : null}
                     </div>
