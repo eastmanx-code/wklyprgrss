@@ -63,7 +63,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Updated is a new photo and comment · grade turns green once the week is closed, with what was signed off inside it"
+          hint="Updated is a new photo and comment · grade fills in once the week is closed, with what was signed off inside it"
         >
           {/* Name the columns once, rather than on every row.
               Two numbers sit on each row now and they mean different things —
@@ -129,9 +129,9 @@ export function VenueRows({
                         screen is something a venue filed; this one is a
                         decision that was made about it, and a plain number in
                         the same weight as its neighbour says the two are the
-                        same kind of thing. The chip is the app's existing
-                        done mark — not the alert colour, which here means
-                        past due, short, missed. A grade is not a warning.
+                        same kind of thing. It takes the accent the app
+                        already has — the one on PAST DUE — rather than a
+                        colour invented for this column.
 
                         The chip is the grade, and the number inside it is
                         what was signed off. Those are two different facts and
@@ -140,21 +140,22 @@ export function VenueRows({
                         closed-out review of a failing venue read exactly like
                         a venue nobody had opened.
 
-                        Every row carries a chip, and colour carries the
-                        state. Printing the ungraded ones as a bare number
-                        instead was read as a missing chip rather than as a
-                        different state — in a column of chips, the row
-                        without one looks broken. Uniform, the column is a
-                        list that turns green as the week is closed out.
+                        Every row carries a chip, and the two states the app
+                        already has tell them apart — solid for closed out,
+                        quiet for still open. Printing the ungraded ones as a
+                        bare number instead was read as a missing chip rather
+                        than as a different state: in a column of chips, the
+                        row without one looks broken. Uniform, the column is a
+                        list that fills in as the week is closed out. */}
 
-                        Kept on a phone, unlike the timestamp beside it. The
+                    {/* Kept on a phone, unlike the timestamp beside it. The
                         bar loses eighty pixels and still has ten legible
                         segments, and the whole point of the column is that it
                         is visible where the reviewing actually happens. */}
                     <span className="flex w-20 shrink-0 justify-center">
                       <span
                         className={`pill min-w-9 justify-center tabular-nums ${
-                          graded ? "pill-ok" : "pill-pending"
+                          graded ? "pill-warn" : "pill-pending"
                         }`}
                       >
                         {row.approvedCount}
