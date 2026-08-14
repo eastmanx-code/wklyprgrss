@@ -149,8 +149,15 @@ export function statusFor(
   weekStart: string,
   now: Date,
 ): WeekStatus {
-  // Nothing to walk means nothing to miss.
-  if (activeCount === 0) return "SETUP";
+  // A board that was never built is a nought, not an exemption. This used to
+  // read "nothing to walk means nothing to miss", which excused the one
+  // failure the programme cannot afford to excuse: building the ten is the
+  // first part of the job, and a venue three weeks in with no list has not
+  // been overlooked, it has not started. A venue that genuinely is not in the
+  // programme yet is marked inactive, which is the lever that exists for it.
+  if (activeCount === 0) {
+    return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
+  }
   // The bar is the board a venue is actually running. LAFA keeps a rolling
   // list of live problems and retires them as they are fixed; against a fixed
   // ten it could file every item it had and still fail. A short board is
@@ -514,18 +521,20 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       venue,
       doneCount,
       approvedCount,
-      activeCount,
+      // No board means the target is the target. Against a denominator of
+      // zero, "0 of 0" is arithmetically complete and draws as a full bar —
+      // the venue that has done least of all would have looked finished.
+      activeCount: activeCount === 0 ? WEEKLY_ITEM_TARGET : activeCount,
       status: statusFor(doneCount, activeCount, weekStart, now),
       failStreak,
     };
   });
 
-  // Worst first, then the ones needing setup, then everything on track.
+  // Worst first, then everything still open, then everything on track.
   const statusRank: Record<WeekStatus, number> = {
     FAIL: 0,
-    SETUP: 1,
-    PENDING: 2,
-    PASS: 3,
+    PENDING: 1,
+    PASS: 2,
   };
   rows.sort((a, b) => {
     if (statusRank[a.status] !== statusRank[b.status]) {

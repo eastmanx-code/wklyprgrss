@@ -47,7 +47,6 @@ export function CompanyHero({
   passing,
   pending,
   failing,
-  setup,
   winRate,
   deadlineLabel,
   deadlineMs,
@@ -60,7 +59,6 @@ export function CompanyHero({
   passing: number;
   pending: number;
   failing: number;
-  setup: number;
   winRate: number;
   deadlineLabel: string;
   deadlineMs: number;
@@ -110,7 +108,6 @@ export function CompanyHero({
           <Stat label="Wins" value={passing} />
           <Stat label="Partial" value={pending} />
           <Stat label="Missed" value={failing} accent={failing > 0} />
-          <Stat label="Not set up" value={setup} />
         </div>
       </Card>
 

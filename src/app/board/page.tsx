@@ -25,9 +25,8 @@ export default async function BoardPage() {
   // Leaders see the grade too — it is the thing that gates their reset, so
   // "has mine been closed out yet" should be answerable from the board.
   const gradedIds = await gradedVenueIds(mostRecentCompletedWeek());
-  const setup = rows.filter((row) => row.status === "SETUP").length;
   // Scored on approvals, in the buckets the weekly note is written in.
-  const scored = rows.filter((row) => row.status !== "SETUP");
+  const scored = rows;
   const wins = scored.filter((row) =>
     isWin(row.approvedCount, row.activeCount),
   ).length;
@@ -61,8 +60,7 @@ export default async function BoardPage() {
         deadlineMs={deadlineFor(weekStart).getTime()}
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
-        activeVenues={rows.length - setup}
-        notSetUp={setup}
+        activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
@@ -74,7 +72,6 @@ export default async function BoardPage() {
           passing={wins}
           pending={partial}
           failing={missed}
-          setup={setup}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}

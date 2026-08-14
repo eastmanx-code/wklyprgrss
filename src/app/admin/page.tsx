@@ -26,9 +26,8 @@ export default async function AdminDashboardPage() {
 
   const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
     await getDashboard();
-  const setup = rows.filter((row) => row.status === "SETUP").length;
   // Scored on approvals, in the buckets the weekly note is written in.
-  const scored = rows.filter((row) => row.status !== "SETUP");
+  const scored = rows;
   const wins = scored.filter((row) =>
     isWin(row.approvedCount, row.activeCount),
   ).length;
@@ -78,8 +77,7 @@ export default async function AdminDashboardPage() {
         deadlineMs={deadlineFor(weekStart).getTime()}
         itemsDone={itemsDone}
         itemsTarget={itemsTarget}
-        activeVenues={rows.length - setup}
-        notSetUp={setup}
+        activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
@@ -93,7 +91,6 @@ export default async function AdminDashboardPage() {
           passing={wins}
           pending={partial}
           failing={missed}
-          setup={setup}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}

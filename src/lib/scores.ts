@@ -1,6 +1,6 @@
 import "server-only";
 
-import { latestByItem, statusFor } from "./status";
+import { WEEKLY_ITEM_TARGET, latestByItem, statusFor } from "./status";
 import { db } from "./supabase";
 import type { Submission, WeekStatus } from "./types";
 import {
@@ -126,7 +126,12 @@ export async function venueWeekRows(
       // finished in.
       const latest = [...latestByItem(mine).values()];
       const filed = latest.length;
-      const activeCount = onBoard.get(venue.id) ?? 0;
+      const built = onBoard.get(venue.id) ?? 0;
+      // A venue with no board is measured against the target, exactly as the
+      // dashboard measures it. Reported as 0 of 0 it is arithmetically
+      // complete, and the export would have called the worst case in the
+      // programme a finished week while the board called it a fail.
+      const activeCount = built === 0 ? WEEKLY_ITEM_TARGET : built;
       const times = mine.map((s) => s.created_at).sort();
       const grade = grades.get(`${venue.id}|${weekStart}`);
 
@@ -142,7 +147,7 @@ export async function venueWeekRows(
           .length,
         rolling_count: latest.filter((s) => s.progress === "another_cycle")
           .length,
-        status: statusFor(filed, activeCount, weekStart, now),
+        status: statusFor(filed, built, weekStart, now),
         graded: Boolean(grade),
         graded_by: grade?.graded_by ?? null,
         graded_at: grade?.graded_at ?? null,
@@ -258,7 +263,7 @@ export async function venueDayRows(
           week_start: weekStart,
           week_ending: weekEnding(weekStart),
           venue_code: venue.code,
-          items_on_board: onBoard.get(venue.id) ?? 0,
+          items_on_board: onBoard.get(venue.id) || WEEKLY_ITEM_TARGET,
           entries_filed: filedToday.length,
           items_covered_to_date: covered.size,
           entries_approved: judgedToday.filter((s) => s.review === "approved")

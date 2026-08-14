@@ -55,7 +55,7 @@ loader can replay any range without creating duplicates.
 | `sent_back_count` | INT | Rejected, to be done again. |
 | `awaiting_review_count` | INT | Filed, no verdict yet. |
 | `rolling_count` | INT | Filed, but the leader said it needs another cycle. |
-| `status` | STRING | `PASS`, `PENDING`, `FAIL`, `SETUP`. |
+| `status` | STRING | `PASS`, `PENDING`, `FAIL`. |
 | `graded` | BOOL | Whether the week has been closed out for this venue. |
 | `graded_by` | STRING | Who closed it. Null when ungraded. |
 | `graded_at` | TIMESTAMP | When. Null when ungraded. |
@@ -83,6 +83,13 @@ Monday; the warehouse closes one on Sunday. The week of Monday 2026-08-10 is
 the warehouse's `2026-08-16`. Both are in every row — join on `week_ending`.
 
 ## Two things to know about the numbers
+
+**A venue with no board scores nought out of ten, not nought out of nought.**
+Building the ten is the first part of the job, so a venue that never set a list
+up is the bottom of the scoring rather than outside it. `items_on_board` reads
+`10` for such a venue and `status` reads `FAIL` once the deadline has passed.
+A venue genuinely not in the programme yet is marked inactive and does not
+appear at all.
 
 **Historical weeks are scored against the current board.** A venue's
 `items_on_board` is what it has on the board today, not what it had in the

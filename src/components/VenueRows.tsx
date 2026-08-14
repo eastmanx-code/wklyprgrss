@@ -29,11 +29,13 @@ function Segments({ done, total }: { done: number; total: number }) {
 }
 
 /**
- * The all-venues list, split by whether a venue has anything to walk yet.
+ * The all-venues list.
  *
- * Venues with no items collapse to code chips rather than rows: twenty-four
- * empty tracks imply progress was possible this week, and chips say "not
- * started" honestly.
+ * Venues with no board used to collapse into a separate strip of code chips,
+ * on the reasoning that an empty track implied progress had been possible.
+ * That reasoning excused the worst case in the programme: a venue that never
+ * built its ten is not outside the scoring, it is the bottom of it. Every
+ * venue is on one list, measured against the same ten.
  *
  * The two pages are the same view of the same week; the only difference is
  * where a row leads — the board to a read-only venue, admin to the screen with
@@ -54,8 +56,7 @@ export function VenueRows({
   /** Venues whose week has been closed out. */
   gradedVenueIds?: Set<string>;
 }) {
-  const active = rows.filter((row) => row.status !== "SETUP");
-  const notSetUp = rows.filter((row) => row.status === "SETUP");
+  const active = rows;
 
   return (
     <>
@@ -174,26 +175,6 @@ export function VenueRows({
         </Card>
       ) : null}
 
-      {notSetUp.length > 0 ? (
-        <Card
-          className="col-span-12"
-          title="No board yet"
-          hint="Nothing set up, so nothing to miss"
-        >
-          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-            {notSetUp.map((row) => (
-              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
-                <Link
-                  href={`${hrefPrefix}${row.venue.id}`}
-                  className="bg-inset hover:bg-hover text-body text-muted flex h-10 items-center justify-center rounded-[4px] tracking-normal transition-colors"
-                >
-                  {row.venue.code}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
     </>
   );
 }

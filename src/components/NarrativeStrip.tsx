@@ -18,13 +18,11 @@ export function NarrativeStrip({
   itemsDone,
   itemsTarget,
   activeVenues,
-  notSetUp,
 }: {
   deadlineMs: number;
   itemsDone: number;
   itemsTarget: number;
   activeVenues: number;
-  notSetUp: number;
 }) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
@@ -61,8 +59,6 @@ export function NarrativeStrip({
       photos
       <span className="text-muted"> · </span>
       <span className="text-ink">{activeVenues}</span> active
-      <span className="text-muted"> · </span>
-      <span className="text-ink">{notSetUp}</span> not set up
     </p>
   );
 }
