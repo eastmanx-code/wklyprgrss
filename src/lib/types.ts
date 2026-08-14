@@ -60,11 +60,12 @@ export type ReviewState = "pending" | "approved" | "sent_back";
 export type ProgressState = "done" | "another_cycle";
 
 /**
- * SETUP is not a grade. A venue with no items configured hasn't failed its
- * walkthrough — it has never been given one, and painting it red buries the
- * venues that genuinely missed.
+ * There is no exemption for having no board. A venue with no items set up has
+ * not been overlooked by the programme — building the ten is the first part of
+ * the job, so an empty board scores nought out of ten like any other shortfall.
+ * A venue genuinely not in the programme yet is marked inactive instead.
  */
-export type WeekStatus = "PASS" | "PENDING" | "FAIL" | "SETUP";
+export type WeekStatus = "PASS" | "PENDING" | "FAIL";
 
 export type VenueWeekSummary = {
   venue: VenueSummary;
