@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { reviewSubmission } from "@/app/admin/actions";
+import { SubmitButton } from "./SubmitButton";
 
 /**
  * A decision already made, and the way to change it.
@@ -53,9 +54,11 @@ export function ChangeVerdict({
             name="review"
             value={approved ? "sent_back" : "approved"}
           />
-          <button type="submit" className="btn-ghost w-full">
+          <SubmitButton
+            pendingLabel={approved ? "Sending back…" : "Approving…"}
+          >
             {approved ? "Send back instead" : "Approve instead"}
-          </button>
+          </SubmitButton>
         </form>
       ) : null}
     </div>
