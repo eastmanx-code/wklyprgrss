@@ -25,13 +25,6 @@
   --divider: rgba(255, 255, 255, 0.11);
   --warn: #bcbc1e;
   --on-warn: #0d0d0d;
-  /* The third colour, and the last one. Yellow already means past due,
-     short, missed — so the grade could not borrow it without reading as an
-     alarm. Green is reserved for exactly one thing: a week the admin has
-     closed out. Dark text on it in both themes, so it reads as a stamp
-     rather than as more of the interface. */
-  --ok: #57c98a;
-  --on-ok: #0d0d0d;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
 }
@@ -54,10 +47,6 @@
   --divider: rgba(0, 0, 0, 0.12);
   --warn: #6f6f0f;
   --on-warn: #ffffff;
-  /* Deeper on white, where the dark-mode green washes out against the card
-     and stops looking like a stamp at all. Still takes black text. */
-  --ok: #3aa96b;
-  --on-ok: #0d0d0d;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);
 }
@@ -82,7 +71,6 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-warn: var(--warn);
-  --color-ok: var(--ok);
   --color-card-border: var(--card-border);
   --color-inset: var(--inset);
   --color-hover: var(--hover);
@@ -94,7 +82,6 @@
   --text-metric: 28px;
   --text-hero: 56px;
   --color-on-warn: var(--on-warn);
-  --color-on-ok: var(--on-ok);
 
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
@@ -748,12 +735,6 @@ p {
     /* Per theme: the light accent is dark enough for white, the dark accent
        is a bright yellow that needs near-black. */
     color: var(--color-on-warn);
-  }
-
-  /* Graded. The admin has closed the week out on this venue. */
-  .pill-ok {
-    background: var(--color-ok);
-    color: var(--color-on-ok);
   }
 
   /* Submitted, counts for the week, but the leader says it isn't finished. */
