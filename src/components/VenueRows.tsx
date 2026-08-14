@@ -63,7 +63,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Updated is a new photo and comment · grade fills in once the week is closed, with what was signed off inside it"
+          hint="Updated is a new photo and comment · grade is what was signed off, in colour once the week is closed"
         >
           {/* Name the columns once, rather than on every row.
               Two numbers sit on each row now and they mean different things —
@@ -125,41 +125,36 @@ export function VenueRows({
                         fractions lined up and the eye had to read each one
                         rather than scan the column.
 
-                        Marked, not just printed. Every other figure on this
-                        screen is something a venue filed; this one is a
-                        decision that was made about it, and a plain number in
-                        the same weight as its neighbour says the two are the
-                        same kind of thing. It takes the accent the app
-                        already has — the one on PAST DUE — rather than a
-                        colour invented for this column.
+                        The biggest number on the row, because it is the one
+                        being scanned. It sat in a chip before, and the chip
+                        was doing two jobs while only one of them was needed:
+                        the header already says this figure is a grade, and
+                        the accent already separates it from the white count
+                        beside it. What the box cost was room — a digit forced
+                        down to the 11px label role with the letter-spacing
+                        that role carries, which is type meant for words like
+                        MISSED 2W, not for twenty-one numbers read in a
+                        column.
 
-                        The chip is the grade, and the number inside it is
-                        what was signed off. Those are two different facts and
-                        showing only the second hid the first: a venue whose
-                        every task was sent back has nothing signed off, so a
-                        closed-out review of a failing venue read exactly like
-                        a venue nobody had opened.
+                        It shows what was signed off, and the colour shows
+                        whether the week was closed at all. Those are two
+                        different facts and printing only the first hid the
+                        second: a venue whose every task was sent back has
+                        nothing signed off, so a closed-out review of a
+                        failing venue read exactly like a venue nobody had
+                        opened. Every row carries a figure now — muted while
+                        the review is still open, accent once it is graded.
 
-                        Every row carries a chip, and the two states the app
-                        already has tell them apart — solid for closed out,
-                        quiet for still open. Printing the ungraded ones as a
-                        bare number instead was read as a missing chip rather
-                        than as a different state: in a column of chips, the
-                        row without one looks broken. Uniform, the column is a
-                        list that fills in as the week is closed out. */}
-
-                    {/* Kept on a phone, unlike the timestamp beside it. The
+                        Kept on a phone, unlike the timestamp beside it. The
                         bar loses eighty pixels and still has ten legible
                         segments, and the whole point of the column is that it
                         is visible where the reviewing actually happens. */}
-                    <span className="flex w-20 shrink-0 justify-center">
-                      <span
-                        className={`pill min-w-9 justify-center tabular-nums ${
-                          graded ? "pill-warn" : "pill-pending"
-                        }`}
-                      >
-                        {row.approvedCount}
-                      </span>
+                    <span
+                      className={`w-20 shrink-0 text-center text-title tracking-normal tabular-nums ${
+                        graded ? "text-warn" : "text-muted"
+                      }`}
+                    >
+                      {row.approvedCount}
                     </span>
 
                     <span
