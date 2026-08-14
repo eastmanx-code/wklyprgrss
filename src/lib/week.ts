@@ -97,6 +97,18 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
 }
 
 /**
+ * The Sunday that closes a week, for the warehouse.
+ *
+ * This app keys a week on the Monday it opens; the CH warehouse keys every
+ * weekly table on the Sunday it ends. Two right answers to the same question,
+ * and a join between them silently matches nothing — so the export carries
+ * both and the warehouse joins on the one it already uses.
+ */
+export function weekEnding(weekStart: string): string {
+  return toIsoDate(isoDateToUtcMidnight(weekStart) + 6 * DAY_MS);
+}
+
+/**
  * Whole weeks between two week starts. Both are Mondays, so this is exact
  * division rather than a rounding question — and it stays right across a DST
  * boundary because week starts are dates, not instants.
