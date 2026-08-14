@@ -129,9 +129,9 @@ export function VenueRows({
                         screen is something a venue filed; this one is a
                         decision that was made about it, and a plain number in
                         the same weight as its neighbour says the two are the
-                        same kind of thing. The chip is the app's existing
-                        done mark — not the alert colour, which here means
-                        past due, short, missed. A grade is not a warning.
+                        same kind of thing. It takes the accent the app
+                        already has — the one on PAST DUE — rather than a
+                        colour invented for this column.
 
                         The chip is the grade, and the number inside it is
                         what was signed off. Those are two different facts and
@@ -155,7 +155,7 @@ export function VenueRows({
                     <span className="flex w-20 shrink-0 justify-center">
                       <span
                         className={`pill min-w-9 justify-center tabular-nums ${
-                          graded ? "pill-done" : "pill-pending"
+                          graded ? "pill-warn" : "pill-pending"
                         }`}
                       >
                         {row.approvedCount}
