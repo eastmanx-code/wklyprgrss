@@ -63,7 +63,7 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="Updated is a new photo and comment · graded is marked once the week is closed, with what was signed off inside it"
+          hint="Updated is a new photo and comment · grade turns green once the week is closed, with what was signed off inside it"
         >
           {/* Name the columns once, rather than on every row.
               Two numbers sit on each row now and they mean different things —
@@ -78,7 +78,7 @@ export function VenueRows({
             <span className="label hidden w-24 shrink-0 text-right sm:block">
               Last in
             </span>
-            <span className="label w-20 shrink-0 text-right">Graded</span>
+            <span className="label w-20 shrink-0 text-center">Grade</span>
             <span className="label w-16 shrink-0 text-right">Updated</span>
           </div>
 
@@ -138,23 +138,27 @@ export function VenueRows({
                         showing only the second hid the first: a venue whose
                         every task was sent back has nothing signed off, so a
                         closed-out review of a failing venue read exactly like
-                        a venue nobody had opened. A tally with no chip is a
-                        review still in progress.
+                        a venue nobody had opened.
+
+                        Every row carries a chip, and colour carries the
+                        state. Printing the ungraded ones as a bare number
+                        instead was read as a missing chip rather than as a
+                        different state — in a column of chips, the row
+                        without one looks broken. Uniform, the column is a
+                        list that turns green as the week is closed out.
 
                         Kept on a phone, unlike the timestamp beside it. The
                         bar loses eighty pixels and still has ten legible
                         segments, and the whole point of the column is that it
                         is visible where the reviewing actually happens. */}
-                    <span className="flex w-20 shrink-0 justify-end">
-                      {graded ? (
-                        <span className="pill pill-done min-w-9 justify-center tabular-nums">
-                          {row.approvedCount}
-                        </span>
-                      ) : row.approvedCount > 0 ? (
-                        <span className="text-body text-muted tabular-nums">
-                          {row.approvedCount}
-                        </span>
-                      ) : null}
+                    <span className="flex w-20 shrink-0 justify-center">
+                      <span
+                        className={`pill min-w-9 justify-center tabular-nums ${
+                          graded ? "pill-ok" : "pill-pending"
+                        }`}
+                      >
+                        {row.approvedCount}
+                      </span>
                     </span>
 
                     <span
