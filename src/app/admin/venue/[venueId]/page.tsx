@@ -197,14 +197,42 @@ export default async function AdminVenuePage({
                         <ReviewPill review={submission.review} />
                       </span>
                     ) : null}
+                    {/* The leader's answer, on the photograph.
+                        Said as a line of its own — "Leader says: this is
+                        done" — it was a sixth stacked row of uppercase under
+                        the picture, and in a five-column board it wrapped to
+                        two. The card stopped being readable at a glance,
+                        which is the only thing a card is for. In the corner it
+                        costs no row at all and answers the question from
+                        across the grid. Backed, because the rolling pill is an
+                        outline and an outline on a photograph is nothing. */}
+                    {submission ? (
+                      <span className="bg-panel absolute bottom-2 left-2 rounded-[4px]">
+                        <span
+                          className={
+                            submission.progress === "another_cycle"
+                              ? "pill pill-rolling"
+                              : "pill pill-done"
+                          }
+                        >
+                          {submission.progress === "another_cycle"
+                            ? "One more cycle"
+                            : "This is done"}
+                        </span>
+                      </span>
+                    ) : null}
                   </div>
 
                   <p className="caps mt-3 text-body leading-snug font-medium break-words">
                     {item.title}
                   </p>
+                  {/* Just the date. "Last photo · " is four words of chrome
+                      in front of three of content, and in a narrow column it
+                      pushed a one-line fact onto two. Under a photograph, a
+                      date is the photograph's date. */}
                   <p className="label mt-1">
                     {lastEver
-                      ? `Last photo · ${formatLastUpload(lastEver.created_at)}`
+                      ? formatLastUpload(lastEver.created_at)
                       : "No photo yet"}
                   </p>
                   {carried ? (
@@ -223,16 +251,6 @@ export default async function AdminVenuePage({
                       author={submission.author}
                       assistedBy={submission.assisted_by}
                     />
-
-                    {/* Printed either way. This only spoke up for "one more
-                        cycle", so a finished card said nothing at all and read
-                        identically to one nobody had answered — on a clean
-                        board of ten, ten silent cards. */}
-                    <p className="label mt-1.5">
-                      {submission.progress === "another_cycle"
-                        ? "Leader says: one more cycle"
-                        : "Leader says: this is done"}
-                    </p>
 
                     {/* Stacked and bottom-aligned: at five columns a tile is
                           too narrow for two pills side by side, and pushing them

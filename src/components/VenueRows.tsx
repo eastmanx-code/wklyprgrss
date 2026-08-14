@@ -44,12 +44,15 @@ export function VenueRows({
   hrefPrefix,
   ownVenueId = null,
   finishedAt = {},
+  gradedVenueIds,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
   /** venue code -> when it reached ten, for the venues that got there. */
   finishedAt?: Record<string, string>;
+  /** Venues whose week has been closed out. */
+  gradedVenueIds?: Set<string>;
 }) {
   const active = rows.filter((row) => row.status !== "SETUP");
   const notSetUp = rows.filter((row) => row.status === "SETUP");
@@ -60,11 +63,29 @@ export function VenueRows({
         <Card
           className="col-span-12"
           title="This week"
-          hint="New photo and comment, out of the board each venue runs · signed off shown once reviewed"
+          hint="Updated is a new photo and comment · grade turns green once the week is closed, with what was signed off inside it"
         >
+          {/* Name the columns once, rather than on every row.
+              Two numbers sit on each row now and they mean different things —
+              what the venue filed, and what has been signed off — so run
+              together as "10/10 · 10 SIGNED OFF" they read as one figure with
+              a suffix. Headed, the words come off the rows entirely: the
+              tally is a bare number under APPROVED, and twenty-one of them
+              make a column you can read down. */}
+          <div className="mb-1 flex h-5 items-center gap-4 px-2">
+            <span className="label w-16 shrink-0">Venue</span>
+            <span className="min-w-0 flex-1" />
+            <span className="label hidden w-24 shrink-0 text-right sm:block">
+              Last in
+            </span>
+            <span className="label w-20 shrink-0 text-center">Grade</span>
+            <span className="label w-16 shrink-0 text-right">Updated</span>
+          </div>
+
           <ul>
             {active.map((row) => {
               const finished = finishedAt[row.venue.code];
+              const graded = gradedVenueIds?.has(row.venue.id) ?? false;
               return (
                 <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                   <Link
@@ -97,22 +118,57 @@ export function VenueRows({
                       {row.venue.id === ownVenueId ? " · you" : ""}
                     </span>
 
-                    <span className="text-body w-40 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums">
+                    {/* The sign-off tally is its own column too, for the same
+                        reason. Run together with the count it made a 160px
+                        blob that started in a different place on every row —
+                        "10/10", "10/10 · 10 SIGNED OFF", "4/10" — so no two
+                        fractions lined up and the eye had to read each one
+                        rather than scan the column.
+
+                        Marked, not just printed. Every other figure on this
+                        screen is something a venue filed; this one is a
+                        decision that was made about it, and a plain number in
+                        the same weight as its neighbour says the two are the
+                        same kind of thing. The chip is the app's existing
+                        done mark — not the alert colour, which here means
+                        past due, short, missed. A grade is not a warning.
+
+                        The chip is the grade, and the number inside it is
+                        what was signed off. Those are two different facts and
+                        showing only the second hid the first: a venue whose
+                        every task was sent back has nothing signed off, so a
+                        closed-out review of a failing venue read exactly like
+                        a venue nobody had opened.
+
+                        Every row carries a chip, and colour carries the
+                        state. Printing the ungraded ones as a bare number
+                        instead was read as a missing chip rather than as a
+                        different state — in a column of chips, the row
+                        without one looks broken. Uniform, the column is a
+                        list that turns green as the week is closed out.
+
+                        Kept on a phone, unlike the timestamp beside it. The
+                        bar loses eighty pixels and still has ten legible
+                        segments, and the whole point of the column is that it
+                        is visible where the reviewing actually happens. */}
+                    <span className="flex w-20 shrink-0 justify-center">
                       <span
-                        className={
-                          row.doneCount >= row.activeCount
-                            ? "text-ink"
-                            : "text-warn"
-                        }
+                        className={`pill min-w-9 justify-center tabular-nums ${
+                          graded ? "pill-ok" : "pill-pending"
+                        }`}
                       >
-                        {row.doneCount}/{row.activeCount}
+                        {row.approvedCount}
                       </span>
-                      {row.approvedCount > 0 ? (
-                        <span className="text-muted">
-                          {" "}
-                          · {row.approvedCount} signed off
-                        </span>
-                      ) : null}
+                    </span>
+
+                    <span
+                      className={`text-body w-16 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums ${
+                        row.doneCount >= row.activeCount
+                          ? "text-ink"
+                          : "text-warn"
+                      }`}
+                    >
+                      {row.doneCount}/{row.activeCount}
                     </span>
                   </Link>
                 </li>

@@ -116,6 +116,28 @@ export function emptySlots(count: number, target: number): number[] {
   );
 }
 
+/**
+ * People type "na" in a field they have nothing to put in.
+ *
+ * Printed literally that becomes "ASSISTED BY NA" on the card — a second line
+ * of uppercase that says nobody helped, which is what an empty field already
+ * said. Treated as blank it just goes away.
+ */
+const NOBODY = new Set([
+  "na",
+  "n/a",
+  "n\\a",
+  "none",
+  "no one",
+  "noone",
+  "nobody",
+  "-",
+  "--",
+  "—",
+  ".",
+  "0",
+]);
+
 /** Byline for a submission: who wrote it, and who helped. */
 export function Attribution({
   author,
@@ -124,10 +146,12 @@ export function Attribution({
   author: string;
   assistedBy: string | null;
 }) {
+  const helper = (assistedBy ?? "").trim();
+  const helped = helper && !NOBODY.has(helper.toLowerCase());
   return (
     <p className="label mt-2">
       By {author || "—"}
-      {assistedBy ? ` · assisted by ${assistedBy}` : ""}
+      {helped ? ` · assisted by ${helper}` : ""}
     </p>
   );
 }
