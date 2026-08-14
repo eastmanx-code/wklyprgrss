@@ -12,7 +12,7 @@ import {
   StatusPill,
   emptySlots,
 } from "@/components/ui";
-import { signedUrls } from "@/lib/photos";
+import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
@@ -49,11 +49,7 @@ export default async function BoardVenuePage({
   const submissions = await getSubmissionsForItems(
     items.map((item) => item.id),
   );
-  const photos = await signedUrls(
-    submissions.flatMap((s) =>
-      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
-    ),
-  );
+  const photos = await signedUrls(livePhotoPaths(submissions));
 
   const weekStart = currentWeekStart();
   const doneThisWeek = doneItemIdsFrom(
