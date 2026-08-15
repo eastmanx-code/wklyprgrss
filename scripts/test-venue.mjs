@@ -57,8 +57,24 @@ if (!venueId) {
 
 if (show || hide) {
   await db.from("venues").update({ active: show }).eq("id", venueId);
+  // Its close checklists ride along. The status feed is gated on the
+  // checklist's own active flag rather than the venue's — the close product
+  // and the weekly walkthrough are different programmes with different rolls,
+  // and the pilot close venue is deliberately not in the walkthrough — so
+  // standing the venue down has to stand its lists down too, or a test list
+  // keeps reporting itself as part of tonight.
+  const { error: listError } = await db
+    .from("close_checklists")
+    .update({ active: show })
+    .eq("venue_id", venueId);
+  if (listError) {
+    console.error(`\n  Could not toggle its checklists: ${listError.message}\n`);
+    process.exit(1);
+  }
   console.log(
-    `\n  ${CODE} is ${show ? "in" : "out of"} the login picker.${
+    `\n  ${CODE} is ${show ? "in" : "out of"} the login picker, and its close checklists are ${
+      show ? "in" : "out of"
+    } the status feed.${
       show ? "  Hide it again with --hide when you are done." : ""
     }\n`,
   );

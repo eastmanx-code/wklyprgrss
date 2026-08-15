@@ -332,7 +332,13 @@ export function CloseChecklist({
 
     // Evidence is the check. Tapping the card jumps to the first shot still
     // outstanding rather than ticking anything.
-    if (item.proof) {
+    //
+    // Length, not truthiness: an empty array is truthy, and this branch then
+    // reached for shot zero of a list with no shots and threw inside a click
+    // handler — so the card did nothing, forever, without saying so. Normalised
+    // on the way in and on the way out now, but checked here too, because the
+    // failure was silent and the next one should not be.
+    if (item.proof && item.proof.length > 0) {
       const at = Math.max(
         0,
         item.proof.findIndex(
@@ -475,8 +481,11 @@ export function CloseChecklist({
       }
     })();
     setCertified(
+      // "all ten" was written when there was one hard-coded ten-line list.
+      // A venue writes its own now, and a six-line list was being told it had
+      // finished ten.
       doneCount === CLOSE_TOTAL
-        ? "Certified · all ten"
+        ? `Certified · all ${CLOSE_TOTAL}`
         : `Certified · ${doneCount} of ${CLOSE_TOTAL}, ${CLOSE_TOTAL - doneCount} left open`,
     );
   }

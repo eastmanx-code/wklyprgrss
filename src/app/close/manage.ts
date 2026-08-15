@@ -102,6 +102,12 @@ function revalidateFor(list: { house: House; role: string; phase: Phase }) {
  * decoration — it is the whole mechanism by which a photo can be judged
  * without anything judging it, so a shot with no prompt is rejected rather
  * than saved empty.
+ *
+ * An item that asks for nothing stores `[]` — the column is not-null and
+ * defaults to it, so that is the schema's own word for "no proof required".
+ * The reading side has to say so too: `[]` is truthy, and code that branched
+ * on `item.proof` alone read an item asking for nothing as an item asking for
+ * a shot that was not there. Normalised where it is read, not here.
  */
 function readShots(formData: FormData): Shot[] | string {
   const kinds = formData.getAll("shotKind").map(String);
@@ -155,18 +161,31 @@ export async function createChecklist(
   if (role.length > MAX_ROLE_LENGTH)
     return { error: "That role name is too long." };
 
-  // Reactivating rather than inserting: a venue that retires a list and then
-  // wants it back should get its history, not a fresh empty one beside it.
-  const { data: existing } = await db()
+  // Matched on the address, not on the exact letters.
+  //
+  // The unique constraint compares role text exactly; slugFor lowercases it
+  // and collapses everything that is not a letter or a digit. So "MOD" and
+  // "mod" are two rows to the database and one URL to the app, and Night Hawk
+  // has both — two lists fighting over the same address, one of which can
+  // never be reached. "Bar Back" and "bar-back" do it too.
+  //
+  // Comparing the way the address is computed is the only rule that cannot
+  // drift from it. A venue has a handful of lists, so this is a small read.
+  const wanted = slugFor(house, role, phase);
+  const { data: siblings } = await db()
     .from("close_checklists")
-    .select("id, active")
-    .eq("venue_id", venue)
-    .eq("house", house)
-    .eq("role", role)
-    .eq("phase", phase)
-    .maybeSingle();
+    .select("id, house, role, phase, active")
+    .eq("venue_id", venue);
 
-  const found = existing as { id: string; active: boolean } | null;
+  const found =
+    ((siblings ?? []) as {
+      id: string;
+      house: House;
+      role: string;
+      phase: Phase;
+      active: boolean;
+    }[]).find((row) => slugFor(row.house, row.role, row.phase) === wanted) ??
+    null;
   if (found) {
     if (found.active) return { error: "That list already exists." };
     await db()
@@ -254,7 +273,13 @@ export async function addItem(
 
   const { error } = await db()
     .from("close_items")
-    .insert({ checklist_id: list.id, position, title, detail, proof });
+    .insert({
+      checklist_id: list.id,
+      position,
+      title,
+      detail,
+      proof,
+    });
   if (error) return { error: "Could not add that. Try again." };
 
   revalidateFor(list);

@@ -88,7 +88,12 @@ export default async function ChecklistPage({
     number: row.position,
     title: row.title,
     detail: row.detail ?? [],
-    proof: row.proof ?? undefined,
+    // An empty array is not "proof required of nothing", it is no proof — and
+    // it used to arrive here as one, because an empty array is truthy. Every
+    // tap on such an item reached for shot zero of nothing and threw, so the
+    // card could never be ticked and said nothing about why. Normalised on the
+    // way in so rows already saved that way come right without a migration.
+    proof: row.proof && row.proof.length > 0 ? row.proof : undefined,
   }));
 
   // Tonight, if anyone has started it. Read-only here — the actions create it.

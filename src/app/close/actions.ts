@@ -274,6 +274,56 @@ export async function recordCapture(
 }
 
 /** Signing closes the night out. After this it is a record, not a document. */
+/**
+ * The list as it stands, frozen for the signature.
+ *
+ * A certified night stops depending on the live tables and becomes a document:
+ * these lines, this wording, this proof asked for, ticked by these people. The
+ * report recomputed an old night against today's list, so rewriting a line
+ * quietly re-measured every night already recorded, and retiring one erased
+ * the fact that the job had ever been owed.
+ *
+ * Editing tonight's list stays free. It simply no longer reaches backwards.
+ */
+async function listAtSigning(checklistId: string, nightRow: string) {
+  const { data: items } = await db()
+    .from("close_items")
+    .select("id, position, title, detail, proof")
+    .eq("checklist_id", checklistId)
+    .eq("active", true)
+    .order("position");
+
+  const { data: ticks } = await db()
+    .from("close_ticks")
+    .select("item_id, initials, created_at")
+    .eq("night_id", nightRow);
+
+  const tick = new Map(
+    ((ticks ?? []) as { item_id: string; initials: string; created_at: string }[])
+      .map((t) => [t.item_id, t]),
+  );
+
+  return ((items ?? []) as {
+    id: string;
+    position: number;
+    title: string;
+    detail: string[];
+    proof: unknown;
+  }[]).map((item) => {
+    const t = tick.get(item.id);
+    return {
+      item_id: item.id,
+      position: item.position,
+      title: item.title,
+      detail: item.detail,
+      proof: item.proof,
+      ticked: Boolean(t),
+      initials: t?.initials ?? null,
+      ticked_at: t?.created_at ?? null,
+    };
+  });
+}
+
 export async function certifyNight(
   _prev: CloseState,
   formData: FormData,
@@ -293,11 +343,15 @@ export async function certifyNight(
   if (!night) return { error: "Could not open tonight." };
   if (await isLocked(night)) return { error: "Tonight is already certified." };
 
+  const frozen = await listAtSigning(list.id, night);
+
   const { error } = await db()
     .from("close_nights")
     .update({
       certified_at: new Date().toISOString(),
       certified_by: who,
+      // Written once, never updated. See supabase/014_close_signed_list.sql.
+      list_at_signing: frozen,
       // Verbatim: if the wording ever changes, the record still shows what
       // this person put their name to.
       attestation,
