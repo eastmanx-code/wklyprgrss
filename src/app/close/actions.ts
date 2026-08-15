@@ -134,6 +134,18 @@ export async function tickItem(
         { onConflict: "night_id,item_id" },
       );
     if (error) return { error: "Could not save that." };
+
+    // Proof can now be collected before the row is signed for — you take the
+    // photograph and then put your name to it, rather than the other way
+    // round. The tick is where the name arrives, so any shot still unsigned
+    // gets it here. Shots already carrying initials keep them: on an item two
+    // people worked, the one who took the photograph is the one who took it.
+    await db()
+      .from("close_proof")
+      .update({ initials })
+      .eq("night_id", night)
+      .eq("item_id", itemId)
+      .is("initials", null);
   } else {
     await db()
       .from("close_ticks")
@@ -164,7 +176,8 @@ export async function saveNote(
     .toUpperCase();
   const body = String(formData.get("body") ?? "").trim();
 
-  if (!initials) return { error: "Initial it first." };
+  // No initials required to write the note. Evidence can land before the
+  // signature; the tick is what has to be signed, and it backfills this row.
 
   const list = await checklistFor(slug);
   if (!list) return { error: "That checklist is not available." };
@@ -187,7 +200,8 @@ export async function saveNote(
         shot_index: shotIndex,
         kind: "note",
         body,
-        initials,
+        // Null, not "", so the tick's backfill can find it.
+        initials: initials || null,
       },
       { onConflict: "night_id,item_id,shot_index" },
     );
@@ -245,7 +259,8 @@ export async function recordCapture(
     .trim()
     .toUpperCase();
 
-  if (!initials) return { error: "Initial it first." };
+  // No initials required. Evidence can land before the signature — the tick
+  // is what has to be signed, and it backfills these rows when it happens.
   if (kind !== "photo" && kind !== "video") return { error: "Bad capture." };
 
   const list = await checklistFor(slug);
@@ -264,7 +279,8 @@ export async function recordCapture(
       shot_index: shotIndex,
       kind,
       storage_path: path,
-      initials,
+      // Null, not "", so the tick's backfill can find it.
+      initials: initials || null,
     },
     { onConflict: "night_id,item_id,shot_index" },
   );
