@@ -113,6 +113,17 @@ export function CloseChecklist({
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
+  /**
+   * Whether the signing block is showing while work is still outstanding.
+   *
+   * It used to be on screen from the moment the list opened — the attestation,
+   * the name field and the signature pad, all sitting under a list at nought
+   * done. The whole difficulty this product exists to solve is getting people
+   * to do the checklist rather than sign it, and a pad already waiting for a
+   * finger is an invitation to do the second. Signing with items open is still
+   * completely allowed; it now takes a deliberate tap to reach.
+   */
+  const [signingOpen, setSigningOpen] = useState(false);
   const [reopenPin, setReopenPin] = useState("");
   const [reopenReason, setReopenReason] = useState("");
   const [reopenError, setReopenError] = useState<string | null>(null);
@@ -1011,6 +1022,11 @@ export function CloseChecklist({
           </div>
         ) : null}
 
+        {/* Everything below is the signature. Held back until the work is
+            done, the night is already a record, or somebody deliberately asks
+            for it. */}
+        {openItems.length === 0 || locked || signingOpen ? (
+          <>
         <div className="border-ink mt-2.5 border-l-2 pl-4">
           <p className="attest">{attestationText}</p>
           {openItems.length > 0 ? (
@@ -1096,6 +1112,16 @@ export function CloseChecklist({
                   : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
           </button>
         </div>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="btn-ghost mt-4"
+            onClick={() => setSigningOpen(true)}
+          >
+            Sign with {openItems.length} open
+          </button>
+        )}
       </section>
     </div>
   );

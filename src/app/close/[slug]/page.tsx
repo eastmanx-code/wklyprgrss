@@ -151,16 +151,9 @@ export default async function ChecklistPage({
         <p className="label">
           {list.house} · {list.role} · {formatNight(night)}
         </p>
-        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-          <h1 className="text-metric font-medium">
-            {phaseName(list.phase)} checklist
-          </h1>
-          {/* The venue owns this list, so the way to change it is on it —
-              not in an admin screen somebody has to be told about. */}
-          <Link href={`/close/${slug}/edit`} className="btn-ghost min-h-11">
-            Edit the list
-          </Link>
-        </div>
+        <h1 className="text-metric mt-2 font-medium">
+          {phaseName(list.phase)} checklist
+        </h1>
       </header>
 
       {rows.length === 0 ? (
@@ -207,6 +200,23 @@ export default async function ChecklistPage({
           }}
         />
       )}
+
+      {/* Under the work, not over it.
+
+          The venue still owns its list — the way to change it is on the list
+          itself rather than in an admin screen somebody has to be told about.
+          But it sat directly beneath the title, which on a phone put "edit the
+          checklist" one tap away and above the first line of it. The person
+          holding this at one in the morning is walking the list, not writing
+          it; whoever is rewriting it will scroll. */}
+      {rows.length > 0 ? (
+        <Link
+          href={`/close/${slug}/edit`}
+          className="btn-ghost mt-6 inline-flex min-h-11"
+        >
+          Edit the list
+        </Link>
+      ) : null}
 
       <CloseBar back="/close" />
     </main>
