@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { gradeWeek, ungradeWeek } from "@/app/admin/actions";
 import type { House } from "@/lib/types";
@@ -42,10 +42,38 @@ export function GradeWeek({
   houses: HouseGrade[];
 }) {
   const [by, setBy] = useState("");
+  /**
+   * The name box lives outside these forms, because one name covers whichever
+   * half is submitted. That puts it beyond the browser's own validation, so
+   * the check is here — and it is a check rather than a disabled button on
+   * purpose. A greyed-out control that gives no reason is the thing that had a
+   * leader messaging to ask what was broken.
+   */
+  const [needName, setNeedName] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
 
+  function requireName(event: React.FormEvent<HTMLFormElement>) {
+    if (by.trim()) return;
+    event.preventDefault();
+    setNeedName(true);
+    nameRef.current?.focus();
+  }
+
+  /**
+   * Every half this venue runs is gradeable, practice or not.
+   *
+   * A practice week is still somebody's work, and the point of running one is
+   * to get told how it went. Hiding the button until the house starts counting
+   * left the person who walked three full kitchens on deadline day with no way
+   * to sign off any of it.
+   *
+   * What practice does NOT do is hold up a reset. That gate reads the scored
+   * houses only, so a venue is never stuck waiting on a grade that would not
+   * have counted anyway.
+   */
   const scored = houses.filter((house) => house.scored);
-  const outstanding = scored.filter((house) => !house.gradedBy);
-  const done = outstanding.length === 0 && scored.length > 0;
+  const outstanding = houses.filter((house) => !house.gradedBy);
+  const done = outstanding.length === 0 && houses.length > 0;
 
   return (
     <section className={`panel mb-6 ${done ? "" : "border-warn/30"}`}>
@@ -53,12 +81,14 @@ export function GradeWeek({
         Week of {weekLabel} ·{" "}
         {done
           ? "graded"
-          : `${scored.length - outstanding.length} of ${scored.length} graded`}
+          : `${houses.length - outstanding.length} of ${houses.length} graded`}
       </p>
       <p className="note text-muted mt-1 leading-relaxed">
         {done
           ? "This venue can reset its board."
-          : "Until every half is graded the venue cannot reset its board or take new jobs into the finished slots. Everything else works as normal for them."}
+          : scored.every((house) => house.gradedBy)
+            ? "This venue can reset its board. What is left below is a practice half, which is worth signing off but holds nothing up."
+            : "Until every half that counts is graded the venue cannot reset its board or take new jobs into the finished slots. Everything else works as normal for them."}
       </p>
 
       {outstanding.length > 0 ? (
@@ -68,23 +98,34 @@ export function GradeWeek({
           </label>
           <input
             id="gradeBy"
+            ref={nameRef}
             value={by}
-            onChange={(event) => setBy(event.target.value)}
+            onChange={(event) => {
+              setBy(event.target.value);
+              if (needName) setNeedName(false);
+            }}
             autoComplete="name"
             className="field mt-1 w-full"
             placeholder="Who is grading this"
+            aria-invalid={needName}
           />
+          {needName ? (
+            <p role="alert" className="text-body text-warn mt-2">
+              Put your name in before you grade. It goes on the record.
+            </p>
+          ) : null}
         </div>
       ) : null}
 
       <ul className="mt-4 space-y-2">
-        {scored.map((house) => (
+        {houses.map((house) => (
           <li
             key={house.house}
             className="flex flex-wrap items-center justify-between gap-3"
           >
             <p className="note min-w-0">
               {houseName(house.house)}
+              {house.scored ? "" : " · practice"}
               {house.gradedBy ? (
                 <span className="text-muted">
                   {" "}
@@ -105,16 +146,16 @@ export function GradeWeek({
                 </button>
               </form>
             ) : (
-              <form action={gradeWeek} className="shrink-0">
+              <form
+                action={gradeWeek}
+                onSubmit={requireName}
+                className="shrink-0"
+              >
                 <input type="hidden" name="venueId" value={venueId} />
                 <input type="hidden" name="weekStart" value={weekStart} />
                 <input type="hidden" name="house" value={house.house} />
                 <input type="hidden" name="by" value={by} />
-                <button
-                  type="submit"
-                  className="btn min-h-11"
-                  disabled={!by.trim()}
-                >
+                <button type="submit" className="btn min-h-11">
                   Grade {houseName(house.house).toLowerCase()}
                 </button>
               </form>

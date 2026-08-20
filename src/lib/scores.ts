@@ -84,11 +84,15 @@ export async function venueWeekRows(
 
   const { data: venueData, error: venueError } = await db()
     .from("venues")
-    .select("id, code")
+    .select("id, code, houses")
     .eq("active", true)
     .order("code");
   if (venueError) throw new Error(venueError.message);
-  const venues = (venueData ?? []) as { id: string; code: string }[];
+  const venues = (venueData ?? []) as {
+    id: string;
+    code: string;
+    houses: House[];
+  }[];
 
   const { data: itemData, error: itemError } = await db()
     .from("items")
@@ -142,7 +146,10 @@ export async function venueWeekRows(
     const passed = isDeadlinePassed(weekStart, now);
 
     for (const venue of venues) {
-      for (const house of HOUSES) {
+      // A venue only appears for the houses it actually runs, so a bar is one
+      // row a week and a restaurant is two. A row for a kitchen that does not
+      // exist would read in the warehouse as a kitchen nobody walked.
+      for (const house of HOUSES.filter((h) => venue.houses.includes(h))) {
         const key = keyOf(venue.id, house);
         const mine = ofWeek.filter((s) => keyOfItem.get(s.item_id) === key);
         // Newest entry per task decides its state, exactly as the board does —
@@ -239,11 +246,15 @@ export async function venueDayRows(
 
   const { data: venueData, error: venueError } = await db()
     .from("venues")
-    .select("id, code")
+    .select("id, code, houses")
     .eq("active", true)
     .order("code");
   if (venueError) throw new Error(venueError.message);
-  const venues = (venueData ?? []) as { id: string; code: string }[];
+  const venues = (venueData ?? []) as {
+    id: string;
+    code: string;
+    houses: House[];
+  }[];
 
   const { data: itemData, error: itemError } = await db()
     .from("items")
@@ -281,7 +292,8 @@ export async function venueDayRows(
     const days = daysOfWeek(weekStart).filter((d) => d <= today);
 
     for (const venue of venues) {
-      for (const house of HOUSES) {
+      // Same rule as the weekly grain.
+      for (const house of HOUSES.filter((h) => venue.houses.includes(h))) {
         const key = keyOf(venue.id, house);
         const mine = ofWeek.filter((s) => keyOfItem.get(s.item_id) === key);
         const covered = new Set<string>();

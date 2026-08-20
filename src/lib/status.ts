@@ -57,9 +57,30 @@ export function houseScored(house: House, weekStart: string): boolean {
   return weekStart >= houseStartWeek(house);
 }
 
-/** The houses whose numbers count in a given week, in board order. */
+/**
+ * The houses whose numbers count company-wide in a given week, in board order.
+ *
+ * This is the calendar question only. What a particular venue is scored on is
+ * this intersected with the houses it actually runs — see housesFor.
+ */
 export function scoredHouses(weekStart: string): House[] {
   return HOUSES.filter((house) => houseScored(house, weekStart));
+}
+
+/**
+ * The houses a venue is scored on this week: the ones it runs, that count yet.
+ *
+ * Every total, target, grade gate and drawn row goes through here. Four venues
+ * are bars with no kitchen, and measuring them against a house they do not
+ * have would fail them every week for a room that does not exist.
+ */
+export function housesFor(
+  venue: { houses: House[] },
+  weekStart: string,
+): House[] {
+  return HOUSES.filter(
+    (house) => venue.houses.includes(house) && houseScored(house, weekStart),
+  );
 }
 
 const STREAK_LOOKBACK_WEEKS = 26;
@@ -112,7 +133,7 @@ export const WEEKLY_ITEM_TARGET = 10;
 export async function getVenues(): Promise<VenueSummary[]> {
   const { data, error } = await db()
     .from("venues")
-    .select("id, code, name")
+    .select("id, code, name, houses")
     .eq("active", true)
     .order("code");
   if (error) throw new Error(error.message);
@@ -125,7 +146,7 @@ export async function getVenues(): Promise<VenueSummary[]> {
 export async function getVenue(venueId: string): Promise<Venue | null> {
   const { data, error } = await db()
     .from("venues")
-    .select("id, code, name, pin")
+    .select("id, code, name, pin, houses")
     .eq("id", venueId)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -298,6 +319,8 @@ export type LeaderBoard = {
 
 export async function getLeaderBoard(
   venueId: string,
+  /** The halves this venue runs. A bar gets one section, not two empty ones. */
+  venueHouses: House[] = HOUSES,
   now: Date = new Date(),
 ): Promise<LeaderBoard> {
   const weekStart = currentWeekStart(now);
@@ -398,7 +421,9 @@ export async function getLeaderBoard(
    * item id and every item belongs to exactly one house, so the split is a
    * filter, and the two houses cannot disagree about a task they can both see.
    */
-  const houses: HouseBoard[] = HOUSES.map((house) => {
+  const houses: HouseBoard[] = HOUSES.filter((house) =>
+    venueHouses.includes(house),
+  ).map((house) => {
     const mine = items.filter((item) => item.house === house);
     const ids = new Set(mine.map((item) => item.id));
     const only = (set: Set<string>) =>
@@ -555,9 +580,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     if (!first || s.week_start < first) firstWeekByKey.set(key, s.week_start);
   }
 
-  /** What a venue owes in a week: ten per house that is being scored. */
-  const targetFor = (week: string) =>
-    scoredHouses(week).length * WEEKLY_ITEM_TARGET;
+  /**
+   * What one venue owes in a week: ten per house it is scored on.
+   *
+   * Per venue, not company-wide. A bar with no kitchen owes ten, not twenty,
+   * and measuring it against twenty would park it at fifty per cent forever
+   * for a room it does not have.
+   */
+  const targetFor = (venue: VenueSummary, week: string) =>
+    housesFor(venue, week).length * WEEKLY_ITEM_TARGET;
+
+  /** What every venue owes together, which is the company denominator. */
+  const companyTarget = (week: string) =>
+    venues.reduce((sum, venue) => sum + targetFor(venue, week), 0);
 
   /**
    * When each venue finished this week — the moment the last task it owed got
@@ -571,10 +606,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
    * Sorted by time here rather than relying on the query order, which is by
    * week: the tenth row processed is not the tenth row submitted.
    */
-  const counting = new Set(scoredHouses(weekStart));
-  const target = targetFor(weekStart);
+  const byId = new Map(venues.map((venue) => [venue.id, venue]));
   const finishedAtByVenue = new Map<string, string>();
   for (const [venueId, entries] of thisWeekByVenue) {
+    const venue = byId.get(venueId);
+    if (!venue) continue;
+    const counting = new Set(housesFor(venue, weekStart));
+    const target = targetFor(venue, weekStart);
+    if (target === 0) continue;
     entries.sort((a, b) => a.at.localeCompare(b.at));
     const seen = new Set<string>();
     for (const entry of entries) {
@@ -589,7 +628,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   }
 
   const rows: VenueWeekSummary[] = venues.map((venue) => {
-    const houses = HOUSES.map((house): HouseWeek => {
+    // Only the halves this venue runs. A bar is never drawn, counted or
+    // graded on a kitchen it does not have.
+    const houses = HOUSES.filter((house) =>
+      venue.houses.includes(house),
+    ).map((house): HouseWeek => {
       const key = keyOf(venue.id, house);
       /**
        * How many tasks this week involved: what is open now, or what was
@@ -699,12 +742,12 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     weekStart,
     rows,
     itemsDone,
-    itemsTarget: rows.length * target,
+    itemsTarget: companyTarget(weekStart),
     history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
       const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
       // The bar moves the week the kitchen goes live, and only from then. A
       // fixed twenty would have halved every week before it overnight.
-      const weekTarget = venues.length * targetFor(week);
+      const weekTarget = companyTarget(week);
       const weekHouses = new Set(scoredHouses(week));
       // The current week reuses the rows the ring, buckets and list are all
       // built from, so the chart's last point cannot drift from the headline.
@@ -853,19 +896,34 @@ export async function gradedVenueIdsByHouse(
 }
 
 /**
- * Venues whose week is closed out in *every* house that is being scored.
+ * Venues whose week is closed out in every house they are scored on.
  *
  * The gate on resetting a board, and the "N of 21" on the admin screen. Either
  * grade alone is not a closed week: a venue told it could reset because the
  * dining room had been signed off would clear a kitchen nobody had looked at.
+ *
+ * Asked per venue, not company-wide, because a bar has no kitchen grade to
+ * wait for and would otherwise never be allowed to reset its board.
  */
 export async function fullyGradedVenueIds(
   weekStart: string,
 ): Promise<Set<string>> {
-  const houses = HOUSES.filter((house) => houseScored(house, weekStart));
-  const sets = await Promise.all(
-    houses.map((house) => gradedVenueIds(weekStart, house)),
+  const venues = await getVenues();
+  const sets = new Map(
+    await Promise.all(
+      scoredHouses(weekStart).map(
+        async (house) =>
+          [house, await gradedVenueIds(weekStart, house)] as const,
+      ),
+    ),
   );
-  if (sets.length === 0) return new Set();
-  return new Set([...sets[0]].filter((id) => sets.every((set) => set.has(id))));
+  return new Set(
+    venues
+      .filter((venue) => {
+        const owed = housesFor(venue, weekStart);
+        // A venue scored on nothing this week has nothing to wait for.
+        return owed.every((house) => sets.get(house)?.has(venue.id));
+      })
+      .map((venue) => venue.id),
+  );
 }

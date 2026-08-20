@@ -38,7 +38,9 @@ export default async function VenuePage() {
   const venue = await getVenue(session.venueId);
   if (!venue) redirect("/");
 
-  const board = await getLeaderBoard(venue.id);
+  // Only the halves this venue runs. A bar gets one section, not a kitchen
+  // full of empty slots it can never fill.
+  const board = await getLeaderBoard(venue.id, venue.houses);
   const unapproved = await countUnapproved(venue.id);
   // Reset waits on the grade for the week that has actually finished — the one
   // the signed-off work belongs to, not the one just started.

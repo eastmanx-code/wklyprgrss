@@ -110,6 +110,14 @@ export function ClearFinished({
           <label htmlFor="resetBy" className="label">
             Your name
           </label>
+          {/* required, rather than a button that greys out.
+      
+              A leader tapped Reset board with this empty, got no response and
+              no reason, and messaged to ask what was broken. A disabled button
+              is the worst of the three options: it looks pressable, does
+              nothing, and explains nothing. The field is in this form, so the
+              browser does the work now, focuses the box and says what it
+              wants. */}
           <input
             id="resetBy"
             name="by"
@@ -118,13 +126,10 @@ export function ClearFinished({
             autoComplete="name"
             className="field mt-1 w-full"
             placeholder="Who is resetting this"
+            required
           />
         </div>
-        <button
-          type="submit"
-          className="btn min-h-11"
-          disabled={pending || !by.trim()}
-        >
+        <button type="submit" className="btn min-h-11" disabled={pending}>
           {pending ? "Resetting…" : "Reset board"}
         </button>
       </form>
