@@ -9,7 +9,6 @@ import { getSession } from "@/lib/session";
 import {
   getDashboard,
   gradedVenueIdsByHouse,
-  scoredHouses,
   venueApproved,
   venueIsWin,
 } from "@/lib/status";
@@ -31,8 +30,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   if ((await getSession())?.role !== "admin") redirect("/admin/login");
 
-  const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
-    await getDashboard();
+  const { weekStart, rows, byHouse, finishes } = await getDashboard();
   // Scored on approvals, in the buckets the weekly note is written in. A
   // venue wins by winning every house that counts, not by the two averaged.
   const wins = rows.filter(venueIsWin).length;
@@ -93,27 +91,20 @@ export default async function AdminDashboardPage() {
 
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
-        itemsDone={itemsDone}
-        itemsTarget={itemsTarget}
+        byHouse={byHouse}
         activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
         <CompanyHero
           winRate={winRate}
-          percent={
-            itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0
-          }
-          itemsDone={itemsDone}
-          itemsTarget={itemsTarget}
+          byHouse={byHouse}
           passing={wins}
           pending={partial}
           failing={missed}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}
-          history={history}
-          houses={scoredHouses(weekStart).length}
         />
 
         <VenueRows

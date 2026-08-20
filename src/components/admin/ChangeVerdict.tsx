@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { reviewSubmission } from "@/app/admin/actions";
+import { SendBack } from "./SendBack";
 import { SubmitButton } from "./SubmitButton";
 
 /**
@@ -46,20 +47,24 @@ export function ChangeVerdict({
       </div>
 
       {open ? (
-        <form action={reviewSubmission}>
-          <input type="hidden" name="submissionId" value={submissionId} />
-          <input type="hidden" name="venueId" value={venueId} />
-          <input
-            type="hidden"
-            name="review"
-            value={approved ? "sent_back" : "approved"}
+        approved ? (
+          /* Turning an approval into a rejection is the case that most wants a
+             reason: the leader has already been told this was fine. */
+          <SendBack
+            submissionId={submissionId}
+            venueId={venueId}
+            label="Send back instead"
           />
-          <SubmitButton
-            pendingLabel={approved ? "Sending back…" : "Approving…"}
-          >
-            {approved ? "Send back instead" : "Approve instead"}
-          </SubmitButton>
-        </form>
+        ) : (
+          <form action={reviewSubmission}>
+            <input type="hidden" name="submissionId" value={submissionId} />
+            <input type="hidden" name="venueId" value={venueId} />
+            <input type="hidden" name="review" value="approved" />
+            <SubmitButton pendingLabel="Approving…">
+              Approve instead
+            </SubmitButton>
+          </form>
+        )
       ) : null}
     </div>
   );

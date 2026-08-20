@@ -11,6 +11,7 @@ import {
 } from "@/app/admin/actions";
 import { AddItemForm } from "@/components/admin/AddItemForm";
 import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
+import { SendBack } from "@/components/admin/SendBack";
 import { GradeWeek } from "@/components/admin/GradeWeek";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
@@ -335,26 +336,10 @@ export default async function AdminVenuePage({
                         ) : null}
 
                         {submission.review === "pending" ? (
-                          <form action={reviewSubmission}>
-                            <input
-                              type="hidden"
-                              name="submissionId"
-                              value={submission.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="venueId"
-                              value={venue.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="review"
-                              value="sent_back"
-                            />
-                            <SubmitButton pendingLabel="Sending back…">
-                              Send back
-                            </SubmitButton>
-                          </form>
+                          <SendBack
+                            submissionId={submission.id}
+                            venueId={venue.id}
+                          />
                         ) : null}
                       </div>
                     </>

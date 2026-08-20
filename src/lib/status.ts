@@ -187,7 +187,7 @@ export async function getSubmissionsForItems(
     let query = db()
       .from("submissions")
       .select(
-        "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, progress, created_at",
+        "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, review_note, progress, created_at",
       )
       .in("item_id", itemIds)
       .is("cleared_at", null);
@@ -447,16 +447,33 @@ export async function getLeaderBoard(
 export type Dashboard = {
   weekStart: string;
   rows: VenueWeekSummary[];
-  /** Total items done across every venue this week, scored houses only. */
-  itemsDone: number;
-  /** venues × ten per scored house — the real weekly obligation. */
-  itemsTarget: number;
+  /**
+   * The week's totals, one set per house, never one set for both.
+   *
+   * A single ring covering both halves is the averaging the split exists to
+   * prevent: with front of house at 95% and the kitchen at 24%, one figure
+   * reads 65%, which describes neither and hides the half that needs the
+   * attention. There is deliberately no combined itemsDone on here.
+   */
+  byHouse: HouseTotals[];
   /** Venues with a house that doesn't have its full 10 items configured. */
   venuesUnderConfigured: string[];
   /** Who reached ten this week, earliest first. */
   finishes: { code: string; at: string }[];
-  /** Company completion for each of the last few weeks, oldest first. */
+};
+
+/** One house's company-wide week, and how it has run over the last few. */
+export type HouseTotals = {
+  house: House;
+  /** Items filed across every venue that runs this house. */
+  itemsDone: number;
+  /** Ten per venue that runs it — the real weekly obligation. */
+  itemsTarget: number;
+  percent: number;
+  /** Completion for each of the last few weeks, oldest first. */
   history: { weekStart: string; percent: number }[];
+  /** False while the house is still being walked for practice. */
+  scored: boolean;
 };
 
 /**
@@ -590,10 +607,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   const targetFor = (venue: VenueSummary, week: string) =>
     housesFor(venue, week).length * WEEKLY_ITEM_TARGET;
 
-  /** What every venue owes together, which is the company denominator. */
-  const companyTarget = (week: string) =>
-    venues.reduce((sum, venue) => sum + targetFor(venue, week), 0);
-
   /**
    * When each venue finished this week — the moment the last task it owed got
    * a photograph.
@@ -630,70 +643,70 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   const rows: VenueWeekSummary[] = venues.map((venue) => {
     // Only the halves this venue runs. A bar is never drawn, counted or
     // graded on a kitchen it does not have.
-    const houses = HOUSES.filter((house) =>
-      venue.houses.includes(house),
-    ).map((house): HouseWeek => {
-      const key = keyOf(venue.id, house);
-      /**
-       * How many tasks this week involved: what is open now, or what was
-       * filed, whichever is larger.
-       *
-       * Open tasks alone made a reset board read "3/2" — three jobs filed
-       * against two still open, because clearing the finished ones shrank the
-       * denominator under work that had already happened. A venue cannot owe
-       * fewer tasks than it did.
-       */
-      const openNow = activeCountByKey.get(key) ?? 0;
-      const weeks = doneByKeyWeek.get(key);
-      const doneThisWeek = weeks?.get(weekStart);
-      /**
-       * What was filed this week, whether or not the task is still on the
-       * board.
-       *
-       * This filtered by active, so retiring a finished task took its
-       * photograph out of the score with it and a graded 10/10 fell to 9/10
-       * the moment a venue tidied up. Leaders were told to freeze their boards
-       * until Monday because of it. The work happened; a board edit afterwards
-       * is not a confession that it did not.
-       */
-      const doneCount = doneThisWeek ? doneThisWeek.size : 0;
-      const activeCount = Math.max(openNow, doneCount);
+    const houses = HOUSES.filter((house) => venue.houses.includes(house)).map(
+      (house): HouseWeek => {
+        const key = keyOf(venue.id, house);
+        /**
+         * How many tasks this week involved: what is open now, or what was
+         * filed, whichever is larger.
+         *
+         * Open tasks alone made a reset board read "3/2" — three jobs filed
+         * against two still open, because clearing the finished ones shrank the
+         * denominator under work that had already happened. A venue cannot owe
+         * fewer tasks than it did.
+         */
+        const openNow = activeCountByKey.get(key) ?? 0;
+        const weeks = doneByKeyWeek.get(key);
+        const doneThisWeek = weeks?.get(weekStart);
+        /**
+         * What was filed this week, whether or not the task is still on the
+         * board.
+         *
+         * This filtered by active, so retiring a finished task took its
+         * photograph out of the score with it and a graded 10/10 fell to 9/10
+         * the moment a venue tidied up. Leaders were told to freeze their boards
+         * until Monday because of it. The work happened; a board edit afterwards
+         * is not a confession that it did not.
+         */
+        const doneCount = doneThisWeek ? doneThisWeek.size : 0;
+        const activeCount = Math.max(openNow, doneCount);
 
-      let failStreak = 0;
-      const firstWeek = firstWeekByKey.get(key);
-      if (firstWeek && activeCount > 0) {
-        let week = completedWeek;
-        for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
-          // A house cannot have missed a week it was not being scored in.
-          if (week < firstWeek || week < houseStartWeek(house)) break;
-          const done = weeks?.get(week)?.size ?? 0;
-          if (statusFor(done, activeCount, week, now) !== "FAIL") break;
-          failStreak += 1;
-          week = shiftWeeks(week, -1);
+        let failStreak = 0;
+        const firstWeek = firstWeekByKey.get(key);
+        if (firstWeek && activeCount > 0) {
+          let week = completedWeek;
+          for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+            // A house cannot have missed a week it was not being scored in.
+            if (week < firstWeek || week < houseStartWeek(house)) break;
+            const done = weeks?.get(week)?.size ?? 0;
+            if (statusFor(done, activeCount, week, now) !== "FAIL") break;
+            failStreak += 1;
+            week = shiftWeeks(week, -1);
+          }
         }
-      }
 
-      // The score: what you signed off, not what was handed in. Same rule as
-      // doneCount — an approval survives the task being cleared off the board.
-      const approvedCount = doneThisWeek
-        ? [...doneThisWeek].filter(
-            (id) => newestThisWeek.get(id)?.review === "approved",
-          ).length
-        : 0;
+        // The score: what you signed off, not what was handed in. Same rule as
+        // doneCount — an approval survives the task being cleared off the board.
+        const approvedCount = doneThisWeek
+          ? [...doneThisWeek].filter(
+              (id) => newestThisWeek.get(id)?.review === "approved",
+            ).length
+          : 0;
 
-      return {
-        house,
-        doneCount,
-        approvedCount,
-        // No board means the target is the target. Against a denominator of
-        // zero, "0 of 0" is arithmetically complete and draws as a full bar —
-        // the house that has done least of all would have looked finished.
-        activeCount: activeCount === 0 ? WEEKLY_ITEM_TARGET : activeCount,
-        status: statusFor(doneCount, activeCount, weekStart, now),
-        failStreak,
-        scored: houseScored(house, weekStart),
-      };
-    });
+        return {
+          house,
+          doneCount,
+          approvedCount,
+          // No board means the target is the target. Against a denominator of
+          // zero, "0 of 0" is arithmetically complete and draws as a full bar —
+          // the house that has done least of all would have looked finished.
+          activeCount: activeCount === 0 ? WEEKLY_ITEM_TARGET : activeCount,
+          status: statusFor(doneCount, activeCount, weekStart, now),
+          failStreak,
+          scored: houseScored(house, weekStart),
+        };
+      },
+    );
 
     const [foh, hoh] = houses;
     const scored = houses.filter((h) => h.scored);
@@ -733,39 +746,55 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     return a.venue.code.localeCompare(b.venue.code);
   });
 
-  const itemsDone = rows.reduce(
-    (sum, row) => sum + row.scored.reduce((n, h) => n + h.doneCount, 0),
-    0,
-  );
+  /**
+   * The same totals, worked out once per house and never added together.
+   *
+   * How many venues owe a house changes the denominator: sixteen run a kitchen
+   * and twenty-one run a dining room, so the kitchen's hundred per cent is a
+   * hundred and sixty items, not two hundred and ten.
+   */
+  const byHouse: HouseTotals[] = HOUSES.map((house) => {
+    const owed = venues.filter((venue) => venue.houses.includes(house));
+    const target = owed.length * WEEKLY_ITEM_TARGET;
+    const done = rows.reduce(
+      (sum, row) =>
+        sum + (row.houses.find((h) => h.house === house)?.doneCount ?? 0),
+      0,
+    );
+    return {
+      house,
+      itemsDone: done,
+      itemsTarget: target,
+      percent: target ? Math.round((done / target) * 100) : 0,
+      scored: houseScored(house, weekStart),
+      history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
+        const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
+        const weekTarget = owed.length * WEEKLY_ITEM_TARGET;
+        // The current week reuses the same rows the ring and the list are
+        // built from, so the chart's last point cannot drift from the
+        // headline.
+        const filed =
+          week === weekStart
+            ? done
+            : [...doneByKeyWeek].reduce(
+                (sum, [key, weeks]) =>
+                  key.endsWith(`|${house}`)
+                    ? sum + (weeks.get(week)?.size ?? 0)
+                    : sum,
+                0,
+              );
+        return {
+          weekStart: week,
+          percent: weekTarget ? Math.round((filed / weekTarget) * 100) : 0,
+        };
+      }),
+    };
+  });
 
   return {
     weekStart,
     rows,
-    itemsDone,
-    itemsTarget: companyTarget(weekStart),
-    history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
-      const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
-      // The bar moves the week the kitchen goes live, and only from then. A
-      // fixed twenty would have halved every week before it overnight.
-      const weekTarget = companyTarget(week);
-      const weekHouses = new Set(scoredHouses(week));
-      // The current week reuses the rows the ring, buckets and list are all
-      // built from, so the chart's last point cannot drift from the headline.
-      const done =
-        week === weekStart
-          ? itemsDone
-          : [...doneByKeyWeek].reduce(
-              (sum, [key, weeks]) =>
-                weekHouses.has(key.split("|")[1] as House)
-                  ? sum + (weeks.get(week)?.size ?? 0)
-                  : sum,
-              0,
-            );
-      return {
-        weekStart: week,
-        percent: weekTarget ? Math.round((done / weekTarget) * 100) : 0,
-      };
-    }),
+    byHouse,
     finishes: rows
       .map((row) => ({
         code: row.venue.code,
