@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { gradeAllVenues } from "@/app/admin/actions";
 import type { House } from "@/lib/types";
@@ -33,6 +33,18 @@ export function GradeAll({
   total: number;
 }) {
   const [by, setBy] = useState("");
+  // Same reasoning as GradeWeek: one name box, several forms, so the check
+  // lives here rather than in a button that greys out and says nothing.
+  const [needName, setNeedName] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  function requireName(event: React.FormEvent<HTMLFormElement>) {
+    if (by.trim()) return;
+    event.preventDefault();
+    setNeedName(true);
+    nameRef.current?.focus();
+  }
+
   const outstanding = houses.filter((house) => house.graded < total);
   const done = outstanding.length === 0 && total > 0;
 
@@ -64,25 +76,35 @@ export function GradeAll({
             </label>
             <input
               id="gradeAllBy"
+              ref={nameRef}
               value={by}
-              onChange={(event) => setBy(event.target.value)}
+              onChange={(event) => {
+                setBy(event.target.value);
+                if (needName) setNeedName(false);
+              }}
               autoComplete="name"
               className="field mt-1 w-full"
               placeholder="Who is grading this"
+              aria-invalid={needName}
             />
+            {needName ? (
+              <p role="alert" className="text-body text-warn mt-2">
+                Put your name in before you grade. It goes on the record.
+              </p>
+            ) : null}
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2">
             {outstanding.map((house) => (
-              <form key={house.house} action={gradeAllVenues}>
+              <form
+                key={house.house}
+                action={gradeAllVenues}
+                onSubmit={requireName}
+              >
                 <input type="hidden" name="weekStart" value={weekStart} />
                 <input type="hidden" name="house" value={house.house} />
                 <input type="hidden" name="by" value={by} />
-                <button
-                  type="submit"
-                  className="btn min-h-11"
-                  disabled={!by.trim()}
-                >
+                <button type="submit" className="btn min-h-11">
                   Grade {houseName(house.house).toLowerCase()} · all venues
                 </button>
               </form>
