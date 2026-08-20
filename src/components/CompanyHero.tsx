@@ -1,8 +1,11 @@
+import { Fragment } from "react";
+
 import { Card } from "./Card";
 import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
-import { WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET, type HouseTotals } from "@/lib/status";
+import { houseName } from "@/lib/types";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
 /**
@@ -41,9 +44,7 @@ function Stat({
  * it counts before anyone acts on it.
  */
 export function CompanyHero({
-  percent,
-  itemsDone,
-  itemsTarget,
+  byHouse,
   passing,
   pending,
   failing,
@@ -51,14 +52,9 @@ export function CompanyHero({
   deadlineLabel,
   deadlineMs,
   finishes,
-  history,
-  houses,
 }: {
-  percent: number;
-  itemsDone: number;
-  itemsTarget: number;
-  /** Boards being scored this week — one until the kitchen goes live. */
-  houses: number;
+  /** One set of totals per house. Never one set covering both. */
+  byHouse: HouseTotals[];
   passing: number;
   pending: number;
   failing: number;
@@ -66,43 +62,62 @@ export function CompanyHero({
   deadlineLabel: string;
   deadlineMs: number;
   finishes: { code: string; at: string }[];
-  history: { weekStart: string; percent: number }[];
 }) {
   const first = finishes[0];
-  // Same series the chart plots, so the two can't disagree.
-  const lastWeek = history.length > 1 ? history[history.length - 2] : undefined;
   const last = finishes[finishes.length - 1];
 
   return (
     <>
-      <Card
-        title="Filed this week"
-        hint={`A new photo and comment on all ${WEEKLY_ITEM_TARGET}${
-          houses > 1 ? " in each half" : ""
-        }, every week`}
-        className="col-span-12 sm:col-span-4"
-      >
-        <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
-        {lastWeek ? (
-          <p className="label mt-4 text-center">
-            Last week: {lastWeek.percent}%
-          </p>
-        ) : null}
-      </Card>
+      {/* A ring and a trend per house, stacked.
+      
+          One ring covering both is the averaging this whole product was split
+          to prevent: front of house at 95% and the kitchen at 24% come out as
+          65%, which describes neither and buries the half that needs the
+          attention. Two rings is more screen and the right answer. */}
+      {byHouse.map((totals) => {
+        // Same series the chart plots, so the two cannot disagree.
+        const lastWeek =
+          totals.history.length > 1
+            ? totals.history[totals.history.length - 2]
+            : undefined;
+        return (
+          <Fragment key={totals.house}>
+            <Card
+              title={`${houseName(totals.house)} · filed this week`}
+              hint={
+                totals.scored
+                  ? `A new photo and comment on all ${WEEKLY_ITEM_TARGET}, every week`
+                  : `Practice. A new photo and comment on all ${WEEKLY_ITEM_TARGET}, not scored yet`
+              }
+              className="col-span-12 sm:col-span-4"
+            >
+              <Dial
+                percent={totals.percent}
+                caption={`${totals.itemsDone} of ${totals.itemsTarget}`}
+              />
+              {lastWeek ? (
+                <p className="label mt-4 text-center">
+                  Last week: {lastWeek.percent}%
+                </p>
+              ) : null}
+            </Card>
 
-      {history.length > 1 ? (
-        <Card
-          title="Filed by week"
-          hint="Eight weeks on a fixed scale, so a bad week looks like one"
-          className="col-span-12 sm:col-span-8"
-        >
-          <Trend
-            points={history}
-            labelLeft={formatWeekStart(history[0].weekStart)}
-            labelRight="This week"
-          />
-        </Card>
-      ) : null}
+            {totals.history.length > 1 ? (
+              <Card
+                title={`${houseName(totals.house)} · by week`}
+                hint="Eight weeks on a fixed scale, so a bad week looks like one"
+                className="col-span-12 sm:col-span-8"
+              >
+                <Trend
+                  points={totals.history}
+                  labelLeft={formatWeekStart(totals.history[0].weekStart)}
+                  labelRight="This week"
+                />
+              </Card>
+            ) : null}
+          </Fragment>
+        );
+      })}
 
       <Card
         title="The week"

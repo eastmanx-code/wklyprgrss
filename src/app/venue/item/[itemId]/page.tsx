@@ -123,6 +123,15 @@ export default async function ItemPage({
               {formatWeekStart(submissions[0].week_start)}
             </p>
           </div>
+          {/* What they actually want doing, when they said.
+              Without it a rejection is "do it again" with no idea what was
+              wrong, so the leader redoes what they think was meant and can be
+              sent back a second time over the same misunderstanding. */}
+          {submissions[0].review_note ? (
+            <p className="text-body mt-3 leading-relaxed whitespace-pre-wrap">
+              {submissions[0].review_note}
+            </p>
+          ) : null}
           <div className="mt-3">
             {photos.get(submissions[0].photo_url) ? (
               <PhotoView

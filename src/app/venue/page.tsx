@@ -194,6 +194,15 @@ export default async function VenuePage() {
                         <DonePill done={done} />
                       )}
                     </div>
+                    {/* The reason, on the tile, so it is visible while
+                        deciding what to walk to rather than one tap further
+                        in. Clamped: the full note is on the item screen. */}
+                    {house.sentBackItemIds.has(item.id) &&
+                    latest?.review_note ? (
+                      <p className="note text-warn mt-2 line-clamp-2 leading-snug">
+                        {latest.review_note}
+                      </p>
+                    ) : null}
                   </Link>
                 </li>
               );

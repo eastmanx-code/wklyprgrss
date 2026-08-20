@@ -84,6 +84,11 @@ export type Submission = {
   review: ReviewState;
   reviewed_at: string | null;
   /**
+   * What the reviewer wants doing differently, when they said. Only ever set
+   * on a rejection, and cleared the moment the work is approved.
+   */
+  review_note: string | null;
+  /**
    * What the leader says about the work itself. `another_cycle` still counts
    * as this week's update — they showed up — but the task isn't finished, and
    * the admin cannot approve it.

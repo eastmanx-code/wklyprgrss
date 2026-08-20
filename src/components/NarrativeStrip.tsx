@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import type { House } from "@/lib/types";
+
 /**
  * The page's answer, in one line, before any card.
  *
@@ -15,13 +17,12 @@ import { useEffect, useState } from "react";
  */
 export function NarrativeStrip({
   deadlineMs,
-  itemsDone,
-  itemsTarget,
+  byHouse,
   activeVenues,
 }: {
   deadlineMs: number;
-  itemsDone: number;
-  itemsTarget: number;
+  /** One figure per house. Added together they would describe neither. */
+  byHouse: { house: House; itemsDone: number; itemsTarget: number }[];
   activeVenues: number;
 }) {
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -54,7 +55,7 @@ export function NarrativeStrip({
       {lead}
       <span className="text-muted"> · </span>
       <span className="text-ink">
-        {itemsDone}/{itemsTarget}
+        {byHouse.map((h) => `${h.itemsDone}/${h.itemsTarget}`).join(" · ")}
       </span>{" "}
       photos
       <span className="text-muted"> · </span>

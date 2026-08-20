@@ -8,7 +8,6 @@ import { getSession } from "@/lib/session";
 import {
   getDashboard,
   gradedVenueIdsByHouse,
-  scoredHouses,
   venueApproved,
   venueIsWin,
 } from "@/lib/status";
@@ -25,8 +24,7 @@ export default async function BoardPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
-    await getDashboard();
+  const { weekStart, rows, byHouse, finishes } = await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   // Leaders see the grade too — it is the thing that gates their reset, so
   // "has mine been closed out yet" should be answerable from the board.
@@ -39,8 +37,6 @@ export default async function BoardPage() {
   const missed = rows.filter((row) => venueApproved(row) === 0).length;
   const partial = rows.length - wins - missed;
   const winRate = rows.length ? Math.round((wins / rows.length) * 100) : 0;
-
-  const percent = itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0;
 
   return (
     <main>
@@ -61,25 +57,20 @@ export default async function BoardPage() {
 
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
-        itemsDone={itemsDone}
-        itemsTarget={itemsTarget}
+        byHouse={byHouse}
         activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
         <CompanyHero
           winRate={winRate}
-          percent={percent}
-          itemsDone={itemsDone}
-          itemsTarget={itemsTarget}
+          byHouse={byHouse}
           passing={wins}
           pending={partial}
           failing={missed}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}
-          history={history}
-          houses={scoredHouses(weekStart).length}
         />
 
         <VenueRows

@@ -14,6 +14,7 @@ export type AdminState = { error: string | null; createdItemId?: string };
 
 const OK: AdminState = { error: null };
 const MAX_TITLE_LENGTH = 120;
+const MAX_NOTE_LENGTH = 500;
 
 async function isAdmin(): Promise<boolean> {
   return (await getSession())?.role === "admin";
@@ -229,9 +230,24 @@ export async function reviewSubmission(formData: FormData) {
     if (!submission || submission.progress !== "done") return;
   }
 
+  /**
+   * The reason, when there is one, and only on a rejection.
+   *
+   * Cleared on approval rather than left behind: a note saying what was wrong
+   * has no meaning once the work has been signed off, and leaving it attached
+   * would show the leader a complaint about work you just accepted.
+   */
+  const note = String(formData.get("note") ?? "")
+    .trim()
+    .slice(0, MAX_NOTE_LENGTH);
+
   await db()
     .from("submissions")
-    .update({ review, reviewed_at: new Date().toISOString() })
+    .update({
+      review,
+      reviewed_at: new Date().toISOString(),
+      review_note: review === "sent_back" ? note || null : null,
+    })
     .eq("id", submissionId);
 
   refresh(venueId);
