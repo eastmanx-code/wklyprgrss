@@ -6,7 +6,7 @@ import { HowToSummary } from "@/components/HowToUse";
 import { LeaderLoginForm } from "@/components/LeaderLoginForm";
 import { APP_NAME } from "@/lib/app";
 import { getSession } from "@/lib/session";
-import { WEEKLY_ITEM_TARGET, getVenues } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET, getVenues, scoredHouses } from "@/lib/status";
 import { currentWeekStart, formatDeadline } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +43,7 @@ export default async function HomePage() {
         <HowToDialog>
           <HowToSummary
             target={WEEKLY_ITEM_TARGET}
+            houses={scoredHouses(currentWeekStart()).length}
             deadlineLabel={deadlineLabel}
           />
         </HowToDialog>

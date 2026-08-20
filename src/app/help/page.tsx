@@ -2,7 +2,7 @@ import { LeaderGuide } from "@/components/HowToUse";
 import { BackLink } from "@/components/ui";
 import { APP_NAME } from "@/lib/app";
 import { getSession } from "@/lib/session";
-import { WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { WEEKLY_ITEM_TARGET, scoredHouses } from "@/lib/status";
 import { currentWeekStart, formatDeadline } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,11 @@ export default async function HelpPage() {
         <h1 className="mt-2 text-metric font-medium">How to use this</h1>
       </header>
 
-      <LeaderGuide target={WEEKLY_ITEM_TARGET} deadlineLabel={deadlineLabel} />
+      <LeaderGuide
+        target={WEEKLY_ITEM_TARGET}
+        houses={scoredHouses(currentWeekStart()).length}
+        deadlineLabel={deadlineLabel}
+      />
     </main>
   );
 }

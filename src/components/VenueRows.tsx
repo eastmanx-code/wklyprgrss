@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Card } from "./Card";
 import { formatFinish } from "@/lib/week";
-import type { VenueWeekSummary } from "@/lib/types";
+import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
  * Ten discrete segments, not a continuous fill.
@@ -29,6 +29,55 @@ function Segments({ done, total }: { done: number; total: number }) {
 }
 
 /**
+ * One house's line inside a venue's row: which half, how it is going, what has
+ * been signed off, and the count.
+ *
+ * A house still being walked for practice is drawn, because leaving it out
+ * would say the kitchen does not exist — but its numbers are held back to the
+ * muted role and labelled, so nobody reads a practice run as a score.
+ */
+function HouseLine({ house, graded }: { house: HouseWeek; graded: boolean }) {
+  const complete = house.doneCount >= house.activeCount;
+  return (
+    <span className="flex h-6 items-center gap-3">
+      <span
+        className={`label w-8 shrink-0 ${house.scored ? "" : "text-muted/60"}`}
+      >
+        {house.house}
+      </span>
+
+      {/* The work, not the paperwork. This measured approvals, so before a
+          review pass every venue in the company read 0/10 — a week where 183
+          cards were filed looked like a week where nobody moved. What a crew
+          did is the photo and the comment; signing off is the admin's job and
+          belongs second. */}
+      <Segments done={house.doneCount} total={house.activeCount} />
+
+      {/* What was signed off, and — in colour — whether the week was closed
+          at all. Those are two different facts and printing only the first hid
+          the second: a venue whose every task was sent back has nothing signed
+          off, so a closed-out review of a failing venue read exactly like a
+          venue nobody had opened. */}
+      <span
+        className={`text-body w-10 shrink-0 text-center tracking-normal tabular-nums ${
+          graded && house.scored ? "text-warn" : "text-muted"
+        }`}
+      >
+        {house.scored ? house.approvedCount : "—"}
+      </span>
+
+      <span
+        className={`text-body w-12 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums ${
+          !house.scored ? "text-muted" : complete ? "text-ink" : "text-warn"
+        }`}
+      >
+        {house.doneCount}/{house.activeCount}
+      </span>
+    </span>
+  );
+}
+
+/**
  * The all-venues list.
  *
  * Venues with no board used to collapse into a separate strip of code chips,
@@ -46,15 +95,19 @@ export function VenueRows({
   hrefPrefix,
   ownVenueId = null,
   finishedAt = {},
-  gradedVenueIds,
+  gradedByHouse,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
-  /** venue code -> when it reached ten, for the venues that got there. */
+  /** venue code -> when it finished the week, for the venues that got there. */
   finishedAt?: Record<string, string>;
-  /** Venues whose week has been closed out. */
-  gradedVenueIds?: Set<string>;
+  /**
+   * Venues whose week has been closed out, per house. Two people grade, so one
+   * set covering both would have shown the kitchen signed off because the
+   * dining room was.
+   */
+  gradedByHouse?: Map<House, Set<string>>;
 }) {
   const active = rows;
 
@@ -73,99 +126,76 @@ export function VenueRows({
               a suffix. Headed, the words come off the rows entirely: the
               tally is a bare number under APPROVED, and twenty-one of them
               make a column you can read down. */}
+          {/* "Last in" came off the header when the second house arrived.
+              Two bars per venue need the width, and the timestamp is one fact
+              about the venue rather than about either walk — it sits under the
+              code, in the venue's own column, where it is not repeated twice
+              saying the same thing. */}
           <div className="mb-1 flex h-5 items-center gap-4 px-2">
-            <span className="label w-16 shrink-0">Venue</span>
-            <span className="min-w-0 flex-1" />
-            <span className="label hidden w-24 shrink-0 text-right sm:block">
-              Last in
+            <span className="label w-14 shrink-0 sm:w-20">Venue</span>
+            {/* Mirrors a house line exactly — same widths, same gap — so the
+                headings sit over the columns rather than near them. */}
+            <span className="flex min-w-0 flex-1 items-center gap-3">
+              <span className="label w-8 shrink-0">Half</span>
+              <span className="min-w-0 flex-1" />
+              <span className="label w-10 shrink-0 text-center">Grade</span>
+              <span className="label w-12 shrink-0 text-right">Updated</span>
             </span>
-            <span className="label w-20 shrink-0 text-center">Grade</span>
-            <span className="label w-16 shrink-0 text-right">Updated</span>
           </div>
 
           <ul>
             {active.map((row) => {
               const finished = finishedAt[row.venue.code];
-              const graded = gradedVenueIds?.has(row.venue.id) ?? false;
+
               return (
                 <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                   <Link
                     href={`${hrefPrefix}${row.venue.id}`}
-                    className="hover:bg-hover -mx-2 flex h-10 items-center gap-4 rounded-[4px] px-2 transition-colors"
+                    className="hover:bg-hover -mx-2 flex items-center gap-4 rounded-[4px] px-2 py-2 transition-colors"
                   >
-                    <span className="text-body text-ink w-16 shrink-0 tracking-normal tabular-nums">
-                      {row.venue.code}
+                    <span className="block w-14 shrink-0 sm:w-20">
+                      <span className="text-body text-ink block tracking-normal tabular-nums">
+                        {row.venue.code}
+                      </span>
+                      {/* Meta under the code rather than in a column of its
+                          own — two bars per venue need the width, and it is
+                          one fact about the venue rather than about either
+                          walk. Off on phones, where the bars and the counts
+                          are the whole story: "THU 5:36 PM" is eleven
+                          characters in a slot that fits about five. */}
+                      <span className="label hidden truncate sm:block">
+                        {finished
+                          ? formatFinish(finished)
+                          : row.failStreak > 0
+                            ? `missed ${row.failStreak}w`
+                            : ""}
+                        {row.venue.id === ownVenueId ? " · you" : ""}
+                      </span>
                     </span>
 
-                    {/* The work, not the paperwork. This measured approvals,
-                        so before a review pass every venue in the company read
-                        0/10 — a week where 183 cards were filed looked like a
-                        week where nobody moved. What a crew did is the photo
-                        and the comment; signing off is the admin's job and
-                        belongs second. */}
-                    <Segments done={row.doneCount} total={row.activeCount} />
-
-                    {/* Meta gets its own column. Folded into the 72px count
-                        it wrapped to a second line and broke the 40px row —
-                        "THU 5:36 PM" is eleven characters in a slot that fits
-                        about eight. Hidden on phones, where the count and the
-                        bar are the whole story. */}
-                    <span className="label hidden w-24 shrink-0 truncate text-right sm:block">
-                      {finished
-                        ? formatFinish(finished)
-                        : row.failStreak > 0
-                          ? `missed ${row.failStreak}w`
-                          : ""}
-                      {row.venue.id === ownVenueId ? " · you" : ""}
-                    </span>
-
-                    {/* The sign-off tally is its own column too, for the same
-                        reason. Run together with the count it made a 160px
-                        blob that started in a different place on every row —
-                        "10/10", "10/10 · 10 SIGNED OFF", "4/10" — so no two
-                        fractions lined up and the eye had to read each one
-                        rather than scan the column.
-
-                        The biggest number on the row, because it is the one
-                        being scanned. It sat in a chip before, and the chip
-                        was doing two jobs while only one of them was needed:
-                        the header already says this figure is a grade, and
-                        the accent already separates it from the white count
-                        beside it. What the box cost was room — a digit forced
-                        down to the 11px label role with the letter-spacing
-                        that role carries, which is type meant for words like
-                        MISSED 2W, not for twenty-one numbers read in a
-                        column.
-
-                        It shows what was signed off, and the colour shows
-                        whether the week was closed at all. Those are two
-                        different facts and printing only the first hid the
-                        second: a venue whose every task was sent back has
-                        nothing signed off, so a closed-out review of a
-                        failing venue read exactly like a venue nobody had
-                        opened. Every row carries a figure now — muted while
-                        the review is still open, accent once it is graded.
-
-                        Kept on a phone, unlike the timestamp beside it. The
-                        bar loses eighty pixels and still has ten legible
-                        segments, and the whole point of the column is that it
-                        is visible where the reviewing actually happens. */}
-                    <span
-                      className={`w-20 shrink-0 text-center text-title tracking-normal tabular-nums ${
-                        graded ? "text-warn" : "text-muted"
-                      }`}
-                    >
-                      {row.approvedCount}
-                    </span>
-
-                    <span
-                      className={`text-body w-16 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums ${
-                        row.doneCount >= row.activeCount
-                          ? "text-ink"
-                          : "text-warn"
-                      }`}
-                    >
-                      {row.doneCount}/{row.activeCount}
+                    {/* One line per house, never one line for both.
+                        Summed into a single twenty-segment bar, a spotless
+                        dining room would have filled half of it and read as
+                        real progress at a venue whose kitchen had not been
+                        walked at all — which is the whole reason the board
+                        was split. */}
+                    {/* `block`, not the default inline. As an inline box this
+                        wrapper shrank to fit its content, and the flex-1 on
+                        each house's bar inside it had no definite width to
+                        grow into — every progress bar in the company rendered
+                        at zero pixels and the column looked empty. */}
+                    <span className="block min-w-0 flex-1">
+                      {row.houses.map((house) => (
+                        <HouseLine
+                          key={house.house}
+                          house={house}
+                          graded={
+                            gradedByHouse
+                              ?.get(house.house)
+                              ?.has(row.venue.id) ?? false
+                          }
+                        />
+                      ))}
                     </span>
                   </Link>
                 </li>
@@ -174,7 +204,6 @@ export function VenueRows({
           </ul>
         </Card>
       ) : null}
-
     </>
   );
 }

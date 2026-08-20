@@ -113,6 +113,17 @@ export function CloseChecklist({
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
+  /**
+   * Whether the signing block is showing while work is still outstanding.
+   *
+   * It used to be on screen from the moment the list opened — the attestation,
+   * the name field and the signature pad, all sitting under a list at nought
+   * done. The whole difficulty this product exists to solve is getting people
+   * to do the checklist rather than sign it, and a pad already waiting for a
+   * finger is an invitation to do the second. Signing with items open is still
+   * completely allowed; it now takes a deliberate tap to reach.
+   */
+  const [signingOpen, setSigningOpen] = useState(false);
   const [reopenPin, setReopenPin] = useState("");
   const [reopenReason, setReopenReason] = useState("");
   const [reopenError, setReopenError] = useState<string | null>(null);
@@ -328,22 +339,38 @@ export function CloseChecklist({
       return;
     }
 
-    if (!haveInitials(item.number)) return;
-
     // Evidence is the check. Tapping the card jumps to the first shot still
     // outstanding rather than ticking anything.
-    if (item.proof) {
-      const at = Math.max(
-        0,
-        item.proof.findIndex(
-          (shot, index) => !shotFilled(item.number, index, shot.kind),
-        ),
+    //
+    // Before the initials gate, deliberately. Asking for a signature before
+    // the camera would open meant the order was sign, then do — backwards, and
+    // the exact habit this is meant to break. Do the job, then put your name
+    // to it. Nothing is marked done unsigned either way: the gate below still
+    // stands between the last shot and the tick.
+    //
+    // Length, not truthiness: an empty array is truthy, and this branch then
+    // reached for shot zero of a list with no shots and threw inside a click
+    // handler — so the card did nothing, forever, without saying so. Normalised
+    // on the way in and on the way out now, but checked here too, because the
+    // failure was silent and the next one should not be.
+    if (item.proof && item.proof.length > 0) {
+      const at = item.proof.findIndex(
+        (shot, index) => !shotFilled(item.number, index, shot.kind),
       );
-      const key = slotKey(item.number, at);
-      if (item.proof[at].kind === "note") notesRefs.current[key]?.focus();
-      else inputs.current[key]?.click();
-      return;
+      // Only when something is still outstanding. This used to clamp -1 to 0,
+      // so an item with every shot already in reopened the camera on the first
+      // one instead of letting the tap be the signature — and the clamp is
+      // what turned an empty proof list into a crash.
+      if (at >= 0) {
+        const key = slotKey(item.number, at);
+        if (item.proof[at].kind === "note") notesRefs.current[key]?.focus();
+        else inputs.current[key]?.click();
+        return;
+      }
     }
+
+    // Nothing left to collect, so this tap is the signature.
+    if (!haveInitials(item.number)) return;
 
     setDone((c) => ({ ...c, [item.number]: true }));
     void persistTick(item, true);
@@ -420,22 +447,24 @@ export function CloseChecklist({
       return;
     }
 
-    setCaptures((current) => {
-      const next = {
-        ...current,
-        [slotKey(item.number, shotIndex)]: { url, kind },
-      };
-      const all = item.proof!.every((shot, index) =>
-        shot.kind === "note"
-          ? Boolean(notes[slotKey(item.number, index)]?.trim())
-          : Boolean(next[slotKey(item.number, index)]),
-      );
-      if (all) {
-        setDone((c) => ({ ...c, [item.number]: true }));
-        void persistTick(item, true);
-      }
-      return next;
-    });
+    const shotKey = slotKey(item.number, shotIndex);
+    setCaptures((current) => ({ ...current, [shotKey]: { url, kind } }));
+
+    // Worked out here rather than inside the updater. A state updater has to
+    // be a pure function of what it is given — React is free to run it twice —
+    // and the old version reached for the camera's focus and fired a save from
+    // inside one.
+    const all = item.proof.every((shot, index) =>
+      shot.kind === "note"
+        ? Boolean(notes[slotKey(item.number, index)]?.trim())
+        : index === shotIndex || Boolean(captures[slotKey(item.number, index)]),
+    );
+    // The last shot is in. Now the signature — and if it is not there yet, ask
+    // for it rather than leaving a finished job looking unfinished.
+    if (all && haveInitials(item.number)) {
+      setDone((c) => ({ ...c, [item.number]: true }));
+      void persistTick(item, true);
+    }
   }
 
   function certify() {
@@ -475,8 +504,11 @@ export function CloseChecklist({
       }
     })();
     setCertified(
+      // "all ten" was written when there was one hard-coded ten-line list.
+      // A venue writes its own now, and a six-line list was being told it had
+      // finished ten.
       doneCount === CLOSE_TOTAL
-        ? "Certified · all ten"
+        ? `Certified · all ${CLOSE_TOTAL}`
         : `Certified · ${doneCount} of ${CLOSE_TOTAL}, ${CLOSE_TOTAL - doneCount} left open`,
     );
   }
@@ -772,11 +804,18 @@ export function CloseChecklist({
                   />
                   {/* Left of the box on a phone, under it on a tablet — either
                     way it reads into the thing it is asking for. */}
-                  {wanted ? (
-                    <span className="label text-warn order-1 text-center sm:order-2">
-                      Initial it
-                    </span>
-                  ) : null}
+                  {/* Always labelled, not only once it is being asked for.
+                    An unlabelled box with a "––" placeholder is a box nobody
+                    knows the purpose of until the app tells them off, and now
+                    that the signature comes after the work rather than
+                    gatekeeping it, this is the control that finishes a line. */}
+                  <span
+                    className={`label order-1 text-center sm:order-2 ${
+                      wanted ? "text-warn" : "text-muted"
+                    }`}
+                  >
+                    {wanted ? "Initial it" : "Initials"}
+                  </span>
                 </span>
               </div>
 
@@ -870,7 +909,11 @@ export function CloseChecklist({
                                         other.kind,
                                       ),
                                 );
-                                if (all) void persistTick(item, true);
+                                // Written, but not yet signed for. Ask, rather
+                                // than firing a save the server will refuse.
+                                if (all && haveInitials(item.number)) {
+                                  void persistTick(item, true);
+                                }
                               }}
                             />
                           </div>
@@ -883,10 +926,7 @@ export function CloseChecklist({
                               <button
                                 type="button"
                                 className="btn-ghost"
-                                onClick={() => {
-                                  if (!haveInitials(item.number)) return;
-                                  inputs.current[key]?.click();
-                                }}
+                                onClick={() => inputs.current[key]?.click()}
                               >
                                 Retake
                               </button>
@@ -895,10 +935,9 @@ export function CloseChecklist({
                         ) : (
                           <button
                             type="button"
-                            onClick={() => {
-                              if (!haveInitials(item.number)) return;
-                              inputs.current[key]?.click();
-                            }}
+                            // No initials gate. Take the photo first; the
+                            // signature is asked for once the work is in.
+                            onClick={() => inputs.current[key]?.click()}
                             className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
                           >
                             <CaptureGlyph kind={shot.kind} />
@@ -983,6 +1022,11 @@ export function CloseChecklist({
           </div>
         ) : null}
 
+        {/* Everything below is the signature. Held back until the work is
+            done, the night is already a record, or somebody deliberately asks
+            for it. */}
+        {openItems.length === 0 || locked || signingOpen ? (
+          <>
         <div className="border-ink mt-2.5 border-l-2 pl-4">
           <p className="attest">{attestationText}</p>
           {openItems.length > 0 ? (
@@ -1068,6 +1112,16 @@ export function CloseChecklist({
                   : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
           </button>
         </div>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="btn-ghost mt-4"
+            onClick={() => setSigningOpen(true)}
+          >
+            Sign with {openItems.length} open
+          </button>
+        )}
       </section>
     </div>
   );

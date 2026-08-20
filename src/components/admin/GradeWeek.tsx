@@ -3,70 +3,71 @@
 import { useState } from "react";
 
 import { gradeWeek, ungradeWeek } from "@/app/admin/actions";
+import type { House } from "@/lib/types";
+import { houseName } from "@/lib/types";
+
+export type HouseGrade = {
+  house: House;
+  gradedBy: string | null;
+  /** False while the house is still being walked for practice. */
+  scored: boolean;
+};
 
 /**
- * Closing a week for a venue.
+ * Closing a week for a venue, one house at a time.
  *
- * Leaders were told reset comes "once graded", and until now nothing in the app
- * meant graded — Reset Board appeared the moment a single task was approved, so
- * a venue could clear its board before the week had been looked at as a whole.
- * This is the act they are waiting on.
+ * Leaders were told reset comes "once graded", and until this existed nothing
+ * in the app meant graded — Reset Board appeared the moment a single task was
+ * approved, so a venue could clear its board before the week had been looked at
+ * as a whole. This is the act they are waiting on.
  *
- * It takes a name. A grade is somebody's judgement of somebody else's week, and
- * the venue on the receiving end should be able to see whose.
+ * Two people walk now, one per house, and each signs their own line. Graded as
+ * one, whoever finished second would have overwritten the first: the record
+ * would have shown one name and silently lost the other, and a venue could have
+ * been told its kitchen was signed off by someone who never entered it.
+ *
+ * The name is typed once and used by whichever line is submitted — the two
+ * walks are usually minutes apart, and asking for it twice is asking the same
+ * person the same question.
  */
 export function GradeWeek({
   venueId,
   weekStart,
   weekLabel,
-  gradedBy,
+  houses,
 }: {
   venueId: string;
   weekStart: string;
   weekLabel: string;
-  gradedBy: string | null;
+  houses: HouseGrade[];
 }) {
   const [by, setBy] = useState("");
 
-  if (gradedBy) {
-    return (
-      <section className="panel mb-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="card-title">Week of {weekLabel} · graded</p>
-            <p className="note text-muted mt-1">
-              By {gradedBy}. This venue can reset its board.
-            </p>
-          </div>
-          <form action={ungradeWeek} className="shrink-0">
-            <input type="hidden" name="venueId" value={venueId} />
-            <input type="hidden" name="weekStart" value={weekStart} />
-            <button type="submit" className="btn-ghost min-h-11">
-              Undo grade
-            </button>
-          </form>
-        </div>
-      </section>
-    );
-  }
+  const scored = houses.filter((house) => house.scored);
+  const outstanding = scored.filter((house) => !house.gradedBy);
+  const done = outstanding.length === 0 && scored.length > 0;
 
   return (
-    <section className="panel border-warn/30 mb-6">
-      <p className="card-title">Week of {weekLabel} · not graded</p>
-      <p className="note text-muted mt-1 leading-relaxed">
-        Until this is graded the venue cannot reset its board or take new jobs
-        into the finished slots. Everything else works as normal for them.
+    <section className={`panel mb-6 ${done ? "" : "border-warn/30"}`}>
+      <p className="card-title">
+        Week of {weekLabel} ·{" "}
+        {done
+          ? "graded"
+          : `${scored.length - outstanding.length} of ${scored.length} graded`}
       </p>
-      <form action={gradeWeek} className="mt-4 flex flex-wrap items-end gap-3">
-        <input type="hidden" name="venueId" value={venueId} />
-        <input type="hidden" name="weekStart" value={weekStart} />
-        <div className="min-w-0 flex-1">
+      <p className="note text-muted mt-1 leading-relaxed">
+        {done
+          ? "This venue can reset its board."
+          : "Until every half is graded the venue cannot reset its board or take new jobs into the finished slots. Everything else works as normal for them."}
+      </p>
+
+      {outstanding.length > 0 ? (
+        <div className="mt-4">
           <label htmlFor="gradeBy" className="label">
             Your name
           </label>
           <input
             id="gradeBy"
-            name="by"
             value={by}
             onChange={(event) => setBy(event.target.value)}
             autoComplete="name"
@@ -74,10 +75,53 @@ export function GradeWeek({
             placeholder="Who is grading this"
           />
         </div>
-        <button type="submit" className="btn min-h-11" disabled={!by.trim()}>
-          Grade this week
-        </button>
-      </form>
+      ) : null}
+
+      <ul className="mt-4 space-y-2">
+        {scored.map((house) => (
+          <li
+            key={house.house}
+            className="flex flex-wrap items-center justify-between gap-3"
+          >
+            <p className="note min-w-0">
+              {houseName(house.house)}
+              {house.gradedBy ? (
+                <span className="text-muted">
+                  {" "}
+                  · graded by {house.gradedBy}
+                </span>
+              ) : (
+                <span className="text-warn"> · not graded</span>
+              )}
+            </p>
+
+            {house.gradedBy ? (
+              <form action={ungradeWeek} className="shrink-0">
+                <input type="hidden" name="venueId" value={venueId} />
+                <input type="hidden" name="weekStart" value={weekStart} />
+                <input type="hidden" name="house" value={house.house} />
+                <button type="submit" className="btn-ghost min-h-11">
+                  Undo
+                </button>
+              </form>
+            ) : (
+              <form action={gradeWeek} className="shrink-0">
+                <input type="hidden" name="venueId" value={venueId} />
+                <input type="hidden" name="weekStart" value={weekStart} />
+                <input type="hidden" name="house" value={house.house} />
+                <input type="hidden" name="by" value={by} />
+                <button
+                  type="submit"
+                  className="btn min-h-11"
+                  disabled={!by.trim()}
+                >
+                  Grade {houseName(house.house).toLowerCase()}
+                </button>
+              </form>
+            )}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

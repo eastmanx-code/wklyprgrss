@@ -1,5 +1,4 @@
-import { timingSafeEqual } from "node:crypto";
-
+import { requireToken } from "@/lib/api-auth";
 import { venueDayRows, venueWeekRows } from "@/lib/scores";
 import { currentWeekStart, shiftWeeks } from "@/lib/week";
 
@@ -11,27 +10,6 @@ const MAX_WEEKS = 26;
 // returning four thousand rows nobody asked for.
 const MAX_WEEKS_DAILY = 8;
 const WEEK_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-
-/**
- * Constant-time, and safe on length.
- *
- * `timingSafeEqual` throws when the buffers differ in length, which would turn
- * a wrong-length token into a 500 and leak the right length through the
- * difference in response.
- */
-function tokenMatches(given: string, expected: string): boolean {
-  const a = Buffer.from(given);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
-
-function unauthorized(): Response {
-  return Response.json(
-    { error: "Unauthorized" },
-    { status: 401, headers: { "WWW-Authenticate": "Bearer" } },
-  );
-}
 
 /**
  * Scores, for the warehouse.
@@ -49,23 +27,18 @@ function unauthorized(): Response {
  *   GET /api/scores?week=2026-08-10
  *   Authorization: Bearer <token>
  *
- * Rows are keyed on (week_ending, venue_code), so re-pulling a window is
+ * Rows are keyed on (week_ending, venue_code, house), so re-pulling a window is
  * idempotent — a loader can replay any range without making duplicates.
+ *
+ * The house is part of the key, not a detail on the row. The dining room and
+ * the kitchen are walked by different people against separate lists of ten and
+ * graded separately; a loader that dropped the column and upserted on venue
+ * and week alone would keep whichever of the two arrived last and silently
+ * lose the other.
  */
 export async function GET(request: Request): Promise<Response> {
-  const expected = process.env.SCORES_API_TOKEN;
-  // Fails closed. An unset token must never mean "open to everyone", which is
-  // what checking `given === expected` on two undefineds would have meant.
-  if (!expected) {
-    return Response.json(
-      { error: "Not configured" },
-      { status: 503, headers: { "Cache-Control": "no-store" } },
-    );
-  }
-
-  const header = request.headers.get("authorization") ?? "";
-  const given = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-  if (!given || !tokenMatches(given, expected)) return unauthorized();
+  const denied = requireToken(request);
+  if (denied) return denied;
 
   const params = new URL(request.url).searchParams;
   const single = params.get("week");

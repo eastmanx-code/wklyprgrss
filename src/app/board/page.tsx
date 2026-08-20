@@ -5,7 +5,13 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradedVenueIds, isWin } from "@/lib/status";
+import {
+  getDashboard,
+  gradedVenueIdsByHouse,
+  scoredHouses,
+  venueApproved,
+  venueIsWin,
+} from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -24,18 +30,15 @@ export default async function BoardPage() {
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   // Leaders see the grade too — it is the thing that gates their reset, so
   // "has mine been closed out yet" should be answerable from the board.
-  const gradedIds = await gradedVenueIds(mostRecentCompletedWeek());
-  // Scored on approvals, in the buckets the weekly note is written in.
-  const scored = rows;
-  const wins = scored.filter((row) =>
-    isWin(row.approvedCount, row.activeCount),
-  ).length;
-  const partial = scored.filter(
-    (row) =>
-      row.approvedCount > 0 && !isWin(row.approvedCount, row.activeCount),
-  ).length;
-  const missed = scored.filter((row) => row.approvedCount === 0).length;
-  const winRate = scored.length ? Math.round((wins / scored.length) * 100) : 0;
+  // Per house, because the grade is per house — one set for both would have
+  // marked the kitchen closed out on the strength of the dining room.
+  const gradedIds = await gradedVenueIdsByHouse(mostRecentCompletedWeek());
+  // Scored on approvals, in the buckets the weekly note is written in. A
+  // venue wins by winning every house that counts, not by the two averaged.
+  const wins = rows.filter(venueIsWin).length;
+  const missed = rows.filter((row) => venueApproved(row) === 0).length;
+  const partial = rows.length - wins - missed;
+  const winRate = rows.length ? Math.round((wins / rows.length) * 100) : 0;
 
   const percent = itemsTarget ? Math.round((itemsDone / itemsTarget) * 100) : 0;
 
@@ -76,6 +79,7 @@ export default async function BoardPage() {
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}
           history={history}
+          houses={scoredHouses(weekStart).length}
         />
 
         <VenueRows
@@ -83,7 +87,7 @@ export default async function BoardPage() {
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
           finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
-          gradedVenueIds={gradedIds}
+          gradedByHouse={gradedIds}
         />
       </div>
     </main>

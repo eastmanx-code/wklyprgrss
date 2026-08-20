@@ -3,6 +3,8 @@
 import { useActionState, useState } from "react";
 
 import { clearApproved, type SubmitState } from "@/app/venue/actions";
+import type { House } from "@/lib/types";
+import { houseName } from "@/lib/types";
 
 const initial: SubmitState = { error: null };
 
@@ -29,14 +31,20 @@ export function ClearFinished({
   venueId,
   finished,
   graded,
-  gradedBy,
+  grades,
   weekLabel,
 }: {
   venueId: string;
   finished: number;
-  /** Whether the admin has graded the week this finished work belongs to. */
+  /**
+   * Whether every house that counts has been graded for the week this finished
+   * work belongs to. Two people grade, so one signature is not a closed week —
+   * resetting on the strength of the dining room alone would clear a kitchen
+   * nobody had looked at.
+   */
   graded: boolean;
-  gradedBy: string | null;
+  /** Who signed each house off, so an outstanding one can be named. */
+  grades: { house: House; gradedBy: string | null; scored: boolean }[];
   weekLabel: string;
 }) {
   const [state, action, pending] = useActionState(clearApproved, initial);
@@ -47,6 +55,13 @@ export function ClearFinished({
   // Waiting on the grade. Leaders were told reset comes "once graded", and a
   // board cleared before the week has been judged as a whole is the thing that
   // promise was made against.
+  // Named, not just counted. "Waiting on the grade" with two graders left a
+  // leader with nobody to chase; the house that has not been signed off is the
+  // one fact that makes the wait actionable.
+  const outstanding = grades
+    .filter((grade) => grade.scored && !grade.gradedBy)
+    .map((grade) => houseName(grade.house).toLowerCase());
+
   if (!graded) {
     return (
       <section className="panel mb-5">
@@ -56,8 +71,12 @@ export function ClearFinished({
             ? "One task is signed off."
             : `${finished} tasks are signed off.`}{" "}
           You can clear them and take new jobs once the week of {weekLabel} has
-          been graded. Everything else works as normal in the meantime — file
-          photos, redo anything sent back.
+          been graded
+          {outstanding.length > 0
+            ? ` — still waiting on ${outstanding.join(" and ")}`
+            : ""}
+          . Everything else works as normal in the meantime — file photos, redo
+          anything sent back.
         </p>
       </section>
     );
@@ -75,7 +94,14 @@ export function ClearFinished({
         redoing, and every photo and comment stays in the record.
       </p>
       <p className="label mt-2">
-        Week of {weekLabel} graded{gradedBy ? ` by ${gradedBy}` : ""}.
+        Week of {weekLabel} graded
+        {grades
+          .filter((grade) => grade.scored && grade.gradedBy)
+          .map(
+            (grade) =>
+              ` · ${houseName(grade.house).toLowerCase()} by ${grade.gradedBy}`,
+          )
+          .join("")}
       </p>
 
       <form action={action} className="mt-4 flex flex-wrap items-end gap-3">

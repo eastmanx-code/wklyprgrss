@@ -37,15 +37,19 @@ function Term({
  */
 export function HowToSummary({
   target,
+  houses,
   deadlineLabel,
 }: {
   target: number;
+  /** How many boards are being scored — one until the kitchen goes live. */
+  houses: number;
   deadlineLabel: string;
 }) {
   return (
     <>
       <p className="note leading-relaxed">
-        By {deadlineLabel}, all {target} items need a <strong>new photo</strong>{" "}
+        By {deadlineLabel}, all {target} items
+        {houses > 1 ? " in each half" : ""} need a <strong>new photo</strong>{" "}
         and a <strong>new comment</strong>. Nothing carries forward.
       </p>
 
@@ -65,9 +69,12 @@ export function HowToSummary({
 
 export function LeaderGuide({
   target,
+  houses,
   deadlineLabel,
 }: {
   target: number;
+  /** How many boards are being scored — one until the kitchen goes live. */
+  houses: number;
   deadlineLabel: string;
 }) {
   return (
@@ -75,11 +82,24 @@ export function LeaderGuide({
       <section className="panel mb-3">
         <h2 className="text-body font-medium">The rule</h2>
         <p className="note mt-4 leading-relaxed">
-          By {deadlineLabel}, all {target} items need a{" "}
-          <strong>new photo</strong> and a <strong>new comment</strong>. Nothing
-          carries forward. Missing either one fails the item.
+          By {deadlineLabel}, all {target} items
+          {houses > 1 ? " in each half" : ""} need a <strong>new photo</strong>{" "}
+          and a <strong>new comment</strong>. Nothing carries forward. Missing
+          either one fails the item.
         </p>
       </section>
+
+      {houses > 1 ? (
+        <section className="panel mb-3">
+          <h2 className="text-body font-medium">Two boards, two scores</h2>
+          <p className="note mt-4 leading-relaxed">
+            Front of house and the kitchen are separate lists of {target}, each
+            walked and graded by a different person. They are never added
+            together — a spotless dining room does not cover a kitchen that was
+            not walked, and the week passes only if both halves do.
+          </p>
+        </section>
+      ) : null}
 
       <section className="panel mb-3">
         <h2 className="text-body font-medium">Uploading</h2>

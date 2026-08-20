@@ -15,14 +15,26 @@
  * own shift splits and this file never did. The rows in close_checklists are
  * the truth; this is just the words they are made of.
  */
+import { HOUSES as HOUSE_KEYS, houseName, type House } from "./types";
 
-export type House = "FOH" | "HOH";
+/**
+ * The two halves of a building are one idea, not two.
+ *
+ * They were defined here for the closing checklists and again in types.ts when
+ * the walkthrough board was split, which gave the same house two names in one
+ * app — a leader saw "Heart of house" on the closing list and "Kitchen" on the
+ * board and had no way to know they were the same place. One definition, in
+ * the module every other one already depends on.
+ */
+export type { House };
+export { houseName };
+
 export type Phase = "open" | "mid" | "close";
 
-export const HOUSES: { key: House; name: string }[] = [
-  { key: "FOH", name: "Front of house" },
-  { key: "HOH", name: "Heart of house" },
-];
+export const HOUSES: { key: House; name: string }[] = HOUSE_KEYS.map((key) => ({
+  key,
+  name: houseName(key),
+}));
 
 export const PHASES: { key: Phase; name: string }[] = [
   { key: "open", name: "Open" },
@@ -32,10 +44,6 @@ export const PHASES: { key: Phase; name: string }[] = [
 
 export function phaseName(phase: Phase): string {
   return PHASES.find((p) => p.key === phase)?.name ?? phase;
-}
-
-export function houseName(house: House): string {
-  return HOUSES.find((h) => h.key === house)?.name ?? house;
 }
 
 export const PHASE_ORDER: Phase[] = PHASES.map((p) => p.key);

@@ -3,31 +3,38 @@
 import { useState } from "react";
 
 import { gradeAllVenues } from "@/app/admin/actions";
+import type { House } from "@/lib/types";
+import { houseName } from "@/lib/types";
+
+export type HouseGradeCount = { house: House; graded: number };
 
 /**
- * Closing the week for everyone, in one move.
+ * Closing the week for everyone, in one move per house.
  *
  * Grading venue by venue is twenty-one taps of bookkeeping on top of the review
  * that already happened — and the first week it existed it was missed
  * altogether, so every board in the company read "waiting on the grade" while
  * the week had in fact been graded on the Thursday.
  *
- * A single venue can still be graded or ungraded on its own screen. This is
- * just the way it is actually done.
+ * One button per house, not one for both: the two walks are done by two people,
+ * and a single button would have put whoever pressed it against a walk they did
+ * not do. A single venue can still be graded or ungraded on its own screen.
  */
 export function GradeAll({
   weekStart,
   weekLabel,
-  graded,
+  houses,
   total,
 }: {
   weekStart: string;
   weekLabel: string;
-  graded: number;
+  /** The houses being scored this week, and how many venues are closed out. */
+  houses: HouseGradeCount[];
   total: number;
 }) {
   const [by, setBy] = useState("");
-  const done = graded >= total && total > 0;
+  const outstanding = houses.filter((house) => house.graded < total);
+  const done = outstanding.length === 0 && total > 0;
 
   return (
     <section
@@ -35,27 +42,28 @@ export function GradeAll({
       aria-label="Grade the week"
     >
       <p className="card-title">
-        Week of {weekLabel} · {graded} of {total} graded
+        Week of {weekLabel} ·{" "}
+        {houses
+          .map(
+            (house) =>
+              `${houseName(house.house).toLowerCase()} ${house.graded}/${total}`,
+          )
+          .join(" · ")}
       </p>
       <p className="note text-muted mt-1 leading-relaxed">
         {done
           ? "Every venue can reset its board and take new jobs."
-          : "Until a venue is graded it cannot reset its board or open the finished slots. Everything else works as normal for them."}
+          : "A venue cannot reset its board until both halves are graded. Everything else works as normal for them."}
       </p>
 
       {done ? null : (
-        <form
-          action={gradeAllVenues}
-          className="mt-4 flex flex-wrap items-end gap-3"
-        >
-          <input type="hidden" name="weekStart" value={weekStart} />
-          <div className="min-w-0 flex-1">
+        <>
+          <div className="mt-4">
             <label htmlFor="gradeAllBy" className="label">
               Your name
             </label>
             <input
               id="gradeAllBy"
-              name="by"
               value={by}
               onChange={(event) => setBy(event.target.value)}
               autoComplete="name"
@@ -63,10 +71,24 @@ export function GradeAll({
               placeholder="Who is grading this"
             />
           </div>
-          <button type="submit" className="btn min-h-11" disabled={!by.trim()}>
-            Grade the week
-          </button>
-        </form>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {outstanding.map((house) => (
+              <form key={house.house} action={gradeAllVenues}>
+                <input type="hidden" name="weekStart" value={weekStart} />
+                <input type="hidden" name="house" value={house.house} />
+                <input type="hidden" name="by" value={by} />
+                <button
+                  type="submit"
+                  className="btn min-h-11"
+                  disabled={!by.trim()}
+                >
+                  Grade {houseName(house.house).toLowerCase()} · all venues
+                </button>
+              </form>
+            ))}
+          </div>
+        </>
       )}
     </section>
   );

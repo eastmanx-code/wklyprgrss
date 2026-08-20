@@ -52,10 +52,13 @@ export function CompanyHero({
   deadlineMs,
   finishes,
   history,
+  houses,
 }: {
   percent: number;
   itemsDone: number;
   itemsTarget: number;
+  /** Boards being scored this week — one until the kitchen goes live. */
+  houses: number;
   passing: number;
   pending: number;
   failing: number;
@@ -74,7 +77,9 @@ export function CompanyHero({
     <>
       <Card
         title="Filed this week"
-        hint={`A new photo and comment on all ${WEEKLY_ITEM_TARGET}, every week`}
+        hint={`A new photo and comment on all ${WEEKLY_ITEM_TARGET}${
+          houses > 1 ? " in each half" : ""
+        }, every week`}
         className="col-span-12 sm:col-span-4"
       >
         <Dial percent={percent} caption={`${itemsDone} of ${itemsTarget}`} />
