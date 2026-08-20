@@ -6,7 +6,13 @@ import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradedVenueIds, isWin } from "@/lib/status";
+import {
+  getDashboard,
+  gradedVenueIdsByHouse,
+  scoredHouses,
+  venueApproved,
+  venueIsWin,
+} from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -26,17 +32,12 @@ export default async function AdminDashboardPage() {
 
   const { weekStart, rows, itemsDone, itemsTarget, finishes, history } =
     await getDashboard();
-  // Scored on approvals, in the buckets the weekly note is written in.
-  const scored = rows;
-  const wins = scored.filter((row) =>
-    isWin(row.approvedCount, row.activeCount),
-  ).length;
-  const partial = scored.filter(
-    (row) =>
-      row.approvedCount > 0 && !isWin(row.approvedCount, row.activeCount),
-  ).length;
-  const missed = scored.filter((row) => row.approvedCount === 0).length;
-  const winRate = scored.length ? Math.round((wins / scored.length) * 100) : 0;
+  // Scored on approvals, in the buckets the weekly note is written in. A
+  // venue wins by winning every house that counts, not by the two averaged.
+  const wins = rows.filter(venueIsWin).length;
+  const missed = rows.filter((row) => venueApproved(row) === 0).length;
+  const partial = rows.length - wins - missed;
+  const winRate = rows.length ? Math.round((wins / rows.length) * 100) : 0;
 
   // The finished week, and whether it has been closed for everyone. Grading is
   // the thing every venue is waiting on before it can reset.
@@ -44,8 +45,9 @@ export default async function AdminDashboardPage() {
   // The set, not just the total: the rows show the grade venue by venue, and
   // counting the live ones here keeps "N of 21" honest when a graded venue is
   // later stood down.
-  const gradedIds = await gradedVenueIds(gradedWeek);
-  const graded = rows.filter((row) => gradedIds.has(row.venue.id)).length;
+  const gradedIds = await gradedVenueIdsByHouse(gradedWeek);
+  // Closed out means closed out in every house that counts. Counted off either
+  // grade alone, "21 of 21" would have appeared with half the walks unread.
 
   return (
     <main>
@@ -69,7 +71,13 @@ export default async function AdminDashboardPage() {
       <GradeAll
         weekStart={gradedWeek}
         weekLabel={formatWeekStart(gradedWeek)}
-        graded={graded}
+        houses={scoredHouses(gradedWeek).map((house) => ({
+          house,
+          // Counted against the live rows, not the raw grade rows: "N of 21"
+          // stays honest when a graded venue is later stood down.
+          graded: rows.filter((row) => gradedIds.get(house)?.has(row.venue.id))
+            .length,
+        }))}
         total={rows.length}
       />
 
@@ -95,13 +103,14 @@ export default async function AdminDashboardPage() {
           deadlineMs={deadlineFor(weekStart).getTime()}
           finishes={finishes}
           history={history}
+          houses={scoredHouses(weekStart).length}
         />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/admin/venue/"
           finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
-          gradedVenueIds={gradedIds}
+          gradedByHouse={gradedIds}
         />
       </div>
     </main>

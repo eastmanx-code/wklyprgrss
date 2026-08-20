@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from "react";
 
 import { addItem, type AdminState } from "@/app/admin/actions";
+import { HOUSES, houseName } from "@/lib/types";
 
 const initialState: AdminState = { error: null };
 
@@ -34,6 +35,22 @@ export function AddItemForm({ venueId }: { venueId: string }) {
           disabled={pending}
         />
         <input type="hidden" name="venueId" value={venueId} />
+        {/* Which list it joins. There is no sensible default once there are
+            two — an item added to the wrong board is invisible to the person
+            who walks that half of the building. */}
+        <select
+          name="house"
+          className="field shrink-0"
+          defaultValue="FOH"
+          aria-label="Which board"
+          disabled={pending}
+        >
+          {HOUSES.map((house) => (
+            <option key={house} value={house}>
+              {houseName(house)}
+            </option>
+          ))}
+        </select>
         <button type="submit" className="btn shrink-0" disabled={pending}>
           Add
         </button>

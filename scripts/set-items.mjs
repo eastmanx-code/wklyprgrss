@@ -4,6 +4,7 @@
  *
  *   npm run set-items -- --file items.txt              every venue
  *   npm run set-items -- --file items.txt HOOD LEIL    just these
+ *   npm run set-items -- --file items.txt --house HOH  the kitchen board
  *   npm run set-items -- --file items.txt --replace    deactivate anything else
  *
  * items.txt is one title per line. Blank lines and # comments are ignored.
@@ -11,16 +12,31 @@
  * Existing items with the same title are left alone (their history is kept and
  * their position updated). --replace deactivates items not in the list; it
  * never deletes, so history always survives.
+ *
+ * Everything is scoped to one house, front of house unless told otherwise.
+ * Positions run 1..n within a house, and --replace only ever touches the house
+ * it was pointed at — loading the kitchen's ten without that scope would have
+ * retired every dining-room item in the company in one command.
  */
 import { readFile } from "node:fs/promises";
 import { createClient } from "@supabase/supabase-js";
 
 const args = process.argv.slice(2);
 const fileIndex = args.indexOf("--file");
+const houseIndex = args.indexOf("--house");
 const replace = args.includes("--replace");
-const codes = args.filter(
-  (a, i) => !a.startsWith("--") && i !== fileIndex + 1,
-).map((c) => c.toUpperCase());
+const codes = args
+  .filter(
+    (a, i) =>
+      !a.startsWith("--") && i !== fileIndex + 1 && i !== houseIndex + 1,
+  )
+  .map((c) => c.toUpperCase());
+
+const house = (args[houseIndex + 1] ?? "FOH").toUpperCase();
+if (houseIndex >= 0 && house !== "FOH" && house !== "HOH") {
+  console.error("\n  --house must be FOH or HOH.\n");
+  process.exit(1);
+}
 
 if (fileIndex < 0 || !args[fileIndex + 1]) {
   console.error("\n  Usage: npm run set-items -- --file items.txt [CODE ...]\n");
@@ -52,13 +68,16 @@ if (error || !venues?.length) {
   process.exit(1);
 }
 
-console.log(`\n  ${titles.length} items → ${venues.length} venues\n`);
+console.log(
+  `\n  ${titles.length} items → ${venues.length} venues · ${house}\n`,
+);
 
 for (const venue of venues) {
   const { data: existing } = await db
     .from("items")
     .select("id, title, active")
-    .eq("venue_id", venue.id);
+    .eq("venue_id", venue.id)
+    .eq("house", house);
 
   const byTitle = new Map(
     (existing ?? []).map((item) => [item.title.toLowerCase(), item]),
@@ -78,6 +97,7 @@ for (const venue of venues) {
       await db.from("items").insert({
         venue_id: venue.id,
         title,
+        house,
         position: index + 1,
         active: true,
       });

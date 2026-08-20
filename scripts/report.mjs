@@ -68,7 +68,7 @@ const deadlinePassed = (weekStart) => {
 const { data: venues } = await db.from("venues").select("id, code").order("code");
 const { data: items } = await db
   .from("items")
-  .select("id, venue_id, active")
+  .select("id, venue_id, active, house")
   .eq("active", true);
 const { data: subs } = await db
   .from("submissions")
@@ -76,44 +76,57 @@ const { data: subs } = await db
   .gte("week_start", weeks[0])
   .neq("review", "sent_back");
 
-const itemVenue = new Map((items ?? []).map((i) => [i.id, i.venue_id]));
+// Keyed by venue *and* house throughout. The dining room and the kitchen are
+// separate lists of ten, graded by different people, and a CSV that summed them
+// would let a spotless one hide a filthy one behind an average.
+const HOUSES = ["FOH", "HOH"];
+const itemKey = new Map(
+  (items ?? []).map((i) => [i.id, `${i.venue_id}|${i.house}`]),
+);
 const activeCount = new Map();
 for (const item of items ?? []) {
-  activeCount.set(item.venue_id, (activeCount.get(item.venue_id) ?? 0) + 1);
+  const key = `${item.venue_id}|${item.house}`;
+  activeCount.set(key, (activeCount.get(key) ?? 0) + 1);
 }
 
-const done = new Map(); // `${venueId}|${week}` -> Set(itemId)
-const firstWeek = new Map(); // venueId -> earliest week seen
+const done = new Map(); // `${venueId}|${house}|${week}` -> Set(itemId)
+const firstWeek = new Map(); // `${venueId}|${house}` -> earliest week seen
 for (const s of subs ?? []) {
-  const venueId = itemVenue.get(s.item_id);
-  if (!venueId) continue;
-  const key = `${venueId}|${s.week_start}`;
+  const owner = itemKey.get(s.item_id);
+  if (!owner) continue;
+  const key = `${owner}|${s.week_start}`;
   if (!done.has(key)) done.set(key, new Set());
   done.get(key).add(s.item_id);
 
-  const seen = firstWeek.get(venueId);
-  if (!seen || s.week_start < seen) firstWeek.set(venueId, s.week_start);
+  const seen = firstWeek.get(owner);
+  if (!seen || s.week_start < seen) firstWeek.set(owner, s.week_start);
 }
 
-const rows = [["week_start", "venue", "done", "active", "target", "status"]];
+const rows = [
+  ["week_start", "venue", "house", "done", "active", "target", "status"],
+];
 for (const week of weeks) {
   for (const venue of venues ?? []) {
-    const active = activeCount.get(venue.id) ?? 0;
-    const count = done.get(`${venue.id}|${week}`)?.size ?? 0;
-    // Weeks before a venue's first-ever submission are "no data", not
-    // failures — same rule the app uses for fail streaks.
-    const started = firstWeek.get(venue.id);
-    const status =
-      active === 0
-        ? "NO_ITEMS"
-        : !started || week < started
-          ? "NO_DATA"
-          : count >= active
-            ? "PASS"
-            : deadlinePassed(week)
-              ? "FAIL"
-              : "PENDING";
-    rows.push([week, venue.code, count, active, TARGET, status]);
+    for (const house of HOUSES) {
+      const owner = `${venue.id}|${house}`;
+      const active = activeCount.get(owner) ?? 0;
+      const count = done.get(`${owner}|${week}`)?.size ?? 0;
+      // Weeks before this house's first-ever submission are "no data", not
+      // failures — same rule the app uses for fail streaks. The kitchen's
+      // practice weeks fall out of the report this way without a date in it.
+      const started = firstWeek.get(owner);
+      const status =
+        active === 0
+          ? "NO_ITEMS"
+          : !started || week < started
+            ? "NO_DATA"
+            : count >= active
+              ? "PASS"
+              : deadlinePassed(week)
+                ? "FAIL"
+                : "PENDING";
+      rows.push([week, venue.code, house, count, active, TARGET, status]);
+    }
   }
 }
 

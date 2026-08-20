@@ -5,9 +5,10 @@ import { redirect } from "next/navigation";
 
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession } from "@/lib/session";
+import { ITEM_COLUMNS, houseScored } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
-import type { Item } from "@/lib/types";
+import type { House, Item } from "@/lib/types";
 
 export type AdminState = { error: string | null; createdItemId?: string };
 
@@ -53,18 +54,41 @@ function refresh(venueId: string) {
   revalidatePath(`/admin/venue/${venueId}`);
 }
 
-async function itemsFor(venueId: string): Promise<Item[]> {
-  const { data, error } = await db()
-    .from("items")
-    .select("id, venue_id, title, position, active")
-    .eq("venue_id", venueId)
+/**
+ * A venue's items, optionally one house's.
+ *
+ * Positions run 1..n *within* a house, so anything that renumbers or reorders
+ * has to be told which one. Asked for the venue, both houses come back in
+ * board order — front of house, then the kitchen.
+ */
+async function itemsFor(venueId: string, house?: House): Promise<Item[]> {
+  let query = db().from("items").select(ITEM_COLUMNS).eq("venue_id", venueId);
+  if (house) query = query.eq("house", house);
+  const { data, error } = await query
+    .order("house")
     .order("position")
     .order("title");
   if (error) throw new Error(error.message);
   return (data ?? []) as Item[];
 }
 
-/** Rewrite positions to a clean 1..n so reordering stays predictable. */
+/** The house an item is on, for the calls that renumber around it. */
+async function houseOfItem(itemId: string): Promise<House | null> {
+  const { data } = await db()
+    .from("items")
+    .select("house")
+    .eq("id", itemId)
+    .maybeSingle();
+  return (data as { house: House } | null)?.house ?? null;
+}
+
+/**
+ * Rewrite positions to a clean 1..n so reordering stays predictable.
+ *
+ * Always called with one house's items. Handed both, it would renumber the
+ * kitchen 11..20 and the two lists would interleave on every board that reads
+ * them in position order.
+ */
 async function normalizePositions(items: Item[]) {
   await Promise.all(
     items.map((item, index) =>
@@ -84,13 +108,17 @@ export async function addItem(
 ): Promise<AdminState> {
   const venueId = String(formData.get("venueId") ?? "");
   const title = String(formData.get("title") ?? "").trim();
+  // Unrecognised means front of house, which is where every item lived before
+  // the kitchen existed. Never a third value: an item on a board nothing
+  // renders is an item nobody will ever walk.
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!venueId) return { error: "Missing venue." };
   if (!(await canManage(venueId))) return { error: "Not signed in." };
   if (!title) return { error: "Give the item a title." };
   if (title.length > MAX_TITLE_LENGTH)
     return { error: "That title is too long." };
 
-  const existing = await itemsFor(venueId);
+  const existing = await itemsFor(venueId, house);
   // Returns the row so the caller can send the leader straight to its upload
   // screen: naming an item and never photographing it is the failure mode
   // this whole setup step exists to avoid.
@@ -99,6 +127,7 @@ export async function addItem(
     .insert({
       venue_id: venueId,
       title,
+      house,
       position: existing.length + 1,
       active: true,
     })
@@ -140,8 +169,9 @@ export async function setItemActive(formData: FormData) {
   const owner = await venueOfItem(itemId);
   if (!owner || !(await canManage(owner))) return;
 
+  const house = await houseOfItem(itemId);
   await db().from("items").update({ active }).eq("id", itemId);
-  await normalizePositions(await itemsFor(venueId));
+  if (house) await normalizePositions(await itemsFor(venueId, house));
   refresh(venueId);
 
   // Retiring from the item's own page leaves you standing on a page that now
@@ -158,7 +188,11 @@ export async function moveItem(formData: FormData) {
   const owner = await venueOfItem(itemId);
   if (!owner || !(await canManage(owner))) return;
 
-  const items = await itemsFor(venueId);
+  // Within its own house. Moved against the venue, the top item of the kitchen
+  // would have swapped with the last item of the dining room.
+  const house = await houseOfItem(itemId);
+  if (!house) return;
+  const items = await itemsFor(venueId, house);
   const index = items.findIndex((item) => item.id === itemId);
   if (index < 0) return;
 
@@ -211,7 +245,11 @@ export async function approveAllForVenue(formData: FormData) {
   const weekStart = String(formData.get("weekStart") ?? "");
   if (!venueId || !weekStart) return;
 
-  const items = await itemsFor(venueId);
+  // One house's work, because one person reviewed it. Approve-all across the
+  // venue would have signed off the kitchen in the dining room's name — which
+  // is precisely the conflation the split board exists to prevent.
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
+  const items = await itemsFor(venueId, house);
   const itemIds = items.map((item) => item.id);
   if (itemIds.length === 0) return;
 
@@ -385,6 +423,11 @@ export async function gradeWeek(formData: FormData) {
   const venueId = String(formData.get("venueId") ?? "");
   const weekStart = String(formData.get("weekStart") ?? "");
   const by = String(formData.get("by") ?? "").trim() || "admin";
+  // One house at a time, and each signs its own. Two people walk now — one the
+  // dining room, one the kitchen — and a single grade per venue meant whoever
+  // finished second overwrote the first: the record showed one name and
+  // silently lost the other.
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!venueId || !weekStart) return;
 
   // Not before the week is over. Grading a week still being worked closes it
@@ -397,8 +440,8 @@ export async function gradeWeek(formData: FormData) {
   await db()
     .from("graded_weeks")
     .upsert(
-      { venue_id: venueId, week_start: weekStart, graded_by: by },
-      { onConflict: "venue_id,week_start" },
+      { venue_id: venueId, week_start: weekStart, house, graded_by: by },
+      { onConflict: "venue_id,week_start,house" },
     );
 
   refresh(venueId);
@@ -410,13 +453,15 @@ export async function ungradeWeek(formData: FormData) {
 
   const venueId = String(formData.get("venueId") ?? "");
   const weekStart = String(formData.get("weekStart") ?? "");
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!venueId || !weekStart) return;
 
   await db()
     .from("graded_weeks")
     .delete()
     .eq("venue_id", venueId)
-    .eq("week_start", weekStart);
+    .eq("week_start", weekStart)
+    .eq("house", house);
 
   refresh(venueId);
 }
@@ -438,8 +483,14 @@ export async function gradeAllVenues(formData: FormData) {
 
   const weekStart = String(formData.get("weekStart") ?? "");
   const by = String(formData.get("by") ?? "").trim() || "admin";
+  // The house this grader walked. Grading both at once would put one person's
+  // name against a walk they did not do — which is the signature this record
+  // exists to carry.
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!weekStart) return;
   if (!isDeadlinePassed(weekStart)) return;
+  // A house that was not being scored that week has nothing to close out.
+  if (!houseScored(house, weekStart)) return;
 
   const { data: venues } = await db()
     .from("venues")
@@ -448,13 +499,14 @@ export async function gradeAllVenues(formData: FormData) {
   const rows = ((venues ?? []) as { id: string }[]).map((venue) => ({
     venue_id: venue.id,
     week_start: weekStart,
+    house,
     graded_by: by,
   }));
   if (rows.length === 0) return;
 
   await db()
     .from("graded_weeks")
-    .upsert(rows, { onConflict: "venue_id,week_start" });
+    .upsert(rows, { onConflict: "venue_id,week_start,house" });
 
   revalidatePath("/admin");
   revalidatePath("/venue");

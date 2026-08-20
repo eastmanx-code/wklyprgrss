@@ -4,6 +4,7 @@ import { NewItemForm } from "@/components/admin/NewItemForm";
 import { BackLink } from "@/components/ui";
 import { getSession } from "@/lib/session";
 import { getVenue } from "@/lib/status";
+import { houseName, type House } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +15,13 @@ export const dynamic = "force-dynamic";
 export default async function NewItemPage({
   searchParams,
 }: {
-  searchParams: Promise<{ venue?: string; slot?: string }>;
+  searchParams: Promise<{ venue?: string; house?: string; slot?: string }>;
 }) {
-  const { venue: venueParam, slot } = await searchParams;
+  const { venue: venueParam, house: houseParam, slot } = await searchParams;
+  // Anything but the kitchen is the dining room. The parameter comes off a
+  // link, so it is checked rather than trusted — an unrecognised value must
+  // not create an item on a third board that nothing displays.
+  const house: House = houseParam === "HOH" ? "HOH" : "FOH";
 
   const session = await getSession();
   if (!session) redirect("/");
@@ -40,13 +45,13 @@ export default async function NewItemPage({
 
       <header className="mt-4 mb-6">
         <p className="label">
-          {venue.code}
+          {venue.code} · {houseName(house)}
           {slot ? ` · slot ${slot}` : ""}
         </p>
         <h1 className="mt-2 text-metric font-medium">New task</h1>
       </header>
 
-      <NewItemForm venueId={venue.id} />
+      <NewItemForm venueId={venue.id} house={house} />
     </main>
   );
 }

@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import type { House } from "@/lib/types";
+
 /**
  * An empty slot, as a target rather than a form.
  *
@@ -13,15 +15,18 @@ import Link from "next/link";
  */
 export function AddItemSlot({
   venueId,
+  house,
   index,
 }: {
   venueId: string;
+  /** Which board this slot belongs to — the new item lands in it. */
+  house: House;
   index: number;
 }) {
   return (
     <li>
       <Link
-        href={`/venue/item/new?venue=${venueId}&slot=${index}`}
+        href={`/venue/item/new?venue=${venueId}&house=${house}&slot=${index}`}
         className="panel panel-link flex h-full flex-col p-3"
       >
         <div className="dotfield flex aspect-square w-full items-center justify-center rounded-[8px]">

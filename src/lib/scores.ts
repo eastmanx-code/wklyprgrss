@@ -1,8 +1,14 @@
 import "server-only";
 
-import { WEEKLY_ITEM_TARGET, latestByItem, statusFor } from "./status";
+import {
+  WEEKLY_ITEM_TARGET,
+  houseScored,
+  latestByItem,
+  statusFor,
+} from "./status";
 import { db } from "./supabase";
-import type { Submission, WeekStatus } from "./types";
+import { HOUSES } from "./types";
+import type { House, Submission, WeekStatus } from "./types";
 import {
   dayInTz,
   daysOfWeek,
@@ -30,6 +36,15 @@ export type VenueWeekRow = {
   /** Sunday. How the warehouse keys a week — join on this. */
   week_ending: string;
   venue_code: string;
+  /**
+   * Which half of the building. FOH is the dining room, HOH the kitchen, and
+   * they are graded by different people against separate lists of ten — so the
+   * grain of this table is one row per venue per house per week, and summing
+   * the two would report an average that hides whichever half is worse.
+   */
+  house: House;
+  /** Whether this house's numbers count yet, or were a practice walk. */
+  scored: boolean;
   /** Tasks on the board now. Historical weeks are scored against the current
       board, which is the only definition the schema supports. */
   items_on_board: number;
@@ -52,7 +67,7 @@ export type VenueWeekRow = {
   deadline_passed: boolean;
 };
 
-type Row = { id: string; venue_id: string; active: boolean };
+type Row = { id: string; venue_id: string; active: boolean; house: House };
 
 /**
  * Every venue's numbers for each of the given weeks.
@@ -77,15 +92,21 @@ export async function venueWeekRows(
 
   const { data: itemData, error: itemError } = await db()
     .from("items")
-    .select("id, venue_id, active");
+    .select("id, venue_id, active, house");
   if (itemError) throw new Error(itemError.message);
   const items = (itemData ?? []) as Row[];
 
-  const venueOfItem = new Map(items.map((item) => [item.id, item.venue_id]));
+  // Keyed by venue *and* house everywhere below, so there is no path through
+  // this function where a kitchen photograph lands in a dining-room total.
+  const keyOf = (venueId: string, house: House) => `${venueId}|${house}`;
+  const keyOfItem = new Map(
+    items.map((item) => [item.id, keyOf(item.venue_id, item.house)]),
+  );
   const onBoard = new Map<string, number>();
   for (const item of items) {
     if (!item.active) continue;
-    onBoard.set(item.venue_id, (onBoard.get(item.venue_id) ?? 0) + 1);
+    const key = keyOf(item.venue_id, item.house);
+    onBoard.set(key, (onBoard.get(key) ?? 0) + 1);
   }
 
   const earliest = [...weekStarts].sort()[0];
@@ -100,16 +121,19 @@ export async function venueWeekRows(
 
   const { data: gradeData, error: gradeError } = await db()
     .from("graded_weeks")
-    .select("venue_id, week_start, graded_by, graded_at")
+    .select("venue_id, week_start, house, graded_by, graded_at")
     .in("week_start", weekStarts);
   if (gradeError) throw new Error(gradeError.message);
   const grades = new Map(
-    ((gradeData ?? []) as {
-      venue_id: string;
-      week_start: string;
-      graded_by: string;
-      graded_at: string;
-    }[]).map((g) => [`${g.venue_id}|${g.week_start}`, g]),
+    (
+      (gradeData ?? []) as {
+        venue_id: string;
+        week_start: string;
+        house: House;
+        graded_by: string;
+        graded_at: string;
+      }[]
+    ).map((g) => [`${g.venue_id}|${g.house}|${g.week_start}`, g]),
   );
 
   const rows: VenueWeekRow[] = [];
@@ -118,44 +142,48 @@ export async function venueWeekRows(
     const passed = isDeadlinePassed(weekStart, now);
 
     for (const venue of venues) {
-      const mine = ofWeek.filter(
-        (s) => venueOfItem.get(s.item_id) === venue.id,
-      );
-      // Newest entry per task decides its state, exactly as the board does —
-      // a task filed twice in a week is one task, in whatever state it
-      // finished in.
-      const latest = [...latestByItem(mine).values()];
-      const filed = latest.length;
-      const built = onBoard.get(venue.id) ?? 0;
-      // A venue with no board is measured against the target, exactly as the
-      // dashboard measures it. Reported as 0 of 0 it is arithmetically
-      // complete, and the export would have called the worst case in the
-      // programme a finished week while the board called it a fail.
-      const activeCount = built === 0 ? WEEKLY_ITEM_TARGET : built;
-      const times = mine.map((s) => s.created_at).sort();
-      const grade = grades.get(`${venue.id}|${weekStart}`);
+      for (const house of HOUSES) {
+        const key = keyOf(venue.id, house);
+        const mine = ofWeek.filter((s) => keyOfItem.get(s.item_id) === key);
+        // Newest entry per task decides its state, exactly as the board does —
+        // a task filed twice in a week is one task, in whatever state it
+        // finished in.
+        const latest = [...latestByItem(mine).values()];
+        const filed = latest.length;
+        const built = onBoard.get(key) ?? 0;
+        // A house with no board is measured against the target, exactly as the
+        // dashboard measures it. Reported as 0 of 0 it is arithmetically
+        // complete, and the export would have called the worst case in the
+        // programme a finished week while the board called it a fail.
+        const activeCount = built === 0 ? WEEKLY_ITEM_TARGET : built;
+        const times = mine.map((s) => s.created_at).sort();
+        const grade = grades.get(`${venue.id}|${house}|${weekStart}`);
 
-      rows.push({
-        week_start: weekStart,
-        week_ending: weekEnding(weekStart),
-        venue_code: venue.code,
-        items_on_board: activeCount,
-        filed_count: filed,
-        approved_count: latest.filter((s) => s.review === "approved").length,
-        sent_back_count: latest.filter((s) => s.review === "sent_back").length,
-        awaiting_review_count: latest.filter((s) => s.review === "pending")
-          .length,
-        rolling_count: latest.filter((s) => s.progress === "another_cycle")
-          .length,
-        status: statusFor(filed, built, weekStart, now),
-        graded: Boolean(grade),
-        graded_by: grade?.graded_by ?? null,
-        graded_at: grade?.graded_at ?? null,
-        first_filed_at: times[0] ?? null,
-        last_filed_at: times[times.length - 1] ?? null,
-        deadline_at: deadlineFor(weekStart).toISOString(),
-        deadline_passed: passed,
-      });
+        rows.push({
+          week_start: weekStart,
+          week_ending: weekEnding(weekStart),
+          venue_code: venue.code,
+          house,
+          scored: houseScored(house, weekStart),
+          items_on_board: activeCount,
+          filed_count: filed,
+          approved_count: latest.filter((s) => s.review === "approved").length,
+          sent_back_count: latest.filter((s) => s.review === "sent_back")
+            .length,
+          awaiting_review_count: latest.filter((s) => s.review === "pending")
+            .length,
+          rolling_count: latest.filter((s) => s.progress === "another_cycle")
+            .length,
+          status: statusFor(filed, built, weekStart, now),
+          graded: Boolean(grade),
+          graded_by: grade?.graded_by ?? null,
+          graded_at: grade?.graded_at ?? null,
+          first_filed_at: times[0] ?? null,
+          last_filed_at: times[times.length - 1] ?? null,
+          deadline_at: deadlineFor(weekStart).toISOString(),
+          deadline_passed: passed,
+        });
+      }
     }
   }
 
@@ -178,6 +206,9 @@ export type VenueDayRow = {
   week_start: string;
   week_ending: string;
   venue_code: string;
+  /** Which half of the building. Same grain rule as the weekly table. */
+  house: House;
+  scored: boolean;
   items_on_board: number;
   /** Entries filed that day. Raw activity, so a re-file counts again. */
   entries_filed: number;
@@ -216,14 +247,18 @@ export async function venueDayRows(
 
   const { data: itemData, error: itemError } = await db()
     .from("items")
-    .select("id, venue_id, active");
+    .select("id, venue_id, active, house");
   if (itemError) throw new Error(itemError.message);
   const items = (itemData ?? []) as Row[];
-  const venueOfItem = new Map(items.map((i) => [i.id, i.venue_id]));
+  const keyOf = (venueId: string, house: House) => `${venueId}|${house}`;
+  const keyOfItem = new Map(
+    items.map((i) => [i.id, keyOf(i.venue_id, i.house)]),
+  );
   const onBoard = new Map<string, number>();
   for (const item of items) {
     if (!item.active) continue;
-    onBoard.set(item.venue_id, (onBoard.get(item.venue_id) ?? 0) + 1);
+    const key = keyOf(item.venue_id, item.house);
+    onBoard.set(key, (onBoard.get(key) ?? 0) + 1);
   }
 
   const { data: subData, error: subError } = await db()
@@ -246,32 +281,38 @@ export async function venueDayRows(
     const days = daysOfWeek(weekStart).filter((d) => d <= today);
 
     for (const venue of venues) {
-      const mine = ofWeek.filter((s) => venueOfItem.get(s.item_id) === venue.id);
-      const covered = new Set<string>();
+      for (const house of HOUSES) {
+        const key = keyOf(venue.id, house);
+        const mine = ofWeek.filter((s) => keyOfItem.get(s.item_id) === key);
+        const covered = new Set<string>();
 
-      for (const date of days) {
-        const filedToday = mine.filter((s) => dayInTz(s.created_at) === date);
-        for (const s of filedToday) covered.add(s.item_id);
+        for (const date of days) {
+          const filedToday = mine.filter((s) => dayInTz(s.created_at) === date);
+          for (const s of filedToday) covered.add(s.item_id);
 
-        const judgedToday = mine.filter(
-          (s) => s.reviewed_at && dayInTz(s.reviewed_at) === date,
-        );
+          const judgedToday = mine.filter(
+            (s) => s.reviewed_at && dayInTz(s.reviewed_at) === date,
+          );
 
-        rows.push({
-          date,
-          day_of_week: DAY_NAMES[new Date(`${date}T00:00:00Z`).getUTCDay()],
-          week_start: weekStart,
-          week_ending: weekEnding(weekStart),
-          venue_code: venue.code,
-          items_on_board: onBoard.get(venue.id) || WEEKLY_ITEM_TARGET,
-          entries_filed: filedToday.length,
-          items_covered_to_date: covered.size,
-          entries_approved: judgedToday.filter((s) => s.review === "approved")
-            .length,
-          entries_sent_back: judgedToday.filter((s) => s.review === "sent_back")
-            .length,
-          is_deadline_day: date === deadlineDay,
-        });
+          rows.push({
+            date,
+            day_of_week: DAY_NAMES[new Date(`${date}T00:00:00Z`).getUTCDay()],
+            week_start: weekStart,
+            week_ending: weekEnding(weekStart),
+            venue_code: venue.code,
+            house,
+            scored: houseScored(house, weekStart),
+            items_on_board: onBoard.get(key) || WEEKLY_ITEM_TARGET,
+            entries_filed: filedToday.length,
+            items_covered_to_date: covered.size,
+            entries_approved: judgedToday.filter((s) => s.review === "approved")
+              .length,
+            entries_sent_back: judgedToday.filter(
+              (s) => s.review === "sent_back",
+            ).length,
+            is_deadline_day: date === deadlineDay,
+          });
+        }
       }
     }
   }

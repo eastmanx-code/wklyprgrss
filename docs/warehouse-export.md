@@ -40,16 +40,25 @@ Rows come back oldest week first.
 }
 ```
 
-One row per venue per week, keyed on `(week_ending, venue_code)`. Re-pulling a
-window is idempotent — the same window always produces the same keys, so a
-loader can replay any range without creating duplicates.
+One row per venue **per house** per week, keyed on
+`(week_ending, venue_code, house)`. Re-pulling a window is idempotent — the
+same window always produces the same keys, so a loader can replay any range
+without creating duplicates.
+
+**The key changed on 2026-08-20.** `house` was added and it is part of the key,
+not a detail on the row. A loader still upserting on `(week_ending,
+venue_code)` will keep whichever half arrived last and silently lose the other,
+so the row count per venue per week doubles and the primary key has to widen
+before the next pull.
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `week_start` | DATE | Monday. How this app keys a week. |
 | `week_ending` | DATE | Sunday. **Join on this** — it is what the warehouse uses. |
 | `venue_code` | STRING | This app's code, verbatim. See mapping below. |
-| `items_on_board` | INT | Tasks on the venue's board. |
+| `house` | STRING | `FOH` (dining room) or `HOH` (kitchen). Part of the key. |
+| `scored` | BOOL | Whether this house's numbers counted that week. See below. |
+| `items_on_board` | INT | Tasks on this house's board. |
 | `filed_count` | INT | Tasks with a new photo and comment that week. The pass/fail gate. |
 | `approved_count` | INT | Signed off after review. **The score.** |
 | `sent_back_count` | INT | Rejected, to be done again. |
@@ -131,8 +140,20 @@ week will freeze last week's approvals at whatever they were on Sunday and
 never see the grade arrive.
 
 **So pull a window, not a week.** `?weeks=4` daily, upserting on
-`(week_ending, venue_code)`, keeps recent history correct as verdicts land
-while staying small — four weeks is about eighty rows.
+`(week_ending, venue_code, house)`, keeps recent history correct as verdicts
+land while staying small — four weeks is about a hundred and seventy rows.
+
+**Never sum or average the two houses.** They are separate lists of ten,
+walked by different people and graded separately, and the whole reason the
+board was split is that one number covering both lets a spotless dining room
+hide a filthy walk-in. A venue passes a week by passing both halves. Roll up to
+a venue with `MIN(status)` semantics — worst half wins — not with an average.
+
+**`HOH` starts counting the week of 2026-08-24.** The kitchen lists went out
+the week before so every venue could walk them once and say what read wrong,
+and rows for those weeks carry `scored = false`. Filter them out of any
+scoreboard: they are a practice run, and counting them puts a fresh 0/10
+against every venue in the company. `FOH` is `scored = true` throughout.
 
 ## What it can answer
 
@@ -168,7 +189,8 @@ showed, what anyone wrote, or who did the work. That detail stays in the app.
 GET https://wklyprgrss.com/api/scores?grain=day&weeks=4
 ```
 
-One row per venue per day, keyed on `(date, venue_code)`. Derived from the
+One row per venue per house per day, keyed on `(date, venue_code, house)`.
+Derived from the
 timestamps already on every entry, so it is exact and it reaches backwards
 over all of history — there is nothing to start collecting and nothing lost
 if a load is missed.
@@ -184,7 +206,9 @@ with the next.
 | `day_of_week` | STRING | `Monday` … `Sunday`. |
 | `week_start` / `week_ending` | DATE | The week this day belongs to. |
 | `venue_code` | STRING | As above. |
-| `items_on_board` | INT | Tasks on the board. |
+| `house` | STRING | `FOH` or `HOH`. Part of the key, same rule as the weekly grain. |
+| `scored` | BOOL | Whether this house's numbers counted that week. |
+| `items_on_board` | INT | Tasks on this house's board. |
 | `entries_filed` | INT | Entries filed that day. Raw activity — a re-file counts again. |
 | `items_covered_to_date` | INT | Distinct tasks with an entry this week, as at the end of that day. **The progress curve.** |
 | `entries_approved` | INT | Verdicts given that day. This is the admin's work, not the venue's. |

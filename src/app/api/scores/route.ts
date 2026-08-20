@@ -27,8 +27,14 @@ const WEEK_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
  *   GET /api/scores?week=2026-08-10
  *   Authorization: Bearer <token>
  *
- * Rows are keyed on (week_ending, venue_code), so re-pulling a window is
+ * Rows are keyed on (week_ending, venue_code, house), so re-pulling a window is
  * idempotent — a loader can replay any range without making duplicates.
+ *
+ * The house is part of the key, not a detail on the row. The dining room and
+ * the kitchen are walked by different people against separate lists of ten and
+ * graded separately; a loader that dropped the column and upserted on venue
+ * and week alone would keep whichever of the two arrived last and silently
+ * lose the other.
  */
 export async function GET(request: Request): Promise<Response> {
   const denied = requireToken(request);

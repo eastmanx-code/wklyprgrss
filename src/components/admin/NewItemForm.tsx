@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 
 import { addItem, type AdminState } from "@/app/admin/actions";
+import type { House } from "@/lib/types";
 
 const initialState: AdminState = { error: null };
 
@@ -20,7 +21,13 @@ const initialState: AdminState = { error: null };
  * Naming still leads straight to the camera: an item with no photo is the
  * failure this setup step exists to avoid.
  */
-export function NewItemForm({ venueId }: { venueId: string }) {
+export function NewItemForm({
+  venueId,
+  house,
+}: {
+  venueId: string;
+  house: House;
+}) {
   const [state, formAction, pending] = useActionState(addItem, initialState);
   const router = useRouter();
 
@@ -33,6 +40,9 @@ export function NewItemForm({ venueId }: { venueId: string }) {
   return (
     <form action={formAction} className="panel space-y-4">
       <input type="hidden" name="venueId" value={venueId} />
+      {/* Which board it lands on. Carried from the slot that was tapped, so
+          nobody has to pick it — the slot already said which list it was. */}
+      <input type="hidden" name="house" value={house} />
 
       <div className="space-y-2">
         <label className="label" htmlFor="title">

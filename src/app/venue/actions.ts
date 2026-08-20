@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { photoPath } from "@/lib/photos";
 import { getSession } from "@/lib/session";
+import { ITEM_COLUMNS } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { Item } from "@/lib/types";
 import { currentWeekStart, mostRecentCompletedWeek } from "@/lib/week";
@@ -37,7 +38,7 @@ async function ownedItem(itemId: string) {
 
   const { data } = await db()
     .from("items")
-    .select("id, venue_id, title, position, active")
+    .select(ITEM_COLUMNS)
     .eq("id", itemId)
     .eq("active", true)
     .maybeSingle();
