@@ -6,7 +6,16 @@ import { gradeAllVenues } from "@/app/admin/actions";
 import type { House } from "@/lib/types";
 import { houseName } from "@/lib/types";
 
-export type HouseGradeCount = { house: House; graded: number };
+export type HouseGradeCount = {
+  house: House;
+  graded: number;
+  /**
+   * How many venues owe this house. Not every venue owes both: four are bars
+   * with no kitchen, so a flat "of 21" would sit at 17/21 forever and read as
+   * four venues nobody had got round to.
+   */
+  total: number;
+};
 
 /**
  * Closing the week for everyone, in one move per house.
@@ -24,13 +33,11 @@ export function GradeAll({
   weekStart,
   weekLabel,
   houses,
-  total,
 }: {
   weekStart: string;
   weekLabel: string;
   /** The houses being scored this week, and how many venues are closed out. */
   houses: HouseGradeCount[];
-  total: number;
 }) {
   const [by, setBy] = useState("");
   // Same reasoning as GradeWeek: one name box, several forms, so the check
@@ -45,8 +52,9 @@ export function GradeAll({
     nameRef.current?.focus();
   }
 
-  const outstanding = houses.filter((house) => house.graded < total);
-  const done = outstanding.length === 0 && total > 0;
+  const outstanding = houses.filter((house) => house.graded < house.total);
+  const done =
+    outstanding.length === 0 && houses.some((house) => house.total > 0);
 
   return (
     <section
@@ -58,14 +66,14 @@ export function GradeAll({
         {houses
           .map(
             (house) =>
-              `${houseName(house.house).toLowerCase()} ${house.graded}/${total}`,
+              `${houseName(house.house).toLowerCase()} ${house.graded}/${house.total}`,
           )
           .join(" · ")}
       </p>
       <p className="note text-muted mt-1 leading-relaxed">
         {done
           ? "Every venue can reset its board and take new jobs."
-          : "A venue cannot reset its board until both halves are graded. Everything else works as normal for them."}
+          : "A venue cannot reset its board until every half it runs is graded. Everything else works as normal for them."}
       </p>
 
       {done ? null : (

@@ -98,20 +98,22 @@ export default async function AdminVenuePage({
    * count. A venue-wide "4 awaiting review" told neither of them how much of
    * it was theirs.
    */
-  const houses = HOUSES.map((house) => {
-    const all = items.filter((item) => item.house === house);
-    const active = all.filter((item) => item.active);
-    const done = active.filter((item) => doneThisWeek.has(item.id)).length;
-    return {
-      house,
-      all,
-      active,
-      done,
-      awaitingReview: active.filter(reviewable).length,
-      status: statusFor(done, active.length, weekStart, new Date()),
-      scored: houseScored(house, weekStart),
-    };
-  });
+  const houses = HOUSES.filter((house) => venue.houses.includes(house)).map(
+    (house) => {
+      const all = items.filter((item) => item.house === house);
+      const active = all.filter((item) => item.active);
+      const done = active.filter((item) => doneThisWeek.has(item.id)).length;
+      return {
+        house,
+        all,
+        active,
+        done,
+        awaitingReview: active.filter(reviewable).length,
+        status: statusFor(done, active.length, weekStart, new Date()),
+        scored: houseScored(house, weekStart),
+      };
+    },
+  );
 
   // The week the venue is waiting on a grade for.
   const gradedWeek = mostRecentCompletedWeek();
@@ -151,11 +153,14 @@ export default async function AdminVenuePage({
         venueId={venue.id}
         weekStart={gradedWeek}
         weekLabel={formatWeekStart(gradedWeek)}
-        houses={HOUSES.map((house) => ({
-          house,
-          gradedBy: grades.get(house)?.gradedBy ?? null,
-          scored: houseScored(house, gradedWeek),
-        }))}
+        houses={HOUSES.filter((house) => venue.houses.includes(house)).map(
+          (house) => ({
+            house,
+            gradedBy: grades.get(house)?.gradedBy ?? null,
+            // Practice halves are still gradeable, just not binding.
+            scored: houseScored(house, gradedWeek),
+          }),
+        )}
       />
 
       {/* This week at a glance: see it, approve it, or send it back.

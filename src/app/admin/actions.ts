@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { ITEM_COLUMNS, houseScored } from "@/lib/status";
+import { ITEM_COLUMNS } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
@@ -489,13 +489,15 @@ export async function gradeAllVenues(formData: FormData) {
   const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!weekStart) return;
   if (!isDeadlinePassed(weekStart)) return;
-  // A house that was not being scored that week has nothing to close out.
-  if (!houseScored(house, weekStart)) return;
 
+  // Only the venues that owe this house. Grading all of them would put a
+  // kitchen grade on four bars that have no kitchen, and the record would say
+  // somebody walked a room that does not exist.
   const { data: venues } = await db()
     .from("venues")
-    .select("id")
-    .eq("active", true);
+    .select("id, houses")
+    .eq("active", true)
+    .contains("houses", [house]);
   const rows = ((venues ?? []) as { id: string }[]).map((venue) => ({
     venue_id: venue.id,
     week_start: weekStart,

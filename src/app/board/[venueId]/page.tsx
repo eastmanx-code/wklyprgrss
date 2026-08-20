@@ -61,17 +61,19 @@ export default async function BoardVenuePage({
   // Two lists, never one. Read as a single board of twenty, a venue with a
   // spotless dining room and an untouched kitchen would show a half-full bar
   // and read as halfway through the week rather than as one half not started.
-  const houses = HOUSES.map((house) => {
-    const mine = items.filter((item) => item.house === house);
-    const done = mine.filter((item) => doneThisWeek.has(item.id)).length;
-    return {
-      house,
-      items: mine,
-      done,
-      status: statusFor(done, mine.length, weekStart, new Date()),
-      scored: houseScored(house, weekStart),
-    };
-  });
+  const houses = HOUSES.filter((house) => venue.houses.includes(house)).map(
+    (house) => {
+      const mine = items.filter((item) => item.house === house);
+      const done = mine.filter((item) => doneThisWeek.has(item.id)).length;
+      return {
+        house,
+        items: mine,
+        done,
+        status: statusFor(done, mine.length, weekStart, new Date()),
+        scored: houseScored(house, weekStart),
+      };
+    },
+  );
 
   const byItem = new Map<string, typeof submissions>();
   for (const submission of submissions) {

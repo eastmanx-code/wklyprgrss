@@ -3,6 +3,16 @@ export type Venue = {
   code: string;
   name: string;
   pin: string;
+  /**
+   * The halves this venue actually runs.
+   *
+   * Four of them are bars with no kitchen. Scored on a house they do not have,
+   * they would fail it every week forever — and since a venue wins a week only
+   * by winning every house it is scored on, they could never win another one.
+   * An empty board is a venue that has not done the work; a missing house is a
+   * fact about the building. Only the second is an excuse, and this is it.
+   */
+  houses: House[];
 };
 
 /**
@@ -10,7 +20,7 @@ export type Venue = {
  * login check uses this, so the PIN is never even read out of the database for
  * screens that have no business showing it.
  */
-export type VenueSummary = Pick<Venue, "id" | "code" | "name">;
+export type VenueSummary = Pick<Venue, "id" | "code" | "name" | "houses">;
 
 /**
  * Which board an item belongs to.

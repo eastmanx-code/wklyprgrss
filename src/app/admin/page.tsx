@@ -13,6 +13,7 @@ import {
   venueApproved,
   venueIsWin,
 } from "@/lib/status";
+import { HOUSES } from "@/lib/types";
 import {
   deadlineFor,
   formatDeadline,
@@ -71,14 +72,23 @@ export default async function AdminDashboardPage() {
       <GradeAll
         weekStart={gradedWeek}
         weekLabel={formatWeekStart(gradedWeek)}
-        houses={scoredHouses(gradedWeek).map((house) => ({
-          house,
+        houses={HOUSES.filter((house) =>
+          rows.some((row) => row.venue.houses.includes(house)),
+        ).map((house) => {
           // Counted against the live rows, not the raw grade rows: "N of 21"
-          // stays honest when a graded venue is later stood down.
-          graded: rows.filter((row) => gradedIds.get(house)?.has(row.venue.id))
-            .length,
-        }))}
-        total={rows.length}
+          // stays honest when a graded venue is later stood down. And only
+          // against the venues that owe this house, so the four bars with no
+          // kitchen are not sitting in the denominator waiting for a grade
+          // that is never coming.
+          const owed = rows.filter((row) => row.venue.houses.includes(house));
+          return {
+            house,
+            graded: owed.filter((row) =>
+              gradedIds.get(house)?.has(row.venue.id),
+            ).length,
+            total: owed.length,
+          };
+        })}
       />
 
       <NarrativeStrip
