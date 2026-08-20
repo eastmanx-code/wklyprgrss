@@ -106,12 +106,13 @@ export type HouseWeek = {
   /**
    * Whether this house's numbers count yet.
    *
-   * A house shows on the board from the day its items are loaded, but it is
-   * not scored until its first live week. The kitchen lists went out mid-week
-   * for people to walk once and get wrong; counting that week would have put a
-   * fresh 0/10 against every venue in the company for a practice run, and —
-   * because past weeks are scored against the board as it stands now — would
-   * have back-dated the same zero across the whole history.
+   * A house shows on the board from the day it exists, but it is not scored
+   * until its first live week. A venue names its own ten, so the kitchen
+   * arrives empty and there is a week of deciding and walking first; counting
+   * that week would have put a fresh 0/10 against every venue in the company
+   * for a board nobody had built yet, and — because past weeks are scored
+   * against the board as it stands now — would have back-dated the same zero
+   * across the whole history.
    */
   scored: boolean;
 };

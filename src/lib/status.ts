@@ -35,12 +35,15 @@ const PROGRAM_START_WEEK = process.env.PROGRAM_START_WEEK ?? "2026-08-03";
 /**
  * The first week the kitchen board counts.
  *
- * The lists go out before this so every venue can walk them once without a
- * score attached — the first run of a new checklist finds the items that are
- * worded wrong, and nobody should be marked down for that. The date matters
- * for more than politeness: past weeks are scored against the board as it
- * stands today, so a kitchen that counted from the day it was loaded would
- * have written a fresh 0/10 into every week of history at once.
+ * A venue writes its own ten, the same way it always has for the dining room,
+ * so the board arrives empty and there is a week of naming and walking before
+ * anything is scored. Nobody should be marked down for the week they were
+ * still deciding what their ten are.
+ *
+ * The date matters for more than fairness. Past weeks are scored against the
+ * board as it stands today, so a kitchen that counted from the moment its
+ * first item was named would have written a fresh 0/10 into every week of
+ * history at once.
  */
 const HOH_START_WEEK = process.env.HOH_START_WEEK ?? "2026-08-24";
 

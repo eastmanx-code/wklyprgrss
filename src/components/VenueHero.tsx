@@ -80,13 +80,16 @@ export function HouseHeading({ progress }: { progress: HouseProgress }) {
           leader distrusted about this. */}
       {!scored && progress.scoredFrom ? (
         <p className="note text-muted mt-2 leading-relaxed">
-          Walk it this week and tell us what reads wrong. Nothing here counts
-          towards a score until the week of {progress.scoredFrom}.
+          Name your ten and walk them once. Nothing here counts towards a score
+          until the week of {progress.scoredFrom}.
         </p>
       ) : null}
 
-      {/* Only when it changes what they should do next. */}
-      {shortOfItems || (missed && !complete) ? (
+      {/* Only when it changes what they should do next — and never while the
+          house is still practising. "A week can't pass with fewer than 10" is
+          not true of a week that is not being scored, and it would have sat
+          directly under the line that already says to name the ten. */}
+      {scored && (shortOfItems || (missed && !complete)) ? (
         <p className="text-body text-warn mt-2 leading-[1.5] tracking-normal">
           {shortOfItems
             ? `Only ${configured} of ${total} items are set up. A week can't pass with fewer than ${total} — add the rest from any empty slot below.`

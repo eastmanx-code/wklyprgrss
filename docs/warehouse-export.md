@@ -149,11 +149,12 @@ board was split is that one number covering both lets a spotless dining room
 hide a filthy walk-in. A venue passes a week by passing both halves. Roll up to
 a venue with `MIN(status)` semantics — worst half wins — not with an average.
 
-**`HOH` starts counting the week of 2026-08-24.** The kitchen lists went out
-the week before so every venue could walk them once and say what read wrong,
-and rows for those weeks carry `scored = false`. Filter them out of any
-scoreboard: they are a practice run, and counting them puts a fresh 0/10
-against every venue in the company. `FOH` is `scored = true` throughout.
+**`HOH` starts counting the week of 2026-08-24.** Each venue writes its own ten
+for the kitchen, the same way it always has for the dining room, so the boards
+arrive empty and there is a week of naming and walking before anything counts.
+Rows for those weeks carry `scored = false`. Filter them out of any scoreboard:
+counting them puts a fresh 0/10 against every venue in the company for a board
+nobody had built yet. `FOH` is `scored = true` throughout.
 
 ## What it can answer
 
