@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import type { House } from "@/lib/types";
+import { houseName, type House } from "@/lib/types";
 
 /**
  * The page's answer, in one line, before any card.
@@ -54,9 +54,19 @@ export function NarrativeStrip({
     <p className="text-body text-muted mb-8 tracking-normal tabular-nums">
       {lead}
       <span className="text-muted"> · </span>
-      <span className="text-ink">
-        {byHouse.map((h) => `${h.itemsDone}/${h.itemsTarget}`).join(" · ")}
-      </span>{" "}
+      {/* Named, not just listed. Two bare fractions side by side — "200/210 ·
+          39/160" — do not say which half is which, and the obvious guess is
+          that the second is a subset of the first rather than a different
+          room measured against a different denominator. */}
+      {byHouse.map((h, i) => (
+        <span key={h.house}>
+          {i > 0 ? <span className="text-muted"> · </span> : null}
+          {houseName(h.house).toLowerCase()}{" "}
+          <span className="text-ink">
+            {h.itemsDone}/{h.itemsTarget}
+          </span>
+        </span>
+      ))}{" "}
       photos
       <span className="text-muted"> · </span>
       <span className="text-ink">{activeVenues}</span> active

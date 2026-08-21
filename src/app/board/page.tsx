@@ -61,14 +61,7 @@ export default async function BoardPage() {
           rows={rows}
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
-          // A venue's row shows when it finished front of house, which is the
-          // half it has always been judged on. The kitchen's own turnaround is
-          // on its card above.
-          finishedAt={Object.fromEntries(
-            (byHouse.find((h) => h.house === "FOH")?.finishes ?? []).map(
-              (f) => [f.code, f.at],
-            ),
-          )}
+          finishesByHouse={byHouse}
           gradedByHouse={gradedIds}
         />
       </div>
