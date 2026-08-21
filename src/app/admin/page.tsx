@@ -80,21 +80,17 @@ export default async function AdminDashboardPage() {
 
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
+        deadlineLabel={formatDeadline(weekStart)}
         byHouse={byHouse}
         activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <CompanyHero
-          byHouse={byHouse}
-          deadlineLabel={formatDeadline(weekStart)}
-          deadlineMs={deadlineFor(weekStart).getTime()}
-        />
+        <CompanyHero byHouse={byHouse} />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/admin/venue/"
-          finishesByHouse={byHouse}
           gradedByHouse={gradedIds}
         />
       </div>

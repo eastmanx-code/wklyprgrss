@@ -36,15 +36,24 @@ export type House = "FOH" | "HOH";
 export const HOUSES: House[] = ["FOH", "HOH"];
 
 /**
- * What a house is called on screen. Nobody outside the office says "HOH".
+ * What a house is called on screen, spelled out.
  *
- * "Kitchen" rather than "heart of house", which is what the closing checklists
- * called it: it is the word the people walking it use, and the one the request
- * for this board used. The code stays HOH everywhere — in the column, the
- * slugs and the export — so nothing about the change is load-bearing.
+ * "Heart of house", not "kitchen". It is what the closing checklists call it
+ * and what the people running it call it, and it keeps the pair symmetrical —
+ * front and heart, FOH and HOH. "Kitchen" broke that symmetry and also read
+ * as a room rather than as half the walkthrough.
  */
 export function houseName(house: House): string {
-  return house === "FOH" ? "Front of house" : "Kitchen";
+  return house === "FOH" ? "Front of house" : "Heart of house";
+}
+
+/**
+ * The three-letter form, for anywhere the words would crowd the number they
+ * are labelling. Same string as the database column, which is the point: the
+ * short label and the code people already use are one thing.
+ */
+export function houseShort(house: House): string {
+  return house;
 }
 
 export type Item = {

@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { formatFinish } from "@/lib/week";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -36,16 +35,7 @@ function Segments({ done, total }: { done: number; total: number }) {
  * would say the kitchen does not exist — but its numbers are held back to the
  * muted role and labelled, so nobody reads a practice run as a score.
  */
-function HouseLine({
-  house,
-  graded,
-  finishedAt,
-}: {
-  house: HouseWeek;
-  graded: boolean;
-  /** When this house got its tenth photo, if it got there. */
-  finishedAt?: string;
-}) {
+function HouseLine({ house, graded }: { house: HouseWeek; graded: boolean }) {
   const complete = house.doneCount >= house.activeCount;
   return (
     <span className="flex h-6 items-center gap-3">
@@ -82,20 +72,6 @@ function HouseLine({
       >
         {house.doneCount}/{house.activeCount}
       </span>
-
-      {/* When this half finished, on this half's own line.
-      
-          It used to sit once under the venue code, described as "one fact
-          about the venue rather than about either walk" — which stopped being
-          true the moment there were two walks. It was front of house's time,
-          printed as the venue's, so a dining room finished Monday and a
-          kitchen finished Thursday both read as Monday.
-      
-          Off on phones, where the bars and the counts are the whole story:
-          "THU 5:36 PM" is eleven characters in a slot that fits about five. */}
-      <span className="label hidden w-20 shrink-0 text-right whitespace-nowrap sm:block">
-        {finishedAt ? formatFinish(finishedAt) : ""}
-      </span>
     </span>
   );
 }
@@ -117,20 +93,11 @@ export function VenueRows({
   rows,
   hrefPrefix,
   ownVenueId = null,
-  finishesByHouse = [],
   gradedByHouse,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
-  /**
-   * When each venue finished each house. Per house, because the two halves
-   * finish at different times and the later one used to swallow the earlier.
-   */
-  finishesByHouse?: {
-    house: House;
-    finishes: { code: string; at: string }[];
-  }[];
   /**
    * Venues whose week has been closed out, per house. Two people grade, so one
    * set covering both would have shown the kitchen signed off because the
@@ -139,12 +106,6 @@ export function VenueRows({
   gradedByHouse?: Map<House, Set<string>>;
 }) {
   const active = rows;
-  /** code|house -> the moment that half's tenth task got a photograph. */
-  const finishedAt = new Map(
-    finishesByHouse.flatMap((entry) =>
-      entry.finishes.map((f) => [`${f.code}|${entry.house}`, f.at] as const),
-    ),
-  );
 
   return (
     <>
@@ -187,10 +148,13 @@ export function VenueRows({
                     <span className="text-body text-ink block tracking-normal tabular-nums">
                       {row.venue.code}
                     </span>
-                    {/* What is left under the code is the only thing here
-                          that really is one fact about the venue: how long it
-                          has been missing weeks. The finishing time moved onto
-                          the house lines, where there is one per walk. */}
+                    {/* How long it has been missing weeks, which is the one
+                        thing here that really is a fact about the venue.
+                        The finishing time used to sit here as well: it was
+                        front of house's, printed as the venue's, and per house
+                        it made a ragged column of twenty-one timestamps that
+                        crowded the counts. First and last in are on each
+                        house's band above, where they say something. */}
                     <span className="label hidden truncate sm:block">
                       {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
                       {row.venue.id === ownVenueId ? " · you" : ""}
@@ -217,9 +181,6 @@ export function VenueRows({
                           gradedByHouse?.get(house.house)?.has(row.venue.id) ??
                           false
                         }
-                        finishedAt={finishedAt.get(
-                          `${row.venue.code}|${house.house}`,
-                        )}
                       />
                     ))}
                   </span>

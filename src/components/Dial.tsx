@@ -15,16 +15,26 @@ export function Dial({
   percent,
   caption,
   tone = "var(--ink)",
+  size = 176,
 }: {
   percent: number;
   caption: string;
   tone?: string;
+  /**
+   * How wide the ring is allowed to get. It shrinks to fit a narrower column
+   * either way; this is what stops it filling a whole card when the card is
+   * the width of the page.
+   */
+  size?: number;
 }) {
   const filled = (Math.min(100, Math.max(0, percent)) / 100) * C;
 
   return (
     <div className="flex items-center justify-center">
-      <div className="relative aspect-square w-full max-w-[176px]">
+      <div
+        className="relative aspect-square w-full"
+        style={{ maxWidth: `${size}px` }}
+      >
         <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden>
           <circle
             cx="50"
@@ -48,10 +58,15 @@ export function Dial({
         </svg>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-hero text-ink leading-[1.2] tracking-normal tabular-nums">
+          <span
+            className="text-ink leading-[1.2] tracking-normal tabular-nums"
+            // Scales with the ring. At 132px the hero size overran the inner
+            // circle and the stroke cut through the digits.
+            style={{ fontSize: `${Math.round(size * 0.26)}px` }}
+          >
             {percent}%
           </span>
-          <span className="label mt-2">{caption}</span>
+          <span className="label mt-1">{caption}</span>
         </div>
       </div>
     </div>

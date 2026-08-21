@@ -465,6 +465,14 @@ export type HouseTotals = {
   house: House;
   /** Items filed across every venue that runs this house. */
   itemsDone: number;
+  /**
+   * Items signed off across every venue that runs this house.
+   *
+   * Filing and passing are different facts and the dashboard only ever showed
+   * the first. A week where everything was filed and half of it was sent back
+   * read as a 95% week.
+   */
+  itemsApproved: number;
   /** Ten per venue that runs it — the real weekly obligation. */
   itemsTarget: number;
   percent: number;
@@ -760,6 +768,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         sum + (row.houses.find((h) => h.house === house)?.doneCount ?? 0),
       0,
     );
+    const approved = rows.reduce(
+      (sum, row) =>
+        sum + (row.houses.find((h) => h.house === house)?.approvedCount ?? 0),
+      0,
+    );
     /**
      * The split on this house alone.
      *
@@ -773,6 +786,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     return {
       house,
       itemsDone: done,
+      itemsApproved: approved,
       itemsTarget: target,
       percent: target ? Math.round((done / target) * 100) : 0,
       scored: houseScored(house, weekStart),
