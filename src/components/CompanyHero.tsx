@@ -1,8 +1,8 @@
 import { Card } from "./Card";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
-import { WEEKLY_ITEM_TARGET, type HouseTotals } from "@/lib/status";
-import { houseName, houseShort } from "@/lib/types";
+import { WIN_RATIO, type HouseTotals } from "@/lib/status";
+import { houseName } from "@/lib/types";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
 /**
@@ -51,6 +51,8 @@ function Stat({
  * whatever the viewer assumes, and "missed" in particular needs to say what it
  * counts before anyone acts on it.
  */
+const TARGET = Math.round(WIN_RATIO * 100);
+
 export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
   return (
     <>
@@ -68,28 +70,58 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
         const last = totals.finishes[totals.finishes.length - 1];
         const hasTrend = totals.history.length > 1;
         const hasLast = Boolean(last && last.code !== first?.code);
+        /**
+         * The headline is the score, not the upload rate.
+         *
+         * The ring showed filing: a new photo on all ten. That is the easiest
+         * thing on the board and the number that only goes up, and it sat in
+         * the biggest type on the page while the outcome — how much of it
+         * actually passed — was a small figure off to the side. Front of house
+         * filed 95% this week and signed off 80% of it.
+         *
+         * A house in practice has nothing signed off, so it keeps filing as
+         * its headline and says so.
+         */
+        const headline = totals.scored
+          ? totals.itemsTarget
+            ? Math.round((totals.itemsApproved / totals.itemsTarget) * 100)
+            : 0
+          : totals.percent;
+        const behind = totals.scored && headline < TARGET;
+        const priorHeadline = lastWeek
+          ? totals.scored
+            ? lastWeek.approvedPercent
+            : lastWeek.percent
+          : undefined;
 
         return (
           <Card
             key={totals.house}
-            title={houseShort(totals.house)}
-            hint={`${houseName(totals.house)} · ${venues} venues · ${
+            title={houseName(totals.house)}
+            hint={
               totals.scored
-                ? `a new photo and comment on all ${WEEKLY_ITEM_TARGET}, every week`
-                : "practice, not scored yet"
-            }`}
+                ? `${venues} venues · share of the week's work signed off · ${TARGET}% is the win line`
+                : `${venues} venues · share of the week's work filed · practice, not scored yet`
+            }
             className="col-span-12"
           >
-            <div className="grid gap-6 lg:grid-cols-[132px_1fr_auto]">
+            <div className="grid gap-6 lg:grid-cols-[200px_1fr_auto]">
               {/* Where the week landed. */}
               <div>
                 <Dial
-                  percent={totals.percent}
-                  caption={`${totals.itemsDone} of ${totals.itemsTarget}`}
-                  size={132}
+                  percent={headline}
+                  tone={behind ? "var(--warn)" : "var(--ink)"}
+                  caption={
+                    totals.scored
+                      ? `${totals.itemsApproved} of ${totals.itemsTarget} signed off`
+                      : `${totals.itemsDone} of ${totals.itemsTarget} filed`
+                  }
+                  size={200}
                 />
-                <p className="label mt-2 text-center">
-                  {lastWeek ? `Last week ${lastWeek.percent}%` : "First week"}
+                <p className="label mt-1 text-center">
+                  {priorHeadline === undefined
+                    ? "First week"
+                    : `Last week ${priorHeadline}%`}
                 </p>
               </div>
 
@@ -102,6 +134,8 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                   points={totals.history}
                   labelLeft={formatWeekStart(totals.history[0].weekStart)}
                   labelRight="This week"
+                  target={totals.scored ? TARGET : undefined}
+                  showApproved={totals.scored}
                 />
               ) : (
                 <div />
@@ -121,15 +155,10 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                       value={totals.wins}
                       sub={`${winRate}% of venues`}
                     />
-                    <Stat
-                      label="Partial"
-                      value={totals.partial}
-                      sub="some signed off"
-                    />
+                    <Stat label="Partial" value={totals.partial} />
                     <Stat
                       label="Missed"
                       value={totals.missed}
-                      sub="none signed off"
                       accent={totals.missed > 0}
                     />
                   </>
@@ -153,18 +182,26 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                   value={hasLast ? last.code : "—"}
                   sub={hasLast ? formatFinish(last.at) : "one board so far"}
                 />
-                {/* Filing and passing are different facts, and the ring only
-                    ever showed the first. A week where everything was filed
-                    and a third of it was sent back read as a 95% week. */}
-                <Stat
-                  label="Signed off"
-                  value={totals.scored ? totals.itemsApproved : "—"}
-                  sub={
-                    totals.scored
-                      ? `of ${totals.itemsDone} filed`
-                      : "not scored yet"
-                  }
-                />
+                {/* Filing is the input, and it belongs beside the outcome
+                    rather than in place of it.
+                
+                    For a house still in practice the ring is already showing
+                    filing, so repeating it here says nothing; what explains
+                    the figure is how many venues have written a list at all. */}
+                {totals.scored ? (
+                  <Stat
+                    label="Filed"
+                    value={`${totals.percent}%`}
+                    sub={`${totals.itemsDone} of ${totals.itemsTarget}`}
+                  />
+                ) : (
+                  <Stat
+                    label="Boards built"
+                    value={totals.boardsBuilt}
+                    sub={`of ${venues} venues`}
+                    accent={totals.boardsBuilt < venues}
+                  />
+                )}
               </div>
             </div>
           </Card>

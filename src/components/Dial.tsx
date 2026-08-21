@@ -30,7 +30,7 @@ export function Dial({
   const filled = (Math.min(100, Math.max(0, percent)) / 100) * C;
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex flex-col items-center">
       <div
         className="relative aspect-square w-full"
         style={{ maxWidth: `${size}px` }}
@@ -57,18 +57,24 @@ export function Dial({
           />
         </svg>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {/* The percentage alone inside the ring, and as big as the ring
+            allows. It had the caption under it in here, and the space inside a
+            circle is a circle: "200 OF 210" is wider than the chord it was
+            sitting on, so the stroke cut through both ends of it. Widening the
+            ring only moves where it clips. */}
+        <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="text-ink leading-[1.2] tracking-normal tabular-nums"
-            // Scales with the ring. At 132px the hero size overran the inner
-            // circle and the stroke cut through the digits.
-            style={{ fontSize: `${Math.round(size * 0.26)}px` }}
+            className="text-ink leading-none tracking-normal tabular-nums"
+            style={{ fontSize: `${Math.round(size * 0.3)}px` }}
           >
             {percent}%
           </span>
-          <span className="label mt-1">{caption}</span>
         </div>
       </div>
+
+      {/* Out here, where it has the full width of the column and can say what
+          the percentage is a percentage of. */}
+      <p className="label mt-3 text-center">{caption}</p>
     </div>
   );
 }

@@ -476,8 +476,20 @@ export type HouseTotals = {
   /** Ten per venue that runs it — the real weekly obligation. */
   itemsTarget: number;
   percent: number;
-  /** Completion for each of the last few weeks, oldest first. */
-  history: { weekStart: string; percent: number }[];
+  /**
+   * Each of the last few weeks, oldest first: what was handed in and what was
+   * signed off.
+   *
+   * Both, because they are different facts and only the first was ever
+   * plotted. Filing climbed every week while the share that passed did not,
+   * and a chart of filing alone drew that as a straight improvement. The gap
+   * between the two lines is the week's send-backs.
+   */
+  history: {
+    weekStart: string;
+    percent: number;
+    approvedPercent: number;
+  }[];
   /** False while the house is still being walked for practice. */
   scored: boolean;
   /**
@@ -492,6 +504,15 @@ export type HouseTotals = {
   missed: number;
   /** Who finished this house first and who finished last, earliest first. */
   finishes: { code: string; at: string }[];
+  /**
+   * Venues whose board for this house is actually built out to the ten.
+   *
+   * The gate before any of the rest of it. A house sitting at 24% because
+   * eleven of its sixteen venues have not written a list yet is a different
+   * problem from one at 24% because the walks are not happening, and the
+   * completion figure alone cannot tell them apart.
+   */
+  boardsBuilt: number;
 };
 
 /**
@@ -580,13 +601,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   // venueId -> every submission this week, to be walked in time order below
   const thisWeekByVenue = new Map<string, { item: string; at: string }[]>();
 
-  // itemId -> newest submission this week, for scoring approvals.
-  const newestThisWeek = new Map<string, (typeof submissions)[number]>();
+  /**
+   * item|week -> the newest submission for that item in that week.
+   *
+   * Approvals are scored off the newest filing, because a task sent back and
+   * redone in the same week is approved on the redo, not on the version that
+   * was rejected. Kept for every week rather than only this one, so the chart
+   * can plot what was signed off as well as what was handed in.
+   */
+  const newestByItemWeek = new Map<string, (typeof submissions)[number]>();
   for (const s of submissions) {
-    if (s.week_start !== weekStart) continue;
-    const held = newestThisWeek.get(s.item_id);
-    if (!held || s.created_at > held.created_at)
-      newestThisWeek.set(s.item_id, s);
+    const key = `${s.item_id}|${s.week_start}`;
+    const held = newestByItemWeek.get(key);
+    if (!held || s.created_at > held.created_at) newestByItemWeek.set(key, s);
   }
 
   for (const s of submissions) {
@@ -696,7 +723,9 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         // doneCount — an approval survives the task being cleared off the board.
         const approvedCount = doneThisWeek
           ? [...doneThisWeek].filter(
-              (id) => newestThisWeek.get(id)?.review === "approved",
+              (id) =>
+                newestByItemWeek.get(`${id}|${weekStart}`)?.review ===
+                "approved",
             ).length
           : 0;
 
@@ -790,6 +819,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       itemsTarget: target,
       percent: target ? Math.round((done / target) * 100) : 0,
       scored: houseScored(house, weekStart),
+      // Off the raw item count, not the week's activeCount: that one is
+      // coerced to the target when a house has no board at all, so counting it
+      // reported every empty board as a built one.
+      boardsBuilt: owed.filter(
+        (venue) =>
+          (activeCountByKey.get(keyOf(venue.id, house)) ?? 0) >=
+          WEEKLY_ITEM_TARGET,
+      ).length,
       wins: mine.filter((h) => isWin(h.approvedCount, h.activeCount)).length,
       missed: mine.filter((h) => h.approvedCount === 0).length,
       partial: mine.filter(
@@ -808,19 +845,29 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         // The current week reuses the same rows the ring and the list are
         // built from, so the chart's last point cannot drift from the
         // headline.
-        const filed =
-          week === weekStart
-            ? done
-            : [...doneByKeyWeek].reduce(
-                (sum, [key, weeks]) =>
-                  key.endsWith(`|${house}`)
-                    ? sum + (weeks.get(week)?.size ?? 0)
-                    : sum,
-                0,
-              );
+        let filed = 0;
+        let signedOff = 0;
+        if (week === weekStart) {
+          filed = done;
+          signedOff = approved;
+        } else {
+          for (const [key, weeks] of doneByKeyWeek) {
+            if (!key.endsWith(`|${house}`)) continue;
+            const ids = weeks.get(week);
+            if (!ids) continue;
+            filed += ids.size;
+            for (const id of ids) {
+              if (newestByItemWeek.get(`${id}|${week}`)?.review === "approved")
+                signedOff += 1;
+            }
+          }
+        }
         return {
           weekStart: week,
           percent: weekTarget ? Math.round((filed / weekTarget) * 100) : 0,
+          approvedPercent: weekTarget
+            ? Math.round((signedOff / weekTarget) * 100)
+            : 0,
         };
       }),
     };
