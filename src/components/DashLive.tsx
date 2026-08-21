@@ -53,7 +53,8 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
 export function ClockAndWeather() {
   return (
     <>
-      <Clock /> · <Weather />
+      <Clock />
+      <Weather />
     </>
   );
 }
@@ -132,11 +133,13 @@ export function Weather() {
     };
   }, []);
 
+  // The separator belongs to the weather, not to the line: printed alongside
+  // it, a failed fetch leaves the clock trailing a dangling dot.
   if (!weather) return null;
 
   return (
     <>
-      San Diego {weather.temp}° {describe(weather.code)}
+      {" · "}San Diego {weather.temp}° {describe(weather.code)}
     </>
   );
 }

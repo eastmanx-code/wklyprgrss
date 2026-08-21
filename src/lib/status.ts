@@ -458,8 +458,6 @@ export type Dashboard = {
   byHouse: HouseTotals[];
   /** Venues with a house that doesn't have its full 10 items configured. */
   venuesUnderConfigured: string[];
-  /** Who reached ten this week, earliest first. */
-  finishes: { code: string; at: string }[];
 };
 
 /** One house's company-wide week, and how it has run over the last few. */
@@ -474,6 +472,18 @@ export type HouseTotals = {
   history: { weekStart: string; percent: number }[];
   /** False while the house is still being walked for practice. */
   scored: boolean;
+  /**
+   * How the venues split on this house alone.
+   *
+   * A venue can win its dining room and miss its kitchen in the same week.
+   * Counted once for the venue, that week reads as a single verdict and the
+   * half that missed disappears into it.
+   */
+  wins: number;
+  partial: number;
+  missed: number;
+  /** Who finished this house first and who finished last, earliest first. */
+  finishes: { code: string; at: string }[];
 };
 
 /**
@@ -598,44 +608,33 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   }
 
   /**
-   * What one venue owes in a week: ten per house it is scored on.
+   * When each venue finished each house this week — the moment that house's
+   * tenth task got a photograph.
    *
-   * Per venue, not company-wide. A bar with no kitchen owes ten, not twenty,
-   * and measuring it against twenty would park it at fifty per cent forever
-   * for a room it does not have.
-   */
-  const targetFor = (venue: VenueSummary, week: string) =>
-    housesFor(venue, week).length * WEEKLY_ITEM_TARGET;
-
-  /**
-   * When each venue finished this week — the moment the last task it owed got
-   * a photograph.
-   *
-   * The bar moves with the board: while the kitchen is still practising a
-   * venue finishes at ten, and from the first live week it finishes at twenty.
-   * Practice items are left out of the count entirely, so a venue cannot reach
-   * the line early by walking a list that is not being scored.
+   * Per house, not per venue. A single finishing time for the pair is the
+   * later of the two, so a dining room done Monday and a kitchen done Thursday
+   * both read as Thursday, and the half that was quick disappears into the
+   * half that was not. A venue with no kitchen is simply never keyed for one.
    *
    * Sorted by time here rather than relying on the query order, which is by
    * week: the tenth row processed is not the tenth row submitted.
    */
   const byId = new Map(venues.map((venue) => [venue.id, venue]));
-  const finishedAtByVenue = new Map<string, string>();
+  /** venue|house -> the moment that house's tenth task got a photograph. */
+  const finishedAt = new Map<string, string>();
   for (const [venueId, entries] of thisWeekByVenue) {
     const venue = byId.get(venueId);
     if (!venue) continue;
-    const counting = new Set(housesFor(venue, weekStart));
-    const target = targetFor(venue, weekStart);
-    if (target === 0) continue;
     entries.sort((a, b) => a.at.localeCompare(b.at));
-    const seen = new Set<string>();
-    for (const entry of entries) {
-      const house = houseOfItem.get(entry.item);
-      if (!house || !counting.has(house)) continue;
-      seen.add(entry.item);
-      if (seen.size === target) {
-        finishedAtByVenue.set(venueId, entry.at);
-        break;
+    for (const house of HOUSES.filter((h) => venue.houses.includes(h))) {
+      const seen = new Set<string>();
+      for (const entry of entries) {
+        if (houseOfItem.get(entry.item) !== house) continue;
+        seen.add(entry.item);
+        if (seen.size === WEEKLY_ITEM_TARGET) {
+          finishedAt.set(keyOf(venueId, house), entry.at);
+          break;
+        }
       }
     }
   }
@@ -761,12 +760,34 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         sum + (row.houses.find((h) => h.house === house)?.doneCount ?? 0),
       0,
     );
+    /**
+     * The split on this house alone.
+     *
+     * Read once per venue, a week where the dining room passed and the kitchen
+     * missed collapses to a single verdict and the miss vanishes into it.
+     */
+    const mine = rows
+      .map((row) => row.houses.find((h) => h.house === house))
+      .filter((h): h is HouseWeek => Boolean(h));
+
     return {
       house,
       itemsDone: done,
       itemsTarget: target,
       percent: target ? Math.round((done / target) * 100) : 0,
       scored: houseScored(house, weekStart),
+      wins: mine.filter((h) => isWin(h.approvedCount, h.activeCount)).length,
+      missed: mine.filter((h) => h.approvedCount === 0).length,
+      partial: mine.filter(
+        (h) => h.approvedCount > 0 && !isWin(h.approvedCount, h.activeCount),
+      ).length,
+      finishes: owed
+        .map((venue) => ({
+          code: venue.code,
+          at: finishedAt.get(keyOf(venue.id, house)),
+        }))
+        .filter((f): f is { code: string; at: string } => Boolean(f.at))
+        .sort((a, b) => a.at.localeCompare(b.at)),
       history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
         const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
         const weekTarget = owed.length * WEEKLY_ITEM_TARGET;
@@ -795,13 +816,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     weekStart,
     rows,
     byHouse,
-    finishes: rows
-      .map((row) => ({
-        code: row.venue.code,
-        at: finishedAtByVenue.get(row.venue.id),
-      }))
-      .filter((f): f is { code: string; at: string } => Boolean(f.at))
-      .sort((a, b) => a.at.localeCompare(b.at)),
     // A house short of its ten is a house that cannot pass the week, whichever
     // house it is. Listed once per venue however many houses are short.
     venuesUnderConfigured: rows

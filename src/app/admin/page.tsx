@@ -6,12 +6,7 @@ import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
-import {
-  getDashboard,
-  gradedVenueIdsByHouse,
-  venueApproved,
-  venueIsWin,
-} from "@/lib/status";
+import { getDashboard, gradedVenueIdsByHouse } from "@/lib/status";
 import { HOUSES } from "@/lib/types";
 import {
   deadlineFor,
@@ -30,13 +25,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   if ((await getSession())?.role !== "admin") redirect("/admin/login");
 
-  const { weekStart, rows, byHouse, finishes } = await getDashboard();
-  // Scored on approvals, in the buckets the weekly note is written in. A
-  // venue wins by winning every house that counts, not by the two averaged.
-  const wins = rows.filter(venueIsWin).length;
-  const missed = rows.filter((row) => venueApproved(row) === 0).length;
-  const partial = rows.length - wins - missed;
-  const winRate = rows.length ? Math.round((wins / rows.length) * 100) : 0;
+  const { weekStart, rows, byHouse } = await getDashboard();
 
   // The finished week, and whether it has been closed for everyone. Grading is
   // the thing every venue is waiting on before it can reset.
@@ -97,20 +86,22 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-12 gap-4">
         <CompanyHero
-          winRate={winRate}
           byHouse={byHouse}
-          passing={wins}
-          pending={partial}
-          failing={missed}
           deadlineLabel={formatDeadline(weekStart)}
           deadlineMs={deadlineFor(weekStart).getTime()}
-          finishes={finishes}
         />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/admin/venue/"
-          finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
+          // A venue's row shows when it finished front of house, which is the
+          // half it has always been judged on. The kitchen's own turnaround is
+          // on its card above.
+          finishedAt={Object.fromEntries(
+            (byHouse.find((h) => h.house === "FOH")?.finishes ?? []).map(
+              (f) => [f.code, f.at],
+            ),
+          )}
           gradedByHouse={gradedIds}
         />
       </div>
