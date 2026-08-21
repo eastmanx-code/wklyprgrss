@@ -1,182 +1,212 @@
-import { Fragment } from "react";
-
 import { Card } from "./Card";
-import { ClockAndWeather, Countdown } from "./DashLive";
 import { Dial } from "./Dial";
 import { Trend } from "./Trend";
-import { WEEKLY_ITEM_TARGET, type HouseTotals } from "@/lib/status";
+import { WIN_RATIO, type HouseTotals } from "@/lib/status";
 import { houseName } from "@/lib/types";
 import { formatFinish, formatWeekStart } from "@/lib/week";
 
 /**
- * Secondary metric: 11px label in the one grey, 28px value in white.
- * Left-aligned — only the ring is centred.
+ * Secondary metric: 11px label in the one grey, 28px value in white, and a
+ * quiet line under it saying what the number counts.
  */
 function Stat({
   label,
   value,
+  sub,
   accent = false,
 }: {
   label: string;
   value: React.ReactNode;
+  sub?: string;
   accent?: boolean;
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p className="label">{label}</p>
       <p
-        className={`text-metric mt-2 leading-[1.2] tracking-normal tabular-nums ${
+        className={`text-metric mt-1 leading-[1.2] tracking-normal tabular-nums ${
           accent ? "text-warn" : "text-ink"
         }`}
       >
         {value}
       </p>
+      {sub ? <p className="label mt-1 truncate">{sub}</p> : null}
     </div>
   );
 }
 
 /**
- * The company's week on a 12-column grid: 4/8 then 8/4, so the rows read as a
- * grid rather than as a stack of differently-proportioned slabs.
+ * One band per house: ring, eight-week line, and every number that house is
+ * judged on — all on one row.
  *
- * Every card states what it measures. A dashboard of bare numbers gets read as
- * whatever the viewer assumes, and "failing" in particular needs to say what
- * it counts before anyone acts on it.
+ * It was five cards before, one measure each, and a screen of mostly empty
+ * panel. Split up they read as unrelated readings; on one row they are one
+ * house's week, and both houses fit on one screen where they can be compared.
+ *
+ * Nothing here averages the two. Front of house at 95% and heart of house at
+ * 24% come out as 65%, which describes neither and buries the half that needs
+ * the attention.
+ *
+ * Every figure states what it counts. A dashboard of bare numbers gets read as
+ * whatever the viewer assumes, and "missed" in particular needs to say what it
+ * counts before anyone acts on it.
  */
-export function CompanyHero({
-  byHouse,
-  passing,
-  pending,
-  failing,
-  winRate,
-  deadlineLabel,
-  deadlineMs,
-  finishes,
-}: {
-  /** One set of totals per house. Never one set covering both. */
-  byHouse: HouseTotals[];
-  passing: number;
-  pending: number;
-  failing: number;
-  winRate: number;
-  deadlineLabel: string;
-  deadlineMs: number;
-  finishes: { code: string; at: string }[];
-}) {
-  const first = finishes[0];
-  const last = finishes[finishes.length - 1];
+const TARGET = Math.round(WIN_RATIO * 100);
 
+export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
   return (
     <>
-      {/* A ring and a trend per house, stacked.
-      
-          One ring covering both is the averaging this whole product was split
-          to prevent: front of house at 95% and the kitchen at 24% come out as
-          65%, which describes neither and buries the half that needs the
-          attention. Two rings is more screen and the right answer. */}
       {byHouse.map((totals) => {
         // Same series the chart plots, so the two cannot disagree.
         const lastWeek =
           totals.history.length > 1
             ? totals.history[totals.history.length - 2]
             : undefined;
-        return (
-          <Fragment key={totals.house}>
-            <Card
-              title={`${houseName(totals.house)} · filed this week`}
-              hint={
-                totals.scored
-                  ? `A new photo and comment on all ${WEEKLY_ITEM_TARGET}, every week`
-                  : `Practice. A new photo and comment on all ${WEEKLY_ITEM_TARGET}, not scored yet`
-              }
-              className="col-span-12 sm:col-span-4"
-            >
-              <Dial
-                percent={totals.percent}
-                caption={`${totals.itemsDone} of ${totals.itemsTarget}`}
-              />
-              {lastWeek ? (
-                <p className="label mt-4 text-center">
-                  Last week: {lastWeek.percent}%
-                </p>
-              ) : null}
-            </Card>
+        // Every venue that runs this house, counted once. The five bars with
+        // no heart of house are not in its denominator.
+        const venues = totals.wins + totals.partial + totals.missed;
+        const winRate = venues ? Math.round((totals.wins / venues) * 100) : 0;
+        const first = totals.finishes[0];
+        const last = totals.finishes[totals.finishes.length - 1];
+        const hasTrend = totals.history.length > 1;
+        const hasLast = Boolean(last && last.code !== first?.code);
+        /**
+         * The headline is the score, not the upload rate.
+         *
+         * The ring showed filing: a new photo on all ten. That is the easiest
+         * thing on the board and the number that only goes up, and it sat in
+         * the biggest type on the page while the outcome — how much of it
+         * actually passed — was a small figure off to the side. Front of house
+         * filed 95% this week and signed off 80% of it.
+         *
+         * A house in practice has nothing signed off, so it keeps filing as
+         * its headline and says so.
+         */
+        const headline = totals.scored
+          ? totals.itemsTarget
+            ? Math.round((totals.itemsApproved / totals.itemsTarget) * 100)
+            : 0
+          : totals.percent;
+        const behind = totals.scored && headline < TARGET;
+        const priorHeadline = lastWeek
+          ? totals.scored
+            ? lastWeek.approvedPercent
+            : lastWeek.percent
+          : undefined;
 
-            {totals.history.length > 1 ? (
-              <Card
-                title={`${houseName(totals.house)} · by week`}
-                hint="Eight weeks on a fixed scale, so a bad week looks like one"
-                className="col-span-12 sm:col-span-8"
-              >
+        return (
+          <Card
+            key={totals.house}
+            title={houseName(totals.house)}
+            hint={
+              totals.scored
+                ? `${venues} venues · share of the week's work signed off · ${TARGET}% is the win line`
+                : `${venues} venues · share of the week's work filed · practice, not scored yet`
+            }
+            className="col-span-12"
+          >
+            <div className="grid gap-6 lg:grid-cols-[200px_1fr_auto]">
+              {/* Where the week landed. */}
+              <div>
+                <Dial
+                  percent={headline}
+                  tone={behind ? "var(--warn)" : "var(--ink)"}
+                  caption={
+                    totals.scored
+                      ? `${totals.itemsApproved} of ${totals.itemsTarget} signed off`
+                      : `${totals.itemsDone} of ${totals.itemsTarget} filed`
+                  }
+                  size={200}
+                />
+                <p className="label mt-1 text-center">
+                  {priorHeadline === undefined
+                    ? "First week"
+                    : `Last week ${priorHeadline}%`}
+                </p>
+              </div>
+
+              {/* Whether that is the direction of travel. Beside the ring
+                  rather than a screen below it: apart, each is half an answer
+                  and the reader has to hold one in their head to use the
+                  other. */}
+              {hasTrend ? (
                 <Trend
                   points={totals.history}
                   labelLeft={formatWeekStart(totals.history[0].weekStart)}
                   labelRight="This week"
+                  target={totals.scored ? TARGET : undefined}
+                  showApproved={totals.scored}
                 />
-              </Card>
-            ) : null}
-          </Fragment>
+              ) : (
+                <div />
+              )}
+
+              {/* And what it cost. Five figures in a fixed block, so the two
+                  houses' numbers sit in the same columns and can be read down
+                  as well as across. */}
+              <div className="grid grid-cols-3 gap-x-6 gap-y-5 lg:w-[420px]">
+                {/* A house still in practice has no verdicts to report.
+                    Printed anyway, "Missed 11" reads as eleven failures on a
+                    board most of them have not finished building. */}
+                {totals.scored ? (
+                  <>
+                    <Stat
+                      label="Wins"
+                      value={totals.wins}
+                      sub={`${winRate}% of venues`}
+                    />
+                    <Stat label="Partial" value={totals.partial} />
+                    <Stat
+                      label="Missed"
+                      value={totals.missed}
+                      accent={totals.missed > 0}
+                    />
+                  </>
+                ) : (
+                  <p className="text-body text-muted col-span-3 leading-[1.5]">
+                    Crews are building and walking this board. Wins and misses
+                    start the week it goes live.
+                  </p>
+                )}
+
+                {/* Always present, with an empty state. Hidden until someone
+                    finished, they looked like they had gone missing on a week
+                    where nobody had. */}
+                <Stat
+                  label="First in"
+                  value={first ? first.code : "—"}
+                  sub={first ? formatFinish(first.at) : "nobody yet"}
+                />
+                <Stat
+                  label="Last in"
+                  value={hasLast ? last.code : "—"}
+                  sub={hasLast ? formatFinish(last.at) : "one board so far"}
+                />
+                {/* Filing is the input, and it belongs beside the outcome
+                    rather than in place of it.
+                
+                    For a house still in practice the ring is already showing
+                    filing, so repeating it here says nothing; what explains
+                    the figure is how many venues have written a list at all. */}
+                {totals.scored ? (
+                  <Stat
+                    label="Filed"
+                    value={`${totals.percent}%`}
+                    sub={`${totals.itemsDone} of ${totals.itemsTarget}`}
+                  />
+                ) : (
+                  <Stat
+                    label="Boards built"
+                    value={totals.boardsBuilt}
+                    sub={`of ${venues} venues`}
+                    accent={totals.boardsBuilt < venues}
+                  />
+                )}
+              </div>
+            </div>
+          </Card>
         );
       })}
-
-      <Card
-        title="The week"
-        hint={`Signed off · ${winRate}% of venues cleared their board`}
-        className="col-span-12 sm:col-span-8"
-      >
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <Stat label="Wins" value={passing} />
-          <Stat label="Partial" value={pending} />
-          <Stat label="Missed" value={failing} accent={failing > 0} />
-        </div>
-      </Card>
-
-      <Card
-        title="Deadline"
-        hint={deadlineLabel}
-        className="col-span-12 sm:col-span-4"
-      >
-        <p className="text-metric text-ink leading-[1.2] tracking-normal tabular-nums">
-          <Countdown deadlineMs={deadlineMs} />
-        </p>
-        <p className="label mt-6">
-          <ClockAndWeather />
-        </p>
-      </Card>
-
-      {/* Always present, with an empty state. Hiding it until someone finished
-          made the card look like it had gone missing on a week where nobody
-          had. */}
-      <Card
-        title="Turnaround"
-        hint="Who filed a full board first, and who filed last"
-        className="col-span-12"
-      >
-        {first ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div>
-              <p className="label">First in</p>
-              <p className="text-metric text-ink mt-2 leading-[1.2] tracking-normal tabular-nums">
-                {first.code}
-                <span className="text-muted"> {formatFinish(first.at)}</span>
-              </p>
-            </div>
-            {last && last.code !== first.code ? (
-              <div>
-                <p className="label">Last in</p>
-                <p className="text-metric text-ink mt-2 leading-[1.2] tracking-normal tabular-nums">
-                  {last.code}
-                  <span className="text-muted"> {formatFinish(last.at)}</span>
-                </p>
-              </div>
-            ) : null}
-          </div>
-        ) : (
-          <p className="text-body text-muted flex h-10 items-center leading-[1.5]">
-            No venue has finished this week yet.
-          </p>
-        )}
-      </Card>
     </>
   );
 }

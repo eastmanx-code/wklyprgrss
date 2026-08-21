@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { formatFinish } from "@/lib/week";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -94,14 +93,11 @@ export function VenueRows({
   rows,
   hrefPrefix,
   ownVenueId = null,
-  finishedAt = {},
   gradedByHouse,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
-  /** venue code -> when it finished the week, for the venues that got there. */
-  finishedAt?: Record<string, string>;
   /**
    * Venues whose week has been closed out, per house. Two people grade, so one
    * set covering both would have shown the kitchen signed off because the
@@ -126,11 +122,6 @@ export function VenueRows({
               a suffix. Headed, the words come off the rows entirely: the
               tally is a bare number under APPROVED, and twenty-one of them
               make a column you can read down. */}
-          {/* "Last in" came off the header when the second house arrived.
-              Two bars per venue need the width, and the timestamp is one fact
-              about the venue rather than about either walk — it sits under the
-              code, in the venue's own column, where it is not repeated twice
-              saying the same thing. */}
           <div className="mb-1 flex h-5 items-center gap-4 px-2">
             <span className="label w-14 shrink-0 sm:w-20">Venue</span>
             {/* Mirrors a house line exactly — same widths, same gap — so the
@@ -140,67 +131,62 @@ export function VenueRows({
               <span className="min-w-0 flex-1" />
               <span className="label w-10 shrink-0 text-center">Grade</span>
               <span className="label w-12 shrink-0 text-right">Updated</span>
+              <span className="label hidden w-20 shrink-0 text-right sm:block">
+                Finished
+              </span>
             </span>
           </div>
 
           <ul>
-            {active.map((row) => {
-              const finished = finishedAt[row.venue.code];
-
-              return (
-                <li key={row.venue.id} id={`venue-${row.venue.code}`}>
-                  <Link
-                    href={`${hrefPrefix}${row.venue.id}`}
-                    className="hover:bg-hover -mx-2 flex items-center gap-4 rounded-[4px] px-2 py-2 transition-colors"
-                  >
-                    <span className="block w-14 shrink-0 sm:w-20">
-                      <span className="text-body text-ink block tracking-normal tabular-nums">
-                        {row.venue.code}
-                      </span>
-                      {/* Meta under the code rather than in a column of its
-                          own — two bars per venue need the width, and it is
-                          one fact about the venue rather than about either
-                          walk. Off on phones, where the bars and the counts
-                          are the whole story: "THU 5:36 PM" is eleven
-                          characters in a slot that fits about five. */}
-                      <span className="label hidden truncate sm:block">
-                        {finished
-                          ? formatFinish(finished)
-                          : row.failStreak > 0
-                            ? `missed ${row.failStreak}w`
-                            : ""}
-                        {row.venue.id === ownVenueId ? " · you" : ""}
-                      </span>
+            {active.map((row) => (
+              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
+                <Link
+                  href={`${hrefPrefix}${row.venue.id}`}
+                  className="hover:bg-hover -mx-2 flex items-center gap-4 rounded-[4px] px-2 py-2 transition-colors"
+                >
+                  <span className="block w-14 shrink-0 sm:w-20">
+                    <span className="text-body text-ink block tracking-normal tabular-nums">
+                      {row.venue.code}
                     </span>
+                    {/* How long it has been missing weeks, which is the one
+                        thing here that really is a fact about the venue.
+                        The finishing time used to sit here as well: it was
+                        front of house's, printed as the venue's, and per house
+                        it made a ragged column of twenty-one timestamps that
+                        crowded the counts. First and last in are on each
+                        house's band above, where they say something. */}
+                    <span className="label hidden truncate sm:block">
+                      {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
+                      {row.venue.id === ownVenueId ? " · you" : ""}
+                    </span>
+                  </span>
 
-                    {/* One line per house, never one line for both.
+                  {/* One line per house, never one line for both.
                         Summed into a single twenty-segment bar, a spotless
                         dining room would have filled half of it and read as
                         real progress at a venue whose kitchen had not been
                         walked at all — which is the whole reason the board
                         was split. */}
-                    {/* `block`, not the default inline. As an inline box this
+                  {/* `block`, not the default inline. As an inline box this
                         wrapper shrank to fit its content, and the flex-1 on
                         each house's bar inside it had no definite width to
                         grow into — every progress bar in the company rendered
                         at zero pixels and the column looked empty. */}
-                    <span className="block min-w-0 flex-1">
-                      {row.houses.map((house) => (
-                        <HouseLine
-                          key={house.house}
-                          house={house}
-                          graded={
-                            gradedByHouse
-                              ?.get(house.house)
-                              ?.has(row.venue.id) ?? false
-                          }
-                        />
-                      ))}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
+                  <span className="block min-w-0 flex-1">
+                    {row.houses.map((house) => (
+                      <HouseLine
+                        key={house.house}
+                        house={house}
+                        graded={
+                          gradedByHouse?.get(house.house)?.has(row.venue.id) ??
+                          false
+                        }
+                      />
+                    ))}
+                  </span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </Card>
       ) : null}

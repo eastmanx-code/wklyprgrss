@@ -5,12 +5,7 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { getSession } from "@/lib/session";
-import {
-  getDashboard,
-  gradedVenueIdsByHouse,
-  venueApproved,
-  venueIsWin,
-} from "@/lib/status";
+import { getDashboard, gradedVenueIdsByHouse } from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -24,19 +19,13 @@ export default async function BoardPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const { weekStart, rows, byHouse, finishes } = await getDashboard();
+  const { weekStart, rows, byHouse } = await getDashboard();
   const ownVenueId = session.role === "leader" ? session.venueId : null;
   // Leaders see the grade too — it is the thing that gates their reset, so
   // "has mine been closed out yet" should be answerable from the board.
   // Per house, because the grade is per house — one set for both would have
   // marked the kitchen closed out on the strength of the dining room.
   const gradedIds = await gradedVenueIdsByHouse(mostRecentCompletedWeek());
-  // Scored on approvals, in the buckets the weekly note is written in. A
-  // venue wins by winning every house that counts, not by the two averaged.
-  const wins = rows.filter(venueIsWin).length;
-  const missed = rows.filter((row) => venueApproved(row) === 0).length;
-  const partial = rows.length - wins - missed;
-  const winRate = rows.length ? Math.round((wins / rows.length) * 100) : 0;
 
   return (
     <main>
@@ -57,27 +46,18 @@ export default async function BoardPage() {
 
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
+        deadlineLabel={formatDeadline(weekStart)}
         byHouse={byHouse}
         activeVenues={rows.length}
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <CompanyHero
-          winRate={winRate}
-          byHouse={byHouse}
-          passing={wins}
-          pending={partial}
-          failing={missed}
-          deadlineLabel={formatDeadline(weekStart)}
-          deadlineMs={deadlineFor(weekStart).getTime()}
-          finishes={finishes}
-        />
+        <CompanyHero byHouse={byHouse} />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
-          finishedAt={Object.fromEntries(finishes.map((f) => [f.code, f.at]))}
           gradedByHouse={gradedIds}
         />
       </div>

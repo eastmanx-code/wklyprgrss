@@ -458,8 +458,6 @@ export type Dashboard = {
   byHouse: HouseTotals[];
   /** Venues with a house that doesn't have its full 10 items configured. */
   venuesUnderConfigured: string[];
-  /** Who reached ten this week, earliest first. */
-  finishes: { code: string; at: string }[];
 };
 
 /** One house's company-wide week, and how it has run over the last few. */
@@ -467,13 +465,54 @@ export type HouseTotals = {
   house: House;
   /** Items filed across every venue that runs this house. */
   itemsDone: number;
+  /**
+   * Items signed off across every venue that runs this house.
+   *
+   * Filing and passing are different facts and the dashboard only ever showed
+   * the first. A week where everything was filed and half of it was sent back
+   * read as a 95% week.
+   */
+  itemsApproved: number;
   /** Ten per venue that runs it — the real weekly obligation. */
   itemsTarget: number;
   percent: number;
-  /** Completion for each of the last few weeks, oldest first. */
-  history: { weekStart: string; percent: number }[];
+  /**
+   * Each of the last few weeks, oldest first: what was handed in and what was
+   * signed off.
+   *
+   * Both, because they are different facts and only the first was ever
+   * plotted. Filing climbed every week while the share that passed did not,
+   * and a chart of filing alone drew that as a straight improvement. The gap
+   * between the two lines is the week's send-backs.
+   */
+  history: {
+    weekStart: string;
+    percent: number;
+    approvedPercent: number;
+  }[];
   /** False while the house is still being walked for practice. */
   scored: boolean;
+  /**
+   * How the venues split on this house alone.
+   *
+   * A venue can win its dining room and miss its kitchen in the same week.
+   * Counted once for the venue, that week reads as a single verdict and the
+   * half that missed disappears into it.
+   */
+  wins: number;
+  partial: number;
+  missed: number;
+  /** Who finished this house first and who finished last, earliest first. */
+  finishes: { code: string; at: string }[];
+  /**
+   * Venues whose board for this house is actually built out to the ten.
+   *
+   * The gate before any of the rest of it. A house sitting at 24% because
+   * eleven of its sixteen venues have not written a list yet is a different
+   * problem from one at 24% because the walks are not happening, and the
+   * completion figure alone cannot tell them apart.
+   */
+  boardsBuilt: number;
 };
 
 /**
@@ -562,13 +601,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   // venueId -> every submission this week, to be walked in time order below
   const thisWeekByVenue = new Map<string, { item: string; at: string }[]>();
 
-  // itemId -> newest submission this week, for scoring approvals.
-  const newestThisWeek = new Map<string, (typeof submissions)[number]>();
+  /**
+   * item|week -> the newest submission for that item in that week.
+   *
+   * Approvals are scored off the newest filing, because a task sent back and
+   * redone in the same week is approved on the redo, not on the version that
+   * was rejected. Kept for every week rather than only this one, so the chart
+   * can plot what was signed off as well as what was handed in.
+   */
+  const newestByItemWeek = new Map<string, (typeof submissions)[number]>();
   for (const s of submissions) {
-    if (s.week_start !== weekStart) continue;
-    const held = newestThisWeek.get(s.item_id);
-    if (!held || s.created_at > held.created_at)
-      newestThisWeek.set(s.item_id, s);
+    const key = `${s.item_id}|${s.week_start}`;
+    const held = newestByItemWeek.get(key);
+    if (!held || s.created_at > held.created_at) newestByItemWeek.set(key, s);
   }
 
   for (const s of submissions) {
@@ -598,44 +643,33 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   }
 
   /**
-   * What one venue owes in a week: ten per house it is scored on.
+   * When each venue finished each house this week — the moment that house's
+   * tenth task got a photograph.
    *
-   * Per venue, not company-wide. A bar with no kitchen owes ten, not twenty,
-   * and measuring it against twenty would park it at fifty per cent forever
-   * for a room it does not have.
-   */
-  const targetFor = (venue: VenueSummary, week: string) =>
-    housesFor(venue, week).length * WEEKLY_ITEM_TARGET;
-
-  /**
-   * When each venue finished this week — the moment the last task it owed got
-   * a photograph.
-   *
-   * The bar moves with the board: while the kitchen is still practising a
-   * venue finishes at ten, and from the first live week it finishes at twenty.
-   * Practice items are left out of the count entirely, so a venue cannot reach
-   * the line early by walking a list that is not being scored.
+   * Per house, not per venue. A single finishing time for the pair is the
+   * later of the two, so a dining room done Monday and a kitchen done Thursday
+   * both read as Thursday, and the half that was quick disappears into the
+   * half that was not. A venue with no kitchen is simply never keyed for one.
    *
    * Sorted by time here rather than relying on the query order, which is by
    * week: the tenth row processed is not the tenth row submitted.
    */
   const byId = new Map(venues.map((venue) => [venue.id, venue]));
-  const finishedAtByVenue = new Map<string, string>();
+  /** venue|house -> the moment that house's tenth task got a photograph. */
+  const finishedAt = new Map<string, string>();
   for (const [venueId, entries] of thisWeekByVenue) {
     const venue = byId.get(venueId);
     if (!venue) continue;
-    const counting = new Set(housesFor(venue, weekStart));
-    const target = targetFor(venue, weekStart);
-    if (target === 0) continue;
     entries.sort((a, b) => a.at.localeCompare(b.at));
-    const seen = new Set<string>();
-    for (const entry of entries) {
-      const house = houseOfItem.get(entry.item);
-      if (!house || !counting.has(house)) continue;
-      seen.add(entry.item);
-      if (seen.size === target) {
-        finishedAtByVenue.set(venueId, entry.at);
-        break;
+    for (const house of HOUSES.filter((h) => venue.houses.includes(h))) {
+      const seen = new Set<string>();
+      for (const entry of entries) {
+        if (houseOfItem.get(entry.item) !== house) continue;
+        seen.add(entry.item);
+        if (seen.size === WEEKLY_ITEM_TARGET) {
+          finishedAt.set(keyOf(venueId, house), entry.at);
+          break;
+        }
       }
     }
   }
@@ -689,7 +723,9 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         // doneCount — an approval survives the task being cleared off the board.
         const approvedCount = doneThisWeek
           ? [...doneThisWeek].filter(
-              (id) => newestThisWeek.get(id)?.review === "approved",
+              (id) =>
+                newestByItemWeek.get(`${id}|${weekStart}`)?.review ===
+                "approved",
             ).length
           : 0;
 
@@ -761,31 +797,77 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         sum + (row.houses.find((h) => h.house === house)?.doneCount ?? 0),
       0,
     );
+    const approved = rows.reduce(
+      (sum, row) =>
+        sum + (row.houses.find((h) => h.house === house)?.approvedCount ?? 0),
+      0,
+    );
+    /**
+     * The split on this house alone.
+     *
+     * Read once per venue, a week where the dining room passed and the kitchen
+     * missed collapses to a single verdict and the miss vanishes into it.
+     */
+    const mine = rows
+      .map((row) => row.houses.find((h) => h.house === house))
+      .filter((h): h is HouseWeek => Boolean(h));
+
     return {
       house,
       itemsDone: done,
+      itemsApproved: approved,
       itemsTarget: target,
       percent: target ? Math.round((done / target) * 100) : 0,
       scored: houseScored(house, weekStart),
+      // Off the raw item count, not the week's activeCount: that one is
+      // coerced to the target when a house has no board at all, so counting it
+      // reported every empty board as a built one.
+      boardsBuilt: owed.filter(
+        (venue) =>
+          (activeCountByKey.get(keyOf(venue.id, house)) ?? 0) >=
+          WEEKLY_ITEM_TARGET,
+      ).length,
+      wins: mine.filter((h) => isWin(h.approvedCount, h.activeCount)).length,
+      missed: mine.filter((h) => h.approvedCount === 0).length,
+      partial: mine.filter(
+        (h) => h.approvedCount > 0 && !isWin(h.approvedCount, h.activeCount),
+      ).length,
+      finishes: owed
+        .map((venue) => ({
+          code: venue.code,
+          at: finishedAt.get(keyOf(venue.id, house)),
+        }))
+        .filter((f): f is { code: string; at: string } => Boolean(f.at))
+        .sort((a, b) => a.at.localeCompare(b.at)),
       history: Array.from({ length: HISTORY_WEEKS }, (_, i) => {
         const week = shiftWeeks(weekStart, -(HISTORY_WEEKS - 1 - i));
         const weekTarget = owed.length * WEEKLY_ITEM_TARGET;
         // The current week reuses the same rows the ring and the list are
         // built from, so the chart's last point cannot drift from the
         // headline.
-        const filed =
-          week === weekStart
-            ? done
-            : [...doneByKeyWeek].reduce(
-                (sum, [key, weeks]) =>
-                  key.endsWith(`|${house}`)
-                    ? sum + (weeks.get(week)?.size ?? 0)
-                    : sum,
-                0,
-              );
+        let filed = 0;
+        let signedOff = 0;
+        if (week === weekStart) {
+          filed = done;
+          signedOff = approved;
+        } else {
+          for (const [key, weeks] of doneByKeyWeek) {
+            if (!key.endsWith(`|${house}`)) continue;
+            const ids = weeks.get(week);
+            if (!ids) continue;
+            filed += ids.size;
+            for (const id of ids) {
+              if (newestByItemWeek.get(`${id}|${week}`)?.review === "approved")
+                signedOff += 1;
+            }
+          }
+        }
         return {
           weekStart: week,
           percent: weekTarget ? Math.round((filed / weekTarget) * 100) : 0,
+          approvedPercent: weekTarget
+            ? Math.round((signedOff / weekTarget) * 100)
+            : 0,
         };
       }),
     };
@@ -795,13 +877,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     weekStart,
     rows,
     byHouse,
-    finishes: rows
-      .map((row) => ({
-        code: row.venue.code,
-        at: finishedAtByVenue.get(row.venue.id),
-      }))
-      .filter((f): f is { code: string; at: string } => Boolean(f.at))
-      .sort((a, b) => a.at.localeCompare(b.at)),
     // A house short of its ten is a house that cannot pass the week, whichever
     // house it is. Listed once per venue however many houses are short.
     venuesUnderConfigured: rows

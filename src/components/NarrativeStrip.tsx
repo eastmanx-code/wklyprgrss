@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import type { House } from "@/lib/types";
+import { ClockAndWeather } from "./DashLive";
+import { houseShort, type House } from "@/lib/types";
 
 /**
  * The page's answer, in one line, before any card.
@@ -17,10 +18,13 @@ import type { House } from "@/lib/types";
  */
 export function NarrativeStrip({
   deadlineMs,
+  deadlineLabel,
   byHouse,
   activeVenues,
 }: {
   deadlineMs: number;
+  /** When the week is due, spelled out. */
+  deadlineLabel: string;
   /** One figure per house. Added together they would describe neither. */
   byHouse: { house: House; itemsDone: number; itemsTarget: number }[];
   activeVenues: number;
@@ -51,15 +55,31 @@ export function NarrativeStrip({
   }
 
   return (
-    <p className="text-body text-muted mb-8 tracking-normal tabular-nums">
+    /* The deadline lives here now rather than in a card of its own. A panel
+       holding a countdown and a clock was a hundred and fifty pixels of mostly
+       nothing above the only two things on the page anybody reads. */
+    <p className="text-body text-muted mb-6 leading-[1.8] tracking-normal tabular-nums">
       {lead}
+      <span className="text-muted"> · due {deadlineLabel}</span>
       <span className="text-muted"> · </span>
-      <span className="text-ink">
-        {byHouse.map((h) => `${h.itemsDone}/${h.itemsTarget}`).join(" · ")}
-      </span>{" "}
+      {/* Named, not just listed. Two bare fractions side by side — "200/210 ·
+          39/160" — do not say which half is which, and the obvious guess is
+          that the second is a subset of the first rather than a different
+          room measured against a different denominator. */}
+      {byHouse.map((h, i) => (
+        <span key={h.house}>
+          {i > 0 ? <span className="text-muted"> · </span> : null}
+          {houseShort(h.house)}{" "}
+          <span className="text-ink">
+            {h.itemsDone}/{h.itemsTarget}
+          </span>
+        </span>
+      ))}{" "}
       photos
       <span className="text-muted"> · </span>
       <span className="text-ink">{activeVenues}</span> active
+      <span className="text-muted"> · </span>
+      <ClockAndWeather />
     </p>
   );
 }
