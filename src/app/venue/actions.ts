@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 
 import { photoPath } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { ITEM_COLUMNS } from "@/lib/status";
+import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
-import type { Item } from "@/lib/types";
+import { HOUSES, type House, type Item } from "@/lib/types";
 import { currentWeekStart, mostRecentCompletedWeek } from "@/lib/week";
 
 export type SubmitState = { error: string | null; ok?: boolean };
@@ -477,13 +477,28 @@ export async function clearApproved(
 
   // The gate, enforced here and not only by hiding the button: a venue may not
   // clear its board until the finished week has been graded.
-  const { data: graded } = await db()
-    .from("graded_weeks")
-    .select("id")
-    .eq("venue_id", venueId)
-    .eq("week_start", mostRecentCompletedWeek())
+  //
+  // Per house, on the same rule the screen uses, so the button and the action
+  // cannot disagree. They did: this read the grade with `maybeSingle`, written
+  // when a week had exactly one grade row per venue. Once each house got its
+  // own row, every venue that runs both returned two, PostgREST refused to
+  // collapse them into one object, and the null it returned instead was read
+  // as "not graded" — so sixteen of twenty-one venues were told the week had
+  // not been graded by a screen that was naming both the people who graded it.
+  // The five venues with a single house kept resetting normally, which is why
+  // it looked like nobody wanted to.
+  const gradedWeek = mostRecentCompletedWeek();
+  const { data: venueRow } = await db()
+    .from("venues")
+    .select("houses")
+    .eq("id", venueId)
     .maybeSingle();
-  if (!graded) {
+  const grades = await gradesFor(venueId, gradedWeek);
+  const owed = housesFor(
+    { houses: (venueRow as { houses: House[] } | null)?.houses ?? HOUSES },
+    gradedWeek,
+  );
+  if (!owed.every((house) => grades.has(house))) {
     return { error: "That week has not been graded yet." };
   }
 
