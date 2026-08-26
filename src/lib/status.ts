@@ -14,6 +14,7 @@ import type {
 import { HOUSES } from "./types";
 import {
   currentWeekStart,
+  filingWeekStart,
   isDeadlinePassed,
   mostRecentCompletedWeek,
   shiftWeeks,
@@ -323,7 +324,17 @@ export async function getLeaderBoard(
   venueHouses: House[] = HOUSES,
   now: Date = new Date(),
 ): Promise<LeaderBoard> {
-  const weekStart = currentWeekStart(now);
+  /**
+   * The week this board is working on, which is not always the calendar week.
+   *
+   * Once the deadline has passed the week a leader is filing into is the next
+   * one, so their own board has to move with it — otherwise they file on a
+   * Friday, watch the count stay at nought, and reasonably conclude it did not
+   * save. The admin review screen and the company dashboard deliberately stay
+   * on the calendar week: grading happens after the deadline and has to keep
+   * looking at the week it is judging.
+   */
+  const weekStart = filingWeekStart(now);
   const items = await getItems(venueId);
   const itemIds = items.map((i) => i.id);
 

@@ -97,6 +97,28 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
 }
 
 /**
+ * The week a photograph filed right now should count toward.
+ *
+ * The same as the calendar week until the deadline passes, and the next week
+ * after that. A calendar week runs to midnight on Sunday but the deadline is
+ * Thursday at four, which left eighty hours of every one hundred and sixty
+ * eight where work filed against an already-judged week counted for nothing.
+ * Eighty seven entries across thirteen venues landed in that window in the
+ * programme's first four weeks — one filing in ten, thrown away by the
+ * calendar, with nothing on screen to say so. A cook who walked the whole
+ * kitchen on a Sunday afternoon had to walk it again on the Monday.
+ *
+ * Only the leader's own board and the writing of an entry use this. Grading,
+ * the company dashboard and the export stay on the calendar week, because
+ * grading happens after the deadline and has to keep looking at the week it is
+ * judging.
+ */
+export function filingWeekStart(now: Date = new Date()): string {
+  const calendar = currentWeekStart(now);
+  return isDeadlinePassed(calendar, now) ? shiftWeeks(calendar, 1) : calendar;
+}
+
+/**
  * The calendar day an instant fell on, in the venues' own timezone.
  *
  * A submission filed at 8pm Pacific on Wednesday is stored as Thursday in UTC.

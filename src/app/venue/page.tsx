@@ -22,6 +22,7 @@ import {
   houseStartWeek,
 } from "@/lib/status";
 import {
+  currentWeekStart,
   deadlineFor,
   formatDeadline,
   formatLastUpload,
@@ -79,6 +80,13 @@ export default async function VenuePage() {
     0,
   );
 
+  /**
+   * Whether the board has rolled ahead of the calendar. True from the deadline
+   * on Thursday until Monday morning, when the two line up again.
+   */
+  const closedWeek = currentWeekStart();
+  const rolled = board.weekStart !== closedWeek;
+
   return (
     <main>
       <header className="mb-6">
@@ -86,6 +94,18 @@ export default async function VenuePage() {
         <h1 className="text-metric mt-2 truncate tracking-normal">
           {venue.name && venue.name !== venue.code ? venue.name : venue.code}
         </h1>
+        {/* Say it, rather than let a board that read 10/10 last night read 0/10
+            this morning with no explanation. The roll happens at the deadline
+            and not at midnight on Sunday, which is the part nobody would guess.
+            Only shown in the days between the two, when it is true. */}
+        {rolled ? (
+          <p className="note text-muted mt-3 max-w-prose leading-relaxed">
+            The week of {formatWeekStart(closedWeek)} closed{" "}
+            {formatDeadline(closedWeek)} and is with the graders. This board is
+            next week&apos;s now, so anything you file counts toward{" "}
+            {formatDeadline(board.weekStart)}.
+          </p>
+        ) : null}
       </header>
 
       <VenueHero

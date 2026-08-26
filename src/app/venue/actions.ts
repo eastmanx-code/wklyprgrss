@@ -7,7 +7,7 @@ import { getSession } from "@/lib/session";
 import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import { HOUSES, type House, type Item } from "@/lib/types";
-import { currentWeekStart, mostRecentCompletedWeek } from "@/lib/week";
+import { filingWeekStart, mostRecentCompletedWeek } from "@/lib/week";
 
 export type SubmitState = { error: string | null; ok?: boolean };
 
@@ -81,7 +81,7 @@ export async function createUploadTargets(
   if (!item) return { error: "That item is no longer available." };
 
   const code = await venueCode(item.venue_id);
-  const weekStart = currentWeekStart();
+  const weekStart = filingWeekStart();
 
   async function sign(suffix: string): Promise<UploadTarget | null> {
     const path = photoPath(code, item!.id, suffix);
@@ -149,8 +149,11 @@ export async function submitItem(
     return { error: "Something went wrong. Try again." };
   }
 
-  // Server time only — the client clock never decides which week this counts for.
-  const weekStart = currentWeekStart();
+  // Server time only: the client clock never decides which week this counts
+  // for. And the week ends at the deadline, not at midnight on Sunday, so work
+  // filed on a Friday counts toward the deadline it is actually preparing for
+  // rather than the one that has already passed.
+  const weekStart = filingWeekStart();
 
   const { error: insertError } = await db().from("submissions").insert({
     item_id: item.id,
@@ -244,7 +247,7 @@ export async function editSubmission(
   const item = await ownedItem(existing.item_id);
   if (!item) return { error: "That item is no longer available." };
 
-  if (existing.week_start !== currentWeekStart()) {
+  if (existing.week_start !== filingWeekStart()) {
     return { error: "Only this week's entry can be edited." };
   }
   if (existing.review === "sent_back") {
