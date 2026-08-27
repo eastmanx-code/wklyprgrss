@@ -9,9 +9,9 @@ import {
   type House,
   type Phase,
 } from "@/lib/checklists";
-import type { ProofKind, Shot } from "@/lib/close-checklist";
+import type { ProofKind, Reference, Shot } from "@/lib/close-checklist";
 import { getSession } from "@/lib/session";
-import { db } from "@/lib/supabase";
+import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 /**
  * Writing the lists, rather than walking them.
@@ -34,6 +34,7 @@ const MAX_DETAIL_LINE = 400;
 const MAX_DETAIL_LINES = 12;
 const MAX_PROMPT = 200;
 const MAX_SHOTS = 6;
+const MAX_REFERENCES = 4;
 
 /** The venue this session may write to, or null. */
 async function venueId(): Promise<string | null> {
@@ -128,6 +129,31 @@ function readShots(formData: FormData): Shot[] | string {
   return shots;
 }
 
+/**
+ * The reference slots, read off the same form as everything else.
+ *
+ * A caption with no photograph is kept, not dropped. That is the placeholder:
+ * a manager writes "the well, stocked" tonight and photographs it on Friday,
+ * and in between the item can say out loud that the standard exists and the
+ * picture does not.
+ */
+function readReferences(formData: FormData): Reference[] | string {
+  const captions = formData.getAll("refCaption").map(String);
+  const paths = formData.getAll("refPath").map(String);
+  const out: Reference[] = [];
+  for (let i = 0; i < captions.length; i += 1) {
+    const caption = (captions[i] ?? "").trim();
+    if (!caption) continue;
+    if (caption.length > MAX_PROMPT) return "That caption is too long.";
+    const path = (paths[i] ?? "").trim();
+    out.push({ caption, path: path || null });
+  }
+  if (out.length > MAX_REFERENCES) {
+    return "That is more reference shots than one item needs.";
+  }
+  return out;
+}
+
 function readDetail(raw: string): string[] | string {
   const lines = raw
     .split("\n")
@@ -178,14 +204,15 @@ export async function createChecklist(
     .eq("venue_id", venue);
 
   const found =
-    ((siblings ?? []) as {
-      id: string;
-      house: House;
-      role: string;
-      phase: Phase;
-      active: boolean;
-    }[]).find((row) => slugFor(row.house, row.role, row.phase) === wanted) ??
-    null;
+    (
+      (siblings ?? []) as {
+        id: string;
+        house: House;
+        role: string;
+        phase: Phase;
+        active: boolean;
+      }[]
+    ).find((row) => slugFor(row.house, row.role, row.phase) === wanted) ?? null;
   if (found) {
     if (found.active) return { error: "That list already exists." };
     await db()
@@ -259,6 +286,8 @@ export async function addItem(
   if (typeof detail === "string") return { error: detail };
   const proof = readShots(formData);
   if (typeof proof === "string") return { error: proof };
+  const reference = readReferences(formData);
+  if (typeof reference === "string") return { error: reference };
 
   // Position from the end of the list, active or not, so a retired item's
   // number is never handed to a new one.
@@ -271,15 +300,14 @@ export async function addItem(
   const position =
     ((last as { position: number }[] | null)?.[0]?.position ?? 0) + 1;
 
-  const { error } = await db()
-    .from("close_items")
-    .insert({
-      checklist_id: list.id,
-      position,
-      title,
-      detail,
-      proof,
-    });
+  const { error } = await db().from("close_items").insert({
+    checklist_id: list.id,
+    position,
+    title,
+    detail,
+    proof,
+    reference,
+  });
   if (error) return { error: "Could not add that. Try again." };
 
   revalidateFor(list);
@@ -301,10 +329,88 @@ export async function updateItem(
   if (typeof detail === "string") return { error: detail };
   const proof = readShots(formData);
   if (typeof proof === "string") return { error: proof };
+  const reference = readReferences(formData);
+  if (typeof reference === "string") return { error: reference };
 
   const { error } = await db()
     .from("close_items")
-    .update({ title, detail, proof })
+    .update({ title, detail, proof, reference })
+    .eq("id", owned.item.id);
+  if (error) return { error: "Could not save that. Try again." };
+
+  revalidateFor(owned.list);
+  return { error: null, ok: true };
+}
+
+/**
+ * A signed URL for a manager to put a reference photograph behind.
+ *
+ * Keyed on the item rather than on a night: this picture is the standard, not
+ * evidence of one shift, and it outlives every night it is shown on. Stamped
+ * with the clock so replacing one leaves the old file alone rather than
+ * fighting a cache — the row points at the new path and nothing points at the
+ * old one.
+ */
+export async function referenceTarget(
+  itemId: string,
+  slot: number,
+): Promise<{ error: string | null; path?: string; signedUrl?: string }> {
+  const owned = await ownedItem(itemId);
+  if (!owned) return { error: "That item is not available." };
+  if (!Number.isInteger(slot) || slot < 0 || slot >= MAX_REFERENCES) {
+    return { error: "That is not a reference slot." };
+  }
+
+  // Re-encoded to JPEG in the browser before it gets here, same as the rest.
+  const path = `close/ref/${itemId}/${slot}-${Date.now()}.jpg`;
+  const { data, error } = await db()
+    .storage.from(PHOTO_BUCKET)
+    .createSignedUploadUrl(path);
+  if (error || !data) return { error: "Could not start the upload." };
+  return { error: null, path, signedUrl: data.signedUrl };
+}
+
+/**
+ * Attaches an uploaded reference to a slot, or clears one back to a
+ * placeholder when no path is given.
+ *
+ * Saved on the spot rather than waiting for the form. A photograph parked in a
+ * hidden field until somebody remembers to press Save is a photograph that
+ * gets lost when they close the tab, and they have already walked to the bar
+ * and taken it.
+ *
+ * The whole list of captions comes up with it, exactly as the manager has it
+ * on screen. Writing only the one slot was tidier and wrong: captions can be
+ * added and removed before anything is saved, so slot two on the screen is not
+ * always slot two on the row, and the photograph would land under somebody
+ * else's caption.
+ */
+export async function setReference(
+  _prev: ManageState,
+  formData: FormData,
+): Promise<ManageState> {
+  const owned = await ownedItem(String(formData.get("itemId") ?? ""));
+  if (!owned) return { error: "That item is not available." };
+
+  const rows = readReferences(formData);
+  if (typeof rows === "string") return { error: rows };
+
+  const slot = Number(formData.get("slot") ?? -1);
+  if (!Number.isInteger(slot) || slot < 0 || slot >= rows.length) {
+    return { error: "Name the shot before you take it." };
+  }
+
+  const path = String(formData.get("path") ?? "").trim();
+  if (path && !path.startsWith(`close/ref/${owned.item.id}/`)) {
+    return { error: "Something went wrong. Try again." };
+  }
+
+  const next = rows.map((ref, i) =>
+    i === slot ? { ...ref, path: path || null } : ref,
+  );
+  const { error } = await db()
+    .from("close_items")
+    .update({ reference: next })
     .eq("id", owned.item.id);
   if (error) return { error: "Could not save that. Try again." };
 

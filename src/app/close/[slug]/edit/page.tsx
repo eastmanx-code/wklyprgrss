@@ -18,7 +18,8 @@ import {
   type House,
   type Phase,
 } from "@/lib/checklists";
-import type { Shot } from "@/lib/close-checklist";
+import type { Reference, Shot } from "@/lib/close-checklist";
+import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -85,25 +86,40 @@ export default async function EditChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, active")
+    .select("id, position, title, detail, proof, reference, active")
     .eq("checklist_id", list.id)
     .order("position");
 
-  const items = (
-    (itemRows ?? []) as {
-      id: string;
-      position: number;
-      title: string;
-      detail: string[] | null;
-      proof: Shot[] | null;
-      active: boolean;
-    }[]
-  ).map<EditableItem>((row) => ({
+  const itemsRaw = (itemRows ?? []) as {
+    id: string;
+    position: number;
+    title: string;
+    detail: string[] | null;
+    proof: Shot[] | null;
+    reference: Reference[] | null;
+    active: boolean;
+  }[];
+
+  // The bucket is private, so a thumbnail needs a signed URL. One round trip
+  // for the whole page rather than one per photograph.
+  const urls = await signedUrls(
+    itemsRaw.flatMap((row) =>
+      (row.reference ?? [])
+        .map((ref) => ref.path)
+        .filter((path): path is string => Boolean(path)),
+    ),
+  );
+
+  const items = itemsRaw.map<EditableItem>((row) => ({
     id: row.id,
     position: row.position,
     title: row.title,
     detail: row.detail ?? [],
     proof: row.proof ?? [],
+    reference: row.reference ?? [],
+    referenceUrls: (row.reference ?? []).map((ref) =>
+      ref.path ? (urls.get(ref.path) ?? null) : null,
+    ),
     active: row.active,
   }));
 

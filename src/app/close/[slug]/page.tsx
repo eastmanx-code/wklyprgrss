@@ -5,7 +5,7 @@ import { CloseBar } from "@/components/close/CloseBar";
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
 import { parseSlug, phaseName, type Phase } from "@/lib/checklists";
-import type { CloseItem, Shot } from "@/lib/close-checklist";
+import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
@@ -19,6 +19,7 @@ type Row = {
   title: string;
   detail: string[];
   proof: Shot[] | null;
+  reference: Reference[] | null;
 };
 
 /** One checklist, off the clipboard — read from the table, night and all. */
@@ -76,7 +77,7 @@ export default async function ChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof")
+    .select("id, position, title, detail, proof, reference")
     .eq("checklist_id", list.id)
     .eq("active", true)
     .order("position");
@@ -94,6 +95,11 @@ export default async function ChecklistPage({
     // card could never be ticked and said nothing about why. Normalised on the
     // way in so rows already saved that way come right without a migration.
     proof: row.proof && row.proof.length > 0 ? row.proof : undefined,
+    // Placeholders included. A named standard with no picture yet still tells
+    // somebody what they are aiming at, and dropping it here would hide the
+    // one thing that gets a manager to go and take the photograph.
+    reference:
+      row.reference && row.reference.length > 0 ? row.reference : undefined,
   }));
 
   // Tonight, if anyone has started it. Read-only here — the actions create it.
@@ -137,11 +143,17 @@ export default async function ChecklistPage({
     proof = (p.data ?? []) as typeof proof;
   }
 
-  const urls = await signedUrls(
-    proof
+  const urls = await signedUrls([
+    ...proof
       .map((row) => row.storage_path)
       .filter((path): path is string => Boolean(path)),
-  );
+    // The reference shots go up in the same round trip as the night's proof.
+    ...rows.flatMap((row) =>
+      (row.reference ?? [])
+        .map((ref) => ref.path)
+        .filter((path): path is string => Boolean(path)),
+    ),
+  ]);
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
@@ -171,6 +183,14 @@ export default async function ChecklistPage({
         <CloseChecklist
           slug={slug}
           items={items}
+          referenceUrls={Object.fromEntries(
+            rows.flatMap((row) =>
+              (row.reference ?? []).flatMap((ref) => {
+                const url = ref.path ? urls.get(ref.path) : undefined;
+                return url ? [[ref.path as string, url] as const] : [];
+              }),
+            ),
+          )}
           saved={{
             ticks: Object.fromEntries(
               ticks.map((t) => [t.item_id, t.initials]),

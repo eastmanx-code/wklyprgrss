@@ -1,16 +1,19 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import {
   addItem,
   moveItem,
+  referenceTarget,
   restoreItem,
   retireItem,
+  setReference,
   updateItem,
   type ManageState,
 } from "@/app/close/manage";
-import type { ProofKind, Shot } from "@/lib/close-checklist";
+import { compressToJpeg, decodeMessage } from "@/lib/compress";
+import type { ProofKind, Reference, Shot } from "@/lib/close-checklist";
 
 const initial: ManageState = { error: null };
 
@@ -20,8 +23,17 @@ export type EditableItem = {
   title: string;
   detail: string[];
   proof: Shot[];
+  /** What right looks like. Empty until a manager writes one. */
+  reference: Reference[];
+  /**
+   * Signed URLs for the reference photographs, in slot order, minted on the
+   * server. Null where the slot is still a placeholder.
+   */
+  referenceUrls: (string | null)[];
   active: boolean;
 };
+
+const MAX_REFERENCES = 4;
 
 const KINDS: { key: ProofKind; label: string; help: string }[] = [
   { key: "photo", label: "Photo", help: "A picture of the thing, taken now." },
@@ -125,6 +137,301 @@ function ShotFields({ shots }: { shots: Shot[] }) {
           }
         >
           Add proof
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * The reference shots for one item: what right looks like.
+ *
+ * The other direction from proof. Proof is what the item owes at the end of
+ * the night; this is what somebody looks at while they are doing it, and the
+ * paper lists have been reaching for it for years without being able to
+ * deliver. Young Blood's bartender open says "make sure your well is FULL
+ * (refer to well photo)" and there is no well photo. The fridge order is a
+ * paragraph naming six fortifieds back to front. Each of those is a
+ * photograph pretending to be a sentence.
+ *
+ * The manager takes it, not us. Whoever runs the bar knows what a correct well
+ * looks like on their bar, and a picture taken anywhere else is a different
+ * bar. That also means it can be retaken the week the layout changes, by the
+ * person who changed it.
+ *
+ * A caption with no photograph is kept rather than dropped. That is the
+ * placeholder: the standard has been named and nobody has been in with a
+ * camera yet, which is a useful thing to be able to see on the list.
+ */
+type Slot = Reference & { url: string | null };
+
+function ReferenceFields({
+  itemId,
+  reference,
+  urls,
+}: {
+  /** Absent on a brand new item — there is no row to hang a photograph off. */
+  itemId?: string;
+  reference: Reference[];
+  urls: (string | null)[];
+}) {
+  // Caption, path and the URL it renders at, on one row. Two parallel arrays
+  // came apart the moment a shot was added or removed in the middle.
+  const [rows, setRows] = useState<Slot[]>(() =>
+    reference.map((ref, i) => ({ ...ref, url: urls[i] ?? null })),
+  );
+  const [busy, setBusy] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const inputs = useRef<Record<number, HTMLInputElement | null>>({});
+  const objectUrls = useRef<string[]>([]);
+
+  useEffect(
+    () => () => {
+      for (const url of objectUrls.current) URL.revokeObjectURL(url);
+    },
+    [],
+  );
+
+  /**
+   * What goes up with a photograph: the captions on screen, blanks dropped,
+   * and where in that list this shot belongs.
+   *
+   * Sending the list rather than one index is the whole guard. A manager can
+   * add and remove captions before saving anything, so the third box on screen
+   * is not always the third entry on the row, and writing by index alone put
+   * the photograph under somebody else's caption.
+   */
+  function payload(index: number): { data: FormData; slot: number } | null {
+    const data = new FormData();
+    let slot = -1;
+    for (const [i, row] of rows.entries()) {
+      const caption = row.caption.trim();
+      if (!caption) continue;
+      if (i === index) slot = data.getAll("refCaption").length;
+      data.append("refCaption", caption);
+      data.append("refPath", row.path ?? "");
+    }
+    if (slot < 0) return null;
+    data.set("itemId", itemId ?? "");
+    data.set("slot", String(slot));
+    return { data, slot };
+  }
+
+  /**
+   * Straight to storage, then the row points at it — the same order the rest
+   * of the app uploads in, so the action only ever carries text.
+   *
+   * Saved on the spot rather than with the form. A photograph sitting in a
+   * hidden field waiting for somebody to press Save is a photograph that gets
+   * lost when they close the tab, and they have already done the hard part.
+   */
+  async function onPick(index: number, file: File | undefined) {
+    if (!file || !itemId) return;
+    const built = payload(index);
+    if (!built) {
+      setError("Name the shot first, so the picture has something to mean.");
+      return;
+    }
+
+    setBusy(index);
+    setError(null);
+
+    let upload: File;
+    try {
+      upload = await compressToJpeg(file);
+    } catch (thrown) {
+      setBusy(null);
+      setError(decodeMessage(thrown));
+      return;
+    }
+
+    const target = await referenceTarget(itemId, built.slot);
+    if (target.error || !target.signedUrl || !target.path) {
+      setBusy(null);
+      setError(target.error ?? "Could not start the upload.");
+      return;
+    }
+    const path = target.path;
+
+    try {
+      const response = await fetch(target.signedUrl, {
+        method: "PUT",
+        headers: { "content-type": "image/jpeg" },
+        body: upload,
+      });
+      if (!response.ok) throw new Error(String(response.status));
+    } catch {
+      setBusy(null);
+      setError("Could not upload that. Check your signal and try again.");
+      return;
+    }
+
+    built.data.set("path", path);
+    const saved = await setReference({ error: null }, built.data);
+    setBusy(null);
+    if (saved.error) {
+      setError(saved.error);
+      return;
+    }
+
+    const preview = URL.createObjectURL(upload);
+    objectUrls.current.push(preview);
+    setRows((current) =>
+      current.map((row, i) =>
+        i === index ? { ...row, path, url: preview } : row,
+      ),
+    );
+  }
+
+  async function onClear(index: number) {
+    if (!itemId) return;
+    const built = payload(index);
+    if (!built) return;
+    setBusy(index);
+    setError(null);
+    built.data.set("path", "");
+    const saved = await setReference({ error: null }, built.data);
+    setBusy(null);
+    if (saved.error) {
+      setError(saved.error);
+      return;
+    }
+    setRows((current) =>
+      current.map((row, i) =>
+        i === index ? { ...row, path: null, url: null } : row,
+      ),
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <span className="label">What right looks like</span>
+
+      {rows.length === 0 ? (
+        <p className="note text-muted">
+          Nothing to show them. Add a shot where words have been doing a
+          photograph&apos;s job.
+        </p>
+      ) : null}
+
+      <ul className="space-y-3">
+        {rows.map((ref, index) => (
+          <li key={index} className="border-divider space-y-2 border-t pt-3">
+            <div className="flex items-start gap-3">
+              {ref.url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={ref.url}
+                  alt={ref.caption || "Reference"}
+                  className="bg-inset h-16 w-16 shrink-0 rounded object-cover"
+                />
+              ) : (
+                <span className="bg-inset label text-muted flex h-16 w-16 shrink-0 items-center justify-center rounded text-center">
+                  No shot
+                </span>
+              )}
+
+              <div className="min-w-0 flex-1 space-y-2">
+                <input type="hidden" name="refPath" value={ref.path ?? ""} />
+                <input
+                  name="refCaption"
+                  className="field"
+                  placeholder="What the picture shows"
+                  maxLength={200}
+                  value={ref.caption}
+                  onChange={(event) =>
+                    setRows((current) =>
+                      current.map((row, i) =>
+                        i === index
+                          ? { ...row, caption: event.target.value }
+                          : row,
+                      ),
+                    )
+                  }
+                />
+
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    ref={(node) => {
+                      inputs.current[index] = node;
+                    }}
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    onChange={(event) =>
+                      onPick(index, event.target.files?.[0] ?? undefined)
+                    }
+                  />
+                  {itemId ? (
+                    <button
+                      type="button"
+                      className="btn-ghost min-h-11"
+                      disabled={busy === index}
+                      onClick={() => inputs.current[index]?.click()}
+                    >
+                      {busy === index
+                        ? "Uploading…"
+                        : ref.path
+                          ? "Replace photo"
+                          : "Take the photo"}
+                    </button>
+                  ) : (
+                    // No row to hang it off yet. Said plainly rather than
+                    // shown as a button that fails.
+                    <p className="label text-muted">
+                      Add the item, then photograph it
+                    </p>
+                  )}
+                  {itemId && ref.path ? (
+                    <button
+                      type="button"
+                      className="btn-ghost min-h-11"
+                      disabled={busy === index}
+                      onClick={() => onClear(index)}
+                    >
+                      Clear photo
+                    </button>
+                  ) : null}
+                  <button
+                    type="button"
+                    className="btn-ghost min-h-11"
+                    onClick={() =>
+                      setRows((current) =>
+                        current.filter((_, i) => i !== index),
+                      )
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                {ref.path ? null : (
+                  <p className="label text-warn">Named, not photographed yet</p>
+                )}
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {error ? (
+        <p role="alert" className="text-body text-warn">
+          {error}
+        </p>
+      ) : null}
+
+      {rows.length < MAX_REFERENCES ? (
+        <button
+          type="button"
+          className="btn-ghost min-h-11"
+          onClick={() =>
+            setRows((current) => [
+              ...current,
+              { caption: "", path: null, url: null },
+            ])
+          }
+        >
+          Add a reference shot
         </button>
       ) : null}
     </div>
@@ -244,6 +551,19 @@ export function ItemRow({
         </p>
       ) : null}
 
+      {/* Worth seeing without opening the item: a named standard with no
+          picture behind it is a promise the list is making and not keeping. */}
+      {item.reference.length > 0 && !open ? (
+        <p
+          className={`label mt-2 ${
+            item.reference.some((ref) => !ref.path) ? "text-warn" : ""
+          }`}
+        >
+          {item.reference.filter((ref) => ref.path).length} of{" "}
+          {item.reference.length} reference shots taken
+        </p>
+      ) : null}
+
       {item.active ? null : <p className="label text-muted mt-2">Retired</p>}
 
       {open ? (
@@ -265,6 +585,11 @@ export function ItemRow({
 
           <DetailField detail={item.detail} />
           <ShotFields shots={item.proof} />
+          <ReferenceFields
+            itemId={item.id}
+            reference={item.reference}
+            urls={item.referenceUrls}
+          />
 
           {state.error ? (
             <p role="alert" className="text-body text-warn">
@@ -347,6 +672,7 @@ export function AddItemForm({ checklistId }: { checklistId: string }) {
 
         <DetailField detail={[]} />
         <ShotFields shots={[]} />
+        <ReferenceFields reference={[]} urls={[]} />
 
         {state.error ? (
           <p role="alert" className="text-body text-warn">
