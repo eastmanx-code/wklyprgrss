@@ -243,10 +243,10 @@ export function statusFor(
   if (activeCount === 0) {
     return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
   }
-  // The bar is the board a venue is actually running. LAFA keeps a rolling
-  // list of live problems and retires them as they are fixed; against a fixed
-  // ten it could file every item it had and still fail. A short board is
-  // surfaced on the row rather than punished in the score.
+  // The bar is ten, not whatever the board is currently holding. It was the
+  // board for a while, on the reasoning that a venue running a rolling list of
+  // live problems would fail for retiring them; but that let a venue with one
+  // task left pass the week on one photograph, which is not the programme.
   if (doneCount >= activeCount) return "PASS";
   return isDeadlinePassed(weekStart, now) ? "FAIL" : "PENDING";
 }
@@ -447,7 +447,9 @@ export async function getLeaderBoard(
       sentBackItemIds: only(sentBackItemIds),
       approvedItemIds: only(approvedItemIds),
       rollingItemIds: only(rollingItemIds),
-      status: statusFor(done.size, mine.length, weekStart, now),
+      // Ten, not mine.length. A leader whose board is down to one task is
+      // not one photograph away from a passed week.
+      status: statusFor(done.size, WEEKLY_ITEM_TARGET, weekStart, now),
       scored: houseScored(house, weekStart),
     };
   });
@@ -691,16 +693,6 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     const houses = HOUSES.filter((house) => venue.houses.includes(house)).map(
       (house): HouseWeek => {
         const key = keyOf(venue.id, house);
-        /**
-         * How many tasks this week involved: what is open now, or what was
-         * filed, whichever is larger.
-         *
-         * Open tasks alone made a reset board read "3/2" — three jobs filed
-         * against two still open, because clearing the finished ones shrank the
-         * denominator under work that had already happened. A venue cannot owe
-         * fewer tasks than it did.
-         */
-        const openNow = activeCountByKey.get(key) ?? 0;
         const weeks = doneByKeyWeek.get(key);
         const doneThisWeek = weeks?.get(weekStart);
         /**
@@ -714,11 +706,25 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
          * is not a confession that it did not.
          */
         const doneCount = doneThisWeek ? doneThisWeek.size : 0;
-        const activeCount = Math.max(openNow, doneCount);
+        /**
+         * Ten. Always ten, whatever the board happens to hold.
+         *
+         * This used to be the venue's own board size, so a venue that reset
+         * and never rebuilt was scored against what was left: one task on the
+         * board meant one task passed the week, and a board of eight read
+         * "8/8" and drew as complete. Four venues were sitting on that this
+         * week, one of them being told it was finished.
+         *
+         * The deal is ten updates a week. A short board is a venue that has
+         * not finished setting up, which is a shortfall to show rather than a
+         * denominator to shrink — the same reasoning that already refuses to
+         * let an empty board score nought out of nought.
+         */
+        const activeCount = WEEKLY_ITEM_TARGET;
 
         let failStreak = 0;
         const firstWeek = firstWeekByKey.get(key);
-        if (firstWeek && activeCount > 0) {
+        if (firstWeek) {
           let week = completedWeek;
           for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
             // A house cannot have missed a week it was not being scored in.
@@ -744,10 +750,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           house,
           doneCount,
           approvedCount,
-          // No board means the target is the target. Against a denominator of
-          // zero, "0 of 0" is arithmetically complete and draws as a full bar —
-          // the house that has done least of all would have looked finished.
-          activeCount: activeCount === 0 ? WEEKLY_ITEM_TARGET : activeCount,
+          activeCount,
           status: statusFor(doneCount, activeCount, weekStart, now),
           failStreak,
           scored: houseScored(house, weekStart),
@@ -892,7 +895,11 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     // house it is. Listed once per venue however many houses are short.
     venuesUnderConfigured: rows
       .filter((row) =>
-        row.scored.some((h) => h.activeCount < WEEKLY_ITEM_TARGET),
+        row.scored.some(
+          (h) =>
+            (activeCountByKey.get(keyOf(row.venue.id, h.house)) ?? 0) <
+            WEEKLY_ITEM_TARGET,
+        ),
       )
       .map((row) => row.venue.code),
   };
