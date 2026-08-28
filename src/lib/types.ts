@@ -194,4 +194,10 @@ export type VenueWeekSummary = {
   status: WeekStatus;
   /** The longest run of missed weeks across the counting houses. */
   failStreak: number;
+  /**
+   * Consecutive weeks this venue cleared the line in every house that counted
+   * that week. Judged per week, so the weeks before the kitchen went live ask
+   * only what was being asked then.
+   */
+  runWeeks: number;
 };

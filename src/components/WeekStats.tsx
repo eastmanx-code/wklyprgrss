@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { isWin, venueRun, WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { isWin, WEEKLY_ITEM_TARGET } from "@/lib/status";
 import type { House, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -86,9 +86,9 @@ export function WeekStats({
   // The longest run going, and who is on it. Named because a streak is the
   // one number here worth being seen holding.
   const best = rows
-    .map((row) => ({ code: row.venue.code, streak: venueRun(row) }))
+    .map((row) => ({ code: row.venue.code, streak: row.runWeeks }))
     .sort((a, b) => b.streak - a.streak)[0];
-  const onARun = rows.filter((row) => venueRun(row) >= 2).length;
+  const onARun = rows.filter((row) => row.runWeeks >= 2).length;
 
   const perfect = judged.filter(
     (h) => h.approvedCount >= WEEKLY_ITEM_TARGET,

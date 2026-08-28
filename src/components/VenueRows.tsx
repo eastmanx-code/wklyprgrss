@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { venueRun } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -161,7 +160,7 @@ function VenueCard({
               printed them on a card about this one, so a venue that filed
               everything this week still read as having missed. */}
           <span className="label shrink-0">
-            {venueRun(row) > 1 ? `${venueRun(row)} weeks clean` : ""}
+            {row.runWeeks > 1 ? `${row.runWeeks} weeks clean` : ""}
             {row.venue.id === ownVenueId ? " · you" : ""}
           </span>
         </div>

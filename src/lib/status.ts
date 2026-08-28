@@ -98,23 +98,6 @@ const STREAK_LOOKBACK_WEEKS = 26;
  */
 export const WIN_RATIO = 0.8;
 
-/**
- * How long a venue has been clearing the line, as a venue.
- *
- * The shortest of its halves, not the longest. Taken as the longest, Morning
- * Glory was named the company's best run at four weeks on the same screen its
- * own card read "missed 1w" — its dining room was on four and its kitchen had
- * missed the week. Praising one half of a venue that is failing the other is
- * the fastest way to make the number mean nothing.
- *
- * A venue scored on one house is on that house's run, which is right: it has
- * no other half to let it down.
- */
-export function venueRun(row: { scored: { winStreak: number }[] }): number {
-  if (row.scored.length === 0) return 0;
-  return Math.min(...row.scored.map((house) => house.winStreak));
-}
-
 export function isWin(approvedCount: number, activeCount: number): boolean {
   return activeCount > 0 && approvedCount / activeCount >= WIN_RATIO;
 }
@@ -823,12 +806,51 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     const [foh, hoh] = houses;
     const scored = houses.filter((h) => h.scored);
 
+    /**
+     * How long this venue has been clearing the line, as a venue.
+     *
+     * Walked at the venue rather than taken from the houses, because a house
+     * streak cannot see the week a house started counting. The kitchen only
+     * began counting this week, so its streak can never exceed one — and the
+     * shorter of the two halves therefore capped every venue that has a
+     * kitchen at one week, leaving the board claiming three venues were on a
+     * run when the only ones that could show a streak at all were the six
+     * with no kitchen to hold them back.
+     *
+     * Each past week is judged by the houses that counted in that week. Before
+     * the kitchen went live that is the dining room alone, which is exactly
+     * what was being asked of them at the time.
+     */
+    let runWeeks = 0;
+    {
+      let week = completedWeek;
+      for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+        const owed = houses.filter((h) => houseScored(h.house, week));
+        if (owed.length === 0) break;
+        const cleared = owed.every((h) => {
+          const filedThen = doneByKeyWeek
+            .get(keyOf(venue.id, h.house))
+            ?.get(week);
+          if (!filedThen) return false;
+          const okThen = [...filedThen].filter(
+            (id) =>
+              newestByItemWeek.get(`${id}|${week}`)?.review === "approved",
+          ).length;
+          return isWin(okThen, WEEKLY_ITEM_TARGET);
+        });
+        if (!cleared) break;
+        runWeeks += 1;
+        week = shiftWeeks(week, -1);
+      }
+    }
+
     return {
       venue,
       foh,
       hoh,
       houses,
       scored,
+      runWeeks,
       // One house failing fails the venue. Averaging them would let a spotless
       // dining room carry a kitchen that missed the week entirely.
       status: worstStatus(scored.map((h) => h.status)),
