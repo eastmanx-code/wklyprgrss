@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
+import { isWin } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -55,7 +56,11 @@ function state(house: HouseWeek, graded: boolean) {
   if (house.pendingCount > 0) {
     return { label: `${house.pendingCount} to review`, tone: "warn" as const };
   }
-  return { label: "graded", tone: "ink" as const };
+  // Graded and over the line is the only good outcome on this screen, so it
+  // is the only thing that gets the good colour.
+  return isWin(house.approvedCount, house.activeCount)
+    ? { label: "graded", tone: "warn" as const }
+    : { label: "graded", tone: "muted" as const };
 }
 
 const TONE = {
@@ -102,7 +107,11 @@ function HouseLine({
           filed, so the two together are the whole week in one line. */}
       <span
         className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
-          house.hasBoard && house.scored ? "text-ink" : "text-muted"
+          !house.hasBoard || !house.scored
+            ? "text-muted"
+            : isWin(house.approvedCount, house.activeCount)
+              ? "text-warn"
+              : "text-ink"
         }`}
       >
         {house.hasBoard && house.scored ? house.approvedCount : "—"}
@@ -141,10 +150,10 @@ function VenueCard({
   quiet?: boolean;
 }) {
   return (
-    <li id={`venue-${row.venue.code}`}>
+    <li className="h-full" id={`venue-${row.venue.code}`}>
       <Link
         href={href}
-        className={`hover:ring-muted/40 block rounded-[6px] p-4 transition-shadow hover:ring-1 ${
+        className={`hover:ring-muted/40 flex h-full flex-col rounded-[6px] p-4 transition-shadow hover:ring-1 ${
           quiet ? "ring-divider ring-1 ring-inset" : "bg-inset"
         }`}
       >

@@ -23,7 +23,13 @@
   --muted: rgba(255, 255, 255, 0.5);
   --line: rgba(255, 255, 255, 0.11);
   --divider: rgba(255, 255, 255, 0.11);
-  --warn: #bcbc1e;
+  /* The one accent. Black, white, green — nothing else.
+
+     It was an olive yellow, which reads as caution, so the only colour on the
+     page always meant trouble and a good week had no colour of its own. Green
+     carries both jobs: it is what the eye goes to, and the word beside it says
+     whether that is because something is owed or because something landed. */
+  --warn: #7ab24f;
   --on-warn: #0d0d0d;
   --dot: rgba(255, 255, 255, 0.1);
   --dot-strong: rgba(255, 255, 255, 0.16);
@@ -45,7 +51,7 @@
   --muted: rgba(0, 0, 0, 0.58);
   --line: rgba(0, 0, 0, 0.12);
   --divider: rgba(0, 0, 0, 0.12);
-  --warn: #6f6f0f;
+  --warn: #3f7a22;
   --on-warn: #ffffff;
   --dot: rgba(0, 0, 0, 0.11);
   --dot-strong: rgba(0, 0, 0, 0.18);

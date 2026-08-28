@@ -3,10 +3,13 @@ import { notFound, redirect } from "next/navigation";
 
 import { PhotoView } from "@/components/PhotoView";
 
-import { setItemActive } from "@/app/admin/actions";
+import { reviewSubmission, setItemActive } from "@/app/admin/actions";
 import { DeleteEntry } from "@/components/DeleteEntry";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
+import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
+import { SendBack } from "@/components/admin/SendBack";
+import { SubmitButton } from "@/components/admin/SubmitButton";
 import {
   Attribution,
   BackLink,
@@ -164,6 +167,54 @@ export default async function ItemPage({
             adds another entry — nothing is overwritten.
           </p>
         </div>
+      ) : null}
+
+      {/* Rule on it here, rather than sending the reviewer back to the venue.
+
+          An admin opening a task to look at the photograph had to leave it,
+          scroll the venue's whole board and find the card again to say yes or
+          no about the thing they were just looking at. The verdict belongs
+          beside the evidence.
+
+          Same actions as the board, so a decision made here is the decision
+          made there — including the undo, which is the one that matters when
+          the tap was a mistake. */}
+      {session.role === "admin" && current ? (
+        <section className="panel mb-3">
+          <p className="card-title">Your call</p>
+          <div className="mt-3 flex flex-col gap-2">
+            {current.review === "pending" ? (
+              <>
+                {current.progress === "done" ? (
+                  <form action={reviewSubmission}>
+                    <input
+                      type="hidden"
+                      name="submissionId"
+                      value={current.id}
+                    />
+                    <input type="hidden" name="venueId" value={item.venue_id} />
+                    <input type="hidden" name="review" value="approved" />
+                    <SubmitButton pendingLabel="Approving…">
+                      Approve
+                    </SubmitButton>
+                  </form>
+                ) : (
+                  <p className="label">
+                    Marked for another cycle, so there is nothing to approve
+                    yet.
+                  </p>
+                )}
+                <SendBack submissionId={current.id} venueId={item.venue_id} />
+              </>
+            ) : (
+              <ChangeVerdict
+                submissionId={current.id}
+                venueId={item.venue_id}
+                review={current.review as "approved" | "sent_back"}
+              />
+            )}
+          </div>
+        </section>
       ) : null}
 
       {previous && !sentBack ? (
