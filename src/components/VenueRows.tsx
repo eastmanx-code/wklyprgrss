@@ -160,6 +160,11 @@ function HouseLine({
  * where a row leads — the board to a read-only venue, admin to the screen with
  * approve and send-back on it.
  */
+/** The longer of a venue's two runs. One good half is still a run. */
+function bestRun(row: VenueWeekSummary): number {
+  return Math.max(0, ...row.scored.map((house) => house.winStreak));
+}
+
 export function VenueRows({
   rows,
   hrefPrefix,
@@ -294,8 +299,15 @@ export function VenueRows({
                       <span className="text-body text-ink block tracking-normal tabular-nums">
                         {row.venue.code}
                       </span>
+                      {/* A run, where the venue can see its own. Weeks in a
+                          row over the line, which is a thing to protect
+                          rather than a position in a table. */}
                       <span className="label hidden truncate sm:block">
-                        {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
+                        {row.failStreak > 0
+                          ? `missed ${row.failStreak}w`
+                          : bestRun(row) > 1
+                            ? `${bestRun(row)}w run`
+                            : ""}
                         {row.venue.id === ownVenueId ? " · you" : ""}
                       </span>
                     </span>

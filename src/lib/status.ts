@@ -762,10 +762,36 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           (id) => reviewOf(id) === "sent_back",
         ).length;
 
+        /**
+         * How long this house has been clearing the line.
+         *
+         * Same walk back as the fail streak and stopped by the same rules, so
+         * a house cannot be credited for weeks before it existed or before it
+         * counted. Broken by the first week that did not clear it, which is
+         * what makes it worth protecting.
+         */
+        let winStreak = 0;
+        {
+          let week = completedWeek;
+          for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+            if (week < houseStartWeek(house)) break;
+            const filedThen = weeks?.get(week);
+            if (!filedThen) break;
+            const okThen = [...filedThen].filter(
+              (id) =>
+                newestByItemWeek.get(`${id}|${week}`)?.review === "approved",
+            ).length;
+            if (!isWin(okThen, activeCount)) break;
+            winStreak += 1;
+            week = shiftWeeks(week, -1);
+          }
+        }
+
         return {
           house,
           doneCount,
           approvedCount,
+          winStreak,
           pendingCount,
           redoCount,
           hasBoard: (activeCountByKey.get(key) ?? 0) > 0,

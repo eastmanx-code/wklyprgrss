@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
+import { WeekStats } from "@/components/WeekStats";
 import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
 import { getDashboard, gradersByHouse } from "@/lib/status";
@@ -90,6 +91,8 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
+        <WeekStats rows={rows} gradedByHouse={gradedIds} />
+
         <CompanyHero byHouse={byHouse} />
 
         <VenueRows

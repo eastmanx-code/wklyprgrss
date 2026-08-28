@@ -125,6 +125,17 @@ export type HouseWeek = {
   /** Approved this week — the score. */
   approvedCount: number;
   /**
+   * Consecutive weeks this house has cleared the win line.
+   *
+   * A streak rather than a rank. Ranking twenty-one venues one to twenty-one
+   * is the public shaming that is already ruled out here, and the research on
+   * it agrees: constant rank-order comparison in high-pressure work raises
+   * stress and pushes people toward quantity and toward hiding. A streak is a
+   * venue measured against itself, every venue can hold one at the same time,
+   * and it is a thing people protect rather than game.
+   */
+  winStreak: number;
+  /**
    * Filed, and still waiting on a verdict.
    *
    * The grade stamp and the reviewing came apart: eight boards were stamped
