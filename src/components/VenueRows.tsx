@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { isWin } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -56,11 +55,7 @@ function state(house: HouseWeek, graded: boolean) {
   if (house.pendingCount > 0) {
     return { label: `${house.pendingCount} to review`, tone: "warn" as const };
   }
-  // Graded and over the line is the only good outcome on this screen, so it
-  // is the only thing that gets the good colour.
-  return isWin(house.approvedCount, house.activeCount)
-    ? { label: "graded", tone: "warn" as const }
-    : { label: "graded", tone: "muted" as const };
+  return { label: "graded", tone: "ink" as const };
 }
 
 const TONE = {
@@ -107,11 +102,7 @@ function HouseLine({
           filed, so the two together are the whole week in one line. */}
       <span
         className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
-          !house.hasBoard || !house.scored
-            ? "text-muted"
-            : isWin(house.approvedCount, house.activeCount)
-              ? "text-warn"
-              : "text-ink"
+          house.hasBoard && house.scored ? "text-ink" : "text-muted"
         }`}
       >
         {house.hasBoard && house.scored ? house.approvedCount : "—"}
@@ -288,13 +279,14 @@ export function VenueRows({
       <Card
         className="col-span-12"
         title="This week"
-        hint={
+        hint={[
           needing.length === 0
             ? `All ${active.length} venues graded and reviewed`
             : isAdmin
               ? `${needing.length} of ${active.length} venues want something from you`
-              : `${needing.length} of ${active.length} venues still open`
-        }
+              : `${needing.length} of ${active.length} venues still open`,
+          "bar is what was filed · the number is what passed · redo is sent back and not replaced",
+        ].join(" · ")}
       >
         {/* The answer, before the evidence. */}
         <p
