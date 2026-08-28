@@ -120,6 +120,67 @@ function HouseLine({
 }
 
 /**
+ * One venue: the code, and a line per half.
+ *
+ * Used for both halves of the page. A settled venue is drawn quieter but it
+ * is still drawn: collapsing it to a bare code answered "what is left" and
+ * destroyed "how did we do", so on the week everything got finished the card
+ * went blank at exactly the moment the results became the interesting thing.
+ */
+function VenueCard({
+  row,
+  href,
+  gradedBy,
+  ownVenueId,
+  quiet = false,
+}: {
+  row: VenueWeekSummary;
+  href: string;
+  gradedBy: (venueId: string, house: House) => string | null;
+  ownVenueId: string | null;
+  quiet?: boolean;
+}) {
+  return (
+    <li id={`venue-${row.venue.code}`}>
+      <Link
+        href={href}
+        className={`hover:ring-muted/40 block rounded-[6px] p-4 transition-shadow hover:ring-1 ${
+          quiet ? "ring-divider ring-1 ring-inset" : "bg-inset"
+        }`}
+      >
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <span
+            className={`text-title tracking-[0.08em] ${
+              quiet ? "text-muted" : "text-ink"
+            }`}
+          >
+            {row.venue.code}
+          </span>
+          <span className="label shrink-0">
+            {row.failStreak > 0
+              ? `missed ${row.failStreak}w`
+              : bestRun(row) > 1
+                ? `${bestRun(row)}w run`
+                : ""}
+            {row.venue.id === ownVenueId ? " · you" : ""}
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          {row.houses.map((house) => (
+            <HouseLine
+              key={house.house}
+              house={house}
+              gradedBy={gradedBy(row.venue.id, house.house)}
+            />
+          ))}
+        </div>
+      </Link>
+    </li>
+  );
+}
+
+/**
  * The all-venues list.
  *
  * Venues with no board used to collapse into a separate strip of code chips,
@@ -242,68 +303,36 @@ export function VenueRows({
         </p>
 
         {needing.length > 0 ? (
-          /* A card each, not rows in columns.
-
-             Two columns of bare rows read as one very wide row: a venue code
-             in the middle of the card looked like another column of the line
-             beside it, so "LEIL ... LOUS ..." ran together as a sentence. A
-             card has an edge, which is the thing that says where one venue
-             stops. It also reflows on its own — one across on a phone, two on
-             a tablet, three on a laptop — so the space gets filled without a
-             table being stretched into it. */
           <ul className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(21rem,1fr))] gap-3">
             {needing.map((row) => (
-              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
-                <Link
-                  href={`${hrefPrefix}${row.venue.id}`}
-                  className="bg-inset hover:ring-muted/40 block rounded-[6px] p-4 transition-shadow hover:ring-1"
-                >
-                  <div className="mb-3 flex items-baseline justify-between gap-3">
-                    <span className="text-title text-ink tracking-[0.08em]">
-                      {row.venue.code}
-                    </span>
-                    <span className="label shrink-0">
-                      {row.failStreak > 0
-                        ? `missed ${row.failStreak}w`
-                        : bestRun(row) > 1
-                          ? `${bestRun(row)}w run`
-                          : ""}
-                      {row.venue.id === ownVenueId ? " · you" : ""}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    {row.houses.map((house) => (
-                      <HouseLine
-                        key={house.house}
-                        house={house}
-                        gradedBy={gradedBy(row.venue.id, house.house)}
-                      />
-                    ))}
-                  </div>
-                </Link>
-              </li>
+              <VenueCard
+                key={row.venue.id}
+                row={row}
+                href={`${hrefPrefix}${row.venue.id}`}
+                gradedBy={gradedBy}
+                ownVenueId={ownVenueId}
+              />
             ))}
           </ul>
         ) : null}
 
-        {/* Finished venues are codes, not rows. Their numbers are a tap away
-            and nobody is looking for them: a venue that is done is the least
-            interesting thing on the page and was taking up two lines of it. */}
         {finished.length > 0 ? (
-          <div className="border-divider mt-6 border-t pt-4">
-            <p className="label">Done · {finished.length}</p>
-            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5">
-              {finished.map((row) => (
-                <Link
-                  key={row.venue.id}
-                  href={`${hrefPrefix}${row.venue.id}`}
-                  className="text-body text-muted hover:text-ink tracking-normal tabular-nums transition-colors"
-                >
-                  {row.venue.code}
-                </Link>
-              ))}
+          <div className={needing.length > 0 ? "mt-8" : "mt-6"}>
+            <p className="label border-divider border-t pt-4">
+              Done · {finished.length}
             </p>
+            <ul className="mt-3 grid grid-cols-[repeat(auto-fill,minmax(21rem,1fr))] gap-3">
+              {finished.map((row) => (
+                <VenueCard
+                  key={row.venue.id}
+                  row={row}
+                  href={`${hrefPrefix}${row.venue.id}`}
+                  gradedBy={gradedBy}
+                  ownVenueId={ownVenueId}
+                  quiet
+                />
+              ))}
+            </ul>
           </div>
         ) : null}
       </Card>
