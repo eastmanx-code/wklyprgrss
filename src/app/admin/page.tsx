@@ -6,7 +6,7 @@ import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradedVenueIdsByHouse } from "@/lib/status";
+import { getDashboard, gradersByHouse } from "@/lib/status";
 import { HOUSES } from "@/lib/types";
 import {
   deadlineFor,
@@ -33,7 +33,7 @@ export default async function AdminDashboardPage() {
   // The set, not just the total: the rows show the grade venue by venue, and
   // counting the live ones here keeps "N of 21" honest when a graded venue is
   // later stood down.
-  const gradedIds = await gradedVenueIdsByHouse(gradedWeek);
+  const gradedIds = await gradersByHouse(gradedWeek);
   // Closed out means closed out in every house that counts. Counted off either
   // grade alone, "21 of 21" would have appeared with half the walks unread.
 

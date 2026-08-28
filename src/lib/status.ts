@@ -1007,14 +1007,45 @@ export async function gradedVenueIds(
   return new Set((data ?? []).map((row) => row.venue_id as string));
 }
 
-/** Which venues have had each house's week graded, keyed by house. */
-export async function gradedVenueIdsByHouse(
+/**
+ * Who closed out each house's week, per venue.
+ *
+ * The dashboard used a set of ids, which answers "was this graded" and nothing
+ * else, and the row then had to say so in colour alone: the same digit in two
+ * shades, meaning "scored nought" or "nobody has looked at it yet". Those are
+ * opposite facts and a grey nought and a yellow nought are not far enough
+ * apart to carry them — least of all in a screenshot, which is how this table
+ * mostly gets read.
+ *
+ * A name is the shortest honest thing to put in the column. It answers whether
+ * the week is closed and who to ask about it in the same breath, and it cannot
+ * be confused with a score.
+ *
+ * One query for the week rather than one per house. Membership still works the
+ * way the callers expect, because a Map has `has` too.
+ */
+export async function gradersByHouse(
   weekStart: string,
-): Promise<Map<House, Set<string>>> {
-  const sets = await Promise.all(
-    HOUSES.map((house) => gradedVenueIds(weekStart, house)),
+): Promise<Map<House, Map<string, string>>> {
+  const { data, error } = await db()
+    .from("graded_weeks")
+    .select("venue_id, house, graded_by")
+    .eq("week_start", weekStart);
+  if (error) throw new Error(error.message);
+
+  const byHouse = new Map<House, Map<string, string>>(
+    HOUSES.map((house) => [house, new Map<string, string>()]),
   );
-  return new Map(HOUSES.map((house, i) => [house, sets[i]]));
+  for (const row of (data ?? []) as {
+    venue_id: string;
+    house: House;
+    graded_by: string | null;
+  }[]) {
+    // Graded is graded even where the signature did not survive: an empty
+    // name must not read as an ungraded week.
+    byHouse.get(row.house)?.set(row.venue_id, row.graded_by?.trim() || "—");
+  }
+  return byHouse;
 }
 
 /**
