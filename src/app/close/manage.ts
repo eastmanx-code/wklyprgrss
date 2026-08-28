@@ -10,7 +10,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import type { ProofKind, Reference, Shot } from "@/lib/close-checklist";
-import { getSession } from "@/lib/session";
+import { closeVenueId } from "@/lib/close-venue";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 /**
@@ -35,18 +35,22 @@ const MAX_DETAIL_LINES = 12;
 const MAX_PROMPT = 200;
 const MAX_SHOTS = 6;
 const MAX_REFERENCES = 4;
+const MAX_SECTION = 60;
+
+/**
+ * The heading an item sits under, off the form.
+ *
+ * Blank means no heading, which is the normal case and has to stay cheap to
+ * say: a list written in the app has none until somebody decides it needs one.
+ */
+function readSection(formData: FormData): string | null {
+  const raw = String(formData.get("section") ?? "").trim();
+  return raw || null;
+}
 
 /** The venue this session may write to, or null. */
 async function venueId(): Promise<string | null> {
-  const session = await getSession();
-  if (!session) return null;
-  if (session.role === "leader") return session.venueId;
-  const { data } = await db()
-    .from("venues")
-    .select("id")
-    .eq("code", "HAWK")
-    .maybeSingle();
-  return (data as { id: string } | null)?.id ?? null;
+  return closeVenueId();
 }
 
 /** A checklist row, if it belongs to this session's venue. */
@@ -288,6 +292,10 @@ export async function addItem(
   if (typeof proof === "string") return { error: proof };
   const reference = readReferences(formData);
   if (typeof reference === "string") return { error: reference };
+  const section = readSection(formData);
+  if (section !== null && section.length > MAX_SECTION) {
+    return { error: "That heading is too long." };
+  }
 
   // Position from the end of the list, active or not, so a retired item's
   // number is never handed to a new one.
@@ -307,6 +315,7 @@ export async function addItem(
     detail,
     proof,
     reference,
+    section,
   });
   if (error) return { error: "Could not add that. Try again." };
 
@@ -331,10 +340,14 @@ export async function updateItem(
   if (typeof proof === "string") return { error: proof };
   const reference = readReferences(formData);
   if (typeof reference === "string") return { error: reference };
+  const section = readSection(formData);
+  if (section !== null && section.length > MAX_SECTION) {
+    return { error: "That heading is too long." };
+  }
 
   const { error } = await db()
     .from("close_items")
-    .update({ title, detail, proof, reference })
+    .update({ title, detail, proof, reference, section })
     .eq("id", owned.item.id);
   if (error) return { error: "Could not save that. Try again." };
 

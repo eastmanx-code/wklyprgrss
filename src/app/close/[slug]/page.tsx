@@ -8,6 +8,7 @@ import { parseSlug, phaseName, type Phase } from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
+import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -20,6 +21,7 @@ type Row = {
   detail: string[];
   proof: Shot[] | null;
   reference: Reference[] | null;
+  section: string | null;
 };
 
 /** One checklist, off the clipboard — read from the table, night and all. */
@@ -35,16 +37,7 @@ export default async function ChecklistPage({
 
   // A leader's venue comes from their session; an admin gets the one venue
   // with a list so far.
-  let venue: string | null = null;
-  if (session.role === "leader") venue = session.venueId;
-  else {
-    const { data } = await db()
-      .from("venues")
-      .select("id")
-      .eq("code", "HAWK")
-      .maybeSingle();
-    venue = (data as { id: string } | null)?.id ?? null;
-  }
+  const venue = await closeVenueId(session);
   if (!venue) notFound();
 
   const parsed = parseSlug(slug);
@@ -77,7 +70,7 @@ export default async function ChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, reference")
+    .select("id, position, title, detail, proof, reference, section")
     .eq("checklist_id", list.id)
     .eq("active", true)
     .order("position");
@@ -87,6 +80,7 @@ export default async function ChecklistPage({
   const items: CloseItem[] = rows.map((row) => ({
     id: row.id,
     number: row.position,
+    section: row.section,
     title: row.title,
     detail: row.detail ?? [],
     // An empty array is not "proof required of nothing", it is no proof — and

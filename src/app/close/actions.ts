@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { isAdminPin } from "@/lib/admin-pin";
-import { getSession } from "@/lib/session";
+import { closeVenueId } from "@/lib/close-venue";
 import { currentNight } from "@/lib/night";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
@@ -19,15 +19,7 @@ function safeJson(raw: string): unknown {
 
 /** The venue this session may work on. */
 async function venueId(): Promise<string | null> {
-  const session = await getSession();
-  if (!session) return null;
-  if (session.role === "leader") return session.venueId;
-  const { data } = await db()
-    .from("venues")
-    .select("id")
-    .eq("code", "HAWK")
-    .maybeSingle();
-  return (data as { id: string } | null)?.id ?? null;
+  return closeVenueId();
 }
 
 /** The checklist row, if this session may see it. */
@@ -193,18 +185,20 @@ export async function saveNote(
       .eq("item_id", itemId)
       .eq("shot_index", shotIndex);
   } else {
-    await db().from("close_proof").upsert(
-      {
-        night_id: night,
-        item_id: itemId,
-        shot_index: shotIndex,
-        kind: "note",
-        body,
-        // Null, not "", so the tick's backfill can find it.
-        initials: initials || null,
-      },
-      { onConflict: "night_id,item_id,shot_index" },
-    );
+    await db()
+      .from("close_proof")
+      .upsert(
+        {
+          night_id: night,
+          item_id: itemId,
+          shot_index: shotIndex,
+          kind: "note",
+          body,
+          // Null, not "", so the tick's backfill can find it.
+          initials: initials || null,
+        },
+        { onConflict: "night_id,item_id,shot_index" },
+      );
   }
 
   revalidatePath(`/close/${slug}`);
@@ -272,18 +266,20 @@ export async function recordCapture(
     return { error: "Something went wrong. Try again." };
   }
 
-  await db().from("close_proof").upsert(
-    {
-      night_id: night,
-      item_id: itemId,
-      shot_index: shotIndex,
-      kind,
-      storage_path: path,
-      // Null, not "", so the tick's backfill can find it.
-      initials: initials || null,
-    },
-    { onConflict: "night_id,item_id,shot_index" },
-  );
+  await db()
+    .from("close_proof")
+    .upsert(
+      {
+        night_id: night,
+        item_id: itemId,
+        shot_index: shotIndex,
+        kind,
+        storage_path: path,
+        // Null, not "", so the tick's backfill can find it.
+        initials: initials || null,
+      },
+      { onConflict: "night_id,item_id,shot_index" },
+    );
 
   revalidatePath(`/close/${slug}`);
   return { error: null };
@@ -315,17 +311,24 @@ async function listAtSigning(checklistId: string, nightRow: string) {
     .eq("night_id", nightRow);
 
   const tick = new Map(
-    ((ticks ?? []) as { item_id: string; initials: string; created_at: string }[])
-      .map((t) => [t.item_id, t]),
+    (
+      (ticks ?? []) as {
+        item_id: string;
+        initials: string;
+        created_at: string;
+      }[]
+    ).map((t) => [t.item_id, t]),
   );
 
-  return ((items ?? []) as {
-    id: string;
-    position: number;
-    title: string;
-    detail: string[];
-    proof: unknown;
-  }[]).map((item) => {
+  return (
+    (items ?? []) as {
+      id: string;
+      position: number;
+      title: string;
+      detail: string[];
+      proof: unknown;
+    }[]
+  ).map((item) => {
     const t = tick.get(item.id);
     return {
       item_id: item.id,

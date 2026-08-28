@@ -20,6 +20,7 @@ import {
 } from "@/lib/checklists";
 import type { Reference, Shot } from "@/lib/close-checklist";
 import { signedUrls } from "@/lib/photos";
+import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -42,16 +43,7 @@ export default async function EditChecklistPage({
   const session = await getSession();
   if (!session) redirect("/");
 
-  let venue: string | null = null;
-  if (session.role === "leader") venue = session.venueId;
-  else {
-    const { data } = await db()
-      .from("venues")
-      .select("id")
-      .eq("code", "HAWK")
-      .maybeSingle();
-    venue = (data as { id: string } | null)?.id ?? null;
-  }
+  const venue = await closeVenueId(session);
   if (!venue) notFound();
 
   const parsed = parseSlug(slug);
@@ -86,7 +78,7 @@ export default async function EditChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, reference, active")
+    .select("id, position, title, detail, proof, reference, section, active")
     .eq("checklist_id", list.id)
     .order("position");
 
@@ -97,6 +89,7 @@ export default async function EditChecklistPage({
     detail: string[] | null;
     proof: Shot[] | null;
     reference: Reference[] | null;
+    section: string | null;
     active: boolean;
   }[];
 
@@ -113,6 +106,7 @@ export default async function EditChecklistPage({
   const items = itemsRaw.map<EditableItem>((row) => ({
     id: row.id,
     position: row.position,
+    section: row.section,
     title: row.title,
     detail: row.detail ?? [],
     proof: row.proof ?? [],

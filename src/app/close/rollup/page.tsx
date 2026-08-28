@@ -4,8 +4,8 @@ import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { BackLink } from "@/components/ui";
 import { groupRollup, venueRollup } from "@/lib/rollup";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
-import { db } from "@/lib/supabase";
 import {
   SAMPLE_BY_ROLE,
   SAMPLE_CERTIFIERS,
@@ -67,16 +67,8 @@ export default async function RollupPage() {
   // rather than being deleted, because a venue in its first week would
   // otherwise meet a page of confident zeroes and learn nothing about what the
   // report is for — and a screen of zeroes is its own kind of lie.
-  let venue: string | null = null;
-  if (session.role === "leader") venue = session.venueId;
-  else {
-    const { data } = await db()
-      .from("venues")
-      .select("id")
-      .eq("code", "HAWK")
-      .maybeSingle();
-    venue = (data as { id: string } | null)?.id ?? null;
-  }
+  const venue = await closeVenueId(session);
+  const venueName = venue ? await closeVenueName(venue) : null;
 
   const real = venue ? await venueRollup(venue) : null;
   const group = real ? await groupRollup() : null;
@@ -99,7 +91,11 @@ export default async function RollupPage() {
             Sample figures · nothing recorded yet
           </span>
         )}
-        <p className="label mt-3">Night Hawk · last {nights} nights</p>
+        {/* Named from the row, not typed in. It read "Night Hawk" on every
+            venue's report, including the ones that are not Night Hawk. */}
+        <p className="label mt-3">
+          {venueName ? `${venueName} · ` : ""}last {nights} nights
+        </p>
         <h1 className="mt-2 text-metric font-medium">
           What&apos;s getting missed
         </h1>

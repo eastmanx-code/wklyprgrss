@@ -20,6 +20,8 @@ const initial: ManageState = { error: null };
 export type EditableItem = {
   id: string;
   position: number;
+  /** The heading this item sits under. Null when the list has none. */
+  section: string | null;
   title: string;
   detail: string[];
   proof: Shot[];
@@ -535,6 +537,10 @@ export function ItemRow({
         </div>
       </div>
 
+      {item.section && !open ? (
+        <p className="label text-warn mt-2">{item.section}</p>
+      ) : null}
+
       {item.detail.length > 0 && !open ? (
         <ul className="mt-2 space-y-1">
           {item.detail.map((line) => (
@@ -569,6 +575,28 @@ export function ItemRow({
       {open ? (
         <form action={action} className="mt-4 space-y-4">
           <input type="hidden" name="itemId" value={item.id} />
+
+          <div className="space-y-2">
+            <label className="label" htmlFor={`section-${item.id}`}>
+              Under heading
+            </label>
+            <input
+              id={`section-${item.id}`}
+              name="section"
+              className="field"
+              placeholder="Leave blank for no heading"
+              maxLength={60}
+              defaultValue={item.section ?? ""}
+              autoComplete="off"
+            />
+            {/* Said out loud, because the grouping is by run and not by name:
+                two items with the same heading and another item between them
+                make two headings, which is usually a sign the order is wrong
+                rather than a thing somebody meant. */}
+            <p className="label">
+              Items in a row under the same heading are grouped together.
+            </p>
+          </div>
 
           <div className="space-y-2">
             <label className="label" htmlFor={`title-${item.id}`}>
@@ -655,6 +683,20 @@ export function AddItemForm({ checklistId }: { checklistId: string }) {
         className="mt-4 space-y-4"
       >
         <input type="hidden" name="checklistId" value={checklistId} />
+
+        <div className="space-y-2">
+          <label className="label" htmlFor="section">
+            Under heading
+          </label>
+          <input
+            id="section"
+            name="section"
+            className="field"
+            placeholder="Leave blank for no heading"
+            maxLength={60}
+            autoComplete="off"
+          />
+        </div>
 
         <div className="space-y-2">
           <label className="label" htmlFor="title">

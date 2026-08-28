@@ -655,7 +655,7 @@ export function CloseChecklist({
       </section>
 
       <ul className="space-y-3">
-        {CLOSE_CHECKLIST.map((item) => {
+        {CLOSE_CHECKLIST.map((item, index) => {
           const isDone = Boolean(done[item.number]);
           const shots = item.proof ?? [];
           const taken = shotsTaken(item);
@@ -663,8 +663,35 @@ export function CloseChecklist({
           const mine = initialsFor(item.number);
           const wanted = initialsWanted === item.number && !mine.trim();
 
+          /**
+           * A heading, when this item starts a new run of one.
+           *
+           * Compared against the item before it rather than grouped into
+           * buckets: the list is already in the order somebody walks it, and
+           * bucketing would quietly reorder a list to suit its headings. A
+           * heading that appears twice down the page is a list that says so.
+           */
+          const heading =
+            item.section && item.section !== CLOSE_CHECKLIST[index - 1]?.section
+              ? item.section
+              : null;
+          // How much of this run is done, because "FIRST CUTS 4/9" is the
+          // question the person under that heading is actually asking.
+          const run = heading
+            ? CLOSE_CHECKLIST.filter((other) => other.section === item.section)
+            : [];
+          const runDone = run.filter((other) => done[other.number]).length;
+
           return (
             <li key={item.number} className="panel p-0">
+              {heading ? (
+                <p className="label border-divider text-warn flex items-baseline justify-between gap-3 border-b px-4 py-2.5">
+                  <span className="break-words">{heading}</span>
+                  <span className="shrink-0 tabular-nums">
+                    {runDone}/{run.length}
+                  </span>
+                </p>
+              ) : null}
               {/* Stacked on a phone, side by side from sm up.
                   The initials box is 88px of a 358px card, and beside a 28px
                   checkbox it left about 180px for the title — "Full close

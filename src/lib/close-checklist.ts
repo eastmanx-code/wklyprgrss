@@ -29,6 +29,18 @@ export type CloseItem = {
   id?: string;
   /** Displayed, and how MODs already refer to these to each other. */
   number: number;
+  /**
+   * The heading this item sits under, if the list has any.
+   *
+   * The paper lists already do this and it carries real information: Noble's
+   * close splits into FIRST CUTS and CLOSING SQUAD, which is two different
+   * sets of people at two different times of the night. Flatten it and every
+   * job survives but nobody can tell whose job it is.
+   *
+   * Grouped by run in position order rather than looked up, so renaming a
+   * heading is one edit and a heading with no items left stops existing.
+   */
+  section?: string | null;
   title: string;
   /** The standard for what "done" means. Not separately ticked. */
   detail: string[];

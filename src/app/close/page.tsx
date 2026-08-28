@@ -15,6 +15,7 @@ import {
 import { currentNight, formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
 import { SAMPLE_MISSED, SAMPLE_NIGHTS } from "@/lib/rollup-sample";
+import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -38,16 +39,7 @@ export default async function ChecklistsPage() {
 
   const night = currentNight();
 
-  let venue: string | null = null;
-  if (session.role === "leader") venue = session.venueId;
-  else {
-    const { data } = await db()
-      .from("venues")
-      .select("id")
-      .eq("code", "HAWK")
-      .maybeSingle();
-    venue = (data as { id: string } | null)?.id ?? null;
-  }
+  const venue = await closeVenueId(session);
 
   const { data: listRows } = venue
     ? await db()
