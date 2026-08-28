@@ -117,7 +117,7 @@ function HouseLine({
       </span>
 
       <span
-        className={`text-body w-8 shrink-0 text-right tracking-normal tabular-nums ${
+        className={`text-body hidden w-8 shrink-0 text-right tracking-normal tabular-nums min-[360px]:block ${
           house.hasBoard && house.scored ? "text-ink" : "text-muted"
         }`}
       >
@@ -221,16 +221,20 @@ export function VenueRows({
             <span className="label w-12 shrink-0 sm:w-20">Venue</span>
             <span className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
               <span className="label w-8 shrink-0">Half</span>
-              <span className="label w-24 shrink-0 sm:w-32">Filed</span>
-              <span className="label w-12 shrink-0 text-right">Of ten</span>
-              <span className="label w-8 shrink-0 text-right">OK</span>
+              {/* Sits over the bar, which carries no heading of its own: it is
+                  the fraction drawn, and the fraction is labelled. */}
+              <span className="hidden w-24 shrink-0 sm:block sm:w-32" />
+              <span className="label w-12 shrink-0 text-right">Filed</span>
+              <span className="label hidden w-8 shrink-0 text-right min-[360px]:block">
+                Pass
+              </span>
               <span
-                className="label w-8 shrink-0 text-right"
-                title="Sent back and not redone"
+                className="label hidden w-8 shrink-0 text-right sm:block"
+                title="Sent back and never redone"
               >
                 Redo
               </span>
-              <span className="label w-24 shrink-0">Standing</span>
+              <span className="label w-24 shrink-0 sm:w-28">Standing</span>
               {/* The slack lands here, past the last column, instead of being
                   pumped into the middle of the row. */}
               <span className="min-w-0 flex-1" />

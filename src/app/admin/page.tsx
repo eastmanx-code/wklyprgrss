@@ -39,14 +39,18 @@ export default async function AdminDashboardPage() {
 
   return (
     <main>
-      <header className="mb-6 flex items-start justify-between gap-4">
+      <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="label">Week of {formatWeekStart(weekStart)}</p>
           <h1 className="text-metric mt-2 tracking-normal">
             Everyone&apos;s progress
           </h1>
         </div>
-        <div className="flex shrink-0 gap-2">
+        {/* Wraps under the title on a narrow phone. Held on one line beside
+            the heading these two buttons ran 27px past a 320px screen and put
+            the whole page into a sideways scroll — for two links that are
+            perfectly happy on their own row. */}
+        <div className="flex flex-wrap gap-2">
           <Link href="/admin/codes" className="btn-ghost">
             Codes
           </Link>

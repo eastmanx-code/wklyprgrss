@@ -40,7 +40,7 @@ import {
   latestByItem,
   statusFor,
 } from "@/lib/status";
-import { HOUSES, houseName } from "@/lib/types";
+import { HOUSES, houseName, type House } from "@/lib/types";
 import {
   currentWeekStart,
   formatLastUpload,
@@ -120,6 +120,28 @@ export default async function AdminVenuePage({
   const gradedWeek = mostRecentCompletedWeek();
   const grades = await gradesFor(venue.id, gradedWeek);
 
+  /**
+   * How much of the week being graded still has no verdict.
+   *
+   * The grade stamp and the reviewing are two separate buttons and nothing
+   * connected them: twenty-one boards were stamped closed on Thursday evening
+   * and only thirteen had been ruled on, so eight venues carry a grade with
+   * every one of their ten still pending. Scored off approvals they read as
+   * nought, and last week the same eight read tens and nines.
+   *
+   * Counted against the graded week rather than the current one, because that
+   * is the week the button below closes.
+   */
+  const gradedWeekSubs = latestByItem(
+    submissions.filter((s) => s.week_start === gradedWeek),
+  );
+  const pendingFor = (house: House) =>
+    activeItems.filter((item) => {
+      if (item.house !== house) return false;
+      const s = gradedWeekSubs.get(item.id);
+      return s?.review === "pending" && s.progress === "done";
+    }).length;
+
   const byItem = new Map<string, typeof submissions>();
   for (const submission of submissions) {
     const list = byItem.get(submission.item_id) ?? [];
@@ -158,6 +180,7 @@ export default async function AdminVenuePage({
           (house) => ({
             house,
             gradedBy: grades.get(house)?.gradedBy ?? null,
+            pending: pendingFor(house),
             // Practice halves are still gradeable, just not binding.
             scored: houseScored(house, gradedWeek),
           }),
