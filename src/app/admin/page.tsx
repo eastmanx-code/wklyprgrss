@@ -4,11 +4,8 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
-import { WeekStats } from "@/components/WeekStats";
-import { GradeAll } from "@/components/admin/GradeAll";
 import { getSession } from "@/lib/session";
 import { getDashboard, gradersByHouse } from "@/lib/status";
-import { HOUSES } from "@/lib/types";
 import {
   deadlineFor,
   formatDeadline,
@@ -61,28 +58,6 @@ export default async function AdminDashboardPage() {
         </div>
       </header>
 
-      <GradeAll
-        weekStart={gradedWeek}
-        weekLabel={formatWeekStart(gradedWeek)}
-        houses={HOUSES.filter((house) =>
-          rows.some((row) => row.venue.houses.includes(house)),
-        ).map((house) => {
-          // Counted against the live rows, not the raw grade rows: "N of 21"
-          // stays honest when a graded venue is later stood down. And only
-          // against the venues that owe this house, so the four bars with no
-          // kitchen are not sitting in the denominator waiting for a grade
-          // that is never coming.
-          const owed = rows.filter((row) => row.venue.houses.includes(house));
-          return {
-            house,
-            graded: owed.filter((row) =>
-              gradedIds.get(house)?.has(row.venue.id),
-            ).length,
-            total: owed.length,
-          };
-        })}
-      />
-
       <NarrativeStrip
         deadlineMs={deadlineFor(weekStart).getTime()}
         deadlineLabel={formatDeadline(weekStart)}
@@ -91,8 +66,6 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <WeekStats rows={rows} gradedByHouse={gradedIds} audience="admin" />
-
         <CompanyHero byHouse={byHouse} />
 
         <VenueRows
