@@ -98,6 +98,23 @@ const STREAK_LOOKBACK_WEEKS = 26;
  */
 export const WIN_RATIO = 0.8;
 
+/**
+ * How long a venue has been clearing the line, as a venue.
+ *
+ * The shortest of its halves, not the longest. Taken as the longest, Morning
+ * Glory was named the company's best run at four weeks on the same screen its
+ * own card read "missed 1w" — its dining room was on four and its kitchen had
+ * missed the week. Praising one half of a venue that is failing the other is
+ * the fastest way to make the number mean nothing.
+ *
+ * A venue scored on one house is on that house's run, which is right: it has
+ * no other half to let it down.
+ */
+export function venueRun(row: { scored: { winStreak: number }[] }): number {
+  if (row.scored.length === 0) return 0;
+  return Math.min(...row.scored.map((house) => house.winStreak));
+}
+
 export function isWin(approvedCount: number, activeCount: number): boolean {
   return activeCount > 0 && approvedCount / activeCount >= WIN_RATIO;
 }

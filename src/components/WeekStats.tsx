@@ -1,5 +1,5 @@
 import { Card } from "./Card";
-import { isWin, WEEKLY_ITEM_TARGET } from "@/lib/status";
+import { isWin, venueRun, WEEKLY_ITEM_TARGET } from "@/lib/status";
 import type { House, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -82,23 +82,13 @@ export function WeekStats({
   // at ten and a kitchen at two is not "one venue at six".
   const judged = scoredHouses.filter((h) => h.hasBoard && h.pendingCount === 0);
   const wins = judged.filter((h) => isWin(h.approvedCount, h.activeCount));
-  const winRate = judged.length
-    ? Math.round((wins.length / judged.length) * 100)
-    : 0;
 
   // The longest run going, and who is on it. Named because a streak is the
   // one number here worth being seen holding.
   const best = rows
-    .flatMap((row) =>
-      row.scored.map((h) => ({ code: row.venue.code, streak: h.winStreak })),
-    )
+    .map((row) => ({ code: row.venue.code, streak: venueRun(row) }))
     .sort((a, b) => b.streak - a.streak)[0];
-  const onARun = rows.filter((row) =>
-    row.scored.some((h) => h.winStreak >= 2),
-  ).length;
-
-  // Sent back and never replaced. Never counted anywhere before.
-  const redos = scoredHouses.reduce((n, h) => n + h.redoCount, 0);
+  const onARun = rows.filter((row) => venueRun(row) >= 2).length;
 
   const perfect = judged.filter(
     (h) => h.approvedCount >= WEEKLY_ITEM_TARGET,
@@ -108,44 +98,47 @@ export function WeekStats({
     <Card
       className="col-span-12"
       title="The week"
-      hint="A half clears the line at 8 of 10 signed off · a run is weeks in a row over it"
+      hint="A board passes at 8 of its 10 signed off"
     >
       {/* auto-fit rather than fixed columns: one across on a phone, two on a
           large phone, four on a laptop, with nothing to configure per screen. */}
+      {/* Three, in the words people use. "22 of 35 halves cleared the line"
+          was language invented for the screen: nobody calls a kitchen a half
+          or a pass a line, and a figure somebody has to translate is one they
+          stop reading.
+
+          The count of work sent back and never redone is gone from here. It
+          is a real number and it belongs on the venue that owes it, where
+          somebody can do something about it — at the top of the company
+          dashboard it is a backlog with nobody's name on it. */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-3">
         <Tile
-          label={isAdmin ? "Waiting on you" : "Awaiting review"}
+          label={isAdmin ? "To review" : "With the graders"}
           value={toReview}
           sub={
-            ungraded > 0
-              ? `to review · ${ungraded} not graded`
-              : toReview > 0
-                ? isAdmin
-                  ? "items to review"
-                  : "items with the graders"
-                : "all clear"
+            toReview > 0
+              ? ungraded > 0
+                ? `${ungraded} not graded yet`
+                : "photos waiting"
+              : "nothing waiting"
           }
           tone={toReview > 0 ? "warn" : "ink"}
         />
         <Tile
-          label="Cleared the line"
-          value={`${winRate}%`}
-          sub={`${wins.length} of ${judged.length} halves${perfect > 0 ? ` · ${perfect} perfect` : ""}`}
-        />
-        <Tile
-          label="Longest run"
-          value={best && best.streak > 0 ? `${best.streak}w` : "—"}
+          label="Boards passed"
+          value={`${wins.length} of ${judged.length}`}
           sub={
-            best && best.streak > 0
-              ? `${best.code}${onARun > 1 ? ` · ${onARun} venues on a run` : ""}`
-              : "nobody on a streak yet"
+            perfect > 0 ? `${perfect} got all ten` : "8 of 10 signed off passes"
           }
         />
         <Tile
-          label="Never redone"
-          value={redos}
-          sub="sent back and left"
-          tone={redos > 0 ? "warn" : "muted"}
+          label="Best run"
+          value={best && best.streak > 0 ? `${best.streak} weeks` : "—"}
+          sub={
+            best && best.streak > 0
+              ? `${best.code}${onARun > 1 ? ` · ${onARun} venues going` : ""}`
+              : "nobody on a run yet"
+          }
         />
       </div>
     </Card>

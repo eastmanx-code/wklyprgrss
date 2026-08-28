@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
+import { venueRun } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -156,12 +157,11 @@ function VenueCard({
           >
             {row.venue.code}
           </span>
+          {/* Only the run. The missed-weeks badge counted earlier weeks and
+              printed them on a card about this one, so a venue that filed
+              everything this week still read as having missed. */}
           <span className="label shrink-0">
-            {row.failStreak > 0
-              ? `missed ${row.failStreak}w`
-              : bestRun(row) > 1
-                ? `${bestRun(row)}w run`
-                : ""}
+            {venueRun(row) > 1 ? `${venueRun(row)} weeks clean` : ""}
             {row.venue.id === ownVenueId ? " · you" : ""}
           </span>
         </div>
@@ -193,11 +193,6 @@ function VenueCard({
  * where a row leads — the board to a read-only venue, admin to the screen with
  * approve and send-back on it.
  */
-/** The longer of a venue's two runs. One good half is still a run. */
-function bestRun(row: VenueWeekSummary): number {
-  return Math.max(0, ...row.scored.map((house) => house.winStreak));
-}
-
 export function VenueRows({
   rows,
   hrefPrefix,
