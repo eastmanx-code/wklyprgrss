@@ -5,50 +5,6 @@ import { isWin } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
- * Ten discrete segments, not a continuous fill.
- *
- * The metric is ten photos, so the bar should be countable: at 1/10 a
- * continuous fill is an unreadable sliver, while one lit segment out of ten
- * reads instantly. Fill is always white — the alert colour is reserved for
- * past due, failing and missed-week runs, and a yellow progress bar would say
- * "progress is bad".
- *
- * Fixed width, not flex. Growing to fill the row put a 1100px barcode across a
- * desktop and shoved every number it was meant to illustrate into a jam at the
- * far edge, so the eye had to cross the whole screen to get from a venue's
- * name to its figures. Ten segments need about as much room as the word beside
- * them; past that the bar is just loud.
- */
-function Segments({
-  done,
-  total,
-  onAccent = false,
-}: {
-  done: number;
-  total: number;
-  onAccent?: boolean;
-}) {
-  return (
-    <span className="flex min-w-0 flex-1 gap-[2px]">
-      {Array.from({ length: Math.max(total, 1) }, (_, i) => (
-        <span
-          key={i}
-          className={`h-2 flex-1 rounded-[1px] ${
-            onAccent
-              ? i < done
-                ? "bg-on-warn"
-                : "bg-on-warn/25"
-              : i < done
-                ? "bg-ink"
-                : "bg-inset"
-          }`}
-        />
-      ))}
-    </span>
-  );
-}
-
-/**
  * Where a house's week actually stands, in words.
  *
  * The screen used to answer this in colour: the approval count went yellow
@@ -109,12 +65,17 @@ const TONE = {
 } as const;
 
 /**
- * One house's line inside a venue's row.
+ * One house's week, in the terms the week is actually discussed in.
  *
- * Every column is fixed width and they sit together next to the venue code,
- * with the slack falling off the right-hand end. Stretching the middle instead
- * is what produced the jam: the numbers ended up against the window edge, a
- * different distance from their own venue on every screen.
+ * It used to lead with a ten-segment bar of what had been filed. On a normal
+ * week every venue files all ten, so twenty-one cards each carried an
+ * identical black block taking the widest column on the card and telling
+ * nobody anything, while the fact that decides the week — how much of it was
+ * signed off — sat beside it as a bare "8" with no denominator. You had to
+ * already know the rule to read the card.
+ *
+ * So the score leads, out of the ten it is out of, and filing only gets a word
+ * when it fell short, which is the rare case worth the ink.
  */
 function HouseLine({
   house,
@@ -128,9 +89,21 @@ function HouseLine({
   onAccent?: boolean;
 }) {
   const here = state(house, Boolean(gradedBy));
+  const scored = house.hasBoard && house.scored;
+
+  // The exceptions, and only the exceptions. A venue that filed its ten and
+  // had none sent back says nothing here at all.
+  const trailer = [
+    house.hasBoard && house.doneCount < house.activeCount
+      ? `filed ${house.doneCount}`
+      : null,
+    house.redoCount > 0 ? `${house.redoCount} redo` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
-    <span className="flex items-center gap-2.5">
+    <span className="flex items-baseline gap-3">
       <span
         className={`label w-8 shrink-0 ${
           onAccent ? "text-on-warn" : house.scored ? "" : "text-muted/60"
@@ -139,42 +112,35 @@ function HouseLine({
         {house.house}
       </span>
 
-      {/* Nothing to draw where there is no list. A full-length empty track
-          said "filed none of ten" about a kitchen that has no ten. */}
-      {house.hasBoard ? (
-        <Segments
-          done={house.doneCount}
-          total={house.activeCount}
-          onAccent={onAccent}
-        />
-      ) : (
-        <span className="min-w-0 flex-1" />
-      )}
-
-      {/* Signed off, out of the ten owed. The bar beside it is what was
-          filed, so the two together are the whole week in one line. */}
       <span
-        className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
+        className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
           onAccent
             ? "text-on-warn"
-            : !house.hasBoard || !house.scored
+            : !scored
               ? "text-muted"
               : missedTheLine(house)
                 ? "text-warn"
                 : "text-ink"
         }`}
       >
-        {house.hasBoard && house.scored ? house.approvedCount : "—"}
+        {scored ? `${house.approvedCount}/${house.activeCount}` : "—"}
       </span>
 
       <span
-        className={`label w-32 shrink-0 truncate text-right ${
+        className={`label min-w-0 flex-1 truncate ${
           onAccent ? "text-on-warn" : TONE[here.tone]
         }`}
         title={gradedBy ? `Graded by ${gradedBy}` : undefined}
       >
         {here.label}
-        {house.redoCount > 0 ? ` · ${house.redoCount} redo` : ""}
+      </span>
+
+      <span
+        className={`label shrink-0 text-right ${
+          onAccent ? "text-on-warn/80" : ""
+        }`}
+      >
+        {trailer}
       </span>
     </span>
   );
@@ -210,7 +176,14 @@ function VenueCard({
    * the eye lands on, so the card is what has to say it.
    */
   const seen = judged(row);
-  const missedAll = seen.length > 0 && seen.every(missedTheLine);
+  // Every half that has a board has to have been ruled on before a venue can
+  // be branded a total failure. A card came up filled on a venue whose dining
+  // room was still sitting in the review queue: one half had missed, the other
+  // had no verdict at all, and the screen called the whole place a write-off
+  // on evidence it did not have yet.
+  const boards = row.scored.filter((h) => h.hasBoard).length;
+  const missedAll =
+    seen.length > 0 && seen.length === boards && seen.every(missedTheLine);
   const missed = !missedAll && row.scored.some(missedTheLine);
 
   return (
@@ -367,7 +340,7 @@ export function VenueRows({
             : isAdmin
               ? `${needing.length} of ${active.length} venues want something from you`
               : `${needing.length} of ${active.length} venues still open`,
-          "bar is what was filed · the number is what passed · redo is sent back and not replaced",
+          "8 of 10 signed off is the line · redo is sent back and not replaced",
         ].join(" · ")}
       >
         {/* The answer, before the evidence. */}
