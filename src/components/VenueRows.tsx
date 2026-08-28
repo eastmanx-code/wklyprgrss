@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
+import { isWin } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -46,6 +47,16 @@ function Segments({ done, total }: { done: number; total: number }) {
  * Ordered by what needs doing, and only ever one of them: the state that
  * should pull somebody's attention wins.
  */
+/** Graded, judged, and under the line. */
+export function missedTheLine(house: HouseWeek): boolean {
+  return (
+    house.hasBoard &&
+    house.scored &&
+    house.pendingCount === 0 &&
+    !isWin(house.approvedCount, house.activeCount)
+  );
+}
+
 function state(house: HouseWeek, graded: boolean) {
   if (!house.hasBoard) return { label: "no board", tone: "warn" as const };
   if (!house.scored) return { label: "practice", tone: "muted" as const };
@@ -55,7 +66,11 @@ function state(house: HouseWeek, graded: boolean) {
   if (house.pendingCount > 0) {
     return { label: `${house.pendingCount} to review`, tone: "warn" as const };
   }
-  return { label: "graded", tone: "ink" as const };
+  // Said as a verdict rather than as a status. "Graded" is true of a ten and
+  // of a two, and a word that covers both tells nobody anything.
+  return isWin(house.approvedCount, house.activeCount)
+    ? { label: "passed", tone: "ink" as const }
+    : { label: "missed", tone: "warn" as const };
 }
 
 const TONE = {
@@ -102,7 +117,11 @@ function HouseLine({
           filed, so the two together are the whole week in one line. */}
       <span
         className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
-          house.hasBoard && house.scored ? "text-ink" : "text-muted"
+          !house.hasBoard || !house.scored
+            ? "text-muted"
+            : missedTheLine(house)
+              ? "text-warn"
+              : "text-ink"
         }`}
       >
         {house.hasBoard && house.scored ? house.approvedCount : "—"}
@@ -140,12 +159,26 @@ function VenueCard({
   ownVenueId: string | null;
   quiet?: boolean;
 }) {
+  /**
+   * Any half that was judged and came in short.
+   *
+   * Carried on the whole card rather than one word inside it. A venue that
+   * missed read exactly like a venue that did not: same box, same weight, the
+   * news sitting in a small grey word at the end of a line. The card is what
+   * the eye lands on, so the card is what has to say it.
+   */
+  const missed = row.scored.some(missedTheLine);
+
   return (
     <li className="h-full" id={`venue-${row.venue.code}`}>
       <Link
         href={href}
-        className={`hover:ring-muted/40 flex h-full flex-col rounded-[6px] p-4 transition-shadow hover:ring-1 ${
-          quiet ? "ring-divider ring-1 ring-inset" : "bg-inset"
+        className={`flex h-full flex-col rounded-[6px] p-4 transition-shadow ${
+          missed
+            ? "ring-warn/45 bg-inset ring-1 ring-inset hover:ring-warn/70"
+            : quiet
+              ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
+              : "bg-inset hover:ring-muted/40 hover:ring-1"
         }`}
       >
         <div className="mb-3 flex items-baseline justify-between gap-3">
