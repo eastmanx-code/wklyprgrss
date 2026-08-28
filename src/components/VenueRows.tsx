@@ -254,15 +254,15 @@ function ColourKey() {
     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
       <span className="flex items-center gap-2">
         <span className="bg-warn h-3 w-5 shrink-0 rounded-[2px]" />
-        <span className="label">Under the line everywhere</span>
+        <span className="label">Under 8 everywhere</span>
       </span>
       <span className="flex items-center gap-2">
         <span className="ring-warn/70 bg-inset h-3 w-5 shrink-0 rounded-[2px] ring-1 ring-inset" />
-        <span className="label">Under in one half</span>
+        <span className="label">Under 8 on one side</span>
       </span>
       <span className="flex items-center gap-2">
         <span className="bg-inset h-3 w-5 shrink-0 rounded-[2px]" />
-        <span className="label">Clear</span>
+        <span className="label">8 or better</span>
       </span>
     </div>
   );
@@ -374,7 +374,7 @@ export function VenueRows({
             : isAdmin
               ? `${needing.length} of ${active.length} venues want something from you`
               : `${needing.length} of ${active.length} venues still open`,
-          "the number is approved out of the ten owed · 8 is the line · sent back was never replaced",
+          "10 photos owed a week · 8 signed off is a win",
         ].join(" · ")}
       >
         {/* The answer, before the evidence. */}

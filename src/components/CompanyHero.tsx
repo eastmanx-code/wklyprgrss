@@ -100,7 +100,7 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
             title={houseName(totals.house)}
             hint={
               totals.scored
-                ? `${venues} venues · share of the week's work signed off · ${TARGET}% is the win line`
+                ? `${venues} venues · share of the week's work signed off · ${TARGET}% signed off is a win`
                 : `${venues} venues · share of the week's work filed · practice, not scored yet`
             }
             className="col-span-12"
@@ -155,21 +155,27 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                       value={totals.wins}
                       sub={`${winRate}% of venues`}
                     />
-                    <Stat label="Partial" value={totals.partial} />
-                    {/* The word the weekly report uses. "Missed" was this
-                        screen's own, and a manager reading "missed 2" here and
-                        "fail rate" in the report had to work out that they
-                        were the same two venues. */}
+                    {/* What it counts, rather than a grade for it. "Partial"
+                        is a word for a bucket, not a thing that happened to
+                        anybody, and it left the reader working out which side
+                        of a pass it sat on. */}
+                    <Stat label="Under 8" value={totals.partial} />
+                    {/* Says what the number is. This column counts houses
+                        with nothing signed off at all, so calling it "missed"
+                        — or "fails" — put a word on it that the cards below
+                        were using for a different thing: five venues were
+                        drawn as failures while this said fails: 0, because
+                        they had each got something approved. */}
                     <Stat
-                      label="Fails"
+                      label="None signed off"
                       value={totals.missed}
                       accent={totals.missed > 0}
                     />
                   </>
                 ) : (
                   <p className="text-body text-muted col-span-3 leading-[1.5]">
-                    Crews are building and walking this board. Wins and fails
-                    start the week it goes live.
+                    Crews are building and walking this board. Scores start the
+                    week it goes live.
                   </p>
                 )}
 
