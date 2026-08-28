@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { ITEM_COLUMNS } from "@/lib/status";
+import { ITEM_COLUMNS, awaitingReview } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
@@ -215,6 +215,8 @@ export async function reviewSubmission(formData: FormData) {
 
   const submissionId = String(formData.get("submissionId") ?? "");
   const venueId = String(formData.get("venueId") ?? "");
+  // Only sent by the grading screen, which knows which card it is on.
+  const itemId = String(formData.get("itemId") ?? "");
   const review = String(formData.get("review") ?? "");
   if (!["pending", "approved", "sent_back"].includes(review)) return;
 
@@ -260,6 +262,31 @@ export async function reviewSubmission(formData: FormData) {
     .eq("id", submissionId);
 
   refresh(venueId);
+
+  // Grading is a queue, so a verdict should hand over the next one rather than
+  // leave the reviewer on a card they have finished with. Only the grading
+  // screen asks for this: on the venue board the next task is already on
+  // screen, and jumping would take the reviewer away from the list they are
+  // working down.
+  const house = String(formData.get("house") ?? "");
+  if (formData.get("advance") === "1" && isHouse(house)) {
+    const next = await nextToReview(venueId, house, itemId);
+    redirect(next ? `/venue/item/${next}` : `/admin/venue/${venueId}`);
+  }
+}
+
+function isHouse(value: string): value is House {
+  return value === "FOH" || value === "HOH";
+}
+
+/** The next task in this half still waiting on a verdict, or nothing. */
+async function nextToReview(
+  venueId: string,
+  house: House,
+  exceptItemId: string,
+): Promise<string | null> {
+  const queue = await awaitingReview(venueId, house);
+  return queue.find((item) => item.id !== exceptItemId)?.id ?? null;
 }
 
 /** Approve everything still pending for this venue's current week, in one go. */

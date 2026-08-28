@@ -20,7 +20,7 @@ import {
 } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { getSubmissionsForItems } from "@/lib/status";
+import { awaitingReview, getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
 import type { Item, Submission } from "@/lib/types";
 import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
@@ -44,7 +44,7 @@ export default async function ItemPage({
 
   const { data, error } = await db()
     .from("items")
-    .select("id, venue_id, title, position, active")
+    .select("id, venue_id, title, position, active, house")
     .eq("id", itemId)
     .maybeSingle();
 
@@ -88,10 +88,16 @@ export default async function ItemPage({
       .eq("id", item.venue_id)
       .maybeSingle();
 
+    // Where this card sits in the half's queue. A verdict hands over the next
+    // one, so the header says how many that is rather than letting the screen
+    // change under somebody with no explanation.
+    const queue = await awaitingReview(item.venue_id, item.house);
+
     return (
       <GradeItem
         item={item}
         venueCode={(venue as { code: string } | null)?.code ?? null}
+        waiting={queue.length}
         current={current}
         photos={photos}
         previous={previous ?? null}
@@ -405,12 +411,15 @@ export default async function ItemPage({
 function GradeItem({
   item,
   venueCode,
+  waiting,
   current,
   photos,
   previous,
 }: {
   item: Item;
   venueCode: string | null;
+  /** How many tasks in this half are still waiting on a verdict, this one included. */
+  waiting: number;
   /** This week's entry, or nothing filed yet. */
   current: Submission | undefined;
   photos: Map<string, string>;
@@ -433,8 +442,16 @@ function GradeItem({
       </BackLink>
 
       <header className="mt-4 mb-6">
-        <p className="label">Grading</p>
+        <p className="label">
+          Grading · {item.house}
+          {waiting > 0 ? ` · ${waiting} left to rule on` : ""}
+        </p>
         <h1 className="text-metric mt-2 tracking-normal">{item.title}</h1>
+        {waiting > 1 ? (
+          <p className="label mt-2">
+            A verdict opens the next one. Nothing else to tap.
+          </p>
+        ) : null}
       </header>
 
       {current ? (
@@ -524,6 +541,9 @@ function GradeItem({
                         value={item.venue_id}
                       />
                       <input type="hidden" name="review" value="approved" />
+                      <input type="hidden" name="advance" value="1" />
+                      <input type="hidden" name="house" value={item.house} />
+                      <input type="hidden" name="itemId" value={item.id} />
                       <SubmitButton pendingLabel="Approving…">
                         Approve
                       </SubmitButton>
@@ -534,7 +554,11 @@ function GradeItem({
                       yet.
                     </p>
                   )}
-                  <SendBack submissionId={current.id} venueId={item.venue_id} />
+                  <SendBack
+                    submissionId={current.id}
+                    venueId={item.venue_id}
+                    advance={{ house: item.house, itemId: item.id }}
+                  />
                 </>
               ) : (
                 <ChangeVerdict

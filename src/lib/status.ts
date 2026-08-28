@@ -274,6 +274,35 @@ export function latestByItem(
   return latest;
 }
 
+/**
+ * One half's review queue, in board order.
+ *
+ * Same rule the venue board draws its "awaiting review" count from, in one
+ * place because three screens now ask the question: the newest entry — this
+ * week's, or one carried over from an earlier week on a task that was never
+ * finished — is pending, and its author called the work done. A task marked
+ * for another cycle is not waiting on anybody.
+ */
+export async function awaitingReview(
+  venueId: string,
+  house: House,
+): Promise<Item[]> {
+  const items = await getItems(venueId, { house });
+  if (items.length === 0) return [];
+
+  const submissions = await getSubmissionsForItems(items.map((i) => i.id));
+  const week = currentWeekStart();
+  const thisWeek = latestByItem(
+    submissions.filter((s) => s.week_start === week),
+  );
+  const ever = latestByItem(submissions);
+
+  return items.filter((item) => {
+    const s = thisWeek.get(item.id) ?? ever.get(item.id);
+    return s?.review === "pending" && s.progress === "done";
+  });
+}
+
 /** One house's half of a venue's board. */
 export type HouseBoard = {
   house: House;
