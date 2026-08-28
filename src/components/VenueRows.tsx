@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
-import { isWin } from "@/lib/status";
+import { tierOf } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
@@ -17,29 +17,21 @@ import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
  * Ordered by what needs doing, and only ever one of them: the state that
  * should pull somebody's attention wins.
  */
-/** Graded, judged, and under the line. */
-export function missedTheLine(house: HouseWeek): boolean {
-  return (
-    house.hasBoard &&
-    house.scored &&
-    house.pendingCount === 0 &&
-    !isWin(house.approvedCount, house.activeCount)
-  );
-}
-
 /**
- * Nothing this venue was judged on reached the line.
+ * What this half scored, once every card in it has been ruled on.
  *
- * Different from "a half missed" and it should look different. Isla Fonda has
- * one half being scored and it came in at seven with three never redone: not
- * a venue that slipped on one side, a venue where everything that was looked
- * at fell short. A ring says "check this"; a filled card says "this one".
- *
- * Only counts halves that were actually judged, so a kitchen with no board
- * and a half still awaiting a verdict neither rescue a venue nor condemn it.
+ * Good, neutral or fail, on the weekly report's own bands. Null while the
+ * half is unbuilt, unscored, or still has cards waiting on a verdict, which
+ * are all states with no score yet rather than a bad one.
  */
-function judged(row: VenueWeekSummary): HouseWeek[] {
-  return row.scored.filter((h) => h.hasBoard && h.pendingCount === 0);
+export function tierFor(house: HouseWeek): "good" | "neutral" | "fail" | null {
+  if (!house.scored || house.pendingCount > 0) return null;
+  // A half with no list at all is the bottom of the scoring, not outside it,
+  // and the house totals have always counted it that way. Held back here, one
+  // venue was drawn as a neutral on the strength of its dining room while its
+  // kitchen had never written a board.
+  if (!house.hasBoard) return "fail";
+  return tierOf(house.approvedCount, house.activeCount);
 }
 
 function state(house: HouseWeek, graded: boolean) {
@@ -84,19 +76,18 @@ const TONE = {
 function HouseLine({
   house,
   gradedBy,
-  onAccent = false,
 }: {
   house: HouseWeek;
   /** Who closed this house's week, or null while it is still open. */
   gradedBy: string | null;
-  /** Drawn on the filled card, where every ink and muted role inverts. */
-  onAccent?: boolean;
 }) {
   const here = state(house, Boolean(gradedBy));
   const scored = house.hasBoard && house.scored;
+  const tier = tierFor(house);
+  const failed = tier === "fail";
 
-  // The exceptions, and only the exceptions. A venue that filed its ten and
-  // had none sent back says nothing here at all.
+  // The exceptions, and only the exceptions. A half that filed its ten and had
+  // none sent back says nothing here at all.
   const trailer = [
     house.hasBoard && house.doneCount < house.activeCount
       ? `${house.doneCount} filed`
@@ -107,10 +98,14 @@ function HouseLine({
     .join(" · ");
 
   return (
-    <span className="flex flex-wrap items-baseline gap-x-3">
+    <span
+      className={`-mx-2 flex flex-wrap items-baseline gap-x-3 rounded-[3px] px-2 py-1 ${
+        failed ? "bg-warn text-on-warn" : ""
+      }`}
+    >
       <span
         className={`label w-8 shrink-0 ${
-          onAccent ? "text-on-warn" : house.scored ? "" : "text-muted/60"
+          failed ? "text-on-warn" : house.scored ? "" : "text-muted/60"
         }`}
       >
         {house.house}
@@ -118,11 +113,11 @@ function HouseLine({
 
       <span
         className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
-          onAccent
+          failed
             ? "text-on-warn"
             : !scored
               ? "text-muted"
-              : missedTheLine(house)
+              : tier === "neutral"
                 ? "text-warn"
                 : "text-ink"
         }`}
@@ -130,14 +125,11 @@ function HouseLine({
         {scored ? `${house.approvedCount}/${house.activeCount}` : "—"}
       </span>
 
-      {/* The verdict keeps its own width, and the exceptions after it drop to
-          their own line rather than being cut off. Sharing the row as two
-          flexible columns clipped whichever lost: first the verdict, then
-          "8 filed · 4 sent back", which at 157px never had a chance in 114. */}
+      {/* The states a number cannot say, then the exceptions. Long ones drop
+          to their own line rather than being cut off: "8 filed · 4 sent back"
+          wants 157px and had 114. */}
       <span
-        className={`label shrink-0 ${
-          onAccent ? "text-on-warn" : TONE[here.tone]
-        }`}
+        className={`label shrink-0 ${failed ? "text-on-warn" : TONE[here.tone]}`}
         title={gradedBy ? `Graded by ${gradedBy}` : undefined}
       >
         {here.label}
@@ -145,7 +137,7 @@ function HouseLine({
 
       <span
         className={`label ml-auto shrink-0 text-right ${
-          onAccent ? "text-on-warn/80" : ""
+          failed ? "text-on-warn/80" : ""
         }`}
       >
         {trailer}
@@ -175,43 +167,24 @@ function VenueCard({
   ownVenueId: string | null;
   quiet?: boolean;
 }) {
-  /**
-   * Any half that was judged and came in short.
-   *
-   * Carried on the whole card rather than one word inside it. A venue that
-   * missed read exactly like a venue that did not: same box, same weight, the
-   * news sitting in a small grey word at the end of a line. The card is what
-   * the eye lands on, so the card is what has to say it.
-   */
-  const seen = judged(row);
-  // Every half that has a board has to have been ruled on before a venue can
-  // be branded a total failure. A card came up filled on a venue whose dining
-  // room was still sitting in the review queue: one half had missed, the other
-  // had no verdict at all, and the screen called the whole place a write-off
-  // on evidence it did not have yet.
-  const boards = row.scored.filter((h) => h.hasBoard).length;
-  const missedAll =
-    seen.length > 0 && seen.length === boards && seen.every(missedTheLine);
-  const missed = !missedAll && row.scored.some(missedTheLine);
-
   return (
     <li className="h-full" id={`venue-${row.venue.code}`}>
       <Link
         href={href}
+        /* The card stays a card. Colouring the whole box by its worst half
+           drew a venue with a perfect dining room and a failed kitchen exactly
+           like one that failed both, and the half that was good disappeared
+           into the fill. The colour belongs on the half it is about. */
         className={`flex h-full flex-col rounded-[6px] p-4 transition-shadow ${
-          missedAll
-            ? "bg-warn text-on-warn"
-            : missed
-              ? "ring-warn/70 bg-inset ring-1 ring-inset hover:ring-warn"
-              : quiet
-                ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
-                : "bg-inset hover:ring-muted/40 hover:ring-1"
+          quiet
+            ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
+            : "bg-inset hover:ring-muted/40 hover:ring-1"
         }`}
       >
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <span
             className={`text-title tracking-[0.08em] ${
-              missedAll ? "text-on-warn" : quiet ? "text-muted" : "text-ink"
+              quiet ? "text-muted" : "text-ink"
             }`}
           >
             {row.venue.code}
@@ -219,9 +192,7 @@ function VenueCard({
           {/* Only the run. The missed-weeks badge counted earlier weeks and
               printed them on a card about this one, so a venue that filed
               everything this week still read as having missed. */}
-          <span
-            className={`label shrink-0 ${missedAll ? "text-on-warn/80" : ""}`}
-          >
+          <span className="label shrink-0">
             {row.runWeeks > 1 ? `${row.runWeeks} weeks clean` : ""}
             {row.venue.id === ownVenueId ? " · you" : ""}
           </span>
@@ -233,7 +204,6 @@ function VenueCard({
               key={house.house}
               house={house}
               gradedBy={gradedBy(row.venue.id, house.house)}
-              onAccent={missedAll}
             />
           ))}
         </div>
@@ -252,18 +222,11 @@ function VenueCard({
 function ColourKey() {
   return (
     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-      <span className="flex items-center gap-2">
-        <span className="bg-warn h-3 w-5 shrink-0 rounded-[2px]" />
-        <span className="label">Under 8 everywhere</span>
+      <span className="bg-warn text-on-warn label rounded-[3px] px-2 py-1">
+        Fail · 5 or under
       </span>
-      <span className="flex items-center gap-2">
-        <span className="ring-warn/70 bg-inset h-3 w-5 shrink-0 rounded-[2px] ring-1 ring-inset" />
-        <span className="label">Under 8 on one side</span>
-      </span>
-      <span className="flex items-center gap-2">
-        <span className="bg-inset h-3 w-5 shrink-0 rounded-[2px]" />
-        <span className="label">8 or better</span>
-      </span>
+      <span className="label text-warn">Neutral · 6 or 7</span>
+      <span className="label text-ink">Good · 8 to 10</span>
     </div>
   );
 }
@@ -374,7 +337,7 @@ export function VenueRows({
             : isAdmin
               ? `${needing.length} of ${active.length} venues want something from you`
               : `${needing.length} of ${active.length} venues still open`,
-          "10 photos owed a week · 8 signed off is a win",
+          "the score is what was signed off, out of 10",
         ].join(" · ")}
       >
         {/* The answer, before the evidence. */}

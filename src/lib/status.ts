@@ -102,6 +102,27 @@ export function isWin(approvedCount: number, activeCount: number): boolean {
   return activeCount > 0 && approvedCount / activeCount >= WIN_RATIO;
 }
 
+/** Below this, and at or above it but under the win line, is the middle tier. */
+const NEUTRAL_RATIO = 0.6;
+
+/**
+ * Good, neutral or fail — the three the weekly report already uses.
+ *
+ * Its bands, too: eight and up is good, six or seven is neutral, five and
+ * under is a fail. The dashboard had been inventing its own words and its own
+ * cuts for the same judgement, so a venue could be a 7 in the report and read
+ * as a failure on screen.
+ */
+export function tierOf(
+  approvedCount: number,
+  activeCount: number,
+): "good" | "neutral" | "fail" {
+  if (isWin(approvedCount, activeCount)) return "good";
+  return activeCount > 0 && approvedCount / activeCount >= NEUTRAL_RATIO
+    ? "neutral"
+    : "fail";
+}
+
 /**
  * A venue wins the week by winning every house that counts.
  *
@@ -541,9 +562,9 @@ export type HouseTotals = {
    * Counted once for the venue, that week reads as a single verdict and the
    * half that missed disappears into it.
    */
-  wins: number;
-  partial: number;
-  missed: number;
+  good: number;
+  neutral: number;
+  fail: number;
   /** Who finished this house first and who finished last, earliest first. */
   finishes: { code: string; at: string }[];
   /**
@@ -954,10 +975,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           (activeCountByKey.get(keyOf(venue.id, house)) ?? 0) >=
           WEEKLY_ITEM_TARGET,
       ).length,
-      wins: mine.filter((h) => isWin(h.approvedCount, h.activeCount)).length,
-      missed: mine.filter((h) => h.approvedCount === 0).length,
-      partial: mine.filter(
-        (h) => h.approvedCount > 0 && !isWin(h.approvedCount, h.activeCount),
+      good: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "good",
+      ).length,
+      neutral: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "neutral",
+      ).length,
+      fail: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "fail",
       ).length,
       finishes: owed
         .map((venue) => ({

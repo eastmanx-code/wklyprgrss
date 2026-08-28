@@ -64,8 +64,8 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
             : undefined;
         // Every venue that runs this house, counted once. The five bars with
         // no heart of house are not in its denominator.
-        const venues = totals.wins + totals.partial + totals.missed;
-        const winRate = venues ? Math.round((totals.wins / venues) * 100) : 0;
+        const venues = totals.good + totals.neutral + totals.fail;
+        const goodRate = venues ? Math.round((totals.good / venues) * 100) : 0;
         const first = totals.finishes[0];
         const last = totals.finishes[totals.finishes.length - 1];
         const hasTrend = totals.history.length > 1;
@@ -100,7 +100,7 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
             title={houseName(totals.house)}
             hint={
               totals.scored
-                ? `${venues} venues · share of the week's work signed off · ${TARGET}% signed off is a win`
+                ? `${venues} venues · share of the week's work signed off · 8 of 10 is good`
                 : `${venues} venues · share of the week's work filed · practice, not scored yet`
             }
             className="col-span-12"
@@ -150,34 +150,20 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                     board most of them have not finished building. */}
                 {totals.scored ? (
                   <>
+                    {/* The three the weekly report uses, on its bands: eight
+                        and up good, six or seven neutral, five and under a
+                        fail. This screen had been running its own words and
+                        its own cuts for the same call. */}
                     <Stat
-                      label="Wins"
-                      value={totals.wins}
-                      sub={`${winRate}% of venues`}
+                      label="Good"
+                      value={totals.good}
+                      sub={`${goodRate}% of venues`}
                     />
-                    {/* Every half that came in under eight, the ones with
-                        nothing at all included.
-
-                        Counted as a bucket beside them rather than around
-                        them, this column promised a number it did not give: a
-                        half with zero signed off is under eight by anybody's
-                        reading, but it was filed next door, so the kitchen
-                        reported "under 8: 7" on a week where nine were. */}
+                    <Stat label="Neutral" value={totals.neutral} />
                     <Stat
-                      label="Under 8"
-                      value={totals.partial + totals.missed}
-                    />
-                    {/* The worst of those, called out of them rather than
-                        set against them. Named "missed", or "fails", it also
-                        put a word on this column that the cards below were
-                        using for something else entirely: five venues were
-                        drawn as failing while this said fails: 0, because each
-                        had got something approved. */}
-                    <Stat
-                      label="None at all"
-                      value={totals.missed}
-                      sub="of the under 8"
-                      accent={totals.missed > 0}
+                      label="Fail"
+                      value={totals.fail}
+                      accent={totals.fail > 0}
                     />
                   </>
                 ) : (
