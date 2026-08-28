@@ -9,6 +9,8 @@ import { houseName } from "@/lib/types";
 export type HouseGrade = {
   house: House;
   gradedBy: string | null;
+  /** Filed for this week with no verdict on it yet. */
+  pending: number;
   /** False while the house is still being walked for practice. */
   scored: boolean;
 };
@@ -134,6 +136,12 @@ export function GradeWeek({
               ) : (
                 <span className="text-warn"> · not graded</span>
               )}
+              {!house.gradedBy && house.pending > 0 ? (
+                <span className="text-warn block">
+                  Approve or send back {house.pending}{" "}
+                  {house.pending === 1 ? "card" : "cards"} to unlock the grade
+                </span>
+              ) : null}
             </p>
 
             {house.gradedBy ? (
@@ -145,6 +153,15 @@ export function GradeWeek({
                   Undo
                 </button>
               </form>
+            ) : house.pending > 0 ? (
+              <button
+                type="button"
+                className="btn min-h-11 shrink-0"
+                disabled
+                title="Every card has to be approved or sent back first"
+              >
+                Grade {houseName(house.house).toLowerCase()}
+              </button>
             ) : (
               <form
                 action={gradeWeek}

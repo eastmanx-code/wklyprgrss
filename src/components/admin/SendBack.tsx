@@ -22,10 +22,16 @@ export function SendBack({
   submissionId,
   venueId,
   label = "Send back",
+  advance,
 }: {
   submissionId: string;
   venueId: string;
   label?: string;
+  /**
+   * Set on the grading screen: once the verdict is in, hand over the next
+   * task in this half instead of leaving the reviewer on a finished card.
+   */
+  advance?: { house: string; itemId: string };
 }) {
   const [open, setOpen] = useState(false);
 
@@ -46,6 +52,13 @@ export function SendBack({
       <input type="hidden" name="submissionId" value={submissionId} />
       <input type="hidden" name="venueId" value={venueId} />
       <input type="hidden" name="review" value="sent_back" />
+      {advance ? (
+        <>
+          <input type="hidden" name="advance" value="1" />
+          <input type="hidden" name="house" value={advance.house} />
+          <input type="hidden" name="itemId" value={advance.itemId} />
+        </>
+      ) : null}
 
       <label htmlFor={`note-${submissionId}`} className="label">
         What needs doing? Optional

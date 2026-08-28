@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession } from "@/lib/session";
-import { ITEM_COLUMNS } from "@/lib/status";
+import { ITEM_COLUMNS, awaitingReview } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
@@ -215,6 +215,8 @@ export async function reviewSubmission(formData: FormData) {
 
   const submissionId = String(formData.get("submissionId") ?? "");
   const venueId = String(formData.get("venueId") ?? "");
+  // Only sent by the grading screen, which knows which card it is on.
+  const itemId = String(formData.get("itemId") ?? "");
   const review = String(formData.get("review") ?? "");
   if (!["pending", "approved", "sent_back"].includes(review)) return;
 
@@ -245,12 +247,46 @@ export async function reviewSubmission(formData: FormData) {
     .from("submissions")
     .update({
       review,
-      reviewed_at: new Date().toISOString(),
+      /**
+       * Back to pending is back to undecided, so the timestamp goes with it.
+       *
+       * It is not cosmetic: the daily scores count an approval by the day its
+       * `reviewed_at` falls on, so a pending row carrying the stamp of the
+       * decision that was just withdrawn would keep being counted as that
+       * day's sign-off. The leader's own amend path already clears it this
+       * way.
+       */
+      reviewed_at: review === "pending" ? null : new Date().toISOString(),
       review_note: review === "sent_back" ? note || null : null,
     })
     .eq("id", submissionId);
 
   refresh(venueId);
+
+  // Grading is a queue, so a verdict should hand over the next one rather than
+  // leave the reviewer on a card they have finished with. Only the grading
+  // screen asks for this: on the venue board the next task is already on
+  // screen, and jumping would take the reviewer away from the list they are
+  // working down.
+  const house = String(formData.get("house") ?? "");
+  if (formData.get("advance") === "1" && isHouse(house)) {
+    const next = await nextToReview(venueId, house, itemId);
+    redirect(next ? `/venue/item/${next}` : `/admin/venue/${venueId}`);
+  }
+}
+
+function isHouse(value: string): value is House {
+  return value === "FOH" || value === "HOH";
+}
+
+/** The next task in this half still waiting on a verdict, or nothing. */
+async function nextToReview(
+  venueId: string,
+  house: House,
+  exceptItemId: string,
+): Promise<string | null> {
+  const queue = await awaitingReview(venueId, house);
+  return queue.find((item) => item.id !== exceptItemId)?.id ?? null;
 }
 
 /** Approve everything still pending for this venue's current week, in one go. */
@@ -433,6 +469,43 @@ export async function updateVenuePin(
  * Admin only, and it carries a name: a grade is somebody's judgement of a
  * week's work, and the venue it lands on should be able to see whose.
  */
+/**
+ * Whether any filed, finished card in this half is still awaiting a verdict.
+ *
+ * Newest filing per item only: a task sent back and refiled is one card, and
+ * the decision that matters is the one on the version that stands now.
+ */
+async function hasUnreviewed(
+  venueId: string,
+  house: House,
+  weekStart: string,
+): Promise<boolean> {
+  const items = await itemsFor(venueId, house);
+  const itemIds = items.map((item) => item.id);
+  if (itemIds.length === 0) return false;
+
+  const { data } = await db()
+    .from("submissions")
+    .select("item_id, review, progress, created_at")
+    .in("item_id", itemIds)
+    .eq("week_start", weekStart)
+    .is("cleared_at", null)
+    .order("created_at", { ascending: false });
+
+  const newest = new Map<string, { review: string; progress: string }>();
+  for (const row of (data ?? []) as {
+    item_id: string;
+    review: string;
+    progress: string;
+  }[]) {
+    if (!newest.has(row.item_id)) newest.set(row.item_id, row);
+  }
+
+  return [...newest.values()].some(
+    (row) => row.review === "pending" && row.progress === "done",
+  );
+}
+
 export async function gradeWeek(formData: FormData) {
   if (!(await isAdmin())) return;
 
@@ -451,6 +524,25 @@ export async function gradeWeek(formData: FormData) {
   // would let a venue clear a board it is still meant to be filling. The
   // screen only ever offers a finished week; this is the rule behind that.
   if (!isDeadlinePassed(weekStart)) return;
+
+  /**
+   * And not before every card has a verdict.
+   *
+   * A grade is a grade: it says somebody looked at the work. Grading and
+   * ruling on the items were two separate buttons and nothing joined them, so
+   * on Thursday twenty-one boards were stamped in an hour while only thirteen
+   * had been gone through — eight venues ended up carrying a grade over ten
+   * untouched filings, and scored off approvals they read as nought when the
+   * same eight had read tens and nines the week before.
+   *
+   * Only work claiming to be finished counts. An item the leader has marked
+   * for another cycle is not waiting on a decision and must not be able to
+   * lock the grade shut for the rest of the week.
+   *
+   * Enforced here and not only by disabling the button, because the button is
+   * a courtesy and this is the rule.
+   */
+  if (await hasUnreviewed(venueId, house, weekStart)) return;
 
   // Idempotent: grading twice is not two grades.
   await db()

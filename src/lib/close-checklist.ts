@@ -16,11 +16,31 @@ export type ProofKind = "photo" | "video" | "note";
 /** One capture, with the thing it has to show. */
 export type Shot = { kind: ProofKind; prompt: string };
 
+/**
+ * One reference shot: what right looks like, and what it is a picture of.
+ *
+ * `path` is a storage object path inside the private photos bucket, never a
+ * URL, and null until a manager takes the picture.
+ */
+export type Reference = { caption: string; path: string | null };
+
 export type CloseItem = {
   /** Row id once the list comes from the table. */
   id?: string;
   /** Displayed, and how MODs already refer to these to each other. */
   number: number;
+  /**
+   * The heading this item sits under, if the list has any.
+   *
+   * The paper lists already do this and it carries real information: Noble's
+   * close splits into FIRST CUTS and CLOSING SQUAD, which is two different
+   * sets of people at two different times of the night. Flatten it and every
+   * job survives but nobody can tell whose job it is.
+   *
+   * Grouped by run in position order rather than looked up, so renaming a
+   * heading is one edit and a heading with no items left stops existing.
+   */
+  section?: string | null;
   title: string;
   /** The standard for what "done" means. Not separately ticked. */
   detail: string[];
@@ -37,6 +57,20 @@ export type CloseItem = {
    * The item completes when every shot is taken, not the first.
    */
   proof?: Shot[];
+  /**
+   * What the item looks like when it is right — the other direction from
+   * `proof`, which is what the item owes at the end.
+   *
+   * The paper lists already reach for this and cannot deliver it. "Make sure
+   * your well is FULL (REFER TO WELL PHOTO)" points at a photograph that does
+   * not exist; the fridge order is a paragraph naming six fortifieds back to
+   * front. Each of those is a picture pretending to be a sentence.
+   *
+   * A slot with a caption and no path is a placeholder: somebody has named the
+   * standard and nobody has photographed it yet, which is worth being able to
+   * see at a glance.
+   */
+  reference?: Reference[];
 };
 
 export const CLOSE_CHECKLIST: CloseItem[] = [

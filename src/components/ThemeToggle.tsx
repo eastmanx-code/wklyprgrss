@@ -28,7 +28,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="btn-ghost aspect-square !px-0 shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
+      className="ww-menu-theme btn-ghost aspect-square !px-0 shadow-[0_2px_12px_rgba(0,0,0,0.12)]"
       aria-label="Switch between light and dark"
       title="Switch between light and dark"
     >

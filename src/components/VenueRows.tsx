@@ -1,78 +1,133 @@
 import Link from "next/link";
 
 import { Card } from "./Card";
+import { tierOf } from "@/lib/status";
 import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
 
 /**
- * Ten discrete segments, not a continuous fill.
+ * What this half scored, once every card in it has been ruled on.
  *
- * The metric is ten photos, so the bar should be countable: at 1/10 a
- * continuous fill is an unreadable sliver, while one lit segment out of ten
- * reads instantly. Fill is always white — the alert colour is reserved for
- * past due, failing and missed-week runs, and a yellow progress bar would say
- * "progress is bad".
+ * Good, neutral or fail, on the weekly report's own bands. Null while the
+ * half is unbuilt, unscored, or still has cards waiting on a verdict, which
+ * are all states with no score yet rather than a bad one.
  */
-function Segments({ done, total }: { done: number; total: number }) {
-  return (
-    <span className="flex min-w-0 flex-1 gap-[2px]">
-      {Array.from({ length: Math.max(total, 1) }, (_, i) => (
-        <span
-          key={i}
-          className={`h-2 flex-1 rounded-[1px] ${
-            i < done ? "bg-ink" : "bg-inset"
-          }`}
-        />
-      ))}
-    </span>
-  );
+export function tierFor(house: HouseWeek): "good" | "neutral" | "fail" | null {
+  if (!house.scored || house.pendingCount > 0) return null;
+  // A half with no list at all is the bottom of the scoring, not outside it,
+  // and the house totals have always counted it that way. Held back here, one
+  // venue was drawn as a neutral on the strength of its dining room while its
+  // kitchen had never written a board.
+  if (!house.hasBoard) return "fail";
+  return tierOf(house.approvedCount, house.activeCount);
 }
 
 /**
- * One house's line inside a venue's row: which half, how it is going, what has
- * been signed off, and the count.
+ * One half's week as a row: which venue, which half, what it scored.
  *
- * A house still being walked for practice is drawn, because leaving it out
- * would say the kitchen does not exist — but its numbers are held back to the
- * muted role and labelled, so nobody reads a practice run as a score.
+ * Twenty-one boxes each holding two lines is a grid you have to read all of
+ * before you know anything. The unit that actually gets a score is a half of a
+ * venue, so that is the row, and the rows sort into the same three groups the
+ * weekly report is written in.
  */
-function HouseLine({ house, graded }: { house: HouseWeek; graded: boolean }) {
-  const complete = house.doneCount >= house.activeCount;
+type Line = {
+  venueId: string;
+  code: string;
+  house: House;
+  score: string;
+  tier: "good" | "neutral" | "fail" | null;
+  ratio: number;
+  /** Sent back, filed short, still in the queue — whatever is outstanding. */
+  note: string;
+  /**
+   * The worst kind of fail, sorted to the top of its group.
+   *
+   * A half with no list at all, one that filed nothing, or a venue that failed
+   * everything it was scored on. Four of ten signed off is a bad week; no
+   * board is not having turned up. Order says so — the bars stay one size.
+   */
+  worst: boolean;
+  mine: boolean;
+};
+
+function ScoreRow({ line, href }: { line: Line; href: string }) {
+  const failed = line.tier === "fail";
+
   return (
-    <span className="flex h-6 items-center gap-3">
-      <span
-        className={`label w-8 shrink-0 ${house.scored ? "" : "text-muted/60"}`}
-      >
-        {house.house}
-      </span>
-
-      {/* The work, not the paperwork. This measured approvals, so before a
-          review pass every venue in the company read 0/10 — a week where 183
-          cards were filed looked like a week where nobody moved. What a crew
-          did is the photo and the comment; signing off is the admin's job and
-          belongs second. */}
-      <Segments done={house.doneCount} total={house.activeCount} />
-
-      {/* What was signed off, and — in colour — whether the week was closed
-          at all. Those are two different facts and printing only the first hid
-          the second: a venue whose every task was sent back has nothing signed
-          off, so a closed-out review of a failing venue read exactly like a
-          venue nobody had opened. */}
-      <span
-        className={`text-body w-10 shrink-0 text-center tracking-normal tabular-nums ${
-          graded && house.scored ? "text-warn" : "text-muted"
+    <li>
+      <Link
+        href={href}
+        /* One bar, one height, whatever it scored. Drawing the worst fails
+           double height made the block a stack of different objects and cost
+           the eye the thing it was scanning for, which is the column of
+           numbers down the left. Order carries severity instead. */
+        className={`bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${
+          failed
+            ? "bg-warn text-on-warn hover:bg-warn/90"
+            : "hover:ring-muted/30 hover:ring-1 hover:ring-inset"
         }`}
       >
-        {house.scored ? house.approvedCount : "—"}
-      </span>
+        <span
+          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+            failed ? "text-on-warn" : "text-ink"
+          }`}
+        >
+          {line.code}
+        </span>
+        <span className={`label w-8 shrink-0 ${failed ? "text-on-warn" : ""}`}>
+          {line.house}
+        </span>
+        <span
+          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
+            failed
+              ? "text-on-warn"
+              : line.tier === "neutral"
+                ? "text-warn"
+                : line.tier === "good"
+                  ? "text-ink"
+                  : "text-muted"
+          }`}
+        >
+          {line.score}
+        </span>
+        <span
+          className={`label ml-auto shrink-0 text-right ${
+            failed ? "text-on-warn" : ""
+          }`}
+        >
+          {line.note}
+          {line.mine ? (line.note ? " · you" : "you") : ""}
+        </span>
+      </Link>
+    </li>
+  );
+}
 
-      <span
-        className={`text-body w-12 shrink-0 text-right whitespace-nowrap tracking-normal tabular-nums ${
-          !house.scored ? "text-muted" : complete ? "text-ink" : "text-warn"
-        }`}
-      >
-        {house.doneCount}/{house.activeCount}
-      </span>
-    </span>
+/** A group heading and its rows, or nothing when the group is empty. */
+function Tier({
+  title,
+  lines,
+  hrefPrefix,
+}: {
+  title: string;
+  lines: Line[];
+  hrefPrefix: string;
+}) {
+  if (lines.length === 0) return null;
+  return (
+    <div className="mt-6">
+      <p className="label border-divider border-t pt-4">
+        {title} · {lines.length}
+      </p>
+      <ul className="-mx-3 mt-2 space-y-[2px]">
+        {lines.map((line) => (
+          <ScoreRow
+            key={`${line.venueId}-${line.house}`}
+            line={line}
+            href={`${hrefPrefix}${line.venueId}`}
+          />
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -94,102 +149,130 @@ export function VenueRows({
   hrefPrefix,
   ownVenueId = null,
   gradedByHouse,
+  audience = "leader",
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
+  /** Whether the reader is the one who has to act. */
+  audience?: "admin" | "leader";
   /**
-   * Venues whose week has been closed out, per house. Two people grade, so one
-   * set covering both would have shown the kitchen signed off because the
-   * dining room was.
+   * Who closed out each house's week, per venue. Two people grade, so one map
+   * covering both would have shown the kitchen signed off because the dining
+   * room was.
    */
-  gradedByHouse?: Map<House, Set<string>>;
+  gradedByHouse?: Map<House, Map<string, string>>;
 }) {
-  const active = rows;
+  const gradedBy = (venueId: string, house: House) =>
+    gradedByHouse?.get(house)?.get(venueId) ?? null;
+
+  /**
+   * Every half that counts, as one flat list.
+   *
+   * A half is what gets a score, so a half is the row. Grouped under venues,
+   * the same page had to be read box by box before it said anything: a venue
+   * with a good bar and a failed kitchen looked like a mixed result you had to
+   * unpick, twenty-one times over.
+   */
+  const lines: Line[] = rows.flatMap((row) => {
+    // Judged on every half it is scored on, and short on all of them. The
+    // whole venue, not one side of it.
+    const fullFail =
+      row.scored.length > 0 &&
+      row.scored.every(
+        (house) =>
+          Boolean(gradedBy(row.venue.id, house.house)) &&
+          tierFor(house) === "fail",
+      );
+
+    return row.scored.map((house) => {
+      const graded = Boolean(gradedBy(row.venue.id, house.house));
+      const ruled = house.hasBoard && house.scored && house.pendingCount === 0;
+      const note = [
+        !house.hasBoard ? "no board" : null,
+        house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
+        house.hasBoard && !graded ? "not graded" : null,
+        house.hasBoard && house.doneCount === 0
+          ? "nothing filed"
+          : house.hasBoard && house.doneCount < house.activeCount
+            ? `${house.doneCount} filed`
+            : null,
+        house.redoCount > 0 ? `${house.redoCount} sent back` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
+      return {
+        venueId: row.venue.id,
+        code: row.venue.code,
+        house: house.house,
+        score:
+          house.hasBoard && house.scored
+            ? `${house.approvedCount}/${house.activeCount}`
+            : "—",
+        tier: graded ? tierFor(house) : null,
+        ratio:
+          ruled && house.activeCount > 0
+            ? house.approvedCount / house.activeCount
+            : 0,
+        note: fullFail
+          ? [note, "whole venue"].filter(Boolean).join(" · ")
+          : note,
+        worst: fullFail || !house.hasBoard || house.doneCount === 0,
+        mine: row.venue.id === ownVenueId,
+      };
+    });
+  });
+
+  // Worst first inside a group, so the top of the fails is the worst half of
+  // the week and the reading order is the order of the work.
+  const of = (tier: Line["tier"]) =>
+    lines
+      .filter((line) => line.tier === tier)
+      .sort(
+        (a, b) =>
+          Number(b.worst) - Number(a.worst) ||
+          a.ratio - b.ratio ||
+          a.code.localeCompare(b.code),
+      );
+
+  const waiting = of(null);
+  const fails = of("fail");
+  const neutrals = of("neutral");
+  const goods = of("good").reverse();
+
+  const isAdmin = audience === "admin";
+  const headline =
+    waiting.length > 0
+      ? `${waiting.length} still to grade`
+      : fails.length > 0
+        ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
+        : isAdmin
+          ? "Nothing waiting on you"
+          : "Every board settled";
 
   return (
-    <>
-      {active.length > 0 ? (
-        <Card
-          className="col-span-12"
-          title="This week"
-          hint="Updated is a new photo and comment · grade is what was signed off, in colour once the week is closed"
-        >
-          {/* Name the columns once, rather than on every row.
-              Two numbers sit on each row now and they mean different things —
-              what the venue filed, and what has been signed off — so run
-              together as "10/10 · 10 SIGNED OFF" they read as one figure with
-              a suffix. Headed, the words come off the rows entirely: the
-              tally is a bare number under APPROVED, and twenty-one of them
-              make a column you can read down. */}
-          <div className="mb-1 flex h-5 items-center gap-4 px-2">
-            <span className="label w-14 shrink-0 sm:w-20">Venue</span>
-            {/* Mirrors a house line exactly — same widths, same gap — so the
-                headings sit over the columns rather than near them. */}
-            <span className="flex min-w-0 flex-1 items-center gap-3">
-              <span className="label w-8 shrink-0">Half</span>
-              <span className="min-w-0 flex-1" />
-              <span className="label w-10 shrink-0 text-center">Grade</span>
-              <span className="label w-12 shrink-0 text-right">Updated</span>
-              <span className="label hidden w-20 shrink-0 text-right sm:block">
-                Finished
-              </span>
-            </span>
-          </div>
+    <Card
+      className="col-span-12"
+      title="This week"
+      hint={[
+        `${rows.length} venues · ${lines.length} halves scored`,
+        "good 8 to 10 · neutral 6 or 7 · fail 5 or under",
+      ].join(" · ")}
+    >
+      {/* The answer, before the evidence. */}
+      <p
+        className={`text-metric leading-[1.15] ${
+          waiting.length > 0 || fails.length > 0 ? "text-warn" : "text-ink"
+        }`}
+      >
+        {headline}
+      </p>
 
-          <ul>
-            {active.map((row) => (
-              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
-                <Link
-                  href={`${hrefPrefix}${row.venue.id}`}
-                  className="hover:bg-hover -mx-2 flex items-center gap-4 rounded-[4px] px-2 py-2 transition-colors"
-                >
-                  <span className="block w-14 shrink-0 sm:w-20">
-                    <span className="text-body text-ink block tracking-normal tabular-nums">
-                      {row.venue.code}
-                    </span>
-                    {/* How long it has been missing weeks, which is the one
-                        thing here that really is a fact about the venue.
-                        The finishing time used to sit here as well: it was
-                        front of house's, printed as the venue's, and per house
-                        it made a ragged column of twenty-one timestamps that
-                        crowded the counts. First and last in are on each
-                        house's band above, where they say something. */}
-                    <span className="label hidden truncate sm:block">
-                      {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
-                      {row.venue.id === ownVenueId ? " · you" : ""}
-                    </span>
-                  </span>
-
-                  {/* One line per house, never one line for both.
-                        Summed into a single twenty-segment bar, a spotless
-                        dining room would have filled half of it and read as
-                        real progress at a venue whose kitchen had not been
-                        walked at all — which is the whole reason the board
-                        was split. */}
-                  {/* `block`, not the default inline. As an inline box this
-                        wrapper shrank to fit its content, and the flex-1 on
-                        each house's bar inside it had no definite width to
-                        grow into — every progress bar in the company rendered
-                        at zero pixels and the column looked empty. */}
-                  <span className="block min-w-0 flex-1">
-                    {row.houses.map((house) => (
-                      <HouseLine
-                        key={house.house}
-                        house={house}
-                        graded={
-                          gradedByHouse?.get(house.house)?.has(row.venue.id) ??
-                          false
-                        }
-                      />
-                    ))}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
-    </>
+      <Tier title="Still to grade" lines={waiting} hrefPrefix={hrefPrefix} />
+      <Tier title="Fail" lines={fails} hrefPrefix={hrefPrefix} />
+      <Tier title="Neutral" lines={neutrals} hrefPrefix={hrefPrefix} />
+      <Tier title="Good" lines={goods} hrefPrefix={hrefPrefix} />
+    </Card>
   );
 }

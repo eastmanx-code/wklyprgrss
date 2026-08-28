@@ -102,6 +102,27 @@ export function isWin(approvedCount: number, activeCount: number): boolean {
   return activeCount > 0 && approvedCount / activeCount >= WIN_RATIO;
 }
 
+/** Below this, and at or above it but under the win line, is the middle tier. */
+const NEUTRAL_RATIO = 0.6;
+
+/**
+ * Good, neutral or fail — the three the weekly report already uses.
+ *
+ * Its bands, too: eight and up is good, six or seven is neutral, five and
+ * under is a fail. The dashboard had been inventing its own words and its own
+ * cuts for the same judgement, so a venue could be a 7 in the report and read
+ * as a failure on screen.
+ */
+export function tierOf(
+  approvedCount: number,
+  activeCount: number,
+): "good" | "neutral" | "fail" {
+  if (isWin(approvedCount, activeCount)) return "good";
+  return activeCount > 0 && approvedCount / activeCount >= NEUTRAL_RATIO
+    ? "neutral"
+    : "fail";
+}
+
 /**
  * A venue wins the week by winning every house that counts.
  *
@@ -272,6 +293,35 @@ export function latestByItem(
       latest.set(s.item_id, s);
   }
   return latest;
+}
+
+/**
+ * One half's review queue, in board order.
+ *
+ * Same rule the venue board draws its "awaiting review" count from, in one
+ * place because three screens now ask the question: the newest entry — this
+ * week's, or one carried over from an earlier week on a task that was never
+ * finished — is pending, and its author called the work done. A task marked
+ * for another cycle is not waiting on anybody.
+ */
+export async function awaitingReview(
+  venueId: string,
+  house: House,
+): Promise<Item[]> {
+  const items = await getItems(venueId, { house });
+  if (items.length === 0) return [];
+
+  const submissions = await getSubmissionsForItems(items.map((i) => i.id));
+  const week = currentWeekStart();
+  const thisWeek = latestByItem(
+    submissions.filter((s) => s.week_start === week),
+  );
+  const ever = latestByItem(submissions);
+
+  return items.filter((item) => {
+    const s = thisWeek.get(item.id) ?? ever.get(item.id);
+    return s?.review === "pending" && s.progress === "done";
+  });
 }
 
 /** One house's half of a venue's board. */
@@ -512,9 +562,9 @@ export type HouseTotals = {
    * Counted once for the venue, that week reads as a single verdict and the
    * half that missed disappears into it.
    */
-  wins: number;
-  partial: number;
-  missed: number;
+  good: number;
+  neutral: number;
+  fail: number;
   /** Who finished this house first and who finished last, earliest first. */
   finishes: { code: string; at: string }[];
   /**
@@ -738,18 +788,63 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
         // The score: what you signed off, not what was handed in. Same rule as
         // doneCount — an approval survives the task being cleared off the board.
-        const approvedCount = doneThisWeek
-          ? [...doneThisWeek].filter(
+        const reviewOf = (id: string) =>
+          newestByItemWeek.get(`${id}|${weekStart}`)?.review;
+        const filed = doneThisWeek ? [...doneThisWeek] : [];
+        const approvedCount = filed.filter(
+          (id) => reviewOf(id) === "approved",
+        ).length;
+        // Filed and nobody has ruled on it. The number that tells a stamped
+        // board from a reviewed one.
+        const pendingCount = filed.filter(
+          (id) => reviewOf(id) === "pending",
+        ).length;
+        /**
+         * Sent back and never replaced.
+         *
+         * The newest filing for the item being the rejected one is exactly
+         * "no redo happened": an amend files a new row and puts it back to
+         * pending, so anything that was genuinely redone stops being counted
+         * here the moment it is. Across the whole history 171 items sit in
+         * this state, which is the number the board has never once shown.
+         */
+        const redoCount = filed.filter(
+          (id) => reviewOf(id) === "sent_back",
+        ).length;
+
+        /**
+         * How long this house has been clearing the line.
+         *
+         * Same walk back as the fail streak and stopped by the same rules, so
+         * a house cannot be credited for weeks before it existed or before it
+         * counted. Broken by the first week that did not clear it, which is
+         * what makes it worth protecting.
+         */
+        let winStreak = 0;
+        {
+          let week = completedWeek;
+          for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+            if (week < houseStartWeek(house)) break;
+            const filedThen = weeks?.get(week);
+            if (!filedThen) break;
+            const okThen = [...filedThen].filter(
               (id) =>
-                newestByItemWeek.get(`${id}|${weekStart}`)?.review ===
-                "approved",
-            ).length
-          : 0;
+                newestByItemWeek.get(`${id}|${week}`)?.review === "approved",
+            ).length;
+            if (!isWin(okThen, activeCount)) break;
+            winStreak += 1;
+            week = shiftWeeks(week, -1);
+          }
+        }
 
         return {
           house,
           doneCount,
           approvedCount,
+          winStreak,
+          pendingCount,
+          redoCount,
+          hasBoard: (activeCountByKey.get(key) ?? 0) > 0,
           activeCount,
           status: statusFor(doneCount, activeCount, weekStart, now),
           failStreak,
@@ -761,12 +856,51 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
     const [foh, hoh] = houses;
     const scored = houses.filter((h) => h.scored);
 
+    /**
+     * How long this venue has been clearing the line, as a venue.
+     *
+     * Walked at the venue rather than taken from the houses, because a house
+     * streak cannot see the week a house started counting. The kitchen only
+     * began counting this week, so its streak can never exceed one — and the
+     * shorter of the two halves therefore capped every venue that has a
+     * kitchen at one week, leaving the board claiming three venues were on a
+     * run when the only ones that could show a streak at all were the six
+     * with no kitchen to hold them back.
+     *
+     * Each past week is judged by the houses that counted in that week. Before
+     * the kitchen went live that is the dining room alone, which is exactly
+     * what was being asked of them at the time.
+     */
+    let runWeeks = 0;
+    {
+      let week = completedWeek;
+      for (let i = 0; i < STREAK_LOOKBACK_WEEKS; i += 1) {
+        const owed = houses.filter((h) => houseScored(h.house, week));
+        if (owed.length === 0) break;
+        const cleared = owed.every((h) => {
+          const filedThen = doneByKeyWeek
+            .get(keyOf(venue.id, h.house))
+            ?.get(week);
+          if (!filedThen) return false;
+          const okThen = [...filedThen].filter(
+            (id) =>
+              newestByItemWeek.get(`${id}|${week}`)?.review === "approved",
+          ).length;
+          return isWin(okThen, WEEKLY_ITEM_TARGET);
+        });
+        if (!cleared) break;
+        runWeeks += 1;
+        week = shiftWeeks(week, -1);
+      }
+    }
+
     return {
       venue,
       foh,
       hoh,
       houses,
       scored,
+      runWeeks,
       // One house failing fails the venue. Averaging them would let a spotless
       // dining room carry a kitchen that missed the week entirely.
       status: worstStatus(scored.map((h) => h.status)),
@@ -841,10 +975,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           (activeCountByKey.get(keyOf(venue.id, house)) ?? 0) >=
           WEEKLY_ITEM_TARGET,
       ).length,
-      wins: mine.filter((h) => isWin(h.approvedCount, h.activeCount)).length,
-      missed: mine.filter((h) => h.approvedCount === 0).length,
-      partial: mine.filter(
-        (h) => h.approvedCount > 0 && !isWin(h.approvedCount, h.activeCount),
+      good: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "good",
+      ).length,
+      neutral: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "neutral",
+      ).length,
+      fail: mine.filter(
+        (h) => tierOf(h.approvedCount, h.activeCount) === "fail",
       ).length,
       finishes: owed
         .map((venue) => ({
@@ -1007,14 +1145,45 @@ export async function gradedVenueIds(
   return new Set((data ?? []).map((row) => row.venue_id as string));
 }
 
-/** Which venues have had each house's week graded, keyed by house. */
-export async function gradedVenueIdsByHouse(
+/**
+ * Who closed out each house's week, per venue.
+ *
+ * The dashboard used a set of ids, which answers "was this graded" and nothing
+ * else, and the row then had to say so in colour alone: the same digit in two
+ * shades, meaning "scored nought" or "nobody has looked at it yet". Those are
+ * opposite facts and a grey nought and a yellow nought are not far enough
+ * apart to carry them — least of all in a screenshot, which is how this table
+ * mostly gets read.
+ *
+ * A name is the shortest honest thing to put in the column. It answers whether
+ * the week is closed and who to ask about it in the same breath, and it cannot
+ * be confused with a score.
+ *
+ * One query for the week rather than one per house. Membership still works the
+ * way the callers expect, because a Map has `has` too.
+ */
+export async function gradersByHouse(
   weekStart: string,
-): Promise<Map<House, Set<string>>> {
-  const sets = await Promise.all(
-    HOUSES.map((house) => gradedVenueIds(weekStart, house)),
+): Promise<Map<House, Map<string, string>>> {
+  const { data, error } = await db()
+    .from("graded_weeks")
+    .select("venue_id, house, graded_by")
+    .eq("week_start", weekStart);
+  if (error) throw new Error(error.message);
+
+  const byHouse = new Map<House, Map<string, string>>(
+    HOUSES.map((house) => [house, new Map<string, string>()]),
   );
-  return new Map(HOUSES.map((house, i) => [house, sets[i]]));
+  for (const row of (data ?? []) as {
+    venue_id: string;
+    house: House;
+    graded_by: string | null;
+  }[]) {
+    // Graded is graded even where the signature did not survive: an empty
+    // name must not read as an ungraded week.
+    byHouse.get(row.house)?.set(row.venue_id, row.graded_by?.trim() || "—");
+  }
+  return byHouse;
 }
 
 /**

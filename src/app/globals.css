@@ -179,6 +179,55 @@
   display: flex;
 }
 
+/* On a phone the row was wider than the phone.
+
+   It is pinned to the right edge and lays out leftwards, so the entries at the
+   far end simply ran off the screen: 503px of menu on a 390px handset put
+   "All venues" entirely out of view and chopped the one beside it to "CKLS".
+   Nothing said so — it looked like a menu that happened to start at the edge.
+   That is how a whole section stayed unfindable on the device everybody uses.
+
+   Stacked above the disc until the row genuinely fits, so the widest entry
+   sets the width and every entry is on the screen and thumb-sized. The
+   threshold is measured, not guessed. The row is 700px of buttons plus the
+   64px disc, its gap and the screen margins: it needs about 805px before it
+   stops running off the left, so everything narrower than a laptop gets the
+   stack. A tablet held in portrait wants the stack anyway. */
+@media (max-width: 1023px) {
+  .ww-menu {
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+
+  .ww-menu-items {
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .ww-menu-items > *,
+  .ww-menu-items .btn-ghost {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* The upright hairline between groups is a rule across the stack now. */
+  .ww-menu-items > span[aria-hidden] {
+    width: 100%;
+    height: 1px;
+    min-height: 0;
+  }
+
+  /* Everything else is a full-width row; this one is a square glyph, and a
+     square stretched to the menu's width is a 192px hole at the bottom of it. */
+  .ww-menu-items > .ww-menu-theme {
+    width: auto;
+    align-self: flex-end;
+  }
+}
+
 /* The close flow brings its own bar. The global one carries the weekly
    deadline and venue navigation, which are dashboard context and not what
    somebody locking up at 2am is doing — and on a tablet it sat over item 7.

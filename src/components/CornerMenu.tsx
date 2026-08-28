@@ -50,8 +50,8 @@ export async function CornerMenu() {
         {/* In flow beside the button, not laid over it. Absolute, it covered the
             only control that could close it again — which is why the menu
             opened and then never shut. */}
-        <div className="border-card-border bg-surface/90 ww-menu-items h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md sm:gap-3 sm:px-3">
-          <span className="hidden sm:contents">
+        <div className="border-card-border bg-surface/90 ww-menu-items h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md lg:gap-3 lg:px-3">
+          <span className="hidden lg:contents">
             <DeadlineCountdown deadlineMs={deadlineMs} />
             <span className="bg-card-border h-6 w-px" aria-hidden />
           </span>
@@ -68,11 +68,13 @@ export async function CornerMenu() {
             </Link>
           ) : null}
 
-          {/* Work in progress, and named so. It is on the live site to be
-              looked at, not to be relied on. */}
+          {/* Named for what it is rather than for its status. "Chcklst > WIP"
+              was unreadable and read as something you were not meant to touch,
+              which is how a section nobody could find stayed that way. The
+              version number carries the same warning without hiding it. */}
           {session ? (
-            <Link href="/close" className="btn-ghost">
-              Chcklst &gt; WIP
+            <Link href="/close" className="btn-ghost whitespace-nowrap">
+              Hood checklists 1.0
             </Link>
           ) : null}
 

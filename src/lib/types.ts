@@ -124,6 +124,43 @@ export type HouseWeek = {
   doneCount: number;
   /** Approved this week — the score. */
   approvedCount: number;
+  /**
+   * Consecutive weeks this house has cleared the win line.
+   *
+   * A streak rather than a rank. Ranking twenty-one venues one to twenty-one
+   * is the public shaming that is already ruled out here, and the research on
+   * it agrees: constant rank-order comparison in high-pressure work raises
+   * stress and pushes people toward quantity and toward hiding. A streak is a
+   * venue measured against itself, every venue can hold one at the same time,
+   * and it is a thing people protect rather than game.
+   */
+  winStreak: number;
+  /**
+   * Filed, and still waiting on a verdict.
+   *
+   * The grade stamp and the reviewing came apart: eight boards were stamped
+   * closed with every one of their ten still untouched, and the screen had no
+   * way to say so — a stamped board looked finished whether or not anybody had
+   * ruled on a single item.
+   */
+  pendingCount: number;
+  /**
+   * Sent back and not redone: the newest filing for the item is the rejected
+   * one, so nothing has replaced it.
+   *
+   * Deliberately not deducted from doneCount. They filed it and they hit the
+   * deadline; whether the redo happened is a separate question and gets its
+   * own column rather than quietly changing the first number.
+   */
+  redoCount: number;
+  /**
+   * Whether this house has any board at all.
+   *
+   * A venue with no kitchen list cannot file, so its nought means "there is
+   * nothing here" — the opposite of a venue that had ten and filed none, and
+   * they were drawing identically.
+   */
+  hasBoard: boolean;
   activeCount: number;
   status: WeekStatus;
   failStreak: number;
@@ -157,4 +194,10 @@ export type VenueWeekSummary = {
   status: WeekStatus;
   /** The longest run of missed weeks across the counting houses. */
   failStreak: number;
+  /**
+   * Consecutive weeks this venue cleared the line in every house that counted
+   * that week. Judged per week, so the weeks before the kitchen went live ask
+   * only what was being asked then.
+   */
+  runWeeks: number;
 };

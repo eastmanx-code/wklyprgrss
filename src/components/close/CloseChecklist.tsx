@@ -49,10 +49,13 @@ const slotKey = (item: number, shot: number) => `${item}:${shot}`;
 export function CloseChecklist({
   slug,
   items,
+  referenceUrls,
   saved,
 }: {
   slug: string;
   items: CloseItem[];
+  /** Storage path -> signed URL, for the reference shots. Minted server-side. */
+  referenceUrls: Record<string, string>;
   saved: SavedNight;
 }) {
   const router = useRouter();
@@ -652,7 +655,7 @@ export function CloseChecklist({
       </section>
 
       <ul className="space-y-3">
-        {CLOSE_CHECKLIST.map((item) => {
+        {CLOSE_CHECKLIST.map((item, index) => {
           const isDone = Boolean(done[item.number]);
           const shots = item.proof ?? [];
           const taken = shotsTaken(item);
@@ -660,8 +663,35 @@ export function CloseChecklist({
           const mine = initialsFor(item.number);
           const wanted = initialsWanted === item.number && !mine.trim();
 
+          /**
+           * A heading, when this item starts a new run of one.
+           *
+           * Compared against the item before it rather than grouped into
+           * buckets: the list is already in the order somebody walks it, and
+           * bucketing would quietly reorder a list to suit its headings. A
+           * heading that appears twice down the page is a list that says so.
+           */
+          const heading =
+            item.section && item.section !== CLOSE_CHECKLIST[index - 1]?.section
+              ? item.section
+              : null;
+          // How much of this run is done, because "FIRST CUTS 4/9" is the
+          // question the person under that heading is actually asking.
+          const run = heading
+            ? CLOSE_CHECKLIST.filter((other) => other.section === item.section)
+            : [];
+          const runDone = run.filter((other) => done[other.number]).length;
+
           return (
             <li key={item.number} className="panel p-0">
+              {heading ? (
+                <p className="label border-divider text-warn flex items-baseline justify-between gap-3 border-b px-4 py-2.5">
+                  <span className="break-words">{heading}</span>
+                  <span className="shrink-0 tabular-nums">
+                    {runDone}/{run.length}
+                  </span>
+                </p>
+              ) : null}
               {/* Stacked on a phone, side by side from sm up.
                   The initials box is 88px of a 358px card, and beside a 28px
                   checkbox it left about 180px for the title — "Full close
@@ -818,6 +848,51 @@ export function CloseChecklist({
                   </span>
                 </span>
               </div>
+
+              {/* What right looks like, above what the item owes.
+
+                  Deliberately in that order: this is the thing you look at
+                  before you start, and the capture controls are the thing you
+                  reach for after. It reads as a strip of small pictures rather
+                  than a gallery — a MOD wants to check the well against the
+                  photo, not browse. Tapping one opens it full size.
+
+                  A named shot nobody has photographed yet still shows. It says
+                  what the standard is in words, which is where every one of
+                  these started. */}
+              {item.reference && item.reference.length > 0 ? (
+                <div className="border-divider border-t px-4 py-4 sm:pl-[3.6rem]">
+                  <p className="label mb-2.5">What right looks like</p>
+                  <ul className="flex flex-wrap gap-3">
+                    {item.reference.map((ref, index) => {
+                      const url = ref.path
+                        ? referenceUrls[ref.path]
+                        : undefined;
+                      return (
+                        <li key={index} className="w-[8.5rem]">
+                          {url ? (
+                            <a href={url} target="_blank" rel="noreferrer">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={url}
+                                alt={ref.caption}
+                                className="bg-inset h-24 w-full rounded object-cover"
+                              />
+                            </a>
+                          ) : (
+                            <span className="bg-inset label text-muted flex h-24 w-full items-center justify-center rounded px-2 text-center">
+                              No photo yet
+                            </span>
+                          )}
+                          <span className="text-ink/65 mt-1.5 block text-[12px] leading-snug break-words">
+                            {ref.caption}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
 
               {/* One control per shot. Two things that both need proving are
                   rarely in the same place, so each names what it has to show
@@ -1027,91 +1102,95 @@ export function CloseChecklist({
             for it. */}
         {openItems.length === 0 || locked || signingOpen ? (
           <>
-        <div className="border-ink mt-2.5 border-l-2 pl-4">
-          <p className="attest">{attestationText}</p>
-          {openItems.length > 0 ? (
-            <ul className="mt-3 space-y-1.5">
-              {openItems.map((item) => (
-                /* Hanging indent: a wrapped title lines up under the title,
+            <div className="border-ink mt-2.5 border-l-2 pl-4">
+              <p className="attest">{attestationText}</p>
+              {openItems.length > 0 ? (
+                <ul className="mt-3 space-y-1.5">
+                  {openItems.map((item) => (
+                    /* Hanging indent: a wrapped title lines up under the title,
                    not under the number. */
-                <li
-                  key={item.number}
-                  className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
-                >
-                  {item.number} · {item.title}
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-
-        <div className="mt-5 space-y-4">
-          <div className="space-y-2">
-            <label className="label" htmlFor="certifier">
-              MOD certifying (required)
-            </label>
-            <input
-              id="certifier"
-              className="field"
-              placeholder="Your name"
-              autoComplete="off"
-              autoCorrect="off"
-              spellCheck={false}
-              value={certifier}
-              disabled={locked}
-              onChange={(event) => setCertifier(event.target.value)}
-            />
-          </div>
-
-          <SignaturePad
-            signed={signed}
-            onSignedChange={setSigned}
-            locked={locked}
-            onInk={(dataUrl) => {
-              signatureRef.current = dataUrl;
-            }}
-          />
-
-          {shortfall ? (
-            <p role="alert" className="text-body text-warn">
-              {shortfall}
-            </p>
-          ) : null}
-
-          {confirmingEmpty ? (
-            <div className="border-warn/40 rounded-[8px] border p-4">
-              <p className="note text-warn">
-                Nothing was checked tonight. Sign anyway?
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <button type="button" className="btn btn-sm" onClick={certify}>
-                  Yes, sign it
-                </button>
-                <button
-                  type="button"
-                  className="btn-ghost"
-                  onClick={() => setConfirmingEmpty(false)}
-                >
-                  Go back
-                </button>
-              </div>
+                    <li
+                      key={item.number}
+                      className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
+                    >
+                      {item.number} · {item.title}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
-          ) : null}
 
-          <button
-            type="button"
-            className="btn w-full"
-            onClick={certify}
-            disabled={locked || saving}
-          >
-            {saving
-              ? "Saving…"
-              : (certified ??
-                (doneCount === CLOSE_TOTAL
-                  ? "Certify this close"
-                  : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
-          </button>
-        </div>
+            <div className="mt-5 space-y-4">
+              <div className="space-y-2">
+                <label className="label" htmlFor="certifier">
+                  MOD certifying (required)
+                </label>
+                <input
+                  id="certifier"
+                  className="field"
+                  placeholder="Your name"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  value={certifier}
+                  disabled={locked}
+                  onChange={(event) => setCertifier(event.target.value)}
+                />
+              </div>
+
+              <SignaturePad
+                signed={signed}
+                onSignedChange={setSigned}
+                locked={locked}
+                onInk={(dataUrl) => {
+                  signatureRef.current = dataUrl;
+                }}
+              />
+
+              {shortfall ? (
+                <p role="alert" className="text-body text-warn">
+                  {shortfall}
+                </p>
+              ) : null}
+
+              {confirmingEmpty ? (
+                <div className="border-warn/40 rounded-[8px] border p-4">
+                  <p className="note text-warn">
+                    Nothing was checked tonight. Sign anyway?
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      onClick={certify}
+                    >
+                      Yes, sign it
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-ghost"
+                      onClick={() => setConfirmingEmpty(false)}
+                    >
+                      Go back
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
+              <button
+                type="button"
+                className="btn w-full"
+                onClick={certify}
+                disabled={locked || saving}
+              >
+                {saving
+                  ? "Saving…"
+                  : (certified ??
+                    (doneCount === CLOSE_TOTAL
+                      ? "Certify this close"
+                      : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
+              </button>
+            </div>
           </>
         ) : (
           <button

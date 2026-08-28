@@ -4,8 +4,9 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
+import { WeekStats } from "@/components/WeekStats";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradedVenueIdsByHouse } from "@/lib/status";
+import { getDashboard, gradersByHouse } from "@/lib/status";
 import {
   deadlineFor,
   formatDeadline,
@@ -25,7 +26,7 @@ export default async function BoardPage() {
   // "has mine been closed out yet" should be answerable from the board.
   // Per house, because the grade is per house — one set for both would have
   // marked the kitchen closed out on the strength of the dining room.
-  const gradedIds = await gradedVenueIdsByHouse(mostRecentCompletedWeek());
+  const gradedIds = await gradersByHouse(mostRecentCompletedWeek());
 
   return (
     <main>
@@ -52,6 +53,8 @@ export default async function BoardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
+        <WeekStats rows={rows} gradedByHouse={gradedIds} />
+
         <CompanyHero byHouse={byHouse} />
 
         <VenueRows
