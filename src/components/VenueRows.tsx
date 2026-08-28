@@ -131,7 +131,7 @@ function HouseLine({
           house.redoCount > 0 ? "text-warn" : "text-muted/40"
         }`}
       >
-        {house.redoCount > 0 ? house.redoCount : "·"}
+        {house.redoCount > 0 ? house.redoCount : ""}
       </span>
 
       {/* The grader's name is on the title rather than the row: it is the same
@@ -200,83 +200,142 @@ export function VenueRows({
     return diff !== 0 ? diff : a.venue.code.localeCompare(b.venue.code);
   });
 
-  const waiting = active.filter((row) => !settled(row)).length;
+  const needing = active.filter((row) => !settled(row));
+  const finished = active.filter(settled);
+
+  /**
+   * What is outstanding, as one sentence.
+   *
+   * The screen is opened to answer "am I done", and a grid of forty-two lines
+   * cannot answer it: you have to read every row and hold the result in your
+   * head. Twenty-one venues is forty-two lines today and only grows. So the
+   * count is stated, the venues that want something are listed, and everything
+   * finished collapses to a row of codes.
+   */
+  const toReview = needing.reduce(
+    (sum, row) => sum + row.scored.reduce((n, h) => n + h.pendingCount, 0),
+    0,
+  );
+  const ungraded = needing.reduce(
+    (n, row) =>
+      n +
+      row.scored.filter((h) => h.hasBoard && !gradedBy(row.venue.id, h.house))
+        .length,
+    0,
+  );
+
+  const headline =
+    needing.length === 0
+      ? "Nothing waiting on you"
+      : [
+          toReview > 0 ? `${toReview} to review` : null,
+          ungraded > 0
+            ? `${ungraded} ${ungraded === 1 ? "half" : "halves"} not graded`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
 
   return (
     <>
-      {active.length > 0 ? (
-        <Card
-          className="col-span-12"
-          title="This week"
-          hint={
-            waiting > 0
-              ? `${waiting} of ${active.length} still want something · settled venues sit at the bottom`
-              : "Every venue graded and reviewed · settled venues sit at the bottom"
-          }
+      <Card
+        className="col-span-12"
+        title="This week"
+        hint={
+          needing.length === 0
+            ? `All ${active.length} venues graded and reviewed`
+            : `${needing.length} of ${active.length} venues want something`
+        }
+      >
+        {/* The answer, before the evidence. */}
+        <p
+          className={`text-metric leading-[1.15] ${
+            needing.length === 0 ? "text-ink" : "text-warn"
+          }`}
         >
-          {/* Name the columns once, rather than on every row. Same box as a
-              row, negative margin included, so each label sits over its own
-              column rather than 8px to the left of it. */}
-          <div className="-mx-2 mb-1 flex h-5 items-center gap-2 px-2 sm:gap-4">
-            <span className="label w-12 shrink-0 sm:w-20">Venue</span>
-            <span className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-              <span className="label w-8 shrink-0">Half</span>
-              {/* Sits over the bar, which carries no heading of its own: it is
-                  the fraction drawn, and the fraction is labelled. */}
-              <span className="hidden w-24 shrink-0 sm:block sm:w-32" />
-              <span className="label w-12 shrink-0 text-right">Filed</span>
-              <span className="label hidden w-8 shrink-0 text-right min-[360px]:block">
-                Pass
-              </span>
-              <span
-                className="label hidden w-8 shrink-0 text-right sm:block"
-                title="Sent back and never redone"
-              >
-                Redo
-              </span>
-              <span className="label w-24 shrink-0 sm:w-28">Standing</span>
-              {/* The slack lands here, past the last column, instead of being
-                  pumped into the middle of the row. */}
-              <span className="min-w-0 flex-1" />
-            </span>
-          </div>
+          {headline}
+        </p>
 
-          <ul>
-            {active.map((row) => (
-              <li key={row.venue.id} id={`venue-${row.venue.code}`}>
-                <Link
-                  href={`${hrefPrefix}${row.venue.id}`}
-                  className="hover:bg-hover -mx-2 flex items-center gap-2 rounded-[4px] px-2 py-2 transition-colors sm:gap-4"
+        {needing.length > 0 ? (
+          <>
+            {/* Column names once, over the rows that follow. */}
+            <div className="-mx-2 mt-6 mb-1 flex h-5 items-center gap-2 px-2 sm:gap-4">
+              <span className="label w-12 shrink-0 sm:w-20">Venue</span>
+              <span className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+                <span className="label w-8 shrink-0">Half</span>
+                <span className="label hidden w-24 shrink-0 sm:block sm:w-32">
+                  Filed
+                </span>
+                <span className="label w-12 shrink-0 text-right sm:sr-only">
+                  Filed
+                </span>
+                <span className="label hidden w-8 shrink-0 text-right min-[360px]:block">
+                  Pass
+                </span>
+                <span
+                  className="label hidden w-8 shrink-0 text-right sm:block"
+                  title="Sent back and never redone"
                 >
-                  <span className="block w-12 shrink-0 sm:w-20">
-                    <span className="text-body text-ink block tracking-normal tabular-nums">
-                      {row.venue.code}
-                    </span>
-                    <span className="label hidden truncate sm:block">
-                      {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
-                      {row.venue.id === ownVenueId ? " · you" : ""}
-                    </span>
-                  </span>
+                  Redo
+                </span>
+                <span className="label w-24 shrink-0 sm:w-28">Standing</span>
+                <span className="min-w-0 flex-1" />
+              </span>
+            </div>
 
-                  {/* One line per house, never one line for both. Summed into
-                      a single twenty-segment bar, a spotless dining room would
-                      have filled half of it and read as real progress at a
-                      venue whose kitchen had not been walked at all. */}
-                  <span className="block min-w-0 flex-1">
-                    {row.houses.map((house) => (
-                      <HouseLine
-                        key={house.house}
-                        house={house}
-                        gradedBy={gradedBy(row.venue.id, house.house)}
-                      />
-                    ))}
-                  </span>
+            <ul>
+              {needing.map((row) => (
+                <li key={row.venue.id} id={`venue-${row.venue.code}`}>
+                  <Link
+                    href={`${hrefPrefix}${row.venue.id}`}
+                    className="hover:bg-hover -mx-2 flex items-center gap-2 rounded-[4px] px-2 py-2 transition-colors sm:gap-4"
+                  >
+                    <span className="block w-12 shrink-0 sm:w-20">
+                      <span className="text-body text-ink block tracking-normal tabular-nums">
+                        {row.venue.code}
+                      </span>
+                      <span className="label hidden truncate sm:block">
+                        {row.failStreak > 0 ? `missed ${row.failStreak}w` : ""}
+                        {row.venue.id === ownVenueId ? " · you" : ""}
+                      </span>
+                    </span>
+
+                    <span className="block min-w-0 flex-1">
+                      {row.houses.map((house) => (
+                        <HouseLine
+                          key={house.house}
+                          house={house}
+                          gradedBy={gradedBy(row.venue.id, house.house)}
+                        />
+                      ))}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+
+        {/* Finished venues are codes, not rows. Their numbers are a tap away
+            and nobody is looking for them: a venue that is done is the least
+            interesting thing on the page and was taking up two lines of it. */}
+        {finished.length > 0 ? (
+          <div className="border-divider mt-6 border-t pt-4">
+            <p className="label">Done · {finished.length}</p>
+            <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1.5">
+              {finished.map((row) => (
+                <Link
+                  key={row.venue.id}
+                  href={`${hrefPrefix}${row.venue.id}`}
+                  className="text-body text-muted hover:text-ink tracking-normal tabular-nums transition-colors"
+                >
+                  {row.venue.code}
                 </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
+              ))}
+            </p>
+          </div>
+        ) : null}
+      </Card>
     </>
   );
 }
