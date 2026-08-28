@@ -155,20 +155,28 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                       value={totals.wins}
                       sub={`${winRate}% of venues`}
                     />
-                    {/* What it counts, rather than a grade for it. "Partial"
-                        is a word for a bucket, not a thing that happened to
-                        anybody, and it left the reader working out which side
-                        of a pass it sat on. */}
-                    <Stat label="Under 8" value={totals.partial} />
-                    {/* Says what the number is. This column counts houses
-                        with nothing signed off at all, so calling it "missed"
-                        — or "fails" — put a word on it that the cards below
-                        were using for a different thing: five venues were
-                        drawn as failures while this said fails: 0, because
-                        they had each got something approved. */}
+                    {/* Every half that came in under eight, the ones with
+                        nothing at all included.
+
+                        Counted as a bucket beside them rather than around
+                        them, this column promised a number it did not give: a
+                        half with zero signed off is under eight by anybody's
+                        reading, but it was filed next door, so the kitchen
+                        reported "under 8: 7" on a week where nine were. */}
                     <Stat
-                      label="None signed off"
+                      label="Under 8"
+                      value={totals.partial + totals.missed}
+                    />
+                    {/* The worst of those, called out of them rather than
+                        set against them. Named "missed", or "fails", it also
+                        put a word on this column that the cards below were
+                        using for something else entirely: five venues were
+                        drawn as failing while this said fails: 0, because each
+                        had got something approved. */}
+                    <Stat
+                      label="None at all"
                       value={totals.missed}
+                      sub="of the under 8"
                       accent={totals.missed > 0}
                     />
                   </>
