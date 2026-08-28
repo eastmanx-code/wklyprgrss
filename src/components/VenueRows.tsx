@@ -39,11 +39,11 @@ type Line = {
   /** Sent back, filed short, still in the queue — whatever is outstanding. */
   note: string;
   /**
-   * The worst kind of fail, drawn loudest.
+   * The worst kind of fail, sorted to the top of its group.
    *
    * A half with no list at all, one that filed nothing, or a venue that failed
    * everything it was scored on. Four of ten signed off is a bad week; no
-   * board is not having turned up, and the two were being drawn the same.
+   * board is not having turned up. Order says so — the bars stay one size.
    */
   worst: boolean;
   mine: boolean;
@@ -56,24 +56,20 @@ function ScoreRow({ line, href }: { line: Line; href: string }) {
     <li>
       <Link
         href={href}
-        /* A fail is drawn heavier than the rows around it, and the worst of
-           them heavier again. At one weight for all of them, a venue that had
-           lost one half read exactly like a venue that never wrote a list. */
-        className={`flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 ${
+        /* One bar, one height, whatever it scored. Drawing the worst fails
+           double height made the block a stack of different objects and cost
+           the eye the thing it was scanning for, which is the column of
+           numbers down the left. Order carries severity instead. */
+        className={`bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${
           failed
-            ? `bg-warn text-on-warn hover:bg-warn/90 ${
-                line.worst ? "py-4" : "py-3"
-              }`
-            : "hover:bg-inset bg-transparent py-2"
+            ? "bg-warn text-on-warn hover:bg-warn/90"
+            : "hover:ring-muted/30 hover:ring-1 hover:ring-inset"
         }`}
       >
         <span
-          /* Wider at the bigger size: a 24px code overran a 64px column and
-             ran straight into the half beside it, so the worst row on the page
-             read "ISFOHOH". */
-          className={`shrink-0 tracking-[0.08em] ${
-            line.worst ? "text-metric w-28" : "text-title w-16"
-          } ${failed ? "text-on-warn" : "text-ink"}`}
+          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+            failed ? "text-on-warn" : "text-ink"
+          }`}
         >
           {line.code}
         </span>
@@ -81,9 +77,7 @@ function ScoreRow({ line, href }: { line: Line; href: string }) {
           {line.house}
         </span>
         <span
-          className={`w-16 shrink-0 tracking-normal tabular-nums ${
-            line.worst ? "text-metric" : "text-title"
-          } ${
+          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
             failed
               ? "text-on-warn"
               : line.tier === "neutral"
@@ -96,46 +90,15 @@ function ScoreRow({ line, href }: { line: Line; href: string }) {
           {line.score}
         </span>
         <span
-          className={`ml-auto shrink-0 text-right ${
-            line.worst ? "card-title" : "label"
-          } ${failed ? "text-on-warn" : ""}`}
+          className={`label ml-auto shrink-0 text-right ${
+            failed ? "text-on-warn" : ""
+          }`}
         >
           {line.note}
           {line.mine ? (line.note ? " · you" : "you") : ""}
         </span>
       </Link>
     </li>
-  );
-}
-
-/**
- * The ones that cleared it, as a run of codes.
- *
- * Twenty-two rows of "10/10, nothing outstanding" is the longest block on the
- * page and the one nobody opens the screen to read. It still gets said —
- * collapsing it entirely answered "what is left" and destroyed "how did we
- * do" — but it gets said in a paragraph, not a table.
- */
-function GoodRun({ lines, hrefPrefix }: { lines: Line[]; hrefPrefix: string }) {
-  if (lines.length === 0) return null;
-  return (
-    <div className="mt-6">
-      <p className="label border-divider border-t pt-4">
-        Good · {lines.length}
-      </p>
-      <p className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-        {lines.map((line) => (
-          <Link
-            key={`${line.venueId}-${line.house}`}
-            href={`${hrefPrefix}${line.venueId}`}
-            className="label hover:text-ink"
-          >
-            <span className="text-ink">{line.code}</span> {line.house}{" "}
-            {line.score}
-          </Link>
-        ))}
-      </p>
-    </div>
   );
 }
 
@@ -309,7 +272,7 @@ export function VenueRows({
       <Tier title="Still to grade" lines={waiting} hrefPrefix={hrefPrefix} />
       <Tier title="Fail" lines={fails} hrefPrefix={hrefPrefix} />
       <Tier title="Neutral" lines={neutrals} hrefPrefix={hrefPrefix} />
-      <GoodRun lines={goods} hrefPrefix={hrefPrefix} />
+      <Tier title="Good" lines={goods} hrefPrefix={hrefPrefix} />
     </Card>
   );
 }
