@@ -19,14 +19,28 @@ import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
  * name to its figures. Ten segments need about as much room as the word beside
  * them; past that the bar is just loud.
  */
-function Segments({ done, total }: { done: number; total: number }) {
+function Segments({
+  done,
+  total,
+  onAccent = false,
+}: {
+  done: number;
+  total: number;
+  onAccent?: boolean;
+}) {
   return (
     <span className="flex min-w-0 flex-1 gap-[2px]">
       {Array.from({ length: Math.max(total, 1) }, (_, i) => (
         <span
           key={i}
           className={`h-2 flex-1 rounded-[1px] ${
-            i < done ? "bg-ink" : "bg-inset"
+            onAccent
+              ? i < done
+                ? "bg-on-warn"
+                : "bg-on-warn/25"
+              : i < done
+                ? "bg-ink"
+                : "bg-inset"
           }`}
         />
       ))}
@@ -55,6 +69,21 @@ export function missedTheLine(house: HouseWeek): boolean {
     house.pendingCount === 0 &&
     !isWin(house.approvedCount, house.activeCount)
   );
+}
+
+/**
+ * Nothing this venue was judged on cleared the line.
+ *
+ * Different from "a half missed" and it should look different. Isla Fonda has
+ * one half being scored and it came in at seven with three never redone: not
+ * a venue that slipped on one side, a venue where everything that was looked
+ * at fell short. A ring says "check this"; a filled card says "this one".
+ *
+ * Only counts halves that were actually judged, so a kitchen with no board
+ * and a half still awaiting a verdict neither rescue a venue nor condemn it.
+ */
+function judged(row: VenueWeekSummary): HouseWeek[] {
+  return row.scored.filter((h) => h.hasBoard && h.pendingCount === 0);
 }
 
 function state(house: HouseWeek, graded: boolean) {
@@ -90,17 +119,22 @@ const TONE = {
 function HouseLine({
   house,
   gradedBy,
+  onAccent = false,
 }: {
   house: HouseWeek;
   /** Who closed this house's week, or null while it is still open. */
   gradedBy: string | null;
+  /** Drawn on the filled card, where every ink and muted role inverts. */
+  onAccent?: boolean;
 }) {
   const here = state(house, Boolean(gradedBy));
 
   return (
     <span className="flex items-center gap-2.5">
       <span
-        className={`label w-8 shrink-0 ${house.scored ? "" : "text-muted/60"}`}
+        className={`label w-8 shrink-0 ${
+          onAccent ? "opacity-70" : house.scored ? "" : "text-muted/60"
+        }`}
       >
         {house.house}
       </span>
@@ -108,7 +142,11 @@ function HouseLine({
       {/* Nothing to draw where there is no list. A full-length empty track
           said "filed none of ten" about a kitchen that has no ten. */}
       {house.hasBoard ? (
-        <Segments done={house.doneCount} total={house.activeCount} />
+        <Segments
+          done={house.doneCount}
+          total={house.activeCount}
+          onAccent={onAccent}
+        />
       ) : (
         <span className="min-w-0 flex-1" />
       )}
@@ -117,18 +155,22 @@ function HouseLine({
           filed, so the two together are the whole week in one line. */}
       <span
         className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
-          !house.hasBoard || !house.scored
-            ? "text-muted"
-            : missedTheLine(house)
-              ? "text-warn"
-              : "text-ink"
+          onAccent
+            ? ""
+            : !house.hasBoard || !house.scored
+              ? "text-muted"
+              : missedTheLine(house)
+                ? "text-warn"
+                : "text-ink"
         }`}
       >
         {house.hasBoard && house.scored ? house.approvedCount : "—"}
       </span>
 
       <span
-        className={`label w-32 shrink-0 truncate text-right ${TONE[here.tone]}`}
+        className={`label w-32 shrink-0 truncate text-right ${
+          onAccent ? "" : TONE[here.tone]
+        }`}
         title={gradedBy ? `Graded by ${gradedBy}` : undefined}
       >
         {here.label}
@@ -167,24 +209,28 @@ function VenueCard({
    * news sitting in a small grey word at the end of a line. The card is what
    * the eye lands on, so the card is what has to say it.
    */
-  const missed = row.scored.some(missedTheLine);
+  const seen = judged(row);
+  const missedAll = seen.length > 0 && seen.every(missedTheLine);
+  const missed = !missedAll && row.scored.some(missedTheLine);
 
   return (
     <li className="h-full" id={`venue-${row.venue.code}`}>
       <Link
         href={href}
         className={`flex h-full flex-col rounded-[6px] p-4 transition-shadow ${
-          missed
-            ? "ring-warn/45 bg-inset ring-1 ring-inset hover:ring-warn/70"
-            : quiet
-              ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
-              : "bg-inset hover:ring-muted/40 hover:ring-1"
+          missedAll
+            ? "bg-warn text-on-warn"
+            : missed
+              ? "ring-warn/45 bg-inset ring-1 ring-inset hover:ring-warn/70"
+              : quiet
+                ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
+                : "bg-inset hover:ring-muted/40 hover:ring-1"
         }`}
       >
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <span
             className={`text-title tracking-[0.08em] ${
-              quiet ? "text-muted" : "text-ink"
+              missedAll ? "" : quiet ? "text-muted" : "text-ink"
             }`}
           >
             {row.venue.code}
@@ -192,7 +238,7 @@ function VenueCard({
           {/* Only the run. The missed-weeks badge counted earlier weeks and
               printed them on a card about this one, so a venue that filed
               everything this week still read as having missed. */}
-          <span className="label shrink-0">
+          <span className={`label shrink-0 ${missedAll ? "opacity-70" : ""}`}>
             {row.runWeeks > 1 ? `${row.runWeeks} weeks clean` : ""}
             {row.venue.id === ownVenueId ? " · you" : ""}
           </span>
@@ -204,6 +250,7 @@ function VenueCard({
               key={house.house}
               house={house}
               gradedBy={gradedBy(row.venue.id, house.house)}
+              onAccent={missedAll}
             />
           ))}
         </div>
