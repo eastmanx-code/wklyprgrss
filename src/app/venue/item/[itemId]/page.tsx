@@ -14,6 +14,7 @@ import {
   Attribution,
   BackLink,
   DonePill,
+  EmptyNote,
   PurgedPhoto,
   ReviewPill,
 } from "@/components/ui";
@@ -21,7 +22,7 @@ import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
-import type { Item } from "@/lib/types";
+import type { Item, Submission } from "@/lib/types";
 import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -36,8 +37,8 @@ export default async function ItemPage({
   const { itemId } = await params;
   const { edit } = await searchParams;
 
-  // A leader may open their own venue's items; an admin may open any. Same
-  // screen for both — the two roles differ only in who can approve.
+  // A leader may open their own venue's items; an admin may open any. The two
+  // then get different screens: filing and grading are different jobs.
   const session = await getSession();
   if (!session) redirect("/");
 
@@ -80,15 +81,27 @@ export default async function ItemPage({
   const previous = submissions.find((s) => s.week_start < weekStart);
   const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
 
+  if (session.role === "admin") {
+    const { data: venue } = await db()
+      .from("venues")
+      .select("code")
+      .eq("id", item.venue_id)
+      .maybeSingle();
+
+    return (
+      <GradeItem
+        item={item}
+        venueCode={(venue as { code: string } | null)?.code ?? null}
+        current={current}
+        photos={photos}
+        previous={previous ?? null}
+      />
+    );
+  }
+
   return (
     <main className="mx-auto max-w-2xl">
-      <BackLink
-        href={
-          session.role === "admin" ? `/admin/venue/${item.venue_id}` : "/venue"
-        }
-      >
-        All items
-      </BackLink>
+      <BackLink href="/venue">All items</BackLink>
 
       <header className="mt-4 mb-6">
         <p className="label">Item</p>
@@ -169,54 +182,6 @@ export default async function ItemPage({
         </div>
       ) : null}
 
-      {/* Rule on it here, rather than sending the reviewer back to the venue.
-
-          An admin opening a task to look at the photograph had to leave it,
-          scroll the venue's whole board and find the card again to say yes or
-          no about the thing they were just looking at. The verdict belongs
-          beside the evidence.
-
-          Same actions as the board, so a decision made here is the decision
-          made there — including the undo, which is the one that matters when
-          the tap was a mistake. */}
-      {session.role === "admin" && current ? (
-        <section className="panel mb-3">
-          <p className="card-title">Your call</p>
-          <div className="mt-3 flex flex-col gap-2">
-            {current.review === "pending" ? (
-              <>
-                {current.progress === "done" ? (
-                  <form action={reviewSubmission}>
-                    <input
-                      type="hidden"
-                      name="submissionId"
-                      value={current.id}
-                    />
-                    <input type="hidden" name="venueId" value={item.venue_id} />
-                    <input type="hidden" name="review" value="approved" />
-                    <SubmitButton pendingLabel="Approving…">
-                      Approve
-                    </SubmitButton>
-                  </form>
-                ) : (
-                  <p className="label">
-                    Marked for another cycle, so there is nothing to approve
-                    yet.
-                  </p>
-                )}
-                <SendBack submissionId={current.id} venueId={item.venue_id} />
-              </>
-            ) : (
-              <ChangeVerdict
-                submissionId={current.id}
-                venueId={item.venue_id}
-                review={current.review as "approved" | "sent_back"}
-              />
-            )}
-          </div>
-        </section>
-      ) : null}
-
       {previous && !sentBack ? (
         <section className="panel mb-3">
           <div className="flex items-baseline justify-between gap-3">
@@ -262,11 +227,7 @@ export default async function ItemPage({
               built to remove. */}
           <PhotoSubmitForm
             key="amend"
-            doneHref={
-              session.role === "admin"
-                ? `/admin/venue/${item.venue_id}`
-                : "/venue"
-            }
+            doneHref="/venue"
             itemId={item.id}
             currentPhotoUrl={photos.get(current.photo_url) ?? null}
             editing={{
@@ -300,11 +261,7 @@ export default async function ItemPage({
 
           <PhotoSubmitForm
             key="new"
-            doneHref={
-              session.role === "admin"
-                ? `/admin/venue/${item.venue_id}`
-                : "/venue"
-            }
+            doneHref="/venue"
             itemId={item.id}
             currentPhotoUrl={
               current && !sentBack
@@ -320,15 +277,7 @@ export default async function ItemPage({
           <input type="hidden" name="itemId" value={item.id} />
           <input type="hidden" name="venueId" value={item.venue_id} />
           <input type="hidden" name="active" value="false" />
-          <input
-            type="hidden"
-            name="redirectTo"
-            value={
-              session.role === "admin"
-                ? `/admin/venue/${item.venue_id}`
-                : "/venue"
-            }
-          />
+          <input type="hidden" name="redirectTo" value="/venue" />
           <button type="submit" className="btn-ghost">
             Retire this item
           </button>
@@ -438,6 +387,230 @@ export default async function ItemPage({
           </ul>
         )}
       </section>
+    </main>
+  );
+}
+
+/**
+ * What an admin opens a task for: the photo, what was said about it, and the
+ * two buttons.
+ *
+ * A MOD asked to rule on a task from inside it rather than from the venue
+ * board, and the first pass gave him the leader's screen with a verdict panel
+ * pushed into the middle of it — the filing form, the amend link, the retire
+ * button and the whole submission history still sat around the decision. None
+ * of that is grading. Filing is the leader's job and this reader never does
+ * it, so the screen is only the evidence and the call.
+ */
+function GradeItem({
+  item,
+  venueCode,
+  current,
+  photos,
+  previous,
+}: {
+  item: Item;
+  venueCode: string | null;
+  /** This week's entry, or nothing filed yet. */
+  current: Submission | undefined;
+  photos: Map<string, string>;
+  /** The last photo from an earlier week, for a before-and-after read. */
+  previous: Submission | null;
+}) {
+  const url = current ? photos.get(current.photo_url) : undefined;
+  const beforeUrl = current?.before_photo_url
+    ? photos.get(current.before_photo_url)
+    : undefined;
+  // Only one before is worth showing. A same-week shot is the pair the leader
+  // filed; without one, the last photo of any earlier week is the comparison.
+  const paired = Boolean(current?.before_photo_url);
+  const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
+
+  return (
+    <main className="mx-auto max-w-2xl">
+      <BackLink href={`/admin/venue/${item.venue_id}`}>
+        {venueCode ? `${venueCode} board` : "Venue board"}
+      </BackLink>
+
+      <header className="mt-4 mb-6">
+        <p className="label">Grading</p>
+        <h1 className="text-metric mt-2 tracking-normal">{item.title}</h1>
+      </header>
+
+      {current ? (
+        <>
+          <section className="panel">
+            <div className="flex items-baseline justify-between gap-3">
+              <p className="label">
+                Week of {formatWeekStart(current.week_start)}
+              </p>
+              <p className="label">{formatTimestamp(current.created_at)}</p>
+            </div>
+
+            {/* Stacked on a phone, side by side from a tablet up. Two 150px
+                thumbnails is not a comparison — at that size neither shot
+                shows the dust anyone is being judged on. */}
+            <div
+              className={`mt-3 ${paired ? "grid gap-2 sm:grid-cols-2" : ""}`}
+            >
+              {paired ? (
+                <figure>
+                  {beforeUrl ? (
+                    <PhotoView
+                      src={beforeUrl}
+                      className="aspect-[4/3] rounded-[8px]"
+                    />
+                  ) : (
+                    <PurgedPhoto aspect="wide" />
+                  )}
+                  <figcaption className="label mt-2">Before</figcaption>
+                </figure>
+              ) : null}
+
+              <figure>
+                {url ? (
+                  <PhotoView src={url} className="aspect-[4/3] rounded-[8px]" />
+                ) : (
+                  <PurgedPhoto aspect="wide" />
+                )}
+                {paired ? (
+                  <figcaption className="label mt-2">After</figcaption>
+                ) : null}
+              </figure>
+            </div>
+
+            <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
+              {current.comment}
+            </p>
+            <Attribution
+              author={current.author}
+              assistedBy={current.assisted_by}
+            />
+
+            {/* Their own answer on whether the job is finished. It changes what
+                the verdict means: approving an item marked for another cycle
+                would sign off work its own author says is not done. */}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className={
+                  current.progress === "another_cycle"
+                    ? "pill pill-rolling"
+                    : "pill pill-done"
+                }
+              >
+                {current.progress === "another_cycle"
+                  ? "One more cycle"
+                  : "This is done"}
+              </span>
+              <ReviewPill review={current.review} />
+            </div>
+          </section>
+
+          <section className="panel mt-3">
+            <p className="card-title">Your call</p>
+            <div className="mt-3 flex flex-col gap-2">
+              {current.review === "pending" ? (
+                <>
+                  {current.progress === "done" ? (
+                    <form action={reviewSubmission}>
+                      <input
+                        type="hidden"
+                        name="submissionId"
+                        value={current.id}
+                      />
+                      <input
+                        type="hidden"
+                        name="venueId"
+                        value={item.venue_id}
+                      />
+                      <input type="hidden" name="review" value="approved" />
+                      <SubmitButton pendingLabel="Approving…">
+                        Approve
+                      </SubmitButton>
+                    </form>
+                  ) : (
+                    <p className="label">
+                      Marked for another cycle, so there is nothing to approve
+                      yet.
+                    </p>
+                  )}
+                  <SendBack submissionId={current.id} venueId={item.venue_id} />
+                </>
+              ) : (
+                <ChangeVerdict
+                  submissionId={current.id}
+                  venueId={item.venue_id}
+                  review={current.review as "approved" | "sent_back"}
+                />
+              )}
+            </div>
+          </section>
+
+          {/* Kept small and last. It is context for the call, not the thing
+              being ruled on. */}
+          {!paired && previous ? (
+            <section className="panel-quiet mt-3 flex items-start gap-3">
+              <div className="w-24 shrink-0">
+                {previousUrl ? (
+                  <PhotoView
+                    src={previousUrl}
+                    className="aspect-[4/3] rounded-[6px]"
+                    hint={false}
+                  />
+                ) : (
+                  <PurgedPhoto aspect="wide" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="label">
+                  Last time · {formatWeekStart(previous.week_start)}
+                </p>
+                <p className="mt-2 text-body leading-relaxed whitespace-pre-wrap">
+                  {previous.comment}
+                </p>
+              </div>
+            </section>
+          ) : null}
+        </>
+      ) : previous ? (
+        /* Nothing this week, but something before — which is the state a
+           sent-back item sits in when nobody redid it. Saying only "nothing
+           filed" hides why: the photo that was rejected, and the week it was
+           rejected in, are the whole explanation. */
+        <section className="panel">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="label text-warn">Nothing filed this week</p>
+            <p className="label">
+              Last filed {formatWeekStart(previous.week_start)}
+            </p>
+          </div>
+          <div className="mt-3">
+            {previousUrl ? (
+              <PhotoView
+                src={previousUrl}
+                className="aspect-[4/3] rounded-[8px]"
+              />
+            ) : (
+              <PurgedPhoto aspect="wide" />
+            )}
+          </div>
+          <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
+            {previous.comment}
+          </p>
+          <Attribution
+            author={previous.author}
+            assistedBy={previous.assisted_by}
+          />
+          <div className="mt-3">
+            <ReviewPill review={previous.review} />
+          </div>
+          <p className="label mt-3">
+            Nothing to rule on until a new photo comes in.
+          </p>
+        </section>
+      ) : (
+        <EmptyNote>Nothing has ever been filed on this item.</EmptyNote>
+      )}
     </main>
   );
 }
