@@ -170,10 +170,13 @@ export function VenueRows({
   hrefPrefix,
   ownVenueId = null,
   gradedByHouse,
+  audience = "leader",
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
+  /** Whether the reader is the one who has to act. */
+  audience?: "admin" | "leader";
   /**
    * Who closed out each house's week, per venue. Two people grade, so one map
    * covering both would have shown the kitchen signed off because the dining
@@ -229,9 +232,12 @@ export function VenueRows({
     0,
   );
 
+  const isAdmin = audience === "admin";
   const headline =
     needing.length === 0
-      ? "Nothing waiting on you"
+      ? isAdmin
+        ? "Nothing waiting on you"
+        : "Every board settled"
       : [
           toReview > 0 ? `${toReview} to review` : null,
           ungraded > 0
@@ -249,7 +255,9 @@ export function VenueRows({
         hint={
           needing.length === 0
             ? `All ${active.length} venues graded and reviewed`
-            : `${needing.length} of ${active.length} venues want something`
+            : isAdmin
+              ? `${needing.length} of ${active.length} venues want something from you`
+              : `${needing.length} of ${active.length} venues still open`
         }
       >
         {/* The answer, before the evidence. */}
@@ -288,7 +296,7 @@ export function VenueRows({
               </span>
             </div>
 
-            <ul>
+            <ul className="lg:grid lg:grid-cols-2 lg:gap-x-8">
               {needing.map((row) => (
                 <li key={row.venue.id} id={`venue-${row.venue.code}`}>
                   <Link

@@ -442,6 +442,43 @@ export async function updateVenuePin(
  * Admin only, and it carries a name: a grade is somebody's judgement of a
  * week's work, and the venue it lands on should be able to see whose.
  */
+/**
+ * Whether any filed, finished card in this half is still awaiting a verdict.
+ *
+ * Newest filing per item only: a task sent back and refiled is one card, and
+ * the decision that matters is the one on the version that stands now.
+ */
+async function hasUnreviewed(
+  venueId: string,
+  house: House,
+  weekStart: string,
+): Promise<boolean> {
+  const items = await itemsFor(venueId, house);
+  const itemIds = items.map((item) => item.id);
+  if (itemIds.length === 0) return false;
+
+  const { data } = await db()
+    .from("submissions")
+    .select("item_id, review, progress, created_at")
+    .in("item_id", itemIds)
+    .eq("week_start", weekStart)
+    .is("cleared_at", null)
+    .order("created_at", { ascending: false });
+
+  const newest = new Map<string, { review: string; progress: string }>();
+  for (const row of (data ?? []) as {
+    item_id: string;
+    review: string;
+    progress: string;
+  }[]) {
+    if (!newest.has(row.item_id)) newest.set(row.item_id, row);
+  }
+
+  return [...newest.values()].some(
+    (row) => row.review === "pending" && row.progress === "done",
+  );
+}
+
 export async function gradeWeek(formData: FormData) {
   if (!(await isAdmin())) return;
 
@@ -460,6 +497,25 @@ export async function gradeWeek(formData: FormData) {
   // would let a venue clear a board it is still meant to be filling. The
   // screen only ever offers a finished week; this is the rule behind that.
   if (!isDeadlinePassed(weekStart)) return;
+
+  /**
+   * And not before every card has a verdict.
+   *
+   * A grade is a grade: it says somebody looked at the work. Grading and
+   * ruling on the items were two separate buttons and nothing joined them, so
+   * on Thursday twenty-one boards were stamped in an hour while only thirteen
+   * had been gone through — eight venues ended up carrying a grade over ten
+   * untouched filings, and scored off approvals they read as nought when the
+   * same eight had read tens and nines the week before.
+   *
+   * Only work claiming to be finished counts. An item the leader has marked
+   * for another cycle is not waiting on a decision and must not be able to
+   * lock the grade shut for the rest of the week.
+   *
+   * Enforced here and not only by disabling the button, because the button is
+   * a courtesy and this is the rule.
+   */
+  if (await hasUnreviewed(venueId, house, weekStart)) return;
 
   // Idempotent: grading twice is not two grades.
   await db()

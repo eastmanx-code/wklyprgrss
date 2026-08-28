@@ -91,7 +91,7 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <WeekStats rows={rows} gradedByHouse={gradedIds} />
+        <WeekStats rows={rows} gradedByHouse={gradedIds} audience="admin" />
 
         <CompanyHero byHouse={byHouse} />
 
@@ -99,6 +99,7 @@ export default async function AdminDashboardPage() {
           rows={rows}
           hrefPrefix="/admin/venue/"
           gradedByHouse={gradedIds}
+          audience="admin"
         />
       </div>
     </main>

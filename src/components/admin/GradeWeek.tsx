@@ -45,20 +45,6 @@ export function GradeWeek({
 }) {
   const [by, setBy] = useState("");
   /**
-   * Which house is being asked "are you sure".
-   *
-   * Grading and reviewing are two buttons and nothing joined them, so a week
-   * could be closed without a single verdict on it and the app said nothing.
-   * That is not hypothetical — twenty-one boards were stamped in an hour on
-   * Thursday and only thirteen had been ruled on, which left eight venues
-   * carrying a grade over ten untouched items and scoring nought off it.
-   *
-   * A warning rather than a block. Closing a week you have not itemised is
-   * sometimes the right call and this screen does not know better than the
-   * person on it. What it can do is refuse to let it happen silently.
-   */
-  const [confirming, setConfirming] = useState<House | null>(null);
-  /**
    * The name box lives outside these forms, because one name covers whichever
    * half is submitted. That puts it beyond the browser's own validation, so
    * the check is here — and it is a check rather than a disabled button on
@@ -152,11 +138,8 @@ export function GradeWeek({
               )}
               {!house.gradedBy && house.pending > 0 ? (
                 <span className="text-warn block">
-                  {house.pending} still {house.pending === 1 ? "needs" : "need"}{" "}
-                  a verdict
-                  {confirming === house.house
-                    ? " · grading now scores this half on what has been approved so far"
-                    : ""}
+                  Approve or send back {house.pending}{" "}
+                  {house.pending === 1 ? "card" : "cards"} to unlock the grade
                 </span>
               ) : null}
             </p>
@@ -170,11 +153,12 @@ export function GradeWeek({
                   Undo
                 </button>
               </form>
-            ) : house.pending > 0 && confirming !== house.house ? (
+            ) : house.pending > 0 ? (
               <button
                 type="button"
-                className="btn-ghost min-h-11 shrink-0"
-                onClick={() => setConfirming(house.house)}
+                className="btn min-h-11 shrink-0"
+                disabled
+                title="Every card has to be approved or sent back first"
               >
                 Grade {houseName(house.house).toLowerCase()}
               </button>
@@ -189,9 +173,7 @@ export function GradeWeek({
                 <input type="hidden" name="house" value={house.house} />
                 <input type="hidden" name="by" value={by} />
                 <button type="submit" className="btn min-h-11">
-                  {house.pending > 0
-                    ? "Grade anyway"
-                    : `Grade ${houseName(house.house).toLowerCase()}`}
+                  Grade {houseName(house.house).toLowerCase()}
                 </button>
               </form>
             )}

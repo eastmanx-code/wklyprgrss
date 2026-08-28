@@ -48,10 +48,22 @@ function Tile({
 export function WeekStats({
   rows,
   gradedByHouse,
+  audience = "leader",
 }: {
   rows: VenueWeekSummary[];
   gradedByHouse?: Map<House, Map<string, string>>;
+  /**
+   * Who is reading.
+   *
+   * The review queue belongs to whoever grades, and this card is on the
+   * leaders' board as well as the admin screen. "Waiting on you" in front of
+   * a venue manager names the wrong person: they cannot approve anything, and
+   * a number addressed to them that they cannot move is worse than no number.
+   * Same fact, said about the company rather than at the reader.
+   */
+  audience?: "admin" | "leader";
 }) {
+  const isAdmin = audience === "admin";
   const scoredHouses = rows.flatMap((row) => row.scored);
 
   // What is still owed to somebody.
@@ -102,13 +114,15 @@ export function WeekStats({
           large phone, four on a laptop, with nothing to configure per screen. */}
       <div className="grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-3">
         <Tile
-          label="Waiting on you"
+          label={isAdmin ? "Waiting on you" : "Awaiting review"}
           value={toReview}
           sub={
             ungraded > 0
               ? `to review · ${ungraded} not graded`
               : toReview > 0
-                ? "items to review"
+                ? isAdmin
+                  ? "items to review"
+                  : "items with the graders"
                 : "all clear"
           }
           tone={toReview > 0 ? "warn" : "ink"}
