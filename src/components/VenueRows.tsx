@@ -133,7 +133,7 @@ function HouseLine({
     <span className="flex items-center gap-2.5">
       <span
         className={`label w-8 shrink-0 ${
-          onAccent ? "opacity-70" : house.scored ? "" : "text-muted/60"
+          onAccent ? "text-on-warn" : house.scored ? "" : "text-muted/60"
         }`}
       >
         {house.house}
@@ -156,7 +156,7 @@ function HouseLine({
       <span
         className={`text-body w-10 shrink-0 text-right tracking-normal tabular-nums ${
           onAccent
-            ? ""
+            ? "text-on-warn"
             : !house.hasBoard || !house.scored
               ? "text-muted"
               : missedTheLine(house)
@@ -169,7 +169,7 @@ function HouseLine({
 
       <span
         className={`label w-32 shrink-0 truncate text-right ${
-          onAccent ? "" : TONE[here.tone]
+          onAccent ? "text-on-warn" : TONE[here.tone]
         }`}
         title={gradedBy ? `Graded by ${gradedBy}` : undefined}
       >
@@ -221,7 +221,7 @@ function VenueCard({
           missedAll
             ? "bg-warn text-on-warn"
             : missed
-              ? "ring-warn/45 bg-inset ring-1 ring-inset hover:ring-warn/70"
+              ? "ring-warn/70 bg-inset ring-1 ring-inset hover:ring-warn"
               : quiet
                 ? "ring-divider hover:ring-muted/40 ring-1 ring-inset"
                 : "bg-inset hover:ring-muted/40 hover:ring-1"
@@ -230,7 +230,7 @@ function VenueCard({
         <div className="mb-3 flex items-baseline justify-between gap-3">
           <span
             className={`text-title tracking-[0.08em] ${
-              missedAll ? "" : quiet ? "text-muted" : "text-ink"
+              missedAll ? "text-on-warn" : quiet ? "text-muted" : "text-ink"
             }`}
           >
             {row.venue.code}
@@ -238,7 +238,9 @@ function VenueCard({
           {/* Only the run. The missed-weeks badge counted earlier weeks and
               printed them on a card about this one, so a venue that filed
               everything this week still read as having missed. */}
-          <span className={`label shrink-0 ${missedAll ? "opacity-70" : ""}`}>
+          <span
+            className={`label shrink-0 ${missedAll ? "text-on-warn/80" : ""}`}
+          >
             {row.runWeeks > 1 ? `${row.runWeeks} weeks clean` : ""}
             {row.venue.id === ownVenueId ? " · you" : ""}
           </span>
