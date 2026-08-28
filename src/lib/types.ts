@@ -124,6 +124,32 @@ export type HouseWeek = {
   doneCount: number;
   /** Approved this week — the score. */
   approvedCount: number;
+  /**
+   * Filed, and still waiting on a verdict.
+   *
+   * The grade stamp and the reviewing came apart: eight boards were stamped
+   * closed with every one of their ten still untouched, and the screen had no
+   * way to say so — a stamped board looked finished whether or not anybody had
+   * ruled on a single item.
+   */
+  pendingCount: number;
+  /**
+   * Sent back and not redone: the newest filing for the item is the rejected
+   * one, so nothing has replaced it.
+   *
+   * Deliberately not deducted from doneCount. They filed it and they hit the
+   * deadline; whether the redo happened is a separate question and gets its
+   * own column rather than quietly changing the first number.
+   */
+  redoCount: number;
+  /**
+   * Whether this house has any board at all.
+   *
+   * A venue with no kitchen list cannot file, so its nought means "there is
+   * nothing here" — the opposite of a venue that had ten and filed none, and
+   * they were drawing identically.
+   */
+  hasBoard: boolean;
   activeCount: number;
   status: WeekStatus;
   failStreak: number;

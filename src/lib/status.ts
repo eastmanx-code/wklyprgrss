@@ -738,18 +738,37 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
         // The score: what you signed off, not what was handed in. Same rule as
         // doneCount — an approval survives the task being cleared off the board.
-        const approvedCount = doneThisWeek
-          ? [...doneThisWeek].filter(
-              (id) =>
-                newestByItemWeek.get(`${id}|${weekStart}`)?.review ===
-                "approved",
-            ).length
-          : 0;
+        const reviewOf = (id: string) =>
+          newestByItemWeek.get(`${id}|${weekStart}`)?.review;
+        const filed = doneThisWeek ? [...doneThisWeek] : [];
+        const approvedCount = filed.filter(
+          (id) => reviewOf(id) === "approved",
+        ).length;
+        // Filed and nobody has ruled on it. The number that tells a stamped
+        // board from a reviewed one.
+        const pendingCount = filed.filter(
+          (id) => reviewOf(id) === "pending",
+        ).length;
+        /**
+         * Sent back and never replaced.
+         *
+         * The newest filing for the item being the rejected one is exactly
+         * "no redo happened": an amend files a new row and puts it back to
+         * pending, so anything that was genuinely redone stops being counted
+         * here the moment it is. Across the whole history 171 items sit in
+         * this state, which is the number the board has never once shown.
+         */
+        const redoCount = filed.filter(
+          (id) => reviewOf(id) === "sent_back",
+        ).length;
 
         return {
           house,
           doneCount,
           approvedCount,
+          pendingCount,
+          redoCount,
+          hasBoard: (activeCountByKey.get(key) ?? 0) > 0,
           activeCount,
           status: statusFor(doneCount, activeCount, weekStart, now),
           failStreak,
