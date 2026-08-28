@@ -156,15 +156,19 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                       sub={`${winRate}% of venues`}
                     />
                     <Stat label="Partial" value={totals.partial} />
+                    {/* The word the weekly report uses. "Missed" was this
+                        screen's own, and a manager reading "missed 2" here and
+                        "fail rate" in the report had to work out that they
+                        were the same two venues. */}
                     <Stat
-                      label="Missed"
+                      label="Fails"
                       value={totals.missed}
                       accent={totals.missed > 0}
                     />
                   </>
                 ) : (
                   <p className="text-body text-muted col-span-3 leading-[1.5]">
-                    Crews are building and walking this board. Wins and misses
+                    Crews are building and walking this board. Wins and fails
                     start the week it goes live.
                   </p>
                 )}

@@ -28,7 +28,7 @@ export function missedTheLine(house: HouseWeek): boolean {
 }
 
 /**
- * Nothing this venue was judged on cleared the line.
+ * Nothing this venue was judged on reached the line.
  *
  * Different from "a half missed" and it should look different. Isla Fonda has
  * one half being scored and it came in at seven with three never redone: not
@@ -51,11 +51,15 @@ function state(house: HouseWeek, graded: boolean) {
   if (house.pendingCount > 0) {
     return { label: `${house.pendingCount} to review`, tone: "warn" as const };
   }
-  // Said as a verdict rather than as a status. "Graded" is true of a ten and
-  // of a two, and a word that covers both tells nobody anything.
-  return isWin(house.approvedCount, house.activeCount)
-    ? { label: "passed", tone: "ink" as const }
-    : { label: "missed", tone: "warn" as const };
+  // Nothing. The line already says 6/10 and 4 sent back, in the words the
+  // crew is given them in, and a verdict word on top of that was either
+  // inventing vocabulary this screen alone used — "passed", "missed" — or,
+  // once it was cut back to the honest one, printing "approved" forty times
+  // down a page where every line said it.
+  //
+  // Whether the half cleared the line is the number against the ten and the
+  // colour of the card. This column is for the states a number cannot say.
+  return { label: "", tone: "ink" as const };
 }
 
 const TONE = {
@@ -95,15 +99,15 @@ function HouseLine({
   // had none sent back says nothing here at all.
   const trailer = [
     house.hasBoard && house.doneCount < house.activeCount
-      ? `filed ${house.doneCount}`
+      ? `${house.doneCount} filed`
       : null,
-    house.redoCount > 0 ? `${house.redoCount} redo` : null,
+    house.redoCount > 0 ? `${house.redoCount} sent back` : null,
   ]
     .filter(Boolean)
     .join(" · ");
 
   return (
-    <span className="flex items-baseline gap-3">
+    <span className="flex flex-wrap items-baseline gap-x-3">
       <span
         className={`label w-8 shrink-0 ${
           onAccent ? "text-on-warn" : house.scored ? "" : "text-muted/60"
@@ -126,8 +130,12 @@ function HouseLine({
         {scored ? `${house.approvedCount}/${house.activeCount}` : "—"}
       </span>
 
+      {/* The verdict keeps its own width, and the exceptions after it drop to
+          their own line rather than being cut off. Sharing the row as two
+          flexible columns clipped whichever lost: first the verdict, then
+          "8 filed · 4 sent back", which at 157px never had a chance in 114. */}
       <span
-        className={`label min-w-0 flex-1 truncate ${
+        className={`label shrink-0 ${
           onAccent ? "text-on-warn" : TONE[here.tone]
         }`}
         title={gradedBy ? `Graded by ${gradedBy}` : undefined}
@@ -136,7 +144,7 @@ function HouseLine({
       </span>
 
       <span
-        className={`label shrink-0 text-right ${
+        className={`label ml-auto shrink-0 text-right ${
           onAccent ? "text-on-warn/80" : ""
         }`}
       >
@@ -231,6 +239,32 @@ function VenueCard({
         </div>
       </Link>
     </li>
+  );
+}
+
+/**
+ * What the colours mean, since nothing else says it.
+ *
+ * The line is two numbers now and no verdict word, so the card's fill is
+ * carrying the result on its own. A convention doing that much work has to be
+ * written down somewhere, and one row of swatches is the whole of it.
+ */
+function ColourKey() {
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+      <span className="flex items-center gap-2">
+        <span className="bg-warn h-3 w-5 shrink-0 rounded-[2px]" />
+        <span className="label">Under the line everywhere</span>
+      </span>
+      <span className="flex items-center gap-2">
+        <span className="ring-warn/70 bg-inset h-3 w-5 shrink-0 rounded-[2px] ring-1 ring-inset" />
+        <span className="label">Under in one half</span>
+      </span>
+      <span className="flex items-center gap-2">
+        <span className="bg-inset h-3 w-5 shrink-0 rounded-[2px]" />
+        <span className="label">Clear</span>
+      </span>
+    </div>
   );
 }
 
@@ -340,7 +374,7 @@ export function VenueRows({
             : isAdmin
               ? `${needing.length} of ${active.length} venues want something from you`
               : `${needing.length} of ${active.length} venues still open`,
-          "8 of 10 signed off is the line · redo is sent back and not replaced",
+          "the number is approved out of the ten owed · 8 is the line · sent back was never replaced",
         ].join(" · ")}
       >
         {/* The answer, before the evidence. */}
@@ -351,6 +385,8 @@ export function VenueRows({
         >
           {headline}
         </p>
+
+        <ColourKey />
 
         {needing.length > 0 ? (
           <ul className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(21rem,1fr))] gap-3">
