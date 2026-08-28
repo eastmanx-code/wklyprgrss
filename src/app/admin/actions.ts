@@ -245,7 +245,16 @@ export async function reviewSubmission(formData: FormData) {
     .from("submissions")
     .update({
       review,
-      reviewed_at: new Date().toISOString(),
+      /**
+       * Back to pending is back to undecided, so the timestamp goes with it.
+       *
+       * It is not cosmetic: the daily scores count an approval by the day its
+       * `reviewed_at` falls on, so a pending row carrying the stamp of the
+       * decision that was just withdrawn would keep being counted as that
+       * day's sign-off. The leader's own amend path already clears it this
+       * way.
+       */
+      reviewed_at: review === "pending" ? null : new Date().toISOString(),
       review_note: review === "sent_back" ? note || null : null,
     })
     .eq("id", submissionId);

@@ -48,13 +48,38 @@ export function ChangeVerdict({
 
       {open ? (
         approved ? (
-          /* Turning an approval into a rejection is the case that most wants a
-             reason: the leader has already been told this was fine. */
-          <SendBack
-            submissionId={submissionId}
-            venueId={venueId}
-            label="Send back instead"
-          />
+          <div className="flex flex-col gap-2">
+            {/* An approval given by mistake is not a rejection.
+
+                Send back was the only way out of one, and it says something
+                false: it tells the leader their work was wrong and makes them
+                redo it. A MOD hit approve-all on the wrong house and had to
+                choose between leaving ten items signed off that nobody had
+                looked at, or failing ten pieces of work that were fine. He
+                had to ask for the database to be edited instead.
+
+                This puts it back where it was — undecided, in the queue, with
+                nothing said to the crew about it. */}
+            <form action={reviewSubmission}>
+              <input type="hidden" name="submissionId" value={submissionId} />
+              <input type="hidden" name="venueId" value={venueId} />
+              <input type="hidden" name="review" value="pending" />
+              <SubmitButton pendingLabel="Undoing…">
+                Undo, back to review
+              </SubmitButton>
+            </form>
+            <p className="label">
+              Undecided again. The crew is told nothing and keeps the work.
+            </p>
+
+            {/* Turning an approval into a rejection is the case that most wants
+                a reason: the leader has already been told this was fine. */}
+            <SendBack
+              submissionId={submissionId}
+              venueId={venueId}
+              label="Send back instead"
+            />
+          </div>
         ) : (
           <form action={reviewSubmission}>
             <input type="hidden" name="submissionId" value={submissionId} />
