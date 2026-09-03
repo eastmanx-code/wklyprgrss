@@ -638,12 +638,15 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   // Sent-back submissions are filtered in SQL so they never count anywhere.
   const submissions = await selectAll<
-    Pick<Submission, "item_id" | "week_start" | "created_at" | "review">
+    Pick<
+      Submission,
+      "item_id" | "week_start" | "created_at" | "review" | "progress"
+    >
   >(
     (from, to) =>
       db()
         .from("submissions")
-        .select("item_id, week_start, created_at, review")
+        .select("item_id, week_start, created_at, review, progress")
         .is("cleared_at", null)
         .gte("week_start", earliestWeek)
         .order("week_start")
@@ -651,7 +654,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         data:
           | Pick<
               Submission,
-              "item_id" | "week_start" | "created_at" | "review"
+              "item_id" | "week_start" | "created_at" | "review" | "progress"
             >[]
           | null;
         error: { message: string } | null;
@@ -790,14 +793,25 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         // doneCount — an approval survives the task being cleared off the board.
         const reviewOf = (id: string) =>
           newestByItemWeek.get(`${id}|${weekStart}`)?.review;
+        const progressOf = (id: string) =>
+          newestByItemWeek.get(`${id}|${weekStart}`)?.progress;
         const filed = doneThisWeek ? [...doneThisWeek] : [];
         const approvedCount = filed.filter(
           (id) => reviewOf(id) === "approved",
         ).length;
-        // Filed and nobody has ruled on it. The number that tells a stamped
-        // board from a reviewed one.
+        /**
+         * Filed as finished and nobody has ruled on it.
+         *
+         * Only work claiming to be done. A leader who marked an item for
+         * another cycle is telling you it is not finished, which is not a
+         * question waiting on an answer — and the grade lock has always read
+         * it that way. Counted here as well, the two disagreed out loud: a
+         * venue with both halves stamped still said "1 to review", and the
+         * card behind it was one nobody was ever meant to rule on. Thirty
+         * four cards across nine halves sat in that state.
+         */
         const pendingCount = filed.filter(
-          (id) => reviewOf(id) === "pending",
+          (id) => reviewOf(id) === "pending" && progressOf(id) === "done",
         ).length;
         /**
          * Sent back and never replaced.
