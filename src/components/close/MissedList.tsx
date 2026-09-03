@@ -1,4 +1,4 @@
-import type { MissedRow } from "@/lib/rollup-sample";
+import type { MissedRow } from "@/lib/rollup-math";
 
 /**
  * What keeps getting left open, ranked.

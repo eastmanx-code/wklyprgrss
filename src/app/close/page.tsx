@@ -14,7 +14,6 @@ import {
 } from "@/lib/checklists";
 import { currentNight, formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
-import { SAMPLE_MISSED, SAMPLE_NIGHTS } from "@/lib/rollup-sample";
 import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -68,9 +67,16 @@ export default async function ChecklistsPage() {
     }
   }
 
+  /**
+   * Real nights only. No sample rows.
+   *
+   * Until a list is signed there is nothing to report, and the screen used to
+   * fill the gap with invented figures — "Stanchions polished · 9 of 30
+   * nights" on a venue that has never signed anything. A manager reading that
+   * on login has no way to tell it from tracking, and the first thing it
+   * taught anybody was that the number cannot be trusted.
+   */
   const real = venue ? await venueRollup(venue) : null;
-  const missed = real?.missed ?? SAMPLE_MISSED;
-  const windowNights = real?.nights ?? SAMPLE_NIGHTS;
 
   const byHouse = (house: House) => {
     const roles = [
@@ -103,34 +109,40 @@ export default async function ChecklistsPage() {
       {/* Above the clipboard, not behind a link. What keeps getting missed is
           the reason any of this exists, and a report you have to go and ask
           for is a report nobody reads. */}
-      <section className="panel border-warn/30 mb-5">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+      {real ? (
+        <section className="panel border-warn/30 mb-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 className="card-title">What&apos;s getting missed</h2>
+            <p className="label">Last {real.nights} nights</p>
+          </div>
+
+          <div className="mt-4">
+            {real.missed.length === 0 ? (
+              <p className="note text-muted">
+                Nothing left open in the window.
+              </p>
+            ) : (
+              <MissedList rows={real.missed.slice(0, 4)} />
+            )}
+          </div>
+
+          <Link
+            href="/close/rollup"
+            className="ring-card-border text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+          >
+            Full report
+            <span className="text-muted">by role, by night, by venue</span>
+          </Link>
+        </section>
+      ) : (
+        <section className="panel-quiet mb-5">
           <h2 className="card-title">What&apos;s getting missed</h2>
-          <p className="label">Last {windowNights} nights</p>
-        </div>
-
-        <div className="mt-4">
-          {missed.length === 0 ? (
-            <p className="note text-muted">Nothing left open in the window.</p>
-          ) : (
-            <MissedList rows={missed.slice(0, 4)} />
-          )}
-        </div>
-
-        <Link
-          href="/close/rollup"
-          className="ring-card-border text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
-        >
-          Full report
-          <span className="text-muted">by role, by night, by venue</span>
-        </Link>
-
-        {real ? null : (
-          <p className="label mt-3">
-            Sample figures. Real from the night the first list is signed.
+          <p className="note text-muted mt-2 leading-relaxed">
+            Nothing signed off yet. This fills in from the first night somebody
+            signs a list and shows what keeps being left open.
           </p>
-        )}
-      </section>
+        </section>
+      )}
 
       {lists.length === 0 ? (
         <section className="panel mb-5">
