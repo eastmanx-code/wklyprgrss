@@ -131,19 +131,21 @@ export default async function ChecklistsPage() {
               <section key={house} className="panel">
                 <h2 className="card-title">{houseName(house)}</h2>
 
+                {/* Cards, not rows off a hairline. A position is the thing
+                    you are here to tap, and a list of names divided by rules
+                    reads as a table of contents — the tap target has to look
+                    like one. */}
                 <ul className="mt-4 space-y-2">
                   {positionsIn(house).map((role) => (
                     <li key={role}>
                       <Link
                         href={`/close/position/${house.toLowerCase()}/${roleSlug(role)}`}
-                        className="border-divider hover:bg-inset flex min-h-14 items-center justify-between gap-3 rounded border-t px-2"
+                        className="bg-warn text-on-warn hover:bg-warn/90 flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3"
                       >
                         <span className="text-body tracking-[0.08em]">
                           {role}
                         </span>
-                        <span className="label" aria-hidden>
-                          →
-                        </span>
+                        <span aria-hidden>→</span>
                       </Link>
                     </li>
                   ))}
