@@ -4,14 +4,7 @@ import { redirect } from "next/navigation";
 import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { NewChecklistForm } from "@/components/close/NewChecklistForm";
-import {
-  houseName,
-  phaseName,
-  PHASE_ORDER,
-  slugFor,
-  type House,
-  type Phase,
-} from "@/lib/checklists";
+import { houseName, roleSlug, type House, type Phase } from "@/lib/checklists";
 import { currentNight, formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
 import { closeVenueId } from "@/lib/close-venue";
@@ -50,23 +43,6 @@ export default async function ChecklistsPage() {
 
   const lists = (listRows ?? []) as Row[];
 
-  // How many items each list actually holds. A list with a name and nothing
-  // in it is worse than no list — it reads as covered.
-  const counts = new Map<string, number>();
-  if (lists.length > 0) {
-    const { data: itemRows } = await db()
-      .from("close_items")
-      .select("checklist_id")
-      .in(
-        "checklist_id",
-        lists.map((l) => l.id),
-      )
-      .eq("active", true);
-    for (const row of (itemRows ?? []) as { checklist_id: string }[]) {
-      counts.set(row.checklist_id, (counts.get(row.checklist_id) ?? 0) + 1);
-    }
-  }
-
   /**
    * Real nights only. No sample rows.
    *
@@ -78,21 +54,19 @@ export default async function ChecklistsPage() {
    */
   const real = venue ? await venueRollup(venue) : null;
 
-  const byHouse = (house: House) => {
+  /**
+   * The positions a house runs, each once.
+   *
+   * Not the lists. A position owns up to three of them and printing all three
+   * here put the whole building on one screen: two houses, every role, every
+   * phase, and a count on each. You pick the position you are working and the
+   * lists are one tap in.
+   */
+  const positionsIn = (house: House) => {
     const roles = [
       ...new Set(lists.filter((l) => l.house === house).map((l) => l.role)),
     ];
-    return roles
-      .sort((a, b) => a.localeCompare(b))
-      .map((role) => ({
-        role,
-        phases: lists
-          .filter((l) => l.house === house && l.role === role)
-          .sort(
-            (a, b) =>
-              PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
-          ),
-      }));
+    return roles.sort((a, b) => a.localeCompare(b));
   };
 
   return (
@@ -101,9 +75,7 @@ export default async function ChecklistsPage() {
         <span className="pill pill-pending">Review build</span>
         <p className="label mt-3">{formatNight(night)}</p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
-        <p className="label mt-2">
-          {lists.length} {lists.length === 1 ? "list" : "lists"}
-        </p>
+        <p className="label mt-2">Pick your position</p>
       </header>
 
       {/* Above the clipboard, not behind a link. What keeps getting missed is
@@ -155,45 +127,24 @@ export default async function ChecklistsPage() {
       ) : (
         <div className="mb-5 space-y-5">
           {(["FOH", "HOH"] as House[]).map((house) =>
-            byHouse(house).length === 0 ? null : (
+            positionsIn(house).length === 0 ? null : (
               <section key={house} className="panel">
                 <h2 className="card-title">{houseName(house)}</h2>
 
-                <ul className="mt-4 space-y-3">
-                  {byHouse(house).map(({ role, phases }) => (
-                    <li key={role} className="border-divider border-t pt-3">
-                      <p className="text-body tracking-[0.08em]">{role}</p>
-
-                      <ul className="mt-2 flex flex-wrap gap-2">
-                        {phases.map((list) => {
-                          const slug = slugFor(
-                            list.house,
-                            list.role,
-                            list.phase,
-                          );
-                          const count = counts.get(list.id) ?? 0;
-                          return (
-                            <li key={list.id}>
-                              <Link
-                                href={`/close/${slug}`}
-                                className={
-                                  count > 0
-                                    ? "bg-warn text-on-warn inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
-                                    : "text-muted ring-card-border inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1 ring-inset"
-                                }
-                              >
-                                {phaseName(list.phase)}
-                                {/* A named list with nothing in it reads as
-                                    covered, which is the one thing worse than
-                                    an absent one. */}
-                                <span className="opacity-70">
-                                  {count > 0 ? `${count} items` : "empty"}
-                                </span>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
+                <ul className="mt-4 space-y-2">
+                  {positionsIn(house).map((role) => (
+                    <li key={role}>
+                      <Link
+                        href={`/close/position/${house.toLowerCase()}/${roleSlug(role)}`}
+                        className="border-divider hover:bg-inset flex min-h-14 items-center justify-between gap-3 rounded border-t px-2"
+                      >
+                        <span className="text-body tracking-[0.08em]">
+                          {role}
+                        </span>
+                        <span className="label" aria-hidden>
+                          →
+                        </span>
+                      </Link>
                     </li>
                   ))}
                 </ul>
