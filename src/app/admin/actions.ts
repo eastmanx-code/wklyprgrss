@@ -553,6 +553,37 @@ export async function gradeWeek(formData: FormData) {
     );
 
   refresh(venueId);
+
+  // The last grade a venue owes is the end of that venue, so it hands back the
+  // board rather than leaving the reviewer on a page with nothing left on it.
+  // Grading the first of two halves stays put: the other half is on the same
+  // screen and bouncing out would only mean navigating back in.
+  if (await venueSettled(venueId, weekStart)) redirect("/admin");
+}
+
+/** Every house this venue is scored on has been graded for the week. */
+async function venueSettled(
+  venueId: string,
+  weekStart: string,
+): Promise<boolean> {
+  const { data: venue } = await db()
+    .from("venues")
+    .select("houses")
+    .eq("id", venueId)
+    .maybeSingle();
+  const houses = (venue as { houses: House[] } | null)?.houses ?? [];
+  if (houses.length === 0) return false;
+
+  const { data } = await db()
+    .from("graded_weeks")
+    .select("house")
+    .eq("venue_id", venueId)
+    .eq("week_start", weekStart);
+
+  const graded = new Set(
+    ((data ?? []) as { house: House }[]).map((row) => row.house),
+  );
+  return houses.every((house) => graded.has(house));
 }
 
 /** Takes a grade back, if it went on the wrong week. */
