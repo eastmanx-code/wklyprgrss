@@ -116,3 +116,20 @@ export function formatNight(night: string): string {
   const [y, m, d] = night.split("-").map(Number);
   return nightLabelFormatter.format(new Date(Date.UTC(y, m - 1, d)));
 }
+
+const clockFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: TZ,
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+/**
+ * "11:52 PM", in the venue's own time.
+ *
+ * Stamps are stored in UTC, and a close signed at 11:52 Pacific is stored as
+ * the following morning. Rendered raw it reads as 6:52am, which on a close
+ * report is not a rounding error but a different night.
+ */
+export function formatClock(iso: string): string {
+  return clockFormatter.format(new Date(iso));
+}

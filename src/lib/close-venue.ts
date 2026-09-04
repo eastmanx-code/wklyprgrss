@@ -50,3 +50,24 @@ export async function closeVenueName(venueId: string): Promise<string | null> {
   const row = data as { name: string | null; code: string } | null;
   return row ? (row.name ?? row.code) : null;
 }
+
+/**
+ * A venue's display name, looked up by its code.
+ *
+ * The compliance screens carry the code in the URL, because that is what a
+ * manager reads on the board and what fits on a bar. The heading wants the
+ * name the venue is actually called: the rest of the app has always shown
+ * "Night Hawk" over "HOOD" and a report that only ever says HOOD reads like a
+ * different product. Falls back to the code, which is what a venue with no
+ * name set has always been called anyway.
+ */
+export async function venueNameOf(code: string): Promise<string> {
+  const { data } = await db()
+    .from("venues")
+    .select("name, code")
+    .eq("code", code)
+    .maybeSingle();
+  const row = data as { name: string | null; code: string } | null;
+  if (!row) return code;
+  return row.name && row.name !== row.code ? row.name : row.code;
+}
