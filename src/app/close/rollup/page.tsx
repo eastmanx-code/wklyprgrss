@@ -6,14 +6,6 @@ import { BackLink } from "@/components/ui";
 import { groupRollup, venueRollup } from "@/lib/rollup";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
-import {
-  SAMPLE_BY_ROLE,
-  SAMPLE_CERTIFIERS,
-  SAMPLE_MISSED,
-  SAMPLE_NIGHTS,
-  SAMPLE_STRIP,
-  SAMPLE_VENUES,
-} from "@/lib/rollup-sample";
 
 export const dynamic = "force-dynamic";
 
@@ -63,23 +55,49 @@ export default async function RollupPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  // Real figures the moment there are any. The sample stays as the fallback
-  // rather than being deleted, because a venue in its first week would
-  // otherwise meet a page of confident zeroes and learn nothing about what the
-  // report is for — and a screen of zeroes is its own kind of lie.
   const venue = await closeVenueId(session);
   const venueName = venue ? await closeVenueName(venue) : null;
 
   const real = venue ? await venueRollup(venue) : null;
   const group = real ? await groupRollup() : null;
 
-  const nights = real?.nights ?? SAMPLE_NIGHTS;
-  const strip = real?.strip ?? SAMPLE_STRIP;
-  const certified = real?.certified ?? 24;
-  const missed = real?.missed ?? SAMPLE_MISSED;
-  const byRole = real?.byRole ?? SAMPLE_BY_ROLE;
-  const certifiers = real?.certifiers ?? SAMPLE_CERTIFIERS;
-  const venues = group ?? SAMPLE_VENUES;
+  /**
+   * Nothing recorded, nothing reported.
+   *
+   * This page used to fill itself with invented figures so a venue in its
+   * first week could see the shape of the report. What it actually produced
+   * was a confident month of tracking for lists nobody had ever signed, with
+   * item names and hit rates a reader had no way to tell from real ones.
+   * An empty report says the true thing and says it in one line.
+   */
+  if (!real) {
+    return (
+      <main className="close-flow mx-auto max-w-2xl pb-4">
+        <BackLink href="/close">All checklists</BackLink>
+        <header className="mt-4 mb-5">
+          <p className="label">{venueName ?? "This venue"}</p>
+          <h1 className="mt-2 text-metric font-medium">
+            What&apos;s getting missed
+          </h1>
+        </header>
+        <section className="panel-quiet">
+          <p className="note text-muted leading-relaxed">
+            Nothing signed off yet. The report starts the night somebody signs a
+            list and builds from there: what got left open, by role, by night
+            and by venue.
+          </p>
+        </section>
+      </main>
+    );
+  }
+
+  const nights = real.nights;
+  const strip = real.strip;
+  const certified = real.certified;
+  const missed = real.missed;
+  const byRole = real.byRole;
+  const certifiers = real.certifiers;
+  const venues = group ?? [];
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">

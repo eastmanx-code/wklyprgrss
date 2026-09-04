@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { CloseBar } from "@/components/close/CloseBar";
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
-import { parseSlug, phaseName, type Phase } from "@/lib/checklists";
+import { parseSlug, phaseName, roleSlug, type Phase } from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
@@ -151,7 +151,14 @@ export default async function ChecklistPage({
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href="/close">All checklists</BackLink>
+      {/* Back to the position, not to the top. Three steps in, "all
+          checklists" threw away both of them and made the way back to the
+          sibling list a fresh trip down the tree. */}
+      <BackLink
+        href={`/close/position/${list.house.toLowerCase()}/${roleSlug(list.role)}`}
+      >
+        {list.role}
+      </BackLink>
 
       <header className="mt-4 mb-5">
         <p className="label">
@@ -232,7 +239,9 @@ export default async function ChecklistPage({
         </Link>
       ) : null}
 
-      <CloseBar back="/close" />
+      <CloseBar
+        back={`/close/position/${list.house.toLowerCase()}/${roleSlug(list.role)}`}
+      />
     </main>
   );
 }

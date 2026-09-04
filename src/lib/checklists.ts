@@ -58,6 +58,16 @@ export function slugFor(house: House, role: string, phase: Phase): string {
 }
 
 /**
+ * A position's address, for the screen that lists what that position owns.
+ *
+ * Same shaping as slugFor, so "Bar Deep Clean" and "bar deep clean" are one
+ * position rather than two rows a MOD has to guess between.
+ */
+export function roleSlug(role: string): string {
+  return role.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+}
+
+/**
  * Back out of a slug. The role is the middle, which is why it may contain
  * hyphens and the house and phase may not — they come from fixed lists.
  */
