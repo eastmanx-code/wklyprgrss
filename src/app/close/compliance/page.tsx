@@ -5,6 +5,7 @@ import { Card } from "@/components/Card";
 import { Dial } from "@/components/Dial";
 import { Trend } from "@/components/Trend";
 import { CloseBar } from "@/components/close/CloseBar";
+import { BackLink } from "@/components/ui";
 import { NightNav, ScoreBar } from "@/components/close/Compliance";
 import {
   nightCompliance,
@@ -110,8 +111,25 @@ export default async function CompliancePage({
         ? `${listsFailed} ${listsFailed === 1 ? "list" : "lists"} failed`
         : "Nothing failed";
 
+  /**
+   * Where back goes.
+   *
+   * An admin arrived from the list of locations, which is also the report
+   * they were reading; a leader has one building and came off their own
+   * clipboard. Sending both to the same place would have sent one of them
+   * somewhere they had never been.
+   */
+  const back = session.role === "admin" ? "/close/locations" : "/close";
+
   return (
     <main>
+      {/* Three screens deep by the time you are in a list, and this one had
+          no way out but the browser. The bar at the foot is a phone control
+          and easy to miss on a desk. */}
+      <BackLink href={back}>
+        {session.role === "admin" ? "All locations" : "Checklists"}
+      </BackLink>
+
       {/* The board's own header shape: the period, then the answer. */}
       <header className="mt-4 mb-6">
         <p className="label">
@@ -213,7 +231,7 @@ export default async function CompliancePage({
         </Card>
       </div>
 
-      <CloseBar back="/close" />
+      <CloseBar back={back} />
     </main>
   );
 }
