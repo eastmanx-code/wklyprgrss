@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { enrolVenue } from "./actions";
+
 import { Card } from "@/components/Card";
 import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
@@ -47,7 +49,10 @@ export default async function LocationsPage() {
   const night = isNightOver(tonight) ? tonight : previousNight(tonight);
 
   const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
-    db().from("venues").select("id, code, name").order("code"),
+    db()
+      .from("venues")
+      .select("id, code, name, active, close_active")
+      .order("code"),
     db().from("close_checklists").select("venue_id").eq("active", true),
     nightCompliance(night),
   ]);
@@ -56,7 +61,17 @@ export default async function LocationsPage() {
     id: string;
     code: string;
     name: string | null;
+    active: boolean;
+    close_active: boolean;
   }[];
+
+  // In the programme, and the ones that could be. Membership is its own flag:
+  // `active` governs the weekly walkthrough and a venue can run one without
+  // the other. Before this existed the screen had to list the whole table,
+  // which put twenty-six rows of "no lists yet" under the one venue running
+  // them, and half of those were venues that had closed or never opened.
+  const enrolled = venues.filter((v) => v.close_active);
+  const candidates = venues.filter((v) => !v.close_active && v.active);
 
   const counts = new Map<string, number>();
   for (const row of (listRows ?? []) as { venue_id: string }[]) {
@@ -90,10 +105,12 @@ export default async function LocationsPage() {
     };
   };
 
-  const running = venues
+  const running = enrolled
     .filter((v) => (counts.get(v.id) ?? 0) > 0)
     .map(lineFor);
-  const idle = venues.filter((v) => (counts.get(v.id) ?? 0) === 0).map(lineFor);
+  const idle = enrolled
+    .filter((v) => (counts.get(v.id) ?? 0) === 0)
+    .map(lineFor);
 
   const of = (tier: "good" | "neutral" | "fail") =>
     running
@@ -155,8 +172,47 @@ export default async function LocationsPage() {
         {/* Not a tier. A venue with no list is not failing the programme, it
             is not in it, and it is listed because that is where somebody goes
             to write the first one. */}
-        <Tier title="No lists yet" rows={idle} />
+        <Tier title="In the programme, nothing written" rows={idle} />
       </Card>
+
+      {/* Folded away. Adding a building is a thing you do once, and twenty
+          rows of it above the one venue you are actually here for is the page
+          reading as a directory rather than a report. */}
+      {candidates.length > 0 ? (
+        <details className="panel mt-4">
+          <summary className="card-title cursor-pointer list-none">
+            Add a location
+            <span className="label ml-3">
+              {candidates.length} not in the close yet
+            </span>
+          </summary>
+          <p className="note text-muted mt-3 leading-relaxed">
+            Adding a venue puts it in the nightly close and opens it, ready for
+            its first list. It has no bearing on the weekly walkthrough.
+          </p>
+          <ul className="mt-4 space-y-2">
+            {candidates.map((venue) => (
+              <li key={venue.id}>
+                <form action={enrolVenue}>
+                  <input type="hidden" name="venueId" value={venue.id} />
+                  <button
+                    type="submit"
+                    className="bg-inset hover:ring-muted/30 flex min-h-11 w-full flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2 text-left hover:ring-1 hover:ring-inset"
+                  >
+                    <span className="text-body w-16 shrink-0 tracking-[0.08em]">
+                      {venue.code}
+                    </span>
+                    {venue.name && venue.name !== venue.code ? (
+                      <span className="label">{venue.name}</span>
+                    ) : null}
+                    <span className="label ml-auto shrink-0">Add</span>
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
 
       <CloseBar back="/home" />
     </main>
