@@ -109,6 +109,21 @@ export async function tickItem(
     .trim()
     .toUpperCase();
   const on = String(formData.get("on") ?? "") === "true";
+  /**
+   * When the device says this happened, which is not when it arrived.
+   *
+   * Recorded, never trusted and never used to decide anything: a phone clock
+   * is wrong as often as it is right and can be set by hand. `created_at` is
+   * the server's own stamp and stays the one the reports count on. Holding
+   * both is what lets a night show a tick that claims eleven forty and landed
+   * at quarter past two, which on a record whose whole value is being true is
+   * the interesting case rather than a rounding error.
+   */
+  const clientAt = String(formData.get("clientAt") ?? "");
+  const stamped =
+    clientAt && !Number.isNaN(Date.parse(clientAt))
+      ? new Date(clientAt).toISOString()
+      : null;
 
   if (!initials) return { error: "Initial it first." };
 
@@ -122,7 +137,7 @@ export async function tickItem(
     const { error } = await db()
       .from("close_ticks")
       .upsert(
-        { night_id: night, item_id: itemId, initials },
+        { night_id: night, item_id: itemId, initials, client_at: stamped },
         { onConflict: "night_id,item_id" },
       );
     if (error) return { error: "Could not save that." };

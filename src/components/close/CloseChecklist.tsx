@@ -4,6 +4,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
+import {
+  canQueue,
+  enqueue,
+  flush,
+  pendingCount,
+  tickKey,
+  type TickOp,
+} from "@/lib/outbox";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -115,6 +123,9 @@ export function CloseChecklist({
     saved.certifiedAt ? `Certified by ${saved.certifiedBy ?? "—"}` : null,
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
+  /** Ticks written here that the server has not taken yet. */
+  const [outstanding, setOutstanding] = useState(0);
+  const [offline, setOffline] = useState(false);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
   /**
    * Whether the signing block is showing while work is still outstanding.
@@ -143,10 +154,45 @@ export function CloseChecklist({
       allowed, and the question here is only "recently?". */
   const justTouched = useRef(false);
   const quiet = useRef<number | null>(null);
+  const draining = useRef(false);
 
   useEffect(() => {
     const urls = objectUrls.current;
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
+
+  /**
+   * Send what is queued: on arrival, whenever the network comes back, and on
+   * a slow timer for the case the browser never fires an online event, which
+   * happens when a phone was asleep in a pocket rather than genuinely offline.
+   *
+   * The timer is thirty seconds because a queued tick is already safe on the
+   * device; nothing is lost by taking half a minute to notice, and polling
+   * harder on a phone in a cold room only spends battery.
+   */
+  useEffect(() => {
+    if (!canQueue()) return;
+
+    const mark = () => setOffline(!navigator.onLine);
+    mark();
+
+    void pendingCount().then(setOutstanding);
+    void drain();
+
+    const back = () => {
+      mark();
+      void drain();
+    };
+    const id = window.setInterval(() => void drain(), 30_000);
+    window.addEventListener("online", back);
+    window.addEventListener("offline", mark);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("online", back);
+      window.removeEventListener("offline", mark);
+    };
+    // Mounted once. drain reads refs and state setters, both stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
@@ -191,7 +237,11 @@ export function CloseChecklist({
    * typing it.
    */
   useEffect(() => {
-    if (saving || justTouched.current) return;
+    // Queued writes have not reached the server, so what the server just sent
+    // back does not know about them. Letting it through would untick a row in
+    // front of somebody who ticked it thirty seconds ago in a cold room, which
+    // is the exact failure the queue exists to prevent.
+    if (saving || justTouched.current || outstanding > 0) return;
 
     setDone((current) => {
       let changed = false;
@@ -263,7 +313,7 @@ export function CloseChecklist({
         ? `Certified by ${saved.certifiedBy ?? "—"}`
         : current,
     );
-  }, [saved, saving, items]);
+  }, [saved, saving, items, outstanding]);
 
   /** A shot is met by a capture, or — for a note — by words in the box. */
   const shotFilled = (item: number, index: number, kind: ProofKind) =>
@@ -296,16 +346,73 @@ export function CloseChecklist({
     return false;
   }
 
-  async function persistTick(item: CloseItem, on: boolean) {
+  /** One queued tick, in the shape the server action reads. */
+  function sendable(op: TickOp): FormData {
     const data = new FormData();
-    data.set("slug", slug);
-    data.set("itemId", item.id ?? "");
-    data.set("initials", initialsFor(item.number));
-    data.set("on", String(on));
-    setSaving(true);
-    const result = await tickItem({ error: null }, data);
-    setSaving(false);
-    if (result.error) setShortfall(result.error);
+    data.set("slug", op.slug);
+    data.set("itemId", op.itemId);
+    data.set("initials", op.initials);
+    data.set("on", String(op.on));
+    data.set("clientAt", op.clientAt);
+    return data;
+  }
+
+  /**
+   * Empty the queue, if anything is in it and the network will take it.
+   *
+   * Guarded against running twice at once: the interval, the online event and
+   * a fresh tap can all arrive together, and three drains racing would send
+   * the same tick three times. Harmless on the server, which upserts, but it
+   * spends a phone's radio for nothing.
+   */
+  async function drain() {
+    if (draining.current || !canQueue()) return;
+    draining.current = true;
+    try {
+      const { left } = await flush((op) =>
+        tickItem({ error: null }, sendable(op)),
+      );
+      setOutstanding(left);
+    } finally {
+      draining.current = false;
+    }
+  }
+
+  /**
+   * A tick goes to the queue, not to the network.
+   *
+   * The tap has to land whether or not there is signal, because the place the
+   * list gets walked is the cellar and the walk-in. Nothing here awaits the
+   * server: the row is already ticked on screen by the time this runs, the
+   * write is durable in the browser before this returns, and the sending is
+   * somebody else's problem a few lines down.
+   *
+   * Falls back to the old direct call where IndexedDB is missing, which is
+   * private windows on some browsers. Worse behaviour offline, same behaviour
+   * on.
+   */
+  async function persistTick(item: CloseItem, on: boolean) {
+    const op: TickOp = {
+      kind: "tick",
+      key: tickKey(slug, item.id ?? ""),
+      slug,
+      itemId: item.id ?? "",
+      initials: initialsFor(item.number),
+      on,
+      clientAt: new Date().toISOString(),
+    };
+
+    if (!canQueue()) {
+      setSaving(true);
+      const result = await tickItem({ error: null }, sendable(op));
+      setSaving(false);
+      if (result.error) setShortfall(result.error);
+      return;
+    }
+
+    await enqueue(op);
+    setOutstanding(await pendingCount());
+    void drain();
   }
 
   /** Marks the moment, so the next poll defers to this device. */
@@ -611,6 +718,26 @@ export function CloseChecklist({
             </div>
           </details>
         </section>
+      ) : null}
+
+      {/* Says the tick is safe, which is the only thing anybody wants to know
+          when the signal drops mid-list. Silence would read as the taps not
+          landing, and somebody who thinks they lost six ticks starts again on
+          paper. Nothing here is an error: a queued tick is stored on the
+          device and goes up on its own. */}
+      {outstanding > 0 || offline ? (
+        <p
+          className="bg-warn text-on-warn -mx-4 mb-1 px-4 py-2 text-label tracking-[0.08em]"
+          role="status"
+        >
+          {outstanding > 0
+            ? `${outstanding} ${outstanding === 1 ? "tick" : "ticks"} saved on this device${
+                offline
+                  ? " · no signal, they go up when it returns"
+                  : " · sending"
+              }`
+            : "No signal. Keep going, everything is saved here."}
+        </p>
       ) : null}
 
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-1 border-b px-4 py-3">
