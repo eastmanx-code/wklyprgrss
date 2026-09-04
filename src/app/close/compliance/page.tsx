@@ -46,13 +46,23 @@ export default async function CompliancePage({
    * they left, at every venue in the group, which is a different thing to
    * hand a bartender.
    */
+  let mineName: string | null = null;
   if (session.role === "leader") {
     const mine = await closeVenueId(session);
     const { data } = mine
-      ? await db().from("venues").select("code").eq("id", mine).maybeSingle()
+      ? await db()
+          .from("venues")
+          .select("code, name")
+          .eq("id", mine)
+          .maybeSingle()
       : { data: null };
-    const code = (data as { code: string } | null)?.code;
-    venues = venues.filter((v) => v.code === code);
+    const row = data as { code: string; name: string | null } | null;
+    venues = venues.filter((v) => v.code === row?.code);
+    mineName = row
+      ? row.name && row.name !== row.code
+        ? row.name
+        : row.code
+      : null;
   }
 
   const failing = venues.filter((v) => v.tier === "fail");
@@ -63,7 +73,11 @@ export default async function CompliancePage({
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <header className="mt-4 mb-5">
+        {/* A leader is reading one building's report and the page should
+            say which. An admin is reading every building's, so naming one
+            would be a lie. */}
         <p className="label">
+          {mineName ? `${mineName} · ` : ""}
           {formatNight(night)} · {over ? "night closed" : "still running"}
         </p>
         <h1 className="text-metric mt-2 font-medium">Close compliance</h1>

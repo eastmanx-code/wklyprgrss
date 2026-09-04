@@ -6,7 +6,7 @@ import { NightNav, ScoreBar, VerdictRow } from "@/components/close/Compliance";
 import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
 import { failuresByRole, nightCompliance } from "@/lib/compliance";
-import { closeVenueId } from "@/lib/close-venue";
+import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { currentNight, formatNight } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -51,14 +51,27 @@ export default async function VenueCompliancePage({
   if (!venue) notFound();
 
   const byRole = failuresByRole(venue.lists);
+  const name = await venueNameOf(code);
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <BackLink href={`/close/compliance?night=${night}`}>All venues</BackLink>
 
+      {/* The name over the code. The code is what the URL and the board
+          carry; the heading is where somebody checks they are looking at the
+          right building, and "HOOD" is not what anybody calls it. */}
       <header className="mt-4 mb-5">
-        <p className="label">{formatNight(night)}</p>
-        <h1 className="text-metric mt-2 font-medium">{code}</h1>
+        <p className="label">
+          {formatNight(night)}
+          {name === code ? "" : ` · ${code}`}
+        </p>
+        {/* Wraps rather than truncates. A venue whose name runs past the
+            phone is a venue whose report says "Youngblood Bar and Kit",
+            and the heading is the one line on the page whose whole job is
+            saying which building this is. */}
+        <h1 className="text-metric mt-2 leading-tight font-medium break-words">
+          {name}
+        </h1>
       </header>
 
       <ScoreBar

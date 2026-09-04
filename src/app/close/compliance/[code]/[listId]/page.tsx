@@ -4,7 +4,7 @@ import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
 import { listDetail } from "@/lib/compliance";
-import { closeVenueId } from "@/lib/close-venue";
+import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { currentNight, formatClock, formatNight } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -56,18 +56,21 @@ export default async function ListCompliancePage({
   const detail = await listDetail(listId, night);
   if (!detail) notFound();
 
+  const name = await venueNameOf(code);
   const open = detail.items.filter((i) => !i.ticked);
   const signed = Boolean(detail.certifiedAt);
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <BackLink href={`/close/compliance/${code}?night=${night}`}>
-        {code}
+        {name}
       </BackLink>
 
+      {/* Three screens deep, with a phase for a heading, this was the only
+          page in the flow that never said which building it was describing. */}
       <header className="mt-4 mb-5">
         <p className="label">
-          {formatNight(night)} · {detail.house} · {detail.role}
+          {name} · {formatNight(night)} · {detail.house} · {detail.role}
         </p>
         <h1 className="text-metric mt-2 font-medium">
           {phaseName(detail.phase)} checklist
