@@ -150,3 +150,75 @@ export function NightNav({ night, base }: { night: string; base: string }) {
     </nav>
   );
 }
+
+/**
+ * The month, as a grid you can tap into.
+ *
+ * The arrows walked one night at a time, which is fine for "what happened
+ * last night" and useless for "when did this start". Thirty squares say where
+ * the bad nights are and every one of them is a link, so getting to the
+ * Tuesday three weeks ago is one tap rather than twenty.
+ *
+ * The colour is a severity ramp rather than a good/bad flag: quiet for the
+ * nights that went well, and one hue rising through it for the two that did
+ * not. Twenty-four blocks shouting "fine" would drown the six that are the
+ * point of the page.
+ */
+export function NightStrip({
+  nights,
+  current,
+  base,
+}: {
+  nights: { night: string; state: "complete" | "gaps" | "missed" }[];
+  current: string;
+  base: string;
+}) {
+  if (nights.length === 0) return null;
+
+  const fill = {
+    complete: "bg-ink/20 hover:bg-ink/30",
+    gaps: "bg-warn/40 hover:bg-warn/60",
+    missed: "bg-warn hover:bg-warn/80",
+  } as const;
+
+  return (
+    <div>
+      {/* Ten across, so three rows of thirty-two pixel squares rather than one
+          row of eleven. A tap target has to survive a thumb at 2am. */}
+      <div className="grid max-w-[22rem] grid-cols-10 gap-1">
+        {nights.map((n) => (
+          <Link
+            key={n.night}
+            href={`${base}?night=${n.night}`}
+            aria-label={`${formatNight(n.night)} · ${
+              n.state === "complete"
+                ? "all complete"
+                : n.state === "gaps"
+                  ? "signed with gaps"
+                  : "never certified"
+            }`}
+            aria-current={n.night === current ? "date" : undefined}
+            className={`aspect-square rounded-[2px] ${fill[n.state]} ${
+              n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
+            }`}
+          />
+        ))}
+      </div>
+
+      <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+        <span className="label flex items-center gap-2">
+          <span className="bg-ink/20 size-3 rounded-[2px]" />
+          All complete
+        </span>
+        <span className="label flex items-center gap-2">
+          <span className="bg-warn/40 size-3 rounded-[2px]" />
+          Signed with gaps
+        </span>
+        <span className="label flex items-center gap-2">
+          <span className="bg-warn size-3 rounded-[2px]" />
+          Never certified
+        </span>
+      </div>
+    </div>
+  );
+}

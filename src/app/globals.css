@@ -165,6 +165,16 @@
   cursor: pointer;
 }
 
+/* The summary is the disc itself, so the global focus ring traced its circle
+   as a white halo floating a couple of pixels off the accent — which reads as
+   a rendering fault rather than a focus state, and shows up on a plain mouse
+   click because that is how browsers treat a focused summary. Same indicator,
+   moved inside the disc and drawn in the ink that already sits on it. */
+.ww-menu > summary:focus-visible {
+  outline: 2px solid var(--color-on-warn);
+  outline-offset: -7px;
+}
+
 .ww-menu > summary::-webkit-details-marker {
   display: none;
 }

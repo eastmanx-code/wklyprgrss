@@ -4,11 +4,17 @@ import { redirect } from "next/navigation";
 import { enrolVenue } from "./actions";
 
 import { Card } from "@/components/Card";
+import { RunCard } from "@/components/close/RunCard";
 import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { previousNight } from "@/lib/close-status";
-import { nightCompliance, type VenueCompliance } from "@/lib/compliance";
+import {
+  nightCompliance,
+  nightTrend,
+  type VenueCompliance,
+} from "@/lib/compliance";
 import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -118,6 +124,22 @@ export default async function LocationsPage() {
       .sort((a, b) => a.code.localeCompare(b.code));
 
   const fails = of("fail");
+
+  // The same run the full report draws, on the screen a manager lands on.
+  const window = nightWindow(30, night);
+  const trend = await nightTrend(window);
+  const points = trend.map((t) => ({
+    weekStart: t.night,
+    percent: t.ticked,
+    approvedPercent: t.signed,
+  }));
+  const ticked = scored.reduce((n, v) => n + v.ticked, 0);
+  const owed = scored.reduce((n, v) => n + v.owed, 0);
+  // Only a comparison when there is something to compare against.
+  const ranked = [...scored].sort((a, b) => b.score - a.score);
+  const best = ranked.length > 1 ? ranked[0] : null;
+  const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
+
   const headline =
     lists === 0
       ? "No lists ran"
@@ -134,6 +156,22 @@ export default async function LocationsPage() {
         <p className="label">{formatNight(night)}</p>
         <h1 className="text-metric mt-2 tracking-normal">Last night</h1>
       </header>
+
+      {lists > 0 ? (
+        <div className="mb-4">
+          <RunCard
+            ticked={ticked}
+            owed={owed}
+            nights={window.length}
+            points={points}
+            failed={failedLists > 0}
+            labelLeft={formatNight(window[0])}
+            labelRight={formatNight(night)}
+            best={best}
+            worst={worst}
+          />
+        </div>
+      ) : null}
 
       <Card
         title="Close checklists"
