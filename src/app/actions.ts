@@ -41,7 +41,7 @@ export async function adminLogin(
   if (!(await isAdminPin(pin))) return { error: GENERIC_ERROR };
 
   await startAdminSession();
-  redirect("/admin");
+  redirect("/home");
 }
 
 export async function logout() {

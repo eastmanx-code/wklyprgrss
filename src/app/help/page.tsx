@@ -13,12 +13,13 @@ export default async function HelpPage() {
   const deadlineLabel = formatDeadline(currentWeekStart());
   // One guide, for the people doing the uploading. There is a single admin and
   // he doesn't need a manual — but he does need to see what staff are told.
-  const isAdmin = session?.role === "admin";
 
   return (
     <main className="rise mx-auto max-w-2xl">
-      <BackLink href={session ? (isAdmin ? "/admin" : "/home") : "/"}>
-        {session ? (isAdmin ? "All venues" : "My items") : "Sign in"}
+      {/* Named for where it goes. Both roles land on the same door now, so
+          "All venues" on a link to it was describing the old destination. */}
+      <BackLink href={session ? "/home" : "/"}>
+        {session ? "Home" : "Sign in"}
       </BackLink>
 
       <header className="mt-4 mb-6">

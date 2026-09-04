@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { closeVenueId } from "@/lib/close-venue";
-import { currentNight } from "@/lib/night";
+import { nightCompliance } from "@/lib/compliance";
+import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import { previousNight } from "@/lib/close-status";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
 import { db } from "@/lib/supabase";
@@ -22,10 +24,10 @@ export const dynamic = "force-dynamic";
  * Each card carries the one number that decides whether you need to open it,
  * so the choice can be made without opening either.
  */
-export default async function LeaderHome() {
+export default async function Home() {
   const session = await getSession();
   if (!session) redirect("/");
-  if (session.role === "admin") redirect("/admin");
+  if (session.role === "admin") return <AdminHome />;
 
   const venue = await getVenue(session.venueId);
   if (!venue) redirect("/");
@@ -120,6 +122,77 @@ export default async function LeaderHome() {
         Lit means something is still open. Deadline{" "}
         {formatDeadline(board.weekStart)}, and the night closes when every list
         is signed.
+      </p>
+    </main>
+  );
+}
+
+/**
+ * The same question asked of an admin, in their order.
+ *
+ * Compliance leads. A leader opens this during a shift and is going to walk a
+ * list or file a photograph; an admin opens it in the morning and the first
+ * thing they want is what went wrong last night, which is a report and not a
+ * task. Putting the week first would put the thing they check on Thursday
+ * above the thing they check every day.
+ *
+ * Last night rather than tonight, for the same reason. At nine in the morning
+ * the night in progress is empty and the night that finished is the one with
+ * the answer in it.
+ */
+async function AdminHome() {
+  // The night with a verdict on it. Before the roll at 4am that is still last
+  // night; after it, the one that just ended.
+  const tonight = currentNight();
+  const night = isNightOver(tonight) ? tonight : previousNight(tonight);
+
+  const venues = await nightCompliance(night);
+  const failingVenues = venues.filter((v) => v.tier === "fail").length;
+  const failedLists = venues.reduce((n, v) => n + v.failed, 0);
+
+  return (
+    <main className="close-flow mx-auto max-w-2xl pb-4">
+      <header className="mt-4 mb-6">
+        <p className="label">Admin</p>
+        <h1 className="text-metric mt-2 font-medium">Where to?</h1>
+      </header>
+
+      <ul className="space-y-3">
+        <Card
+          href={`/close/compliance?night=${night}`}
+          title="Close compliance"
+          lit={failedLists > 0}
+          note={
+            venues.length === 0
+              ? `${formatNight(night)} · no venue was running a list`
+              : failedLists > 0
+                ? `${formatNight(night)} · ${failedLists} ${
+                    failedLists === 1 ? "list" : "lists"
+                  } failed across ${failingVenues} ${
+                    failingVenues === 1 ? "venue" : "venues"
+                  }`
+                : `${formatNight(night)} · nothing failed`
+          }
+        />
+
+        <Card
+          href="/admin"
+          title="Weekly progress"
+          lit={false}
+          note="Every venue's board, and the grading queue"
+        />
+
+        <Card
+          href="/close/locations"
+          title="Checklists"
+          lit={false}
+          note="Pick a location, then a position"
+        />
+      </ul>
+
+      <p className="label mt-6">
+        Lit means something wants looking at. Compliance reads the night that
+        has finished, not the one in progress.
       </p>
     </main>
   );

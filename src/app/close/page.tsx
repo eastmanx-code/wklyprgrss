@@ -7,7 +7,7 @@ import { NewChecklistForm } from "@/components/close/NewChecklistForm";
 import { houseName, roleSlug, type House, type Phase } from "@/lib/checklists";
 import { currentNight, formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
-import { closeVenueId } from "@/lib/close-venue";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -32,6 +32,11 @@ export default async function ChecklistsPage() {
   const night = currentNight();
 
   const venue = await closeVenueId(session);
+  // An admin who has not picked a building yet gets the list of them. This
+  // used to show them one venue chosen in code, with nothing on the page
+  // saying which, which is how an admin edits the wrong venue's list.
+  if (!venue && session.role === "admin") redirect("/close/locations");
+  const venueName = venue ? await closeVenueName(venue) : null;
 
   const { data: listRows } = venue
     ? await db()
@@ -105,7 +110,10 @@ export default async function ChecklistsPage() {
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <header className="mb-5">
-        <p className="label">{formatNight(night)}</p>
+        <p className="label">
+          {venueName ? `${venueName} · ` : ""}
+          {formatNight(night)}
+        </p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
         <p className="label mt-2">
           Pick your position · lit means still open tonight
@@ -222,7 +230,18 @@ export default async function ChecklistsPage() {
 
       <NewChecklistForm />
 
-      <CloseBar back={session.role === "admin" ? "/admin" : "/home"} />
+      {/* The way out of the building you are in. Without it the cookie is a
+          one-way door and the only way back to another venue is the address
+          bar. */}
+      {session.role === "admin" ? (
+        <p className="mt-6">
+          <Link href="/close/locations" className="label hover:text-ink">
+            Switch location
+          </Link>
+        </p>
+      ) : null}
+
+      <CloseBar back="/home" />
     </main>
   );
 }

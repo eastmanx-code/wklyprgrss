@@ -18,8 +18,9 @@ export const dynamic = "force-dynamic";
  */
 export default async function HomePage() {
   const session = await getSession();
-  if (session?.role === "leader") redirect("/home");
-  if (session?.role === "admin") redirect("/admin");
+  // Both roles land on the same door now, which asks which product they are
+  // here for rather than assuming.
+  if (session) redirect("/home");
 
   const venues = await getVenues();
   const deadlineLabel = formatDeadline(currentWeekStart());
