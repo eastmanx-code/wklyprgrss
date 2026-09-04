@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { BackLink } from "@/components/ui";
 import { groupRollup, venueRollup } from "@/lib/rollup";
@@ -234,8 +233,6 @@ export default async function RollupPage() {
           ? `Counted over the last ${nights} nights. An item is open on a night with no tick against it, and every night in the window counts — including the ones nobody opened the list.`
           : "Every figure on this page is invented, to show the shape of the report. It becomes real the night the first checklist is stored."}
       </p>
-
-      <CloseBar back="/close" />
     </main>
   );
 }

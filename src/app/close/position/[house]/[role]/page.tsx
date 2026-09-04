@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import {
   houseName,
   phaseName,
@@ -144,8 +143,6 @@ export default async function PositionPage({
           </li>
         ))}
       </ul>
-
-      <CloseBar back="/close" />
     </main>
   );
 }

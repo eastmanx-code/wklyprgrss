@@ -5,7 +5,6 @@ import { enrolVenue } from "./actions";
 
 import { Card } from "@/components/Card";
 import { RunCard } from "@/components/close/RunCard";
-import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { previousNight } from "@/lib/close-status";
 import {
@@ -118,13 +117,6 @@ export default async function LocationsPage() {
     .filter((v) => (counts.get(v.id) ?? 0) === 0)
     .map(lineFor);
 
-  const of = (tier: "good" | "neutral" | "fail") =>
-    running
-      .filter((r) => r.tier === tier)
-      .sort((a, b) => a.code.localeCompare(b.code));
-
-  const fails = of("fail");
-
   // The same run the full report draws, on the screen a manager lands on.
   const window = nightWindow(30, night);
   const trend = await nightTrend(window);
@@ -140,21 +132,16 @@ export default async function LocationsPage() {
   const best = ranked.length > 1 ? ranked[0] : null;
   const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
 
-  const headline =
-    lists === 0
-      ? "No lists ran"
-      : failedLists > 0
-        ? `${failedLists} ${failedLists === 1 ? "list" : "lists"} failed`
-        : "Nothing failed";
-
   return (
     <main>
       <BackLink href="/home">Home</BackLink>
 
-      {/* The board's own header shape: the period, then the answer. */}
+      {/* Named for what you came to do. It read "Last night", which is what
+          the panel under it reports on, and a page whose heading is a report
+          is a page nobody expects to walk into a list from. */}
       <header className="mt-4 mb-6">
-        <p className="label">{formatNight(night)}</p>
-        <h1 className="text-metric mt-2 tracking-normal">Last night</h1>
+        <p className="label">Checklists · {formatNight(night)}</p>
+        <h1 className="text-metric mt-2 tracking-normal">Open a location</h1>
       </header>
 
       {lists > 0 ? (
@@ -174,43 +161,43 @@ export default async function LocationsPage() {
       ) : null}
 
       <Card
-        title="Close checklists"
-        hint={[
-          `${lists} lists · ${signed} signed`,
-          "good 8 to 10 · neutral 6 or 7 · fail 5 or under",
-        ].join(" · ")}
+        title="Your locations"
+        hint={
+          lists === 0
+            ? "nothing running yet"
+            : `${lists} lists · ${signed} signed last night · tap one to open its lists`
+        }
       >
-        {/* The answer, before the evidence. Same as the weekly card. */}
-        <p
-          className={`text-metric leading-[1.15] ${
-            failedLists > 0 ? "text-warn" : "text-ink"
-          }`}
-        >
-          {headline}
-        </p>
-
-        {lists === 0 ? (
-          <p className="note text-muted mt-4 leading-relaxed">
-            No venue was running a list on {formatNight(night)}. This fills in
-            from the first night somebody signs one.
+        {running.length === 0 && idle.length === 0 ? (
+          <p className="note text-muted leading-relaxed">
+            No venue is in the close yet. Add one below and write its first
+            list.
           </p>
         ) : (
+          /* One list, worst first, no tier headings.
+           *
+           * The headings were the whole problem: grouped under Fail and
+           * Neutral and Good, with a score in a fixed column, the venues read
+           * as rows of a report rather than as the doors they are, and the
+           * only way into a checklist stopped looking like a way into
+           * anything. The score stays, because knowing which building needs
+           * you is why the order is what it is. The arrow says it opens. */
+          <ul className="-mx-3 space-y-[2px]">
+            {[...running, ...idle].map((row) => (
+              <VenueBar key={row.id} row={row} />
+            ))}
+          </ul>
+        )}
+
+        {lists > 0 ? (
           <Link
             href={`/close/compliance?night=${night}`}
-            className="ring-card-border text-ink mt-6 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
+            className="ring-card-border text-ink mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
           >
             Full report
             <span className="text-muted">who signed, what was left</span>
           </Link>
-        )}
-
-        <Tier title="Fail" rows={fails} />
-        <Tier title="Neutral" rows={of("neutral")} />
-        <Tier title="Good" rows={of("good")} />
-        {/* Not a tier. A venue with no list is not failing the programme, it
-            is not in it, and it is listed because that is where somebody goes
-            to write the first one. */}
-        <Tier title="In the programme, nothing written" rows={idle} />
+        ) : null}
       </Card>
 
       {/* Folded away. Adding a building is a thing you do once, and twenty
@@ -251,26 +238,7 @@ export default async function LocationsPage() {
           </ul>
         </details>
       ) : null}
-
-      <CloseBar back="/home" />
     </main>
-  );
-}
-
-/** A group heading and its rows, or nothing when the group is empty. */
-function Tier({ title, rows }: { title: string; rows: Row[] }) {
-  if (rows.length === 0) return null;
-  return (
-    <div className="mt-6">
-      <p className="label border-divider border-t pt-4">
-        {title} · {rows.length}
-      </p>
-      <ul className="-mx-3 mt-2 space-y-[2px]">
-        {rows.map((row) => (
-          <VenueBar key={row.id} row={row} />
-        ))}
-      </ul>
-    </div>
   );
 }
 
@@ -319,6 +287,9 @@ function VenueBar({ row }: { row: Row }) {
           }`}
         >
           {row.note}
+        </span>
+        <span className="shrink-0" aria-hidden>
+          →
         </span>
       </Link>
     </li>

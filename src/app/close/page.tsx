@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import { MissedList } from "@/components/close/MissedList";
 import { NewChecklistForm } from "@/components/close/NewChecklistForm";
 import { houseName, roleSlug, type House, type Phase } from "@/lib/checklists";
@@ -10,6 +9,7 @@ import { venueRollup } from "@/lib/rollup";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
+import { BackLink } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -109,6 +109,12 @@ export default async function ChecklistsPage() {
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
+      {/* The only close screen that had no way back at the top: it leaned on
+          the bar at the foot, and the bar is gone. */}
+      <BackLink href={session.role === "admin" ? "/close/locations" : "/home"}>
+        {session.role === "admin" ? "All locations" : "Home"}
+      </BackLink>
+
       <header className="mb-5">
         <p className="label">
           {venueName ? `${venueName} · ` : ""}
@@ -240,8 +246,6 @@ export default async function ChecklistsPage() {
           </Link>
         </p>
       ) : null}
-
-      <CloseBar back="/home" />
     </main>
   );
 }

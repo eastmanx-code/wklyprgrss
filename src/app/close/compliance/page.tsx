@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { Card } from "@/components/Card";
 import { RunCard } from "@/components/close/RunCard";
-import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { NightStrip, ScoreBar } from "@/components/close/Compliance";
 import {
@@ -209,8 +208,6 @@ export default async function CompliancePage({
           </p>
         </Card>
       </div>
-
-      <CloseBar back={back} />
     </main>
   );
 }
