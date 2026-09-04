@@ -38,7 +38,7 @@ export default async function BoardPage() {
           </h1>
         </div>
         <Link
-          href={session.role === "admin" ? "/admin" : "/venue"}
+          href={session.role === "admin" ? "/admin" : "/home"}
           className="btn-ghost"
         >
           {session.role === "admin" ? "Admin" : "My venue"}

@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
  */
 export default async function HomePage() {
   const session = await getSession();
-  if (session?.role === "leader") redirect("/venue");
+  if (session?.role === "leader") redirect("/home");
   if (session?.role === "admin") redirect("/admin");
 
   const venues = await getVenues();
