@@ -21,11 +21,11 @@ export async function CornerMenu() {
   const session = await getSession();
   const deadlineMs = deadlineFor(currentWeekStart()).getTime();
 
-  // Admin's home already lists every venue, so a separate Board link would go
-  // to a read-only copy of the page they're on. Leaders get both: their own
-  // board, and everyone's.
+  // Home is the same door for both roles now: the screen that asks which
+  // product you are here for. What differs is the second link. An admin's
+  // "all venues" is the grading board; a leader's is everybody's scores.
   const isAdmin = session?.role === "admin";
-  const home = session ? (isAdmin ? "/admin" : "/home") : null;
+  const home = session ? "/home" : null;
 
   return (
     /* Sized to its content now rather than pinned across the phone, so the
@@ -58,13 +58,16 @@ export async function CornerMenu() {
 
           {home ? (
             <Link href={home} className="btn-ghost">
-              {isAdmin ? "All venues" : "Mine"}
+              Home
             </Link>
           ) : null}
 
-          {session && !isAdmin ? (
-            <Link href="/board" className="btn-ghost">
-              All
+          {session ? (
+            <Link
+              href={isAdmin ? "/admin" : "/board"}
+              className="btn-ghost whitespace-nowrap"
+            >
+              {isAdmin ? "All venues" : "All"}
             </Link>
           ) : null}
 
