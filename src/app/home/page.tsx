@@ -79,12 +79,16 @@ export default async function Home() {
   const nightOpen = lists.length > 0 && signed < lists.length;
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <header className="mt-4 mb-6">
-        <p className="label">
+    <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
+      {/* Centred, the way the sign-in page is. This is the same kind of
+          screen: one question, two answers, nothing to scroll. Left-aligned
+          at the top of a tall page it read as the start of a list that never
+          came. */}
+      <header className="mb-8">
+        <p className="label text-center">
           {venue.name && venue.name !== venue.code ? venue.name : venue.code}
         </p>
-        <h1 className="text-metric mt-2 font-medium">Where to?</h1>
+        <h1 className="text-metric mt-2 text-center font-medium">Where to?</h1>
       </header>
 
       <ul className="space-y-3">
@@ -118,10 +122,8 @@ export default async function Home() {
         />
       </ul>
 
-      <p className="label mt-6">
-        Lit means something is still open. Deadline{" "}
-        {formatDeadline(board.weekStart)}, and the night closes when every list
-        is signed.
+      <p className="label mt-6 text-center">
+        Lit means something is still open.
       </p>
     </main>
   );
@@ -151,16 +153,20 @@ async function AdminHome() {
   const failedLists = venues.reduce((n, v) => n + v.failed, 0);
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <header className="mt-4 mb-6">
-        <p className="label">Admin</p>
-        <h1 className="text-metric mt-2 font-medium">Where to?</h1>
+    <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
+      <header className="mb-8">
+        <p className="label text-center">Admin</p>
+        <h1 className="text-metric mt-2 text-center font-medium">Where to?</h1>
       </header>
 
+      {/* Two doors, not three. Compliance is not a third product, it is the
+          report on the checklists, and it lives inside them the way the
+          rollup always has. What it earns out here is the card's second line:
+          last night's verdict, which is the reason to open the thing. */}
       <ul className="space-y-3">
         <Card
-          href={`/close/compliance?night=${night}`}
-          title="Close compliance"
+          href="/close/locations"
+          title="Checklists"
           lit={failedLists > 0}
           note={
             venues.length === 0
@@ -181,18 +187,10 @@ async function AdminHome() {
           lit={false}
           note="Every venue's board, and the grading queue"
         />
-
-        <Card
-          href="/close/locations"
-          title="Checklists"
-          lit={false}
-          note="Pick a location, then a position"
-        />
       </ul>
 
-      <p className="label mt-6">
-        Lit means something wants looking at. Compliance reads the night that
-        has finished, not the one in progress.
+      <p className="label mt-6 text-center">
+        Lit means something wants looking at.
       </p>
     </main>
   );

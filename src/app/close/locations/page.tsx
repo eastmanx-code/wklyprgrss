@@ -3,32 +3,40 @@ import { redirect } from "next/navigation";
 
 import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
+import { previousNight } from "@/lib/close-status";
+import { nightCompliance } from "@/lib/compliance";
+import { currentNight, formatNight, isNightOver } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Which building, before which position.
+ * How the buildings did, and which one you want.
  *
- * An admin has no venue of their own, so every checklist screen used to show
- * them one venue picked in code. This is the step that was missing: locations,
- * then the positions in that location, then the list. A leader never sees it,
- * because a leader has exactly one answer to the question.
+ * Compliance is not a third product sitting beside the checklists, it is the
+ * report on them, so it leads this page rather than owning a card of its own
+ * on the way in. The rollup at the top is last night across the group; every
+ * venue below carries its own score for the same night, so the list you pick
+ * a location from is also the list that says which location needs you.
  *
- * Venues with lists lead. Twenty-one codes in one column, twenty of them dead,
- * is a page you have to read rather than scan.
+ * A leader never sees this. They have one building and the app already knows
+ * which.
  */
 export default async function LocationsPage() {
   const session = await getSession();
   if (!session) redirect("/");
-  // A leader has one venue and it is already theirs. Sending them here would
-  // be a list of one, or worse, a list of everybody else's.
   if (session.role !== "admin") redirect("/close");
 
-  const [{ data: venueRows }, { data: listRows }] = await Promise.all([
+  // The night with a verdict on it. Before the roll at 4am that is still last
+  // night; after it, the one that just ended.
+  const tonight = currentNight();
+  const night = isNightOver(tonight) ? tonight : previousNight(tonight);
+
+  const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
     db().from("venues").select("id, code, name").order("code"),
     db().from("close_checklists").select("venue_id").eq("active", true),
+    nightCompliance(night),
   ]);
 
   const venues = (venueRows ?? []) as {
@@ -42,46 +50,125 @@ export default async function LocationsPage() {
     counts.set(row.venue_id, (counts.get(row.venue_id) ?? 0) + 1);
   }
 
-  const withLists = venues.filter((v) => (counts.get(v.id) ?? 0) > 0);
-  const without = venues.filter((v) => (counts.get(v.id) ?? 0) === 0);
+  const scoreOf = new Map(scored.map((v) => [v.code, v]));
+
+  const failedLists = scored.reduce((n, v) => n + v.failed, 0);
+  const failingVenues = scored.filter((v) => v.tier === "fail").length;
+  const signed = scored.reduce((n, v) => n + v.listsSigned, 0);
+  const lists = scored.reduce((n, v) => n + v.listsTotal, 0);
 
   const nameOf = (v: { code: string; name: string | null }) =>
     v.name && v.name !== v.code ? v.name : v.code;
+
+  /** Running a list, worst night first. Then everybody else. */
+  const withLists = venues
+    .filter((v) => (counts.get(v.id) ?? 0) > 0)
+    .sort((a, b) => {
+      const order = { fail: 0, neutral: 1, good: 2 } as const;
+      const sa = scoreOf.get(a.code);
+      const sb = scoreOf.get(b.code);
+      if (!sa || !sb) return a.code.localeCompare(b.code);
+      return (
+        order[sa.tier] - order[sb.tier] ||
+        sa.score - sb.score ||
+        a.code.localeCompare(b.code)
+      );
+    });
+  const without = venues.filter((v) => (counts.get(v.id) ?? 0) === 0);
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <BackLink href="/home">Home</BackLink>
 
       <header className="mt-4 mb-5">
-        <p className="label">Checklists</p>
-        <h1 className="text-metric mt-2 font-medium">Pick a location</h1>
+        <p className="label">Checklists · {formatNight(night)}</p>
+        <h1 className="text-metric mt-2 font-medium">Last night</h1>
       </header>
 
-      {withLists.length === 0 ? (
-        <section className="panel">
-          <h2 className="card-title">Nothing written yet</h2>
+      {/* The rollup, above the picker. Whoever opens this at nine in the
+          morning wants the verdict before the menu, and a report you have to
+          go and ask for is a report nobody reads. */}
+      {lists === 0 ? (
+        <section className="panel-quiet mb-6">
+          <h2 className="card-title">Nothing to report</h2>
           <p className="note text-muted mt-2 leading-relaxed">
-            No venue has a checklist on it. Pick one below and start the first
-            list.
+            No venue was running a list on {formatNight(night)}. This fills in
+            from the first night somebody signs one.
           </p>
         </section>
       ) : (
-        <section>
-          <h2 className="card-title">Running lists</h2>
-          <ul className="mt-3 space-y-2">
-            {withLists.map((venue) => (
+        <section className="panel border-warn/30 mb-6">
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <p className="text-metric tabular-nums">
+                {signed}
+                <span className="text-muted">/{lists}</span>
+              </p>
+              <p className="label mt-1">Lists signed</p>
+            </div>
+            <div>
+              <p
+                className={`text-metric tabular-nums ${
+                  failedLists > 0 ? "text-warn" : ""
+                }`}
+              >
+                {failedLists}
+              </p>
+              <p className="label mt-1">Lists failed</p>
+            </div>
+            <div>
+              <p
+                className={`text-metric tabular-nums ${
+                  failingVenues > 0 ? "text-warn" : ""
+                }`}
+              >
+                {failingVenues}
+              </p>
+              <p className="label mt-1">Venues failing</p>
+            </div>
+          </div>
+
+          {/* Wraps as two lines rather than two ragged halves of one. At 390
+              the hint could not sit beside the label and broke mid-phrase, so
+              it gets its own line and the whole thing stays one target. */}
+          <Link
+            href={`/close/compliance?night=${night}`}
+            className="ring-card-border text-ink mt-4 flex min-h-11 flex-col justify-center gap-0.5 rounded px-4 py-2 text-label tracking-[0.08em] ring-1 sm:inline-flex sm:flex-row sm:items-center sm:gap-2"
+          >
+            <span>Full report</span>
+            <span className="text-muted">who signed, what was left</span>
+          </Link>
+        </section>
+      )}
+
+      <h2 className="card-title">Pick a location</h2>
+
+      {withLists.length === 0 ? (
+        <p className="note text-muted mt-2 leading-relaxed">
+          No venue has a checklist on it. Pick one below and start the first
+          list.
+        </p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {withLists.map((venue) => {
+            const row = scoreOf.get(venue.code);
+            return (
               <li key={venue.id}>
                 <VenueLink
                   id={venue.id}
                   name={nameOf(venue)}
                   code={venue.code}
-                  lists={counts.get(venue.id) ?? 0}
-                  lit
+                  failed={row?.tier === "fail"}
+                  note={
+                    row
+                      ? `${row.score}/10 · ${row.listsSigned} of ${row.listsTotal} signed`
+                      : `${counts.get(venue.id) ?? 0} lists`
+                  }
                 />
               </li>
-            ))}
-          </ul>
-        </section>
+            );
+          })}
+        </ul>
       )}
 
       {/* Still listed, still openable. A venue with no lists is where somebody
@@ -97,7 +184,8 @@ export default async function LocationsPage() {
                   id={venue.id}
                   name={nameOf(venue)}
                   code={venue.code}
-                  lists={0}
+                  failed={false}
+                  note="Start one"
                 />
               </li>
             ))}
@@ -114,20 +202,20 @@ function VenueLink({
   id,
   name,
   code,
-  lists,
-  lit = false,
+  note,
+  failed,
 }: {
   id: string;
   name: string;
   code: string;
-  lists: number;
-  lit?: boolean;
+  note: string;
+  failed: boolean;
 }) {
   return (
     <Link
       href={`/close/enter/${id}`}
       className={`flex min-h-14 flex-wrap items-baseline gap-x-3 gap-y-1 rounded-[4px] px-4 py-3 ${
-        lit
+        failed
           ? "bg-warn text-on-warn hover:bg-warn/90"
           : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
       }`}
@@ -136,20 +224,18 @@ function VenueLink({
       {name === code ? null : (
         <span
           className={`text-label tracking-[0.08em] ${
-            lit ? "text-on-warn" : "text-muted"
+            failed ? "text-on-warn" : "text-muted"
           }`}
         >
           {code}
         </span>
       )}
       <span
-        className={`ml-auto text-label tracking-[0.08em] ${
-          lit ? "text-on-warn" : "text-muted"
+        className={`ml-auto text-label tabular-nums tracking-[0.08em] ${
+          failed ? "text-on-warn" : "text-muted"
         }`}
       >
-        {lists === 0
-          ? "Start one"
-          : `${lists} ${lists === 1 ? "list" : "lists"}`}
+        {note}
       </span>
     </Link>
   );
