@@ -99,13 +99,17 @@ export default async function LocationsPage() {
       score: row ? `${row.score}/10` : "—",
       tier: row?.tier ?? null,
       note: row
-        ? `${row.listsSigned} of ${row.listsTotal} signed${
-            row.failed > 0
-              ? ` · ${row.failed} failed`
+        ? [
+            `${row.listsSigned} of ${row.listsTotal} signed`,
+            ...(row.failed > 0
+              ? [`${row.failed} failed`]
               : row.owed > row.ticked
-                ? ` · ${row.owed - row.ticked} open`
-                : ""
-          }`
+                ? [`${row.owed - row.ticked} open`]
+                : []),
+            // The sharper of the two signals, so it survives to the screen an
+            // admin lands on rather than waiting two taps in.
+            ...(row.bursted > 0 ? [`${row.bursted} not walked`] : []),
+          ].join(" · ")
         : "No lists yet",
     };
   };

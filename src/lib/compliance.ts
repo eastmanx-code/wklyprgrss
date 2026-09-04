@@ -2,7 +2,8 @@ import "server-only";
 
 import { closeStatus, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
-import { currentNight, isNightOver } from "./night";
+import { currentNight, isNightOver, nightEndsAt, shiftNights } from "./night";
+import { paceOf, type Pace } from "./pace";
 import { tierOf } from "./status";
 
 /**
@@ -33,6 +34,17 @@ export type ListVerdict = {
   state: ListState;
   /** Why, in the words the row itself justifies. Shown on the list. */
   reason: string;
+  /**
+   * The pace, when it is worth saying out loud, and null when it is not.
+   *
+   * Kept apart from `state` on purpose. A list ticked three seconds an item
+   * was not walked, but there are honest ways to produce that: a cook who
+   * worked off paper and entered it after, a manager catching up a section
+   * they stood and watched. Folding it into Fail would put the report in an
+   * argument it cannot win. It sits next to the verdict instead, and a person
+   * decides.
+   */
+  flag: string | null;
 };
 
 export type VenueCompliance = {
@@ -46,6 +58,8 @@ export type VenueCompliance = {
   listsSigned: number;
   listsTotal: number;
   failed: number;
+  /** Lists whose ticks arrived too fast to have been a walk. */
+  bursted: number;
 };
 
 /** The ten-point scale the weekly board already uses. */
@@ -67,9 +81,15 @@ export function verdictOf(
   row: CloseStatusRow,
   nightOver: boolean,
 ): ListVerdict {
+  // Said once, carried on every branch. A list can be a clean pass and still
+  // have been thumbed through, which is exactly the case a verdict alone
+  // cannot express.
+  const flag = row.pace.burst ? row.pace.note : null;
+
   if (row.empty) {
     return {
       row,
+      flag,
       state: "empty",
       reason: `${row.role} · nothing written on it yet`,
     };
@@ -82,12 +102,14 @@ export function verdictOf(
     if (row.open > 0) {
       return {
         row,
+        flag,
         state: "fail",
         reason: `${row.role} · signed${signed} with ${row.open} still open`,
       };
     }
     return {
       row,
+      flag,
       state: "pass",
       reason: `${row.role} · ${row.ticked} of ${row.items_on_list} · signed${signed}`,
     };
@@ -96,6 +118,7 @@ export function verdictOf(
   if (row.untouched) {
     return {
       row,
+      flag,
       state: nightOver ? "fail" : "open",
       reason: nightOver
         ? `${row.role} · never opened · 0 of ${row.items_on_list}`
@@ -105,6 +128,7 @@ export function verdictOf(
 
   return {
     row,
+    flag,
     state: nightOver ? "fail" : "open",
     reason: nightOver
       ? `${row.role} · ${row.ticked} of ${row.items_on_list} · nobody signed`
@@ -169,6 +193,7 @@ export async function nightCompliance(
       listsSigned: counted.filter((r) => r.certified).length,
       listsTotal: counted.length,
       failed: lists.filter((l) => l.state === "fail").length,
+      bursted: counted.filter((r) => r.pace.burst).length,
     });
   }
 
@@ -208,6 +233,8 @@ export type ListDetail = {
   /** The last tick of the night, which is when work actually stopped. */
   lastTickAt: string | null;
   reopened: number;
+  /** How the ticks arrived: the pace of them, and how late they landed. */
+  pace: Pace;
 };
 
 /**
@@ -269,13 +296,14 @@ export async function listDetail(
     item_id: string;
     initials: string | null;
     created_at: string;
+    client_at: string | null;
   }[] = [];
   let proof: { item_id: string }[] = [];
   if (stored) {
     const [t, p] = await Promise.all([
       db()
         .from("close_ticks")
-        .select("item_id, initials, created_at")
+        .select("item_id, initials, created_at, client_at")
         .eq("night_id", stored.id),
       db().from("close_proof").select("item_id").eq("night_id", stored.id),
     ]);
@@ -328,6 +356,10 @@ export async function listDetail(
       : null,
     lastTickAt: times.length > 0 ? times[times.length - 1] : null,
     reopened: Array.isArray(stored?.history) ? stored.history.length : 0,
+    pace: paceOf(
+      ticks.map((t) => ({ at: t.created_at, claimedAt: t.client_at })),
+      { start: nightEndsAt(shiftNights(night, -1)), end: nightEndsAt(night) },
+    ),
   };
 }
 

@@ -2,6 +2,7 @@ import "server-only";
 
 import { db } from "./supabase";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
+import { paceOf, type Pace } from "./pace";
 
 /**
  * Where every checklist stands, right now.
@@ -40,6 +41,15 @@ export type CloseStatusRow = {
   signed_with_gaps: boolean;
   /** How many times a signature on this night has been undone and redone. */
   reopened: number;
+  /**
+   * How the ticks arrived, rather than how many.
+   *
+   * Every other column here answers "did it get done" and none of them can
+   * tell a room that was checked from a screen that was thumbed through at
+   * the bar. Carried on the row so the reports get it for free: the ticks
+   * were already being fetched to be counted.
+   */
+  pace: Pace;
 };
 
 export async function closeStatus(
@@ -98,25 +108,43 @@ export async function closeStatus(
     history: unknown[] | null;
   }[];
 
-  let ticks: { night_id: string; item_id: string }[] = [];
+  // Two more columns on a query that was already running. The timestamps are
+  // what the pace is read from, and fetching them separately would be a
+  // second round trip for rows already in hand.
+  let ticks: {
+    night_id: string;
+    item_id: string;
+    created_at: string;
+    client_at: string | null;
+  }[] = [];
   if (nights.length > 0) {
     const { data: tickRows } = await db()
       .from("close_ticks")
-      .select("night_id, item_id")
+      .select("night_id, item_id, created_at, client_at")
       .in(
         "night_id",
         nights.map((n) => n.id),
       );
-    ticks = (tickRows ?? []) as { night_id: string; item_id: string }[];
+    ticks = (tickRows ?? []) as typeof ticks;
   }
 
   const nightOf = new Map(nights.map((n) => [n.checklist_id, n]));
   const tickedOn = new Map<string, number>();
+  const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
   for (const t of ticks) {
     tickedOn.set(t.night_id, (tickedOn.get(t.night_id) ?? 0) + 1);
+    const held = timesOn.get(t.night_id);
+    const stamp = { at: t.created_at, claimedAt: t.client_at };
+    if (held) held.push(stamp);
+    else timesOn.set(t.night_id, [stamp]);
   }
 
-  const endsAt = nightEndsAt(night).toISOString();
+  const ends = nightEndsAt(night);
+  const endsAt = ends.toISOString();
+  // The night's own bounds, for catching a device clock claiming a time the
+  // night never contained. A night runs from one 4am roll to the next.
+  const window = { start: nightEndsAt(shiftNights(night, -1)), end: ends };
+  const NO_TICKS = paceOf([]);
 
   return checklists
     .filter((list) => code.has(list.venue_id))
@@ -143,6 +171,7 @@ export async function closeStatus(
         certified_at: row?.certified_at ?? null,
         signed_with_gaps: certified && ticked < owed,
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
+        pace: row ? paceOf(timesOn.get(row.id) ?? [], window) : NO_TICKS,
       };
     })
     .sort(

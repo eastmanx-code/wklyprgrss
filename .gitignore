@@ -46,3 +46,4 @@ next-env.d.ts
 
 # npm run check-rollup compiles the pure module here
 .rollup-check
+.pace-check
