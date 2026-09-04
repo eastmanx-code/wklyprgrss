@@ -132,13 +132,25 @@ export default async function ChecklistsPage() {
             )}
           </div>
 
-          <Link
-            href="/close/rollup"
-            className="ring-card-border text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
-          >
-            Full report
-            <span className="text-muted">by role, by night, by venue</span>
-          </Link>
+          {/* Two reports, two questions. This one is the month; the other is
+              last night, which is the one somebody opens at ten in the
+              morning wanting to know who signed what. */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              href="/close/compliance"
+              className="bg-inset text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+            >
+              Last night
+              <span className="text-muted">what failed, who signed</span>
+            </Link>
+            <Link
+              href="/close/rollup"
+              className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+            >
+              Full report
+              <span className="text-muted">by role, by night, by venue</span>
+            </Link>
+          </div>
         </section>
       ) : (
         <section className="panel-quiet mb-5">
@@ -147,6 +159,16 @@ export default async function ChecklistsPage() {
             Nothing signed off yet. This fills in from the first night somebody
             signs a list and shows what keeps being left open.
           </p>
+          {/* Reachable before the first signature, deliberately. Until one
+              exists, the night report is the only screen that can say nobody
+              has opened anything, which is the thing worth knowing. */}
+          <Link
+            href="/close/compliance"
+            className="bg-inset text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+          >
+            Last night
+            <span className="text-muted">what failed, who signed</span>
+          </Link>
         </section>
       )}
 

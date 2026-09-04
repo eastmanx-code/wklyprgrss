@@ -15,6 +15,8 @@ import { currentNight, nightEndsAt, shiftNights } from "./night";
  */
 export type CloseStatusRow = {
   night: string;
+  /** The list itself, so a report can link to the night it is describing. */
+  checklist_id: string;
   night_ends_at: string;
   venue_code: string;
   house: "FOH" | "HOH";
@@ -125,6 +127,7 @@ export async function closeStatus(
       const certified = Boolean(row?.certified_at);
       return {
         night,
+        checklist_id: list.id,
         night_ends_at: endsAt,
         venue_code: code.get(list.venue_id) ?? "—",
         house: list.house,
