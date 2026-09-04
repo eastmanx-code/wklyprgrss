@@ -1,27 +1,40 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Card } from "@/components/Card";
 import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { previousNight } from "@/lib/close-status";
-import { nightCompliance } from "@/lib/compliance";
+import { nightCompliance, type VenueCompliance } from "@/lib/compliance";
 import { currentNight, formatNight, isNightOver } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+type Row = {
+  id: string;
+  code: string;
+  score: string;
+  tier: "good" | "neutral" | "fail" | null;
+  note: string;
+};
+
 /**
- * How the buildings did, and which one you want.
+ * How the buildings did last night, and which one you want.
  *
- * Compliance is not a third product sitting beside the checklists, it is the
- * report on them, so it leads this page rather than owning a card of its own
- * on the way in. The rollup at the top is last night across the group; every
- * venue below carries its own score for the same night, so the list you pick
- * a location from is also the list that says which location needs you.
+ * Written in the weekly board's language on purpose. It is the same company,
+ * the same three tiers, the same lime bar for a fail, and somebody who has
+ * read "Everyone's progress" already knows how to read this: a headline, then
+ * groups worst first, then a bar per row with the number in a fixed column
+ * down the left. A second product that invents its own layout is a second
+ * product to learn.
  *
- * A leader never sees this. They have one building and the app already knows
- * which.
+ * Compliance is not a separate destination either. It is the report on the
+ * checklists, so it leads the page you pick a location from: the picker is
+ * the report.
+ *
+ * A leader never sees this. They have one building and the app knows which.
  */
 export default async function LocationsPage() {
   const session = await getSession();
@@ -50,193 +63,170 @@ export default async function LocationsPage() {
     counts.set(row.venue_id, (counts.get(row.venue_id) ?? 0) + 1);
   }
 
-  const scoreOf = new Map(scored.map((v) => [v.code, v]));
+  const scoreOf = new Map<string, VenueCompliance>(
+    scored.map((v) => [v.code, v]),
+  );
 
   const failedLists = scored.reduce((n, v) => n + v.failed, 0);
-  const failingVenues = scored.filter((v) => v.tier === "fail").length;
   const signed = scored.reduce((n, v) => n + v.listsSigned, 0);
   const lists = scored.reduce((n, v) => n + v.listsTotal, 0);
 
-  const nameOf = (v: { code: string; name: string | null }) =>
-    v.name && v.name !== v.code ? v.name : v.code;
+  const lineFor = (venue: (typeof venues)[number]): Row => {
+    const row = scoreOf.get(venue.code);
+    return {
+      id: venue.id,
+      code: venue.code,
+      score: row ? `${row.score}/10` : "—",
+      tier: row?.tier ?? null,
+      note: row
+        ? `${row.listsSigned} of ${row.listsTotal} signed${
+            row.failed > 0
+              ? ` · ${row.failed} failed`
+              : row.owed > row.ticked
+                ? ` · ${row.owed - row.ticked} open`
+                : ""
+          }`
+        : "No lists yet",
+    };
+  };
 
-  /** Running a list, worst night first. Then everybody else. */
-  const withLists = venues
+  const running = venues
     .filter((v) => (counts.get(v.id) ?? 0) > 0)
-    .sort((a, b) => {
-      const order = { fail: 0, neutral: 1, good: 2 } as const;
-      const sa = scoreOf.get(a.code);
-      const sb = scoreOf.get(b.code);
-      if (!sa || !sb) return a.code.localeCompare(b.code);
-      return (
-        order[sa.tier] - order[sb.tier] ||
-        sa.score - sb.score ||
-        a.code.localeCompare(b.code)
-      );
-    });
-  const without = venues.filter((v) => (counts.get(v.id) ?? 0) === 0);
+    .map(lineFor);
+  const idle = venues.filter((v) => (counts.get(v.id) ?? 0) === 0).map(lineFor);
+
+  const of = (tier: "good" | "neutral" | "fail") =>
+    running
+      .filter((r) => r.tier === tier)
+      .sort((a, b) => a.code.localeCompare(b.code));
+
+  const fails = of("fail");
+  const headline =
+    lists === 0
+      ? "No lists ran"
+      : failedLists > 0
+        ? `${failedLists} ${failedLists === 1 ? "list" : "lists"} failed`
+        : "Nothing failed";
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
+    <main>
       <BackLink href="/home">Home</BackLink>
 
-      <header className="mt-4 mb-5">
-        <p className="label">Checklists · {formatNight(night)}</p>
-        <h1 className="text-metric mt-2 font-medium">Last night</h1>
+      {/* The board's own header shape: the period, then the answer. */}
+      <header className="mt-4 mb-6">
+        <p className="label">{formatNight(night)}</p>
+        <h1 className="text-metric mt-2 tracking-normal">Last night</h1>
       </header>
 
-      {/* The rollup, above the picker. Whoever opens this at nine in the
-          morning wants the verdict before the menu, and a report you have to
-          go and ask for is a report nobody reads. */}
-      {lists === 0 ? (
-        <section className="panel-quiet mb-6">
-          <h2 className="card-title">Nothing to report</h2>
-          <p className="note text-muted mt-2 leading-relaxed">
+      <Card
+        title="Close checklists"
+        hint={[
+          `${lists} lists · ${signed} signed`,
+          "good 8 to 10 · neutral 6 or 7 · fail 5 or under",
+        ].join(" · ")}
+      >
+        {/* The answer, before the evidence. Same as the weekly card. */}
+        <p
+          className={`text-metric leading-[1.15] ${
+            failedLists > 0 ? "text-warn" : "text-ink"
+          }`}
+        >
+          {headline}
+        </p>
+
+        {lists === 0 ? (
+          <p className="note text-muted mt-4 leading-relaxed">
             No venue was running a list on {formatNight(night)}. This fills in
             from the first night somebody signs one.
           </p>
-        </section>
-      ) : (
-        <section className="panel border-warn/30 mb-6">
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <p className="text-metric tabular-nums">
-                {signed}
-                <span className="text-muted">/{lists}</span>
-              </p>
-              <p className="label mt-1">Lists signed</p>
-            </div>
-            <div>
-              <p
-                className={`text-metric tabular-nums ${
-                  failedLists > 0 ? "text-warn" : ""
-                }`}
-              >
-                {failedLists}
-              </p>
-              <p className="label mt-1">Lists failed</p>
-            </div>
-            <div>
-              <p
-                className={`text-metric tabular-nums ${
-                  failingVenues > 0 ? "text-warn" : ""
-                }`}
-              >
-                {failingVenues}
-              </p>
-              <p className="label mt-1">Venues failing</p>
-            </div>
-          </div>
-
-          {/* Wraps as two lines rather than two ragged halves of one. At 390
-              the hint could not sit beside the label and broke mid-phrase, so
-              it gets its own line and the whole thing stays one target. */}
+        ) : (
           <Link
             href={`/close/compliance?night=${night}`}
-            className="ring-card-border text-ink mt-4 flex min-h-11 flex-col justify-center gap-0.5 rounded px-4 py-2 text-label tracking-[0.08em] ring-1 sm:inline-flex sm:flex-row sm:items-center sm:gap-2"
+            className="ring-card-border text-ink mt-6 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
           >
-            <span>Full report</span>
+            Full report
             <span className="text-muted">who signed, what was left</span>
           </Link>
-        </section>
-      )}
+        )}
 
-      <h2 className="card-title">Pick a location</h2>
-
-      {withLists.length === 0 ? (
-        <p className="note text-muted mt-2 leading-relaxed">
-          No venue has a checklist on it. Pick one below and start the first
-          list.
-        </p>
-      ) : (
-        <ul className="mt-3 space-y-2">
-          {withLists.map((venue) => {
-            const row = scoreOf.get(venue.code);
-            return (
-              <li key={venue.id}>
-                <VenueLink
-                  id={venue.id}
-                  name={nameOf(venue)}
-                  code={venue.code}
-                  failed={row?.tier === "fail"}
-                  note={
-                    row
-                      ? `${row.score}/10 · ${row.listsSigned} of ${row.listsTotal} signed`
-                      : `${counts.get(venue.id) ?? 0} lists`
-                  }
-                />
-              </li>
-            );
-          })}
-        </ul>
-      )}
-
-      {/* Still listed, still openable. A venue with no lists is where somebody
-          goes to write the first one, so hiding it would hide the only way to
-          start. Quiet, because it is not where the work is. */}
-      {without.length > 0 ? (
-        <section className="mt-6">
-          <h2 className="card-title">No lists yet</h2>
-          <ul className="mt-3 space-y-2">
-            {without.map((venue) => (
-              <li key={venue.id}>
-                <VenueLink
-                  id={venue.id}
-                  name={nameOf(venue)}
-                  code={venue.code}
-                  failed={false}
-                  note="Start one"
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+        <Tier title="Fail" rows={fails} />
+        <Tier title="Neutral" rows={of("neutral")} />
+        <Tier title="Good" rows={of("good")} />
+        {/* Not a tier. A venue with no list is not failing the programme, it
+            is not in it, and it is listed because that is where somebody goes
+            to write the first one. */}
+        <Tier title="No lists yet" rows={idle} />
+      </Card>
 
       <CloseBar back="/home" />
     </main>
   );
 }
 
-function VenueLink({
-  id,
-  name,
-  code,
-  note,
-  failed,
-}: {
-  id: string;
-  name: string;
-  code: string;
-  note: string;
-  failed: boolean;
-}) {
+/** A group heading and its rows, or nothing when the group is empty. */
+function Tier({ title, rows }: { title: string; rows: Row[] }) {
+  if (rows.length === 0) return null;
   return (
-    <Link
-      href={`/close/enter/${id}`}
-      className={`flex min-h-14 flex-wrap items-baseline gap-x-3 gap-y-1 rounded-[4px] px-4 py-3 ${
-        failed
-          ? "bg-warn text-on-warn hover:bg-warn/90"
-          : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
-      }`}
-    >
-      <span className="text-body tracking-[0.06em]">{name}</span>
-      {name === code ? null : (
-        <span
-          className={`text-label tracking-[0.08em] ${
-            failed ? "text-on-warn" : "text-muted"
-          }`}
-        >
-          {code}
-        </span>
-      )}
-      <span
-        className={`ml-auto text-label tabular-nums tracking-[0.08em] ${
-          failed ? "text-on-warn" : "text-muted"
+    <div className="mt-6">
+      <p className="label border-divider border-t pt-4">
+        {title} · {rows.length}
+      </p>
+      <ul className="-mx-3 mt-2 space-y-[2px]">
+        {rows.map((row) => (
+          <VenueBar key={row.id} row={row} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * One venue's night as a bar, in the weekly board's proportions.
+ *
+ * Same fixed columns, so the scores line up down the left however long the
+ * names are, and the same one height whatever it scored. Order carries
+ * severity; the bar does not grow to shout.
+ */
+function VenueBar({ row }: { row: Row }) {
+  const failed = row.tier === "fail";
+  return (
+    <li>
+      <Link
+        href={`/close/enter/${row.id}`}
+        className={`bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${
+          failed
+            ? "bg-warn text-on-warn hover:bg-warn/90"
+            : "hover:ring-muted/30 hover:ring-1 hover:ring-inset"
         }`}
       >
-        {note}
-      </span>
-    </Link>
+        <span
+          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+            failed ? "text-on-warn" : "text-ink"
+          }`}
+        >
+          {row.code}
+        </span>
+        <span
+          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
+            failed
+              ? "text-on-warn"
+              : row.tier === "neutral"
+                ? "text-warn"
+                : row.tier === "good"
+                  ? "text-ink"
+                  : "text-muted"
+          }`}
+        >
+          {row.score}
+        </span>
+        <span
+          className={`label ml-auto shrink-0 text-right ${
+            failed ? "text-on-warn" : ""
+          }`}
+        >
+          {row.note}
+        </span>
+      </Link>
+    </li>
   );
 }

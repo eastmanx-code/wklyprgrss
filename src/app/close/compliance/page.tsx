@@ -1,11 +1,19 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { Card } from "@/components/Card";
+import { Dial } from "@/components/Dial";
+import { Trend } from "@/components/Trend";
 import { CloseBar } from "@/components/close/CloseBar";
 import { NightNav, ScoreBar } from "@/components/close/Compliance";
-import { nightCompliance } from "@/lib/compliance";
+import {
+  nightCompliance,
+  nightTrend,
+  type VenueCompliance,
+} from "@/lib/compliance";
 import { closeVenueId } from "@/lib/close-venue";
 import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -70,108 +78,183 @@ export default async function CompliancePage({
   const signed = venues.reduce((n, v) => n + v.listsSigned, 0);
   const lists = venues.reduce((n, v) => n + v.listsTotal, 0);
 
+  const of = (tier: "good" | "neutral" | "fail") =>
+    venues.filter((v) => v.tier === tier);
+
+  // The shape behind the night. Drawn only for a leader's own venue or the
+  // whole group, never for a single venue on the group screen.
+  const window = nightWindow(30, night);
+  const trend = await nightTrend(window);
+  const points = trend.map((t) => ({
+    weekStart: t.night,
+    percent: t.ticked,
+    approvedPercent: t.signed,
+  }));
+
+  // Items ticked across every list that was owed. The same measure the ring
+  // on the weekly board carries, asked of a night instead of a week.
+  const owed = venues.reduce((n, v) => n + v.owed, 0);
+  const ticked = venues.reduce((n, v) => n + v.ticked, 0);
+  const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
+
+  // Best and worst are only a comparison when there is something to compare
+  // to. With one venue running they are the same row printed twice.
+  const ranked = [...venues].sort((a, b) => b.score - a.score);
+  const best = ranked.length > 1 ? ranked[0] : null;
+  const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
+
+  const headline =
+    venues.length === 0
+      ? "No lists ran"
+      : listsFailed > 0
+        ? `${listsFailed} ${listsFailed === 1 ? "list" : "lists"} failed`
+        : "Nothing failed";
+
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <header className="mt-4 mb-5">
-        {/* A leader is reading one building's report and the page should
-            say which. An admin is reading every building's, so naming one
-            would be a lie. */}
+    <main>
+      {/* The board's own header shape: the period, then the answer. */}
+      <header className="mt-4 mb-6">
         <p className="label">
           {mineName ? `${mineName} · ` : ""}
           {formatNight(night)} · {over ? "night closed" : "still running"}
         </p>
-        <h1 className="text-metric mt-2 font-medium">Close compliance</h1>
-        {/* A night in progress is a progress bar and the same night at ten in
-            the morning is a verdict. Saying which costs one line and stops an
-            ordinary Tuesday evening reading as a building-wide failure. */}
-        <p className="note text-muted mt-2 max-w-prose leading-relaxed">
-          {over
-            ? "The night is over, so anything unsigned stayed unsigned."
-            : "The night is still running. Lists with work left on them are counted as open, not failed."}
-        </p>
+        <h1 className="text-metric mt-2 tracking-normal">Close compliance</h1>
       </header>
 
       <NightNav night={night} base="/close/compliance" />
 
-      {venues.length === 0 ? (
-        <section className="panel mt-5">
-          <h2 className="card-title">No lists on this night</h2>
-          <p className="note text-muted mt-2 leading-relaxed">
-            Nothing to report. A venue appears here once it has a list written
-            against it.
-          </p>
-        </section>
-      ) : (
-        <>
-          <section className="panel mt-5">
-            {/* Figure over label, not under it. A label that wraps to two
-                lines pushed its own number down a row, so three tiles that
-                are meant to be read across came out on three baselines. */}
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-metric tabular-nums">
-                  {signed}
-                  <span className="text-muted">/{lists}</span>
+      {/* The shape, before the list. Same furniture as the weekly board: the
+          ring on the left, the run of nights beside it, the names that carry
+          the night on the right. Each piece hides itself rather than drawing
+          an empty one — the trend needs two nights before a line means
+          anything, and best against worst needs two venues. */}
+      {venues.length > 0 ? (
+        <div className="mt-4">
+          <Card title="The run" hint={`Last ${window.length} nights`}>
+            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
+              <Dial
+                percent={share}
+                caption={`${ticked} of ${owed} items ticked`}
+                tone={listsFailed > 0 ? "var(--warn)" : "var(--ink)"}
+              />
+
+              {points.length > 1 ? (
+                <Trend
+                  points={points}
+                  labelLeft={formatNight(window[0])}
+                  labelRight={formatNight(night)}
+                  target={80}
+                />
+              ) : (
+                <p className="note text-muted self-center leading-relaxed">
+                  One night of history. The run draws itself from the second.
                 </p>
-                <p className="label mt-1">Lists signed</p>
-              </div>
-              <div>
-                <p
-                  className={`text-metric tabular-nums ${
-                    listsFailed > 0 ? "text-warn" : ""
-                  }`}
-                >
-                  {listsFailed}
-                </p>
-                <p className="label mt-1">Lists failed</p>
-              </div>
-              <div>
-                <p
-                  className={`text-metric tabular-nums ${
-                    failing.length > 0 ? "text-warn" : ""
-                  }`}
-                >
-                  {failing.length}
-                </p>
-                <p className="label mt-1">Venues failing</p>
-              </div>
+              )}
+
+              {best && worst ? (
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-1">
+                  <div>
+                    <p className="label">Best</p>
+                    <p className="text-title mt-1 tracking-[0.08em]">
+                      {best.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{best.score}/10</p>
+                  </div>
+                  <div>
+                    <p className="label">Worst</p>
+                    <p className="text-title text-warn mt-1 tracking-[0.08em]">
+                      {worst.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{worst.score}/10</p>
+                  </div>
+                </div>
+              ) : null}
             </div>
-          </section>
+          </Card>
+        </div>
+      ) : null}
 
-          {/* Uniform bars, worst first, the tier carried by the fill. Same
-              shape and the same three bands as the weekly board, so nobody
-              has to learn a second scale to read a second product. */}
-          <ul className="mt-3 space-y-2">
-            {venues.map((venue) => (
-              <li key={venue.code}>
-                <Link
-                  href={`/close/compliance/${venue.code}?night=${night}`}
-                  className="block"
-                >
-                  <ScoreBar
-                    score={venue.score}
-                    code={venue.code}
-                    tier={venue.tier}
-                    note={
-                      venue.failed > 0
-                        ? `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.failed} failed`
-                        : `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.owed - venue.ticked} open`
-                    }
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="mt-4">
+        <Card
+          title="Last night"
+          hint={[
+            `${lists} lists · ${signed} signed · ${failing.length} ${
+              failing.length === 1 ? "venue" : "venues"
+            } failing`,
+            over
+              ? "the night is over, so anything unsigned stayed unsigned"
+              : "still running, so unsigned lists count as open rather than failed",
+          ].join(" · ")}
+        >
+          <p
+            className={`text-metric leading-[1.15] ${
+              listsFailed > 0 ? "text-warn" : "text-ink"
+            }`}
+          >
+            {headline}
+          </p>
 
-          <p className="label mt-5">
-            Score is items ticked out of items owed, out of ten. 8 and above is
-            good, 6 or 7 neutral, 5 and under a fail. A list nobody signed fails
+          {venues.length === 0 ? (
+            <p className="note text-muted mt-4 leading-relaxed">
+              Nothing to report. A venue appears here once it has a list written
+              against it.
+            </p>
+          ) : null}
+
+          <Tier title="Fail" venues={of("fail")} night={night} />
+          <Tier title="Neutral" venues={of("neutral")} night={night} />
+          <Tier title="Good" venues={of("good")} night={night} />
+
+          <p className="label mt-6">
+            Score is items ticked out of items owed, out of ten. Good 8 to 10 ·
+            neutral 6 or 7 · fail 5 or under. A list nobody signed fails
             whatever its ticks say.
           </p>
-        </>
-      )}
+        </Card>
+      </div>
 
       <CloseBar back="/close" />
     </main>
+  );
+}
+
+/** A group heading and its rows, or nothing when the group is empty. */
+function Tier({
+  title,
+  venues,
+  night,
+}: {
+  title: string;
+  venues: VenueCompliance[];
+  night: string;
+}) {
+  if (venues.length === 0) return null;
+  return (
+    <div className="mt-6">
+      <p className="label border-divider border-t pt-4">
+        {title} · {venues.length}
+      </p>
+      <ul className="-mx-3 mt-2 space-y-[2px]">
+        {venues.map((venue) => (
+          <li key={venue.code}>
+            <Link
+              href={`/close/compliance/${venue.code}?night=${night}`}
+              className="block"
+            >
+              <ScoreBar
+                score={venue.score}
+                code={venue.code}
+                tier={venue.tier}
+                note={
+                  venue.failed > 0
+                    ? `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.failed} failed`
+                    : `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.owed - venue.ticked} open`
+                }
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
