@@ -80,6 +80,23 @@ export default async function VenueCompliancePage({
         note={`${venue.ticked} of ${venue.owed} items · ${venue.listsSigned} of ${venue.listsTotal} lists signed`}
       />
 
+      {/* Louder than the fails, and above them, because it is the one thing
+          on this page a score cannot say. A list can be ten out of ten,
+          signed, and worthless. */}
+      {venue.bursted > 0 ? (
+        <section className="panel border-warn/30 mt-3">
+          <h2 className="card-title text-warn">
+            {venue.bursted} {venue.bursted === 1 ? "list" : "lists"} ticked too
+            fast to have been walked
+          </h2>
+          <p className="note text-muted mt-3 leading-relaxed">
+            Marked on the lists below. It is a pace, not a verdict: somebody who
+            worked off paper and entered it after looks the same from here.
+            Worth asking about rather than acting on.
+          </p>
+        </section>
+      ) : null}
+
       {/* Three fails at one venue read as a bad night. Three fails that are
           all the same position read as one conversation with one person, and
           that is invisible until something groups on it. */}
@@ -119,6 +136,7 @@ export default async function VenueCompliancePage({
                 name={`${phaseName(list.row.phase)} · ${list.row.house}`}
                 state={list.state}
                 reason={list.reason}
+                flag={list.flag}
               />
             </Link>
           </li>

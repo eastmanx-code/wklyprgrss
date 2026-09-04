@@ -74,6 +74,10 @@ export default async function CompliancePage({
 
   const failing = venues.filter((v) => v.tier === "fail");
   const listsFailed = venues.reduce((n, v) => n + v.failed, 0);
+  // The lists that finished but did not happen. Kept apart from the failures
+  // because it is a different accusation: a fail says the work was not done,
+  // this says the record of it cannot be believed.
+  const listsBursted = venues.reduce((n, v) => n + v.bursted, 0);
   const signed = venues.reduce((n, v) => n + v.listsSigned, 0);
   const lists = venues.reduce((n, v) => n + v.listsTotal, 0);
 
@@ -190,6 +194,17 @@ export default async function CompliancePage({
             {headline}
           </p>
 
+          {/* Under the headline rather than in it. A night can have nothing
+              fail and still have three lists nobody walked, and a heading
+              that read "Nothing failed" over that would be the report lying
+              to the person who came to it for the truth. */}
+          {listsBursted > 0 ? (
+            <p className="text-warn mt-2 text-body">
+              {listsBursted} {listsBursted === 1 ? "list was" : "lists were"}{" "}
+              ticked too fast to have been walked
+            </p>
+          ) : null}
+
           {venues.length === 0 ? (
             <p className="note text-muted mt-4 leading-relaxed">
               Nothing to report. A venue appears here once it has a list written
@@ -239,11 +254,13 @@ function Tier({
                 score={venue.score}
                 code={venue.code}
                 tier={venue.tier}
-                note={
+                note={[
+                  `${venue.listsSigned} of ${venue.listsTotal} signed`,
                   venue.failed > 0
-                    ? `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.failed} failed`
-                    : `${venue.listsSigned} of ${venue.listsTotal} signed · ${venue.owed - venue.ticked} open`
-                }
+                    ? `${venue.failed} failed`
+                    : `${venue.owed - venue.ticked} open`,
+                  ...(venue.bursted > 0 ? [`${venue.bursted} not walked`] : []),
+                ].join(" · ")}
               />
             </Link>
           </li>

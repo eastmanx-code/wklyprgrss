@@ -5,6 +5,7 @@ import { phaseName } from "@/lib/checklists";
 import { listDetail } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { currentNight, formatClock, formatNight } from "@/lib/night";
+import { describeLag, describeSpan } from "@/lib/pace";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -120,6 +121,55 @@ export default async function ListCompliancePage({
           </p>
         ) : null}
       </section>
+
+      {/* How the ticks arrived, which no count on this page can say.
+          A list can be ten out of ten, signed, and thumbed through at the
+          bar; that is the case this section exists for and the only one it
+          can see. Deliberately worded as evidence rather than a verdict:
+          somebody who walked with paper and entered it after produces the
+          same shape, and a report that called that cheating would be wrong
+          often enough to stop being read. */}
+      {detail.pace.burst ? (
+        <section className="bg-warn text-on-warn mt-2 rounded-[4px] px-4 py-3">
+          <p className="text-body">Ticked too fast to have been walked</p>
+          <p className="text-on-warn mt-1 text-label tracking-[0.08em]">
+            {detail.pace.note}
+          </p>
+          <p className="text-on-warn mt-2 text-label leading-relaxed">
+            There is no route through a building at that pace. Worth asking
+            about: working off paper and entering it after looks the same from
+            here.
+          </p>
+        </section>
+      ) : detail.pace.ticks >= 2 ? (
+        <p className="label mt-2">
+          Walked over {describeSpan(detail.pace.spanSeconds)} ·{" "}
+          {detail.pace.secondsPerItem >= 60
+            ? `about ${Math.round(detail.pace.secondsPerItem / 60)} minutes an item`
+            : `${detail.pace.secondsPerItem} seconds an item`}
+        </p>
+      ) : null}
+
+      {/* The lag is a fact, never an accusation. It used to mean somebody was
+          backfilling; since the offline queue shipped it also means somebody
+          walked a cellar with no signal, and the two cannot be told apart by
+          arrival time. What separates them is the pace above. */}
+      {detail.pace.late ? (
+        <p className="note text-muted mt-2 leading-relaxed">
+          These ticks reached the server {describeLag(detail.pace.lagMinutes)}{" "}
+          after the phone says they were taken. That is what a list walked
+          without signal looks like, and it is also what backfilling looks like.
+          The pace above is what tells them apart.
+        </p>
+      ) : null}
+
+      {detail.pace.impossible ? (
+        <p className="note text-warn mt-2 leading-relaxed">
+          A tick claims a time this night never contained, so that phone{"'"}s
+          clock is wrong or was set by hand. Read the times on this page as the
+          server{"'"}s, not the device{"'"}s.
+        </p>
+      ) : null}
 
       {detail.items.length === 0 ? (
         <section className="panel mt-3">

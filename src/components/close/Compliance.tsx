@@ -79,10 +79,20 @@ export function VerdictRow({
   name,
   state,
   reason,
+  flag,
 }: {
   name: string;
   state: "pass" | "fail" | "open" | "empty";
   reason: string;
+  /**
+   * The pace, when the ticks came too fast to have been a walk.
+   *
+   * Sits under the verdict rather than replacing it, because the two say
+   * different things: the verdict is what the rows add up to, this is how
+   * they arrived. A list can be a clean pass on the first and worthless on
+   * the second, and that combination is the whole reason to look.
+   */
+  flag?: string | null;
 }) {
   const failed = state === "fail";
   const word =
@@ -111,6 +121,15 @@ export function VerdictRow({
       >
         {reason}
       </span>
+      {flag ? (
+        <span
+          className={`col-span-2 text-label tracking-[0.08em] ${
+            failed ? "text-on-warn" : "text-warn"
+          }`}
+        >
+          Not walked · {flag}
+        </span>
+      ) : null}
     </div>
   );
 }
