@@ -13,9 +13,11 @@ import { shiftNights, currentNight, formatNight } from "@/lib/night";
 /**
  * A venue's night, as a bar.
  *
- * Every bar is the same height whatever the score, and a failure is the whole
- * bar rather than a coloured dot on the end of it. A fail that reads as a
- * quiet row is a fail nobody acts on.
+ * The weekly board's proportions exactly: code and score in fixed columns so
+ * the numbers line up down the left however long the trailer is, one height
+ * whatever it scored, and the whole bar lime on a fail rather than a coloured
+ * dot at the end of it. Somebody who reads the weekly board already knows how
+ * to read this one.
  */
 export function ScoreBar({
   score,
@@ -31,20 +33,33 @@ export function ScoreBar({
   const failed = tier === "fail";
   return (
     <div
-      className={`flex min-h-14 flex-wrap items-baseline gap-x-3 gap-y-1 rounded-[4px] px-4 py-3 ${
+      className={`bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${
         failed
           ? "bg-warn text-on-warn hover:bg-warn/90"
-          : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
+          : "hover:ring-muted/30 hover:ring-1 hover:ring-inset"
       }`}
     >
-      <span className="text-title font-medium tabular-nums">{score}/10</span>
-      <span className="text-body tracking-[0.06em]">{code}</span>
-      {/* ml-auto and its own line when it has to wrap. The trailing count is
-          the longest string on the row and on a narrow phone it was being
-          clipped by the row it shares. */}
       <span
-        className={`ml-auto text-label tracking-[0.08em] ${
-          failed ? "text-on-warn" : "text-muted"
+        className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+          failed ? "text-on-warn" : "text-ink"
+        }`}
+      >
+        {code}
+      </span>
+      <span
+        className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
+          failed
+            ? "text-on-warn"
+            : tier === "neutral"
+              ? "text-warn"
+              : "text-ink"
+        }`}
+      >
+        {score}/10
+      </span>
+      <span
+        className={`label ml-auto shrink-0 text-right ${
+          failed ? "text-on-warn" : ""
         }`}
       >
         {note}
