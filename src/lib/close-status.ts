@@ -63,14 +63,14 @@ export async function closeStatus(
 
   const [{ data: venueRows }, { data: itemRows }, { data: nightRows }] =
     await Promise.all([
-      // Every venue, deliberately. `venues.active` governs membership of the
+      // `close_active`, not `active`. The latter governs membership of the
       // weekly walkthrough — whether a venue appears in that login picker —
-      // and the close product is a different programme with a different roll.
-      // Filtering on it dropped the pilot venue, which is not in the
-      // walkthrough at all. The checklist's own `active` flag is the gate
-      // here: a list that should not be in tonight's feed gets stood down as
-      // a list.
-      db().from("venues").select("id, code"),
+      // and the close is a different programme with a different roll, which
+      // is why filtering on it once dropped the pilot venue entirely. Now
+      // that the close has a flag of its own, that is the gate: a venue that
+      // has left the programme stops appearing in the feed even if its old
+      // lists are still sitting there.
+      db().from("venues").select("id, code").eq("close_active", true),
       db()
         .from("close_items")
         .select("id, checklist_id")

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Card } from "@/components/Card";
-import { Dial } from "@/components/Dial";
-import { Trend } from "@/components/Trend";
+import { RunCard } from "@/components/close/RunCard";
 import { CloseBar } from "@/components/close/CloseBar";
-import { NightNav, ScoreBar } from "@/components/close/Compliance";
+import { BackLink } from "@/components/ui";
+import { NightStrip, ScoreBar } from "@/components/close/Compliance";
 import {
   nightCompliance,
   nightTrend,
@@ -91,11 +91,23 @@ export default async function CompliancePage({
     approvedPercent: t.signed,
   }));
 
+  // A night is complete when every list was signed and nothing was left on
+  // them, signed with gaps when somebody put their name to it but items were
+  // still open, and never certified when nobody signed at all.
+  const strip = trend.map((t) => ({
+    night: t.night,
+    state:
+      t.signed === 0
+        ? ("missed" as const)
+        : t.signed >= 100 && t.ticked >= 100
+          ? ("complete" as const)
+          : ("gaps" as const),
+  }));
+
   // Items ticked across every list that was owed. The same measure the ring
   // on the weekly board carries, asked of a night instead of a week.
   const owed = venues.reduce((n, v) => n + v.owed, 0);
   const ticked = venues.reduce((n, v) => n + v.ticked, 0);
-  const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
 
   // Best and worst are only a comparison when there is something to compare
   // to. With one venue running they are the same row printed twice.
@@ -110,8 +122,25 @@ export default async function CompliancePage({
         ? `${listsFailed} ${listsFailed === 1 ? "list" : "lists"} failed`
         : "Nothing failed";
 
+  /**
+   * Where back goes.
+   *
+   * An admin arrived from the list of locations, which is also the report
+   * they were reading; a leader has one building and came off their own
+   * clipboard. Sending both to the same place would have sent one of them
+   * somewhere they had never been.
+   */
+  const back = session.role === "admin" ? "/close/locations" : "/close";
+
   return (
     <main>
+      {/* Three screens deep by the time you are in a list, and this one had
+          no way out but the browser. The bar at the foot is a phone control
+          and easy to miss on a desk. */}
+      <BackLink href={back}>
+        {session.role === "admin" ? "All locations" : "Checklists"}
+      </BackLink>
+
       {/* The board's own header shape: the period, then the answer. */}
       <header className="mt-4 mb-6">
         <p className="label">
@@ -121,56 +150,24 @@ export default async function CompliancePage({
         <h1 className="text-metric mt-2 tracking-normal">Close compliance</h1>
       </header>
 
-      <NightNav night={night} base="/close/compliance" />
+      {/* The month, tappable. The arrows walked one night at a time, which
+          answers "what happened last night" and nothing else: finding the
+          Tuesday three weeks ago took twenty taps. */}
+      <NightStrip nights={strip} current={night} base="/close/compliance" />
 
-      {/* The shape, before the list. Same furniture as the weekly board: the
-          ring on the left, the run of nights beside it, the names that carry
-          the night on the right. Each piece hides itself rather than drawing
-          an empty one — the trend needs two nights before a line means
-          anything, and best against worst needs two venues. */}
       {venues.length > 0 ? (
         <div className="mt-4">
-          <Card title="The run" hint={`Last ${window.length} nights`}>
-            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
-              <Dial
-                percent={share}
-                caption={`${ticked} of ${owed} items ticked`}
-                tone={listsFailed > 0 ? "var(--warn)" : "var(--ink)"}
-              />
-
-              {points.length > 1 ? (
-                <Trend
-                  points={points}
-                  labelLeft={formatNight(window[0])}
-                  labelRight={formatNight(night)}
-                  target={80}
-                />
-              ) : (
-                <p className="note text-muted self-center leading-relaxed">
-                  One night of history. The run draws itself from the second.
-                </p>
-              )}
-
-              {best && worst ? (
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-1">
-                  <div>
-                    <p className="label">Best</p>
-                    <p className="text-title mt-1 tracking-[0.08em]">
-                      {best.code}
-                    </p>
-                    <p className="label mt-1 tabular-nums">{best.score}/10</p>
-                  </div>
-                  <div>
-                    <p className="label">Worst</p>
-                    <p className="text-title text-warn mt-1 tracking-[0.08em]">
-                      {worst.code}
-                    </p>
-                    <p className="label mt-1 tabular-nums">{worst.score}/10</p>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          </Card>
+          <RunCard
+            ticked={ticked}
+            owed={owed}
+            nights={window.length}
+            points={points}
+            failed={listsFailed > 0}
+            labelLeft={formatNight(window[0])}
+            labelRight={formatNight(night)}
+            best={best}
+            worst={worst}
+          />
         </div>
       ) : null}
 
@@ -213,7 +210,7 @@ export default async function CompliancePage({
         </Card>
       </div>
 
-      <CloseBar back="/close" />
+      <CloseBar back={back} />
     </main>
   );
 }
