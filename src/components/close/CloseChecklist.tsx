@@ -5,11 +5,17 @@ import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
 import {
+  blobFor,
   canQueue,
   enqueue,
+  enqueueProof,
   flush,
-  pendingCount,
+  pending as pendingWork,
+  proofKey,
+  queued,
   tickKey,
+  type Op,
+  type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
@@ -41,6 +47,19 @@ export type SavedNight = {
 };
 
 type Capture = { url: string; kind: "photo" | "video" };
+
+/**
+ * What the device is holding, in words.
+ *
+ * "3 saved on this device" does not say whether the photograph made it, which
+ * is the one thing worth knowing when the signal drops mid-shot.
+ */
+function describeHeld(ticks: number, proof: number): string {
+  const parts: string[] = [];
+  if (ticks > 0) parts.push(`${ticks} ${ticks === 1 ? "tick" : "ticks"}`);
+  if (proof > 0) parts.push(`${proof} ${proof === 1 ? "photo" : "photos"}`);
+  return parts.join(" and ");
+}
 
 /** One capture slot: item number and which of that item's shots. */
 const slotKey = (item: number, shot: number) => `${item}:${shot}`;
@@ -123,8 +142,9 @@ export function CloseChecklist({
     saved.certifiedAt ? `Certified by ${saved.certifiedBy ?? "—"}` : null,
   );
   const [shortfall, setShortfall] = useState<string | null>(null);
-  /** Ticks written here that the server has not taken yet. */
+  /** Work written here that the server has not taken yet. */
   const [outstanding, setOutstanding] = useState(0);
+  const [heldProof, setHeldProof] = useState(0);
   const [offline, setOffline] = useState(false);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
   /**
@@ -176,7 +196,11 @@ export function CloseChecklist({
     const mark = () => setOffline(!navigator.onLine);
     mark();
 
-    void pendingCount().then(setOutstanding);
+    void pendingWork().then((held) => {
+      setOutstanding(held.total);
+      setHeldProof(held.proof);
+    });
+    void rehydrate();
     void drain();
 
     const back = () => {
@@ -358,6 +382,56 @@ export function CloseChecklist({
   }
 
   /**
+   * One queued capture, all three steps of it.
+   *
+   * A photograph is not one write. The server mints a signed URL against
+   * tonight's row, the bytes go straight to storage, and only then does a row
+   * point at them. Any of the three can fail on a bad connection, and the
+   * whole thing has to be safe to repeat: the first two steps leave nothing
+   * behind worth keeping, and the third upserts on (night, item, shot), so a
+   * retry overwrites its own earlier attempt rather than doubling it.
+   *
+   * A thrown error means the network; a returned one means the server said no.
+   * The queue treats those differently and this has to preserve the
+   * difference, so the fetch failures are rethrown rather than swallowed.
+   */
+  async function sendProof(op: ProofOp, blob: Blob) {
+    const target = await captureTarget(
+      op.slug,
+      op.itemId,
+      op.shotIndex,
+      op.shot,
+      op.extension,
+    );
+    if (target.error || !target.signedUrl || !target.path) {
+      // The server had an opinion — a certified night, a list that moved.
+      // Repeating the call will not change it.
+      return { error: target.error ?? "Could not start the upload." };
+    }
+
+    const response = await fetch(target.signedUrl, {
+      method: "PUT",
+      headers: {
+        "content-type":
+          op.shot === "photo"
+            ? "image/jpeg"
+            : blob.type || "application/octet-stream",
+      },
+      body: blob,
+    });
+    if (!response.ok) throw new Error(`upload ${response.status}`);
+
+    const data = new FormData();
+    data.set("slug", op.slug);
+    data.set("itemId", op.itemId);
+    data.set("shotIndex", String(op.shotIndex));
+    data.set("kind", op.shot);
+    data.set("path", target.path);
+    data.set("initials", op.initials);
+    return recordCapture({ error: null }, data);
+  }
+
+  /**
    * Empty the queue, if anything is in it and the network will take it.
    *
    * Guarded against running twice at once: the interval, the online event and
@@ -369,10 +443,16 @@ export function CloseChecklist({
     if (draining.current || !canQueue()) return;
     draining.current = true;
     try {
-      const { left } = await flush((op) =>
-        tickItem({ error: null }, sendable(op)),
+      const { refused, left } = await flush((op: Op, blob?: Blob) =>
+        op.kind === "tick"
+          ? tickItem({ error: null }, sendable(op))
+          : sendProof(op, blob!),
       );
-      setOutstanding(left);
+      setOutstanding(left.total);
+      setHeldProof(left.proof);
+      // A refusal is the one thing worth interrupting for. The work is gone
+      // and the person who did it is the only one who can decide what now.
+      if (refused.length > 0) setShortfall(refused[0]);
     } finally {
       draining.current = false;
     }
@@ -411,7 +491,9 @@ export function CloseChecklist({
     }
 
     await enqueue(op);
-    setOutstanding(await pendingCount());
+    const held = await pendingWork();
+    setOutstanding(held.total);
+    setHeldProof(held.proof);
     void drain();
   }
 
@@ -486,6 +568,48 @@ export function CloseChecklist({
     void persistTick(item, true);
   }
 
+  /**
+   * Bring back the previews for captures still sitting on this device.
+   *
+   * The server's copy of the night knows nothing about a photograph that has
+   * not gone up yet, so after a reload the thumbnail would be missing and the
+   * shot would read as never taken — which is how somebody takes it twice, or
+   * decides the camera is broken. The bytes are here; this points the image
+   * back at them.
+   */
+  async function rehydrate() {
+    if (!canQueue()) return;
+    const held = await queued();
+    for (const op of held) {
+      if (op.kind !== "proof" || op.slug !== slug) continue;
+      const item = items.find((row) => row.id === op.itemId);
+      if (!item) continue;
+      const blob = await blobFor(op.key);
+      if (!blob) continue;
+      const url = URL.createObjectURL(blob);
+      objectUrls.current.push(url);
+      setCaptures((current) => ({
+        ...current,
+        [slotKey(item.number, op.shotIndex)]: { url, kind: op.shot },
+      }));
+    }
+  }
+
+  /**
+   * A capture lands on the device, then goes up on its own.
+   *
+   * It used to hold the whole three-step upload open before the thumbnail
+   * appeared: signed URL, bytes, row. On a good connection that is a second
+   * of nothing happening, and on a bad one it is the shot being lost. Now the
+   * bytes are safe here before this returns and the sending is the drain's
+   * problem, so the picture appears immediately and a cellar with no signal
+   * behaves exactly like a bar with five bars.
+   *
+   * That also means the tick gate can close on time. An item owing a
+   * photograph cannot be hand-ticked, and the thing that satisfies the gate is
+   * a capture being present — which is now true the moment it is taken rather
+   * than whenever the network gets round to it.
+   */
   async function onCapture(
     item: CloseItem,
     shotIndex: number,
@@ -498,7 +622,7 @@ export function CloseChecklist({
     touch();
     setSaving(true);
 
-    let upload = file;
+    let upload: Blob = file;
     if (kind === "photo") {
       try {
         upload = await compressToJpeg(file);
@@ -508,57 +632,55 @@ export function CloseChecklist({
         return;
       }
     }
+
+    const op: ProofOp = {
+      kind: "proof",
+      key: proofKey(slug, item.id ?? "", shotIndex),
+      slug,
+      itemId: item.id ?? "",
+      shotIndex,
+      shot: kind,
+      extension: kind === "video" ? (file.name.split(".").pop() ?? "") : "",
+      initials: initialsFor(item.number),
+      bytes: upload.size,
+      clientAt: new Date().toISOString(),
+    };
+
+    if (canQueue()) {
+      const stored = await enqueueProof(op, upload);
+      if (stored.error) {
+        setSaving(false);
+        setShortfall(stored.error);
+        return;
+      }
+    } else {
+      // No store to keep it in, so it goes now or not at all.
+      try {
+        const result = await sendProof(op, upload);
+        if (result.error) {
+          setSaving(false);
+          setShortfall(result.error);
+          return;
+        }
+      } catch {
+        setSaving(false);
+        setShortfall("Could not upload that. Check your signal and try again.");
+        return;
+      }
+    }
+
     const url = URL.createObjectURL(upload);
     objectUrls.current.push(url);
-
-    // Straight to storage, then a row pointing at it — the action only ever
-    // carries text, the same shape the weekly photos use.
-    const target = await captureTarget(
-      slug,
-      item.id ?? "",
-      shotIndex,
-      kind,
-      kind === "video" ? (file.name.split(".").pop() ?? "") : "",
-    );
-    if (target.error || !target.signedUrl || !target.path) {
-      setSaving(false);
-      setShortfall(target.error ?? "Could not start the upload.");
-      return;
-    }
-    try {
-      const response = await fetch(target.signedUrl, {
-        method: "PUT",
-        headers: {
-          "content-type":
-            kind === "photo"
-              ? "image/jpeg"
-              : upload.type || "application/octet-stream",
-        },
-        body: upload,
-      });
-      if (!response.ok) throw new Error(String(response.status));
-    } catch {
-      setSaving(false);
-      setShortfall("Could not upload that. Check your signal and try again.");
-      return;
-    }
-
-    const data = new FormData();
-    data.set("slug", slug);
-    data.set("itemId", item.id ?? "");
-    data.set("shotIndex", String(shotIndex));
-    data.set("kind", kind);
-    data.set("path", target.path);
-    data.set("initials", initialsFor(item.number));
-    const recorded = await recordCapture({ error: null }, data);
-    setSaving(false);
-    if (recorded.error) {
-      setShortfall(recorded.error);
-      return;
-    }
-
     const shotKey = slotKey(item.number, shotIndex);
     setCaptures((current) => ({ ...current, [shotKey]: { url, kind } }));
+    setSaving(false);
+
+    if (canQueue()) {
+      const held = await pendingWork();
+      setOutstanding(held.total);
+      setHeldProof(held.proof);
+      void drain();
+    }
 
     // Worked out here rather than inside the updater. A state updater has to
     // be a pure function of what it is given — React is free to run it twice —
@@ -731,9 +853,9 @@ export function CloseChecklist({
           role="status"
         >
           {outstanding > 0
-            ? `${outstanding} ${outstanding === 1 ? "tick" : "ticks"} saved on this device${
+            ? `${describeHeld(outstanding - heldProof, heldProof)} saved on this device${
                 offline
-                  ? " · no signal, they go up when it returns"
+                  ? " · no signal, it goes up when it returns"
                   : " · sending"
               }`
             : "No signal. Keep going, everything is saved here."}
