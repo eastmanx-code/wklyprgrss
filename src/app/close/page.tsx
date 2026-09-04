@@ -105,8 +105,7 @@ export default async function ChecklistsPage() {
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <header className="mb-5">
-        <span className="pill pill-pending">Review build</span>
-        <p className="label mt-3">{formatNight(night)}</p>
+        <p className="label">{formatNight(night)}</p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
         <p className="label mt-2">
           Pick your position · lit means still open tonight
@@ -201,7 +200,7 @@ export default async function ChecklistsPage() {
 
       <NewChecklistForm />
 
-      <CloseBar back={session.role === "admin" ? "/admin" : "/venue"} />
+      <CloseBar back={session.role === "admin" ? "/admin" : "/home"} />
     </main>
   );
 }

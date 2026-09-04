@@ -25,7 +25,7 @@ export async function CornerMenu() {
   // to a read-only copy of the page they're on. Leaders get both: their own
   // board, and everyone's.
   const isAdmin = session?.role === "admin";
-  const home = session ? (isAdmin ? "/admin" : "/venue") : null;
+  const home = session ? (isAdmin ? "/admin" : "/home") : null;
 
   return (
     /* Sized to its content now rather than pinned across the phone, so the
@@ -68,13 +68,13 @@ export async function CornerMenu() {
             </Link>
           ) : null}
 
-          {/* Named for what it is rather than for its status. "Chcklst > WIP"
-              was unreadable and read as something you were not meant to touch,
-              which is how a section nobody could find stayed that way. The
-              version number carries the same warning without hiding it. */}
+          {/* Named for what it is. It read "Hood checklists 1.0" from the
+              days when one venue was piloting them; the lists are a leader's
+              own venue now, so the venue in the label was wrong for twenty of
+              the twenty-one reading it. */}
           {session ? (
-            <Link href="/close" className="btn-ghost whitespace-nowrap">
-              Hood checklists 1.0
+            <Link href="/close" className="btn-ghost">
+              Checklists
             </Link>
           ) : null}
 

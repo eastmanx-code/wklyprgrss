@@ -30,7 +30,7 @@ export async function leaderLogin(
   if (!venue || !pinMatches(pin, venue.pin)) return { error: GENERIC_ERROR };
 
   await startLeaderSession(venue.id);
-  redirect("/venue");
+  redirect("/home");
 }
 
 export async function adminLogin(

@@ -17,7 +17,7 @@ export default async function HelpPage() {
 
   return (
     <main className="rise mx-auto max-w-2xl">
-      <BackLink href={session ? (isAdmin ? "/admin" : "/venue") : "/"}>
+      <BackLink href={session ? (isAdmin ? "/admin" : "/home") : "/"}>
         {session ? (isAdmin ? "All venues" : "My items") : "Sign in"}
       </BackLink>
 
