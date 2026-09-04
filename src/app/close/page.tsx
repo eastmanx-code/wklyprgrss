@@ -44,6 +44,39 @@ export default async function ChecklistsPage() {
   const lists = (listRows ?? []) as Row[];
 
   /**
+   * Which lists are already signed for tonight.
+   *
+   * The colour on this screen is the night draining away. Everything starts
+   * lit because nothing is signed, and a position goes quiet when every list
+   * under it has been closed out — so the page is loud exactly while there is
+   * work in it, and the same accent means the same thing it means on the
+   * walkthrough board: this wants something from you.
+   */
+  const signed = new Set<string>();
+  if (lists.length > 0) {
+    const { data: nightRows } = await db()
+      .from("close_nights")
+      .select("checklist_id, certified_at")
+      .eq("night", night)
+      .in(
+        "checklist_id",
+        lists.map((l) => l.id),
+      );
+    for (const row of (nightRows ?? []) as {
+      checklist_id: string;
+      certified_at: string | null;
+    }[]) {
+      if (row.certified_at) signed.add(row.checklist_id);
+    }
+  }
+
+  /** Nothing left open under this position tonight. */
+  const positionDone = (house: House, role: string) =>
+    lists
+      .filter((l) => l.house === house && l.role === role)
+      .every((l) => signed.has(l.id));
+
+  /**
    * Real nights only. No sample rows.
    *
    * Until a list is signed there is nothing to report, and the screen used to
@@ -75,7 +108,9 @@ export default async function ChecklistsPage() {
         <span className="pill pill-pending">Review build</span>
         <p className="label mt-3">{formatNight(night)}</p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
-        <p className="label mt-2">Pick your position</p>
+        <p className="label mt-2">
+          Pick your position · lit means still open tonight
+        </p>
       </header>
 
       {/* Above the clipboard, not behind a link. What keeps getting missed is
@@ -140,12 +175,20 @@ export default async function ChecklistsPage() {
                     <li key={role}>
                       <Link
                         href={`/close/position/${house.toLowerCase()}/${roleSlug(role)}`}
-                        className="bg-warn text-on-warn hover:bg-warn/90 flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3"
+                        className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
+                          positionDone(house, role)
+                            ? "bg-inset text-muted ring-divider ring-1 ring-inset"
+                            : "bg-warn text-on-warn hover:bg-warn/90"
+                        }`}
                       >
                         <span className="text-body tracking-[0.08em]">
                           {role}
                         </span>
-                        <span aria-hidden>→</span>
+                        {positionDone(house, role) ? (
+                          <span className="label">Signed</span>
+                        ) : (
+                          <span aria-hidden>→</span>
+                        )}
                       </Link>
                     </li>
                   ))}

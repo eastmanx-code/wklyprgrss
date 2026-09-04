@@ -12,6 +12,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import { closeVenueId } from "@/lib/close-venue";
+import { currentNight } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
@@ -76,6 +77,29 @@ export default async function PositionPage({
     ),
   );
 
+  // Signed for tonight. Same rule as the screen before this one: the accent
+  // is work still open, and it drains as the night gets closed out.
+  const { data: nightRows } = await db()
+    .from("close_nights")
+    .select("checklist_id, certified_at, certified_by")
+    .eq("night", currentNight())
+    .in(
+      "checklist_id",
+      lists.map((l) => l.id),
+    );
+
+  const signedBy = new Map(
+    (
+      (nightRows ?? []) as {
+        checklist_id: string;
+        certified_at: string | null;
+        certified_by: string | null;
+      }[]
+    )
+      .filter((row) => row.certified_at)
+      .map((row) => [row.checklist_id, row.certified_by]),
+  );
+
   const ordered = [...lists].sort(
     (a, b) => PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
   );
@@ -94,17 +118,27 @@ export default async function PositionPage({
           <li key={list.id}>
             <Link
               href={`/close/${slugFor(list.house, list.role, list.phase)}`}
-              className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 ${
-                built.has(list.id)
-                  ? "bg-warn text-on-warn"
-                  : "text-muted ring-card-border ring-1 ring-inset"
+              className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
+                !built.has(list.id) || signedBy.has(list.id)
+                  ? "bg-inset text-muted ring-divider ring-1 ring-inset"
+                  : "bg-warn text-on-warn hover:bg-warn/90"
               }`}
             >
               <span className="text-body tracking-[0.08em]">
                 {phaseName(list.phase)}
               </span>
-              {built.has(list.id) ? null : (
+              {/* One state per row, and only when it is not the obvious one.
+                  An unlit row is either finished or never written, which are
+                  not the same thing and cannot be told apart by the grey. */}
+              {!built.has(list.id) ? (
                 <span className="label">Nothing on it yet</span>
+              ) : signedBy.has(list.id) ? (
+                <span className="label">
+                  Signed
+                  {signedBy.get(list.id) ? ` · ${signedBy.get(list.id)}` : ""}
+                </span>
+              ) : (
+                <span aria-hidden>→</span>
               )}
             </Link>
           </li>
