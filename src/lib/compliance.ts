@@ -354,3 +354,84 @@ export function failuresByRole(
     .filter((r) => r.failed > 0)
     .sort((a, b) => b.failed - a.failed || a.role.localeCompare(b.role));
 }
+
+/**
+ * The shape of the last few weeks, one point per night.
+ *
+ * Two measures, because one of them is easy. Items ticked mostly climbs on
+ * its own; lists signed is the one that says a manager stood at the end of a
+ * shift and put their name to it, and the gap between them is the nights that
+ * got walked but never closed out. A chart of ticks alone would draw that as
+ * progress.
+ *
+ * Four queries for the whole window rather than one per night. Thirty nights
+ * at four queries each is a hundred and twenty round trips for a sparkline.
+ */
+export async function nightTrend(
+  window: string[],
+): Promise<{ night: string; ticked: number; signed: number }[]> {
+  if (window.length === 0) return [];
+
+  const { data: checklistRows } = await db()
+    .from("close_checklists")
+    .select("id")
+    .eq("active", true);
+  const ids = ((checklistRows ?? []) as { id: string }[]).map((c) => c.id);
+  if (ids.length === 0) return [];
+
+  const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
+    db()
+      .from("close_items")
+      .select("id, checklist_id")
+      .in("checklist_id", ids)
+      .eq("active", true),
+    db()
+      .from("close_nights")
+      .select("id, checklist_id, night, certified_at")
+      .in("checklist_id", ids)
+      .gte("night", window[0])
+      .lte("night", window[window.length - 1]),
+  ]);
+
+  const items = (itemRows ?? []) as { id: string; checklist_id: string }[];
+  const nights = (nightRows ?? []) as {
+    id: string;
+    checklist_id: string;
+    night: string;
+    certified_at: string | null;
+  }[];
+
+  let ticks: { night_id: string }[] = [];
+  if (nights.length > 0) {
+    const { data } = await db()
+      .from("close_ticks")
+      .select("night_id")
+      .in(
+        "night_id",
+        nights.map((n) => n.id),
+      );
+    ticks = (data ?? []) as { night_id: string }[];
+  }
+
+  const tickedOn = new Map<string, number>();
+  for (const t of ticks) {
+    tickedOn.set(t.night_id, (tickedOn.get(t.night_id) ?? 0) + 1);
+  }
+
+  // Every list that exists is owed every night in the window. A night nobody
+  // opened has to count against the total or the quietest night reads as the
+  // cleanest, which is the same trap the status feed was built to avoid.
+  const owedPerNight = items.length;
+  const listsPerNight = ids.length;
+
+  return window.map((night) => {
+    const rows = nights.filter((n) => n.night === night);
+    const ticked = rows.reduce((n, r) => n + (tickedOn.get(r.id) ?? 0), 0);
+    const signed = rows.filter((r) => r.certified_at).length;
+    return {
+      night,
+      ticked: owedPerNight === 0 ? 0 : (ticked / owedPerNight) * 100,
+      signed: listsPerNight === 0 ? 0 : (signed / listsPerNight) * 100,
+    };
+  });
+}

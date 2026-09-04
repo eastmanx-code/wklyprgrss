@@ -2,11 +2,18 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Card } from "@/components/Card";
+import { Dial } from "@/components/Dial";
+import { Trend } from "@/components/Trend";
 import { CloseBar } from "@/components/close/CloseBar";
 import { NightNav, ScoreBar } from "@/components/close/Compliance";
-import { nightCompliance, type VenueCompliance } from "@/lib/compliance";
+import {
+  nightCompliance,
+  nightTrend,
+  type VenueCompliance,
+} from "@/lib/compliance";
 import { closeVenueId } from "@/lib/close-venue";
 import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -74,6 +81,28 @@ export default async function CompliancePage({
   const of = (tier: "good" | "neutral" | "fail") =>
     venues.filter((v) => v.tier === tier);
 
+  // The shape behind the night. Drawn only for a leader's own venue or the
+  // whole group, never for a single venue on the group screen.
+  const window = nightWindow(30, night);
+  const trend = await nightTrend(window);
+  const points = trend.map((t) => ({
+    weekStart: t.night,
+    percent: t.ticked,
+    approvedPercent: t.signed,
+  }));
+
+  // Items ticked across every list that was owed. The same measure the ring
+  // on the weekly board carries, asked of a night instead of a week.
+  const owed = venues.reduce((n, v) => n + v.owed, 0);
+  const ticked = venues.reduce((n, v) => n + v.ticked, 0);
+  const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
+
+  // Best and worst are only a comparison when there is something to compare
+  // to. With one venue running they are the same row printed twice.
+  const ranked = [...venues].sort((a, b) => b.score - a.score);
+  const best = ranked.length > 1 ? ranked[0] : null;
+  const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
+
   const headline =
     venues.length === 0
       ? "No lists ran"
@@ -93,6 +122,57 @@ export default async function CompliancePage({
       </header>
 
       <NightNav night={night} base="/close/compliance" />
+
+      {/* The shape, before the list. Same furniture as the weekly board: the
+          ring on the left, the run of nights beside it, the names that carry
+          the night on the right. Each piece hides itself rather than drawing
+          an empty one — the trend needs two nights before a line means
+          anything, and best against worst needs two venues. */}
+      {venues.length > 0 ? (
+        <div className="mt-4">
+          <Card title="The run" hint={`Last ${window.length} nights`}>
+            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
+              <Dial
+                percent={share}
+                caption={`${ticked} of ${owed} items ticked`}
+                tone={listsFailed > 0 ? "var(--warn)" : "var(--ink)"}
+              />
+
+              {points.length > 1 ? (
+                <Trend
+                  points={points}
+                  labelLeft={formatNight(window[0])}
+                  labelRight={formatNight(night)}
+                  target={80}
+                />
+              ) : (
+                <p className="note text-muted self-center leading-relaxed">
+                  One night of history. The run draws itself from the second.
+                </p>
+              )}
+
+              {best && worst ? (
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-1">
+                  <div>
+                    <p className="label">Best</p>
+                    <p className="text-title mt-1 tracking-[0.08em]">
+                      {best.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{best.score}/10</p>
+                  </div>
+                  <div>
+                    <p className="label">Worst</p>
+                    <p className="text-title text-warn mt-1 tracking-[0.08em]">
+                      {worst.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{worst.score}/10</p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </Card>
+        </div>
+      ) : null}
 
       <div className="mt-4">
         <Card
