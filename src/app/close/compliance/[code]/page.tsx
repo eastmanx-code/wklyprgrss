@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import { NightNav, ScoreBar, VerdictRow } from "@/components/close/Compliance";
 import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
@@ -127,8 +126,6 @@ export default async function VenueCompliancePage({
       </ul>
 
       <NightNav night={night} base={`/close/compliance/${code}`} />
-
-      <CloseBar back={`/close/compliance?night=${night}`} />
     </main>
   );
 }

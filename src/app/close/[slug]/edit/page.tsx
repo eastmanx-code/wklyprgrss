@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import {
   AddItemForm,
   ItemRow,
@@ -194,8 +193,6 @@ export default async function EditChecklistPage({
       ) : null}
 
       {list.active ? <RetireChecklist checklistId={list.id} /> : null}
-
-      <CloseBar back={`/close/${slugFor(list.house, list.role, list.phase)}`} />
     </main>
   );
 }

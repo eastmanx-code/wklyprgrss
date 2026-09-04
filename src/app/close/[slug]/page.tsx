@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
 import { parseSlug, phaseName, roleSlug, type Phase } from "@/lib/checklists";
@@ -238,10 +237,6 @@ export default async function ChecklistPage({
           Edit the list
         </Link>
       ) : null}
-
-      <CloseBar
-        back={`/close/position/${list.house.toLowerCase()}/${roleSlug(list.role)}`}
-      />
     </main>
   );
 }

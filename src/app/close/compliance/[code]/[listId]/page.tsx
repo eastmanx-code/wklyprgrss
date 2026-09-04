@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
 
-import { CloseBar } from "@/components/close/CloseBar";
 import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
 import { listDetail } from "@/lib/compliance";
@@ -175,8 +174,6 @@ export default async function ListCompliancePage({
         Every tick carries the initials typed on it and the moment it was taken,
         so a shared iPad still says who did what.
       </p>
-
-      <CloseBar back={`/close/compliance/${code}?night=${night}`} />
     </main>
   );
 }
