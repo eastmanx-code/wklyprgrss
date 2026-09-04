@@ -6,7 +6,7 @@ import {
   latestByItem,
   statusFor,
 } from "./status";
-import { db } from "./supabase";
+import { db, selectAll } from "./supabase";
 import { HOUSES } from "./types";
 import type { House, Submission, WeekStatus } from "./types";
 import {
@@ -94,11 +94,18 @@ export async function venueWeekRows(
     houses: House[];
   }[];
 
-  const { data: itemData, error: itemError } = await db()
-    .from("items")
-    .select("id, venue_id, active, house");
-  if (itemError) throw new Error(itemError.message);
-  const items = (itemData ?? []) as Row[];
+  /**
+   * Paged, because there are more than a thousand of them.
+   *
+   * PostgREST caps an unpaged select at a thousand rows and says nothing about
+   * it. The item table crossed that line and a hundred and ten items fell off
+   * the end — and every submission belonging to one of them had no venue to be
+   * counted against, so it was counted nowhere. Three venues that filed and
+   * signed off a full ten reported zero to the warehouse.
+   */
+  const items = await selectAll<Row>((from, to) =>
+    db().from("items").select("id, venue_id, active, house").range(from, to),
+  );
 
   // Keyed by venue *and* house everywhere below, so there is no path through
   // this function where a kitchen photograph lands in a dining-room total.
@@ -114,23 +121,37 @@ export async function venueWeekRows(
   }
 
   const earliest = [...weekStarts].sort()[0];
-  const { data: subData, error: subError } = await db()
-    .from("submissions")
-    .select("id, item_id, week_start, created_at, review, progress")
-    .is("cleared_at", null)
-    .gte("week_start", earliest)
-    .in("week_start", weekStarts);
-  if (subError) throw new Error(subError.message);
-  const submissions = (subData ?? []) as Submission[];
+  // Same cap, and a twelve week pull clears it on its own.
+  const submissions = await selectAll<Submission>(
+    (from, to) =>
+      db()
+        .from("submissions")
+        .select("id, item_id, week_start, created_at, review, progress")
+        .is("cleared_at", null)
+        .gte("week_start", earliest)
+        .in("week_start", weekStarts)
+        .range(from, to) as unknown as PromiseLike<{
+        data: Submission[] | null;
+        error: { message: string } | null;
+      }>,
+  );
 
-  const { data: gradeData, error: gradeError } = await db()
-    .from("graded_weeks")
-    .select("venue_id, week_start, house, graded_by, graded_at")
-    .in("week_start", weekStarts);
-  if (gradeError) throw new Error(gradeError.message);
+  const gradeData = await selectAll<{
+    venue_id: string;
+    week_start: string;
+    house: House;
+    graded_by: string;
+    graded_at: string;
+  }>((from, to) =>
+    db()
+      .from("graded_weeks")
+      .select("venue_id, week_start, house, graded_by, graded_at")
+      .in("week_start", weekStarts)
+      .range(from, to),
+  );
   const grades = new Map(
     (
-      (gradeData ?? []) as {
+      gradeData as {
         venue_id: string;
         week_start: string;
         house: House;
@@ -256,11 +277,9 @@ export async function venueDayRows(
     houses: House[];
   }[];
 
-  const { data: itemData, error: itemError } = await db()
-    .from("items")
-    .select("id, venue_id, active, house");
-  if (itemError) throw new Error(itemError.message);
-  const items = (itemData ?? []) as Row[];
+  const items = await selectAll<Row>((from, to) =>
+    db().from("items").select("id, venue_id, active, house").range(from, to),
+  );
   const keyOf = (venueId: string, house: House) => `${venueId}|${house}`;
   const keyOfItem = new Map(
     items.map((i) => [i.id, keyOf(i.venue_id, i.house)]),
@@ -272,13 +291,18 @@ export async function venueDayRows(
     onBoard.set(key, (onBoard.get(key) ?? 0) + 1);
   }
 
-  const { data: subData, error: subError } = await db()
-    .from("submissions")
-    .select("item_id, week_start, created_at, reviewed_at, review")
-    .is("cleared_at", null)
-    .in("week_start", weekStarts);
-  if (subError) throw new Error(subError.message);
-  const submissions = (subData ?? []) as Submission[];
+  const submissions = await selectAll<Submission>(
+    (from, to) =>
+      db()
+        .from("submissions")
+        .select("item_id, week_start, created_at, reviewed_at, review")
+        .is("cleared_at", null)
+        .in("week_start", weekStarts)
+        .range(from, to) as unknown as PromiseLike<{
+        data: Submission[] | null;
+        error: { message: string } | null;
+      }>,
+  );
 
   const today = todayInTz(now);
   const rows: VenueDayRow[] = [];
