@@ -699,7 +699,7 @@ export function CloseChecklist({
     }
   }
 
-  function certify() {
+  async function certify() {
     if (locked) return;
     const missing: string[] = [];
     if (!certifier.trim()) missing.push("your name");
@@ -707,6 +707,46 @@ export function CloseChecklist({
     if (missing.length > 0) {
       setShortfall(`Still needed: ${missing.join(" and ")}.`);
       return;
+    }
+
+    /**
+     * Nothing gets signed over work the server has not seen yet.
+     *
+     * The signature is a claim about a state, and the record it freezes is
+     * read from the database rather than from this screen. So a night signed
+     * while three ticks are still queued on this phone freezes a record
+     * saying those three are open, under an attestation that says they are
+     * done, and the two disagree for ever.
+     *
+     * The second half is worse. Certifying locks the night, and a locked
+     * night refuses the writes that arrive after it — which is correct on its
+     * own and fatal here, because the queue drops a refused write rather than
+     * retrying it. The three ticks and the photograph are then gone, having
+     * been taken by somebody who watched them appear on screen.
+     *
+     * Neither could happen before the queue existed: a tick either landed or
+     * visibly failed. So the drain runs first, and if anything is still held
+     * the signature waits. Refusing to sign is recoverable. Signing over lost
+     * work is not.
+     */
+    if (canQueue()) {
+      const before = await pendingWork();
+      if (before.total > 0) {
+        setSaving(true);
+        setShortfall("Sending what this device is still holding…");
+        await drain();
+        const held = await pendingWork();
+        setOutstanding(held.total);
+        setHeldProof(held.proof);
+        setSaving(false);
+        if (held.total > 0) {
+          setShortfall(
+            `${describeHeld(held.total - held.proof, held.proof)} still to reach the server. Wait for them to send, or find signal, then sign.`,
+          );
+          return;
+        }
+        setShortfall(null);
+      }
     }
     // The one gate. Signing with items open is the design; signing a night
     // nobody touched is almost certainly a mistake.
@@ -1411,7 +1451,7 @@ export function CloseChecklist({
                     <button
                       type="button"
                       className="btn btn-sm"
-                      onClick={certify}
+                      onClick={() => void certify()}
                     >
                       Yes, sign it
                     </button>
@@ -1429,7 +1469,7 @@ export function CloseChecklist({
               <button
                 type="button"
                 className="btn w-full"
-                onClick={certify}
+                onClick={() => void certify()}
                 disabled={locked || saving}
               >
                 {saving

@@ -45,10 +45,12 @@ function Bar({ done, of }: { done: number; of: number }) {
  * The report the whole thing is for: not whether tonight is done, but what
  * keeps not getting done.
  *
- * Built against sample figures so the shape can be shown and argued with
- * before anything is stored. Every number is invented and the page says so at
- * the top — the one thing worse than no report is a fabricated one that reads
- * as real.
+ * Every figure is read from signed nights. It was once built against sample
+ * data so the shape could be argued with before anything was stored, and that
+ * turned out to be the worse of the two failures: a fabricated month that
+ * reads as real teaches a manager that the numbers here cannot be trusted,
+ * which is a lesson that outlives the sample. A venue with nothing recorded
+ * now gets one honest line instead.
  */
 export default async function RollupPage() {
   const session = await getSession();
@@ -103,14 +105,9 @@ export default async function RollupPage() {
       <BackLink href="/close">All checklists</BackLink>
 
       <header className="mt-4 mb-5">
-        {real ? null : (
-          <span className="pill pill-warn">
-            Sample figures · nothing recorded yet
-          </span>
-        )}
         {/* Named from the row, not typed in. It read "Night Hawk" on every
             venue's report, including the ones that are not Night Hawk. */}
-        <p className="label mt-3">
+        <p className="label">
           {venueName ? `${venueName} · ` : ""}last {nights} nights
         </p>
         <h1 className="mt-2 text-metric font-medium">
