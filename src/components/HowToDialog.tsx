@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+
+import { T } from "@/components/Lang";
 import { APP_NAME } from "@/lib/app";
 
 /**
@@ -36,7 +38,7 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
         className="label hover:text-ink"
         onClick={() => ref.current?.showModal()}
       >
-        {"How to use this"}
+        <T en="How to use this" es="Cómo usar esto" />
       </button>
 
       <dialog
@@ -52,7 +54,9 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
         <div className="ww-dialog-body">
           <header className="mb-4">
             <p className="label">{APP_NAME} · before you start</p>
-            <h2 className="mt-2 text-metric font-medium">How to use this</h2>
+            <h2 className="mt-2 text-metric font-medium">
+              <T en="How to use this" es="Cómo usar esto" />
+            </h2>
           </header>
 
           {children}
