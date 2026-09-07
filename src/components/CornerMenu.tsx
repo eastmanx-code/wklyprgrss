@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
-import { EditThisList, HelpLink } from "@/components/close/EditThisList";
+import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
 import { logout } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
@@ -77,7 +77,7 @@ export async function CornerMenu() {
               own venue now, so the venue in the label was wrong for twenty of
               the twenty-one reading it. */}
           {session ? (
-            <Link href="/close" className="btn-ghost">
+            <Link href="/checklists" className="btn-ghost">
               Checklists
             </Link>
           ) : null}

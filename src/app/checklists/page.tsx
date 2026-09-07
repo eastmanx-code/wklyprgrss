@@ -1,0 +1,307 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { LangSwitch, T } from "@/components/Lang";
+import { MissedList } from "@/components/checklists/MissedList";
+import { NewChecklistForm } from "@/components/checklists/NewChecklistForm";
+import {
+  HOUSE_ES,
+  houseName,
+  roleSlug,
+  type House,
+  type Phase,
+} from "@/lib/checklists";
+import { currentNight, formatNight } from "@/lib/night";
+import { venueRollup } from "@/lib/rollup";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
+import { getSession } from "@/lib/session";
+import { db } from "@/lib/supabase";
+import { BackLink } from "@/components/ui";
+
+export const dynamic = "force-dynamic";
+
+type Row = { id: string; house: House; role: string; phase: Phase };
+
+/**
+ * The clipboard. Front of house or heart of house, then the role, then open,
+ * mid or close — you flip to yours rather than scrolling one long list.
+ *
+ * Built from the venue's own rows. It used to render forty slots from a fixed
+ * list of roles invented in code, so every venue was shown the same MOD,
+ * Bartender, Barback whether or not it splits a shift that way, and thirty-odd
+ * of them permanently read "not set up". A venue writes the roles it actually
+ * runs; an empty clipboard says so plainly and offers the way to start one.
+ */
+export default async function ChecklistsPage() {
+  const session = await getSession();
+  if (!session) redirect("/");
+
+  const night = currentNight();
+
+  const venue = await closeVenueId(session);
+  // An admin who has not picked a building yet gets the list of them. This
+  // used to show them one venue chosen in code, with nothing on the page
+  // saying which, which is how an admin edits the wrong venue's list.
+  if (!venue && session.role === "admin") redirect("/checklists/locations");
+  const venueName = venue ? await closeVenueName(venue) : null;
+
+  const { data: listRows } = venue
+    ? await db()
+        .from("close_checklists")
+        .select("id, house, role, phase")
+        .eq("venue_id", venue)
+        .eq("active", true)
+    : { data: [] };
+
+  const lists = (listRows ?? []) as Row[];
+
+  /**
+   * Whether anybody at this venue has written a word of Spanish.
+   *
+   * The switch used to live inside a list, which is three screens past the
+   * point where somebody who cannot read English gets stuck. It belongs here,
+   * on the screen they land on, and it belongs here only where there is
+   * something behind it: on a venue with no translations it would be a control
+   * that changes nothing.
+   */
+  let venueHasSpanish = false;
+  if (lists.length > 0) {
+    const { data: esRows } = await db()
+      .from("close_items")
+      .select("id")
+      .in(
+        "checklist_id",
+        lists.map((l) => l.id),
+      )
+      .eq("active", true)
+      .not("title_es", "is", null)
+      .limit(1);
+    venueHasSpanish = (esRows ?? []).length > 0;
+  }
+
+  /**
+   * Which lists are already signed for tonight.
+   *
+   * The colour on this screen is the night draining away. Everything starts
+   * lit because nothing is signed, and a position goes quiet when every list
+   * under it has been closed out — so the page is loud exactly while there is
+   * work in it, and the same accent means the same thing it means on the
+   * walkthrough board: this wants something from you.
+   */
+  const signed = new Set<string>();
+  if (lists.length > 0) {
+    const { data: nightRows } = await db()
+      .from("close_nights")
+      .select("checklist_id, certified_at")
+      .eq("night", night)
+      .in(
+        "checklist_id",
+        lists.map((l) => l.id),
+      );
+    for (const row of (nightRows ?? []) as {
+      checklist_id: string;
+      certified_at: string | null;
+    }[]) {
+      if (row.certified_at) signed.add(row.checklist_id);
+    }
+  }
+
+  /** Every list under this position is signed. */
+  const positionDone = (house: House, role: string) =>
+    lists
+      .filter((l) => l.house === house && l.role === role)
+      .every((l) => signed.has(l.id));
+
+  /**
+   * Real nights only. No sample rows.
+   *
+   * Until a list is signed there is nothing to report, and the screen used to
+   * fill the gap with invented figures — "Stanchions polished · 9 of 30
+   * nights" on a venue that has never signed anything. A manager reading that
+   * on login has no way to tell it from tracking, and the first thing it
+   * taught anybody was that the number cannot be trusted.
+   */
+  const real = venue ? await venueRollup(venue) : null;
+
+  /**
+   * The positions a house runs, each once.
+   *
+   * Not the lists. A position owns up to three of them and printing all three
+   * here put the whole building on one screen: two houses, every role, every
+   * phase, and a count on each. You pick the position you are working and the
+   * lists are one tap in.
+   */
+  const positionsIn = (house: House) => {
+    const roles = [
+      ...new Set(lists.filter((l) => l.house === house).map((l) => l.role)),
+    ];
+    return roles.sort((a, b) => a.localeCompare(b));
+  };
+
+  return (
+    <main className="close-flow mx-auto max-w-2xl pb-4">
+      {/* The only close screen that had no way back at the top: it leaned on
+          the bar at the foot, and the bar is gone. */}
+      <BackLink
+        href={session.role === "admin" ? "/checklists/locations" : "/home"}
+      >
+        {session.role === "admin" ? (
+          "All locations"
+        ) : (
+          <T en="Home" es="Inicio" />
+        )}
+      </BackLink>
+
+      <header className="mb-5">
+        <p className="label">
+          {venueName ? `${venueName} · ` : ""}
+          {formatNight(night)}
+        </p>
+        <h1 className="mt-2 text-metric font-medium">
+          <T en="Checklists" es="Listas" />
+        </h1>
+        <p className="label mt-2">
+          <T
+            en="Pick your position · lit means not signed yet"
+            es="Escoge tu puesto · lo iluminado no está firmado"
+          />
+        </p>
+
+        {/* The one word on the screen a person who reads no English can still
+            read is the name of their own language, so the control says
+            Español rather than ES or a globe. */}
+        {venueHasSpanish ? <LangSwitch className="mt-3" /> : null}
+      </header>
+
+      {/* Above the clipboard, not behind a link. What keeps getting missed is
+          the reason any of this exists, and a report you have to go and ask
+          for is a report nobody reads. */}
+      {real ? (
+        <section className="panel border-warn/30 mb-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <h2 className="card-title">
+              <T
+                en="What's getting missed"
+                es="Lo que se está pasando por alto"
+              />
+            </h2>
+            <p className="label">Last {real.nights} nights</p>
+          </div>
+
+          <div className="mt-4">
+            {real.missed.length === 0 ? (
+              <p className="note text-muted">
+                Nothing left open in the window.
+              </p>
+            ) : (
+              <MissedList rows={real.missed.slice(0, 4)} />
+            )}
+          </div>
+
+          {/* Two reports, two questions. This one is the month; the other is
+              last night, which is the one somebody opens at ten in the
+              morning wanting to know who signed what. */}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              href="/checklists/compliance"
+              className="bg-inset text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+            >
+              Last night
+              <span className="text-muted">what failed, who signed</span>
+            </Link>
+            <Link
+              href="/checklists/rollup"
+              className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+            >
+              Full report
+              <span className="text-muted">by role, by night, by venue</span>
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="panel-quiet mb-5">
+          <h2 className="card-title">What&apos;s getting missed</h2>
+          <p className="note text-muted mt-2 leading-relaxed">
+            Nothing signed off yet. This fills in from the first night somebody
+            signs a list and shows what keeps being left open.
+          </p>
+          {/* Reachable before the first signature, deliberately. Until one
+              exists, the night report is the only screen that can say nobody
+              has opened anything, which is the thing worth knowing. */}
+          <Link
+            href="/checklists/compliance"
+            className="bg-inset text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+          >
+            Last night
+            <span className="text-muted">what failed, who signed</span>
+          </Link>
+        </section>
+      )}
+
+      {lists.length === 0 ? (
+        <section className="panel mb-5">
+          <h2 className="card-title">No lists yet</h2>
+          <p className="note text-muted mt-2 leading-relaxed">
+            Start with the one your venue already runs on paper. A role, a
+            phase, and the items in the order somebody walks them.
+          </p>
+        </section>
+      ) : (
+        <div className="mb-5 space-y-5">
+          {(["FOH", "HOH"] as House[]).map((house) =>
+            positionsIn(house).length === 0 ? null : (
+              <section key={house} className="panel">
+                <h2 className="card-title">
+                  <T en={houseName(house)} es={HOUSE_ES[house]} />
+                </h2>
+
+                {/* Cards, not rows off a hairline. A position is the thing
+                    you are here to tap, and a list of names divided by rules
+                    reads as a table of contents — the tap target has to look
+                    like one. */}
+                <ul className="mt-4 space-y-2">
+                  {positionsIn(house).map((role) => (
+                    <li key={role}>
+                      <Link
+                        href={`/checklists/position/${house.toLowerCase()}/${roleSlug(role)}`}
+                        className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
+                          positionDone(house, role)
+                            ? "bg-inset text-muted ring-divider ring-1 ring-inset"
+                            : "bg-warn text-on-warn hover:bg-warn/90"
+                        }`}
+                      >
+                        <span className="text-body tracking-[0.08em]">
+                          {role}
+                        </span>
+                        {positionDone(house, role) ? (
+                          <span className="label">
+                            <T en="Signed" es="Firmada" />
+                          </span>
+                        ) : (
+                          <span aria-hidden>→</span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ),
+          )}
+        </div>
+      )}
+
+      <NewChecklistForm />
+
+      {/* The way out of the building you are in. Without it the cookie is a
+          one-way door and the only way back to another venue is the address
+          bar. */}
+      {session.role === "admin" ? (
+        <p className="mt-6">
+          <Link href="/checklists/locations" className="label hover:text-ink">
+            Switch location
+          </Link>
+        </p>
+      ) : null}
+    </main>
+  );
+}

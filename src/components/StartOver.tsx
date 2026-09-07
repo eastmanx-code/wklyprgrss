@@ -39,9 +39,9 @@ export function StartOver({
           ? "Takes the one entry nobody has judged yet off your board."
           : `Takes all ${waiting} entries nobody has judged yet off your board.`}{" "}
         Anything signed off stays, anything sent back stays and still needs
-        redoing, and so do your items and their names.
-        Nothing is destroyed — a cleared entry leaves the board and the score,
-        and an admin can still put it back.
+        redoing, and so do your items and their names. Nothing is destroyed — a
+        cleared entry leaves the board and the score, and an admin can still put
+        it back.
       </p>
 
       {state.ok ? (
