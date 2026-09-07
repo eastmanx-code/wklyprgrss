@@ -420,11 +420,37 @@ export function CloseChecklist({
   const untouched = doneCount === 0;
 
   /**
-   * Never prefilled. Ten items initialled ten times is the point — a single
-   * value applied to the whole night records who opened the app, not who did
-   * the work, and the second is the only one worth keeping.
+   * The initials on a row, carried down from the row before it.
+   *
+   * Every item still stores its own, because a single value stamped across the
+   * night would record who opened the app rather than who did the work. What
+   * changed is who pays for that. On a close four people share one pad and
+   * each types their own, which is the case this was written for. On a prep
+   * open one person walks twenty six items alone at six in the morning, and
+   * asking them to open a phone keyboard twenty six times to type the same two
+   * letters is most of what the app costs them.
+   *
+   * So it carries and stays editable. Alone, you type once. When somebody
+   * takes over they overtype the row they are on and it carries theirs from
+   * there. The record is identical either way: initials per item, entered by
+   * the person who did it.
    */
-  const initialsFor = (number: number) => rowInitials[number] ?? "";
+  const initialsFor = (number: number) => {
+    const own = rowInitials[number];
+    if (own !== undefined) return own;
+    // The nearest row above that somebody has signed for. Above rather than
+    // anywhere, so a list worked top to bottom carries forward and never
+    // reaches back to put an earlier person's letters on later work.
+    for (
+      let i = CLOSE_CHECKLIST.findIndex((it) => it.number === number) - 1;
+      i >= 0;
+      i -= 1
+    ) {
+      const said = rowInitials[CLOSE_CHECKLIST[i].number];
+      if (said?.trim()) return said;
+    }
+    return "";
+  };
 
   /** Nothing happens on a row until it is signed for. */
   function haveInitials(number: number) {
