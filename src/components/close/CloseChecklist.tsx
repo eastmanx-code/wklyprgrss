@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
 import {
@@ -59,6 +59,48 @@ function describeHeld(ticks: number, proof: number): string {
   if (ticks > 0) parts.push(`${ticks} ${ticks === 1 ? "tick" : "ticks"}`);
   if (proof > 0) parts.push(`${proof} ${proof === 1 ? "photo" : "photos"}`);
   return parts.join(" and ");
+}
+
+/**
+ * Which language a person reads their list in, kept on their own device.
+ *
+ * Not a site setting and not a stacked pair. Stacking both languages under
+ * every translated line doubles the list for the people who did not need it,
+ * and a site-wide setting is a far larger job than the problem, which is one
+ * position in one building. This swaps the item text and nothing else, so the
+ * signature, the record and the reports stay in a single language.
+ *
+ * A tiny store rather than component state so the choice survives navigating
+ * between lists, and so a second tab follows along.
+ */
+const LANG_KEY = "ww-close-lang";
+const langListeners = new Set<() => void>();
+
+function subscribeLang(cb: () => void) {
+  langListeners.add(cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    langListeners.delete(cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+
+function readLang(): boolean {
+  try {
+    return window.localStorage.getItem(LANG_KEY) === "es";
+  } catch {
+    // Private windows throw on access. English, then.
+    return false;
+  }
+}
+
+function writeLang(es: boolean) {
+  try {
+    window.localStorage.setItem(LANG_KEY, es ? "es" : "en");
+  } catch {
+    // Nothing to do. The choice still holds for this visit.
+  }
+  for (const cb of langListeners) cb();
 }
 
 /** One capture slot: item number and which of that item's shots. */
@@ -146,6 +188,19 @@ export function CloseChecklist({
   const [outstanding, setOutstanding] = useState(0);
   const [heldProof, setHeldProof] = useState(0);
   const [offline, setOffline] = useState(false);
+
+  /**
+   * Which language the list is being read in.
+   *
+   * Read through useSyncExternalStore rather than an effect, because the
+   * device is the source of truth and the server has no opinion: its snapshot
+   * is English, so the first paint matches what the server sent and the switch
+   * settles immediately after.
+   */
+  const spanish = useSyncExternalStore(subscribeLang, readLang, () => false);
+
+  /** Whether anything on this list has been translated at all. */
+  const hasSpanish = items.some((item) => item.titleEs);
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
   /**
    * Whether the signing block is showing while work is still outstanding.
@@ -930,6 +985,34 @@ export function CloseChecklist({
               .join(" · ")}
           </p>
         </div>
+
+        {/* Only where somebody has translated something. On the other fourteen
+            lists it would be a control that does nothing, sitting at the top of
+            every screen to advertise a feature nobody there is using. */}
+        {hasSpanish ? (
+          <div className="mt-2.5 flex gap-1" role="group" aria-label="Language">
+            {(
+              [
+                ["en", "English", false],
+                ["es", "Español", true],
+              ] as const
+            ).map(([key, label, es]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => writeLang(es)}
+                aria-pressed={spanish === es}
+                className={`min-h-9 rounded px-3 text-label tracking-[0.08em] ${
+                  spanish === es
+                    ? "bg-ink text-paper"
+                    : "ring-card-border text-muted ring-1"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        ) : null}
         {/* One block per item, in order, showing which are open rather than how
             many. Filled left to right it read as a progress bar and item 7
             being the one nobody ever does was invisible. */}
@@ -1035,7 +1118,7 @@ export function CloseChecklist({
                       {/* Title stays white when checked — the card records what
                         was done, and a greyed title reads as cancelled. */}
                       <span className="text-title leading-tight tracking-[0.08em] break-words">
-                        {item.title}
+                        {spanish && item.titleEs ? item.titleEs : item.title}
                       </span>
                       {/* Says how many, because three separate photographs is a
                         different job from one and a MOD scanning the list

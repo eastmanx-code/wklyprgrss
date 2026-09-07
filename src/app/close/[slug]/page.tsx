@@ -17,6 +17,7 @@ type Row = {
   id: string;
   position: number;
   title: string;
+  title_es: string | null;
   detail: string[];
   proof: Shot[] | null;
   reference: Reference[] | null;
@@ -69,7 +70,7 @@ export default async function ChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, reference, section")
+    .select("id, position, title, title_es, detail, proof, reference, section")
     .eq("checklist_id", list.id)
     .eq("active", true)
     .order("position");
@@ -81,6 +82,7 @@ export default async function ChecklistPage({
     number: row.position,
     section: row.section,
     title: row.title,
+    titleEs: row.title_es,
     detail: row.detail ?? [],
     // An empty array is not "proof required of nothing", it is no proof — and
     // it used to arrive here as one, because an empty array is truthy. Every

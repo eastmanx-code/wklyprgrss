@@ -23,6 +23,8 @@ export type EditableItem = {
   /** The heading this item sits under. Null when the list has none. */
   section: string | null;
   title: string;
+  /** The same item in Spanish, where somebody has needed it. */
+  titleEs: string | null;
   detail: string[];
   proof: Shot[];
   /** What right looks like. Empty until a manager writes one. */
@@ -440,6 +442,47 @@ function ReferenceFields({
   );
 }
 
+/**
+ * The item again, in Spanish.
+ *
+ * Optional and quiet, because most lists will never use it. Prep at Hood is
+ * worked by somebody who does not read English and the list is twenty six
+ * instructions, so the words have to exist in their language; a reference
+ * photograph shows what a finished caddy looks like and cannot say which bar
+ * it belongs to or how many go in it.
+ *
+ * The same row rather than a second list. A Spanish copy of a checklist would
+ * split the night's ticks across two lists that each look half done.
+ */
+function SpanishField({
+  titleEs,
+  id,
+}: {
+  titleEs?: string | null;
+  id: string;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="label" htmlFor={id}>
+        Same item in Spanish
+      </label>
+      <input
+        id={id}
+        name="titleEs"
+        className="field"
+        maxLength={200}
+        autoComplete="off"
+        defaultValue={titleEs ?? ""}
+        placeholder="Optional"
+      />
+      <p className="label leading-relaxed">
+        Shown under the English on the list, for whoever is walking it. Reports
+        stay in English.
+      </p>
+    </div>
+  );
+}
+
 function DetailField({ detail }: { detail: string[] }) {
   return (
     <div className="space-y-2">
@@ -611,6 +654,8 @@ export function ItemRow({
             />
           </div>
 
+          <SpanishField titleEs={item.titleEs} id={`title-es-${item.id}`} />
+
           <DetailField detail={item.detail} />
           <ShotFields shots={item.proof} />
           <ReferenceFields
@@ -711,6 +756,8 @@ export function AddItemForm({ checklistId }: { checklistId: string }) {
             autoComplete="off"
           />
         </div>
+
+        <SpanishField id="title-es-new" />
 
         <DetailField detail={[]} />
         <ShotFields shots={[]} />

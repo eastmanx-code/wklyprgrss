@@ -42,6 +42,8 @@ export type CloseItem = {
    */
   section?: string | null;
   title: string;
+  /** The same item in Spanish, where a venue has needed it. */
+  titleEs?: string | null;
   /** The standard for what "done" means. Not separately ticked. */
   detail: string[];
   /**
