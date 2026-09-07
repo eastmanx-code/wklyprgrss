@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
+import { EditThisList } from "@/components/close/EditThisList";
 import { logout } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
@@ -80,6 +81,13 @@ export async function CornerMenu() {
               Checklists
             </Link>
           ) : null}
+
+          {/* Only while standing on a checklist, and it renders nothing
+              anywhere else. The way into the editor is otherwise the link at
+              the foot of the list, below every item on it, which is right for
+              somebody walking it at one in the morning and useless for the
+              person setting one up. */}
+          {session ? <EditThisList /> : null}
 
           <Link href="/help" className="btn-ghost">
             How to
