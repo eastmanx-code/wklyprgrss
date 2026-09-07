@@ -3,27 +3,44 @@
 import { useActionState } from "react";
 
 import { leaderLogin, type FormState } from "@/app/actions";
-import { T, useT } from "@/components/Lang";
+import { useSpanish } from "@/components/Lang";
 
 const initialState: FormState = { error: null };
+
+/** Said in Spanish, keyed by which refusal the server returned. */
+const ERROR_ES: Record<string, string> = {
+  pin: "Ese PIN no es correcto. Inténtalo otra vez.",
+  venue: "Primero escoge tu lugar.",
+};
 
 export function LeaderLoginForm({
   venues,
   defaultVenueId = "",
   next,
+  forceEs = false,
 }: {
   venues: { id: string; code: string; name: string }[];
   /** Chosen by the link, for a QR taped to a wall in one building. */
   defaultVenueId?: string;
   /** Where that link wanted to go. Checked on the server before it is used. */
   next?: string;
+  /**
+   * The link itself said Spanish, so this renders Spanish on the server too.
+   *
+   * Without it the door paints in English and flips a moment later, on the one
+   * screen where the person has just scanned a code printed in Spanish. A flash
+   * of the wrong language is small everywhere else and not here: this is the
+   * first thing the app ever shows him.
+   */
+  forceEs?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(
     leaderLogin,
     initialState,
   );
   // An <option> takes text, not markup, so this one is read as a value.
-  const t = useT();
+  const spanish = useSpanish() || forceEs;
+  const t = (en: string, es: string) => (spanish ? es : en);
   const selectPrompt = t("Select your venue", "Escoge tu lugar");
 
   return (
@@ -31,7 +48,7 @@ export function LeaderLoginForm({
       {next ? <input type="hidden" name="next" value={next} /> : null}
       <div className="space-y-3">
         <label className="label" htmlFor="venueId">
-          <T en="Venue" es="Lugar" />
+          {t("Venue", "Lugar")}
         </label>
         <span className="select-wrap">
           <select
@@ -74,16 +91,12 @@ export function LeaderLoginForm({
 
       {state.error ? (
         <p role="alert" className="text-body text-warn">
-          {state.error}
+          {spanish && state.code ? ERROR_ES[state.code] : state.error}
         </p>
       ) : null}
 
       <button type="submit" className="btn mt-2 w-full" disabled={pending}>
-        {pending ? (
-          <T en="Checking…" es="Revisando…" />
-        ) : (
-          <T en="Continue" es="Entrar" />
-        )}
+        {pending ? t("Checking…", "Revisando…") : t("Continue", "Entrar")}
       </button>
     </form>
   );

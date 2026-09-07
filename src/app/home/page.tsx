@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { T } from "@/components/Lang";
 import { closeVenueId } from "@/lib/close-venue";
 import { nightCompliance } from "@/lib/compliance";
-import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import {
+  currentNight,
+  formatNight,
+  formatNightEs,
+  isNightOver,
+} from "@/lib/night";
 import { previousNight } from "@/lib/close-status";
 import { getSession } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
@@ -88,7 +94,9 @@ export default async function Home() {
         <p className="label text-center">
           {venue.name && venue.name !== venue.code ? venue.name : venue.code}
         </p>
-        <h1 className="text-metric mt-2 text-center font-medium">Where to?</h1>
+        <h1 className="text-metric mt-2 text-center font-medium">
+          <T en="Where to?" es="¿A dónde?" />
+        </h1>
       </header>
 
       <ul className="space-y-3">
@@ -97,32 +105,59 @@ export default async function Home() {
             week is the thing they come back to. */}
         <Card
           href="/checklists"
-          title="Checklists"
+          title={<T en="Checklists" es="Listas" />}
           lit={nightOpen}
           note={
-            lists.length === 0
-              ? "Nothing set up yet · start your first list"
-              : signed === lists.length
-                ? `All ${lists.length} signed for tonight`
-                : `${lists.length - signed} of ${lists.length} not done tonight`
+            lists.length === 0 ? (
+              <T
+                en="Nothing set up yet · start your first list"
+                es="Todavía no hay nada · empieza tu primera lista"
+              />
+            ) : signed === lists.length ? (
+              <T
+                en={`All ${lists.length} signed for tonight`}
+                es={`Las ${lists.length} firmadas para hoy`}
+              />
+            ) : (
+              <T
+                en={`${lists.length - signed} of ${lists.length} not done tonight`}
+                es={`${lists.length - signed} de ${lists.length} sin hacer hoy`}
+              />
+            )
           }
         />
 
         <Card
           href="/venue"
-          title="Weekly progress"
+          title={<T en="Weekly progress" es="Progreso semanal" />}
           lit={weekOpen}
           note={
-            sentBack > 0
-              ? `${filed} of ${owed} filed · ${sentBack} sent back`
-              : filed >= owed
-                ? `All ${owed} filed · due ${formatDeadline(board.weekStart)}`
-                : `${filed} of ${owed} filed · due ${formatDeadline(board.weekStart)}`
+            sentBack > 0 ? (
+              <T
+                en={`${filed} of ${owed} filed · ${sentBack} sent back`}
+                es={`${filed} de ${owed} entregados · ${sentBack} devueltos`}
+              />
+            ) : filed >= owed ? (
+              <T
+                en={`All ${owed} filed · due ${formatDeadline(board.weekStart)}`}
+                es={`Los ${owed} entregados · para ${formatDeadline(board.weekStart)}`}
+              />
+            ) : (
+              <T
+                en={`${filed} of ${owed} filed · due ${formatDeadline(board.weekStart)}`}
+                es={`${filed} de ${owed} entregados · para ${formatDeadline(board.weekStart)}`}
+              />
+            )
           }
         />
       </ul>
 
-      <p className="label mt-6 text-center">Lit means something is not done.</p>
+      <p className="label mt-6 text-center">
+        <T
+          en="Lit means something is not done."
+          es="Lo iluminado quiere decir que algo falta."
+        />
+      </p>
     </main>
   );
 }
@@ -154,7 +189,9 @@ async function AdminHome() {
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       <header className="mb-8">
         <p className="label text-center">Admin</p>
-        <h1 className="text-metric mt-2 text-center font-medium">Where to?</h1>
+        <h1 className="text-metric mt-2 text-center font-medium">
+          <T en="Where to?" es="¿A dónde?" />
+        </h1>
       </header>
 
       {/* Two doors, not three. Compliance is not a third product, it is the
@@ -164,31 +201,54 @@ async function AdminHome() {
       <ul className="space-y-3">
         <Card
           href="/checklists/locations"
-          title="Checklists"
+          title={<T en="Checklists" es="Listas" />}
           lit={failedLists > 0}
           note={
-            venues.length === 0
-              ? `${formatNight(night)} · no venue was running a list`
-              : failedLists > 0
-                ? `${formatNight(night)} · ${failedLists} ${
-                    failedLists === 1 ? "list" : "lists"
-                  } failed across ${failingVenues} ${
-                    failingVenues === 1 ? "venue" : "venues"
-                  }`
-                : `${formatNight(night)} · nothing failed`
+            venues.length === 0 ? (
+              <T
+                en={`${formatNight(night)} · no venue was running a list`}
+                es={`${formatNightEs(night)} · ningún lugar tenía una lista corriendo`}
+              />
+            ) : failedLists > 0 ? (
+              <T
+                en={`${formatNight(night)} · ${failedLists} ${
+                  failedLists === 1 ? "list" : "lists"
+                } failed across ${failingVenues} ${
+                  failingVenues === 1 ? "venue" : "venues"
+                }`}
+                es={`${formatNightEs(night)} · ${failedLists} ${
+                  failedLists === 1 ? "lista falló" : "listas fallaron"
+                } en ${failingVenues} ${
+                  failingVenues === 1 ? "lugar" : "lugares"
+                }`}
+              />
+            ) : (
+              <T
+                en={`${formatNight(night)} · nothing failed`}
+                es={`${formatNightEs(night)} · nada falló`}
+              />
+            )
           }
         />
 
         <Card
           href="/admin"
-          title="Weekly progress"
+          title={<T en="Weekly progress" es="Progreso semanal" />}
           lit={false}
-          note="Every venue's board, and the grading queue"
+          note={
+            <T
+              en="Every venue's board, and the grading queue"
+              es="El tablero de cada lugar, y la fila de calificación"
+            />
+          }
         />
       </ul>
 
       <p className="label mt-6 text-center">
-        Lit means something wants looking at.
+        <T
+          en="Lit means something wants looking at."
+          es="Lo iluminado quiere decir que algo necesita atención."
+        />
       </p>
     </main>
   );
@@ -211,8 +271,9 @@ function Card({
   lit,
 }: {
   href: string;
-  title: string;
-  note: string;
+  /** Words, or a <T> that picks which words. */
+  title: React.ReactNode;
+  note: React.ReactNode;
   lit: boolean;
 }) {
   return (

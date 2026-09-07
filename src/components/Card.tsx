@@ -16,8 +16,9 @@ export function Card({
   children,
   className = "",
 }: {
-  title: string;
-  hint?: string;
+  /** Words, or a <T> that picks which words. */
+  title: React.ReactNode;
+  hint?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {

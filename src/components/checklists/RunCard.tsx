@@ -1,4 +1,5 @@
 import { Card } from "@/components/Card";
+import { T } from "@/components/Lang";
 import { Dial } from "@/components/Dial";
 import { Trend } from "@/components/Trend";
 
@@ -42,11 +43,19 @@ export function RunCard({
   const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
 
   return (
-    <Card title="The run" hint={`Last ${nights} nights`}>
+    <Card
+      title={<T en="The run" es="La racha" />}
+      hint={<T en={`Last ${nights} nights`} es={`Últimas ${nights} noches`} />}
+    >
       <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
         <Dial
           percent={share}
-          caption={`${ticked} of ${owed} items ticked`}
+          caption={
+            <T
+              en={`${ticked} of ${owed} items ticked`}
+              es={`${ticked} de ${owed} puntos marcados`}
+            />
+          }
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />
 
@@ -59,19 +68,26 @@ export function RunCard({
           />
         ) : (
           <p className="note text-muted self-center leading-relaxed">
-            One night of history. The run draws itself from the second.
+            <T
+              en="One night of history. The run draws itself from the second."
+              es="Una noche de historial. La racha se dibuja a partir de la segunda."
+            />
           </p>
         )}
 
         {best && worst ? (
           <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-1">
             <div>
-              <p className="label">Best</p>
+              <p className="label">
+                <T en="Best" es="Mejor" />
+              </p>
               <p className="text-title mt-1 tracking-[0.08em]">{best.code}</p>
               <p className="label mt-1 tabular-nums">{best.score}/10</p>
             </div>
             <div>
-              <p className="label">Worst</p>
+              <p className="label">
+                <T en="Worst" es="Peor" />
+              </p>
               <p className="text-title text-warn mt-1 tracking-[0.08em]">
                 {worst.code}
               </p>

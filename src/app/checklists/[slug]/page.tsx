@@ -55,7 +55,7 @@ export default async function ChecklistPage({
   // back first. A venue has a handful of lists.
   const { data: listRows } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase")
+    .select("id, house, role, role_es, phase")
     .eq("venue_id", venue)
     .eq("active", true);
 
@@ -65,6 +65,7 @@ export default async function ChecklistPage({
         id: string;
         house: string;
         role: string;
+        role_es: string | null;
         phase: Phase;
       }[]
     ).find(
@@ -165,12 +166,12 @@ export default async function ChecklistPage({
       <BackLink
         href={`/checklists/position/${list.house.toLowerCase()}/${roleSlug(list.role)}`}
       >
-        {list.role}
+        <T en={list.role} es={list.role_es ?? list.role} />
       </BackLink>
 
       <header className="mt-4 mb-5">
         <p className="label">
-          {list.house} · {list.role} ·{" "}
+          {list.house} · <T en={list.role} es={list.role_es ?? list.role} /> ·{" "}
           <T en={formatNight(night)} es={formatNightEs(night)} />
         </p>
         <h1 className="text-metric mt-2 font-medium">

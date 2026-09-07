@@ -18,7 +18,7 @@ export function Dial({
   size = 176,
 }: {
   percent: number;
-  caption: string;
+  caption: React.ReactNode;
   tone?: string;
   /**
    * How wide the ring is allowed to get. It shrinks to fit a narrower column

@@ -21,7 +21,13 @@ import { BackLink } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-type Row = { id: string; house: House; role: string; phase: Phase };
+type Row = {
+  id: string;
+  house: House;
+  role: string;
+  role_es: string | null;
+  phase: Phase;
+};
 
 /**
  * One position, and the lists it owns.
@@ -47,7 +53,7 @@ export default async function PositionPage({
 
   const { data } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase")
+    .select("id, house, role, role_es, phase")
     .eq("venue_id", venue)
     .eq("house", house)
     .eq("active", true);
@@ -102,6 +108,11 @@ export default async function PositionPage({
       .map((row) => [row.checklist_id, row.certified_by]),
   );
 
+  // Several lists share one position; the first that carries a translation
+  // names it, so a position reads the same whichever list was edited.
+  const roleEs =
+    lists.map((l) => l.role_es?.trim()).find((said) => Boolean(said)) ?? null;
+
   const ordered = [...lists].sort(
     (a, b) => PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
   );
@@ -116,7 +127,9 @@ export default async function PositionPage({
         <p className="label">
           <T en={houseName(house)} es={HOUSE_ES[house]} />
         </p>
-        <h1 className="mt-2 text-metric font-medium">{role}</h1>
+        <h1 className="mt-2 text-metric font-medium">
+          <T en={role} es={roleEs ?? role} />
+        </h1>
       </header>
 
       <ul className="mb-5 space-y-2">

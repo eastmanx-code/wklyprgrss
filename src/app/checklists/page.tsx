@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { LangSwitch, T } from "@/components/Lang";
+import { T } from "@/components/Lang";
 import { MissedList } from "@/components/checklists/MissedList";
 import { NewChecklistForm } from "@/components/checklists/NewChecklistForm";
 import {
@@ -20,7 +20,13 @@ import { BackLink } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-type Row = { id: string; house: House; role: string; phase: Phase };
+type Row = {
+  id: string;
+  house: House;
+  role: string;
+  role_es: string | null;
+  phase: Phase;
+};
 
 /**
  * The clipboard. Front of house or heart of house, then the role, then open,
@@ -48,7 +54,7 @@ export default async function ChecklistsPage() {
   const { data: listRows } = venue
     ? await db()
         .from("close_checklists")
-        .select("id, house, role, phase")
+        .select("id, house, role, role_es, phase")
         .eq("venue_id", venue)
         .eq("active", true)
     : { data: [] };
@@ -56,27 +62,16 @@ export default async function ChecklistsPage() {
   const lists = (listRows ?? []) as Row[];
 
   /**
-   * Whether anybody at this venue has written a word of Spanish.
+   * The position, in Spanish, where somebody has written it.
    *
-   * The switch used to live inside a list, which is three screens past the
-   * point where somebody who cannot read English gets stuck. It belongs here,
-   * on the screen they land on, and it belongs here only where there is
-   * something behind it: on a venue with no translations it would be a control
-   * that changes nothing.
+   * A role is free text on the checklist row and several rows share one: a
+   * bartender has an open list and a close list. First non-empty wins, so a
+   * position reads the same whichever of its lists carried the translation.
    */
-  let venueHasSpanish = false;
-  if (lists.length > 0) {
-    const { data: esRows } = await db()
-      .from("close_items")
-      .select("id")
-      .in(
-        "checklist_id",
-        lists.map((l) => l.id),
-      )
-      .eq("active", true)
-      .not("title_es", "is", null)
-      .limit(1);
-    venueHasSpanish = (esRows ?? []).length > 0;
+  const roleEs = new Map<string, string>();
+  for (const row of lists) {
+    const said = row.role_es?.trim();
+    if (said && !roleEs.has(row.role)) roleEs.set(row.role, said);
   }
 
   /**
@@ -166,11 +161,6 @@ export default async function ChecklistsPage() {
             es="Escoge tu puesto · lo iluminado no está firmado"
           />
         </p>
-
-        {/* The one word on the screen a person who reads no English can still
-            read is the name of their own language, so the control says
-            Español rather than ES or a globe. */}
-        {venueHasSpanish ? <LangSwitch className="mt-3" /> : null}
       </header>
 
       {/* Above the clipboard, not behind a link. What keeps getting missed is
@@ -286,7 +276,7 @@ export default async function ChecklistsPage() {
                         }`}
                       >
                         <span className="text-body tracking-[0.08em]">
-                          {role}
+                          <T en={role} es={roleEs.get(role) ?? role} />
                         </span>
                         {positionDone(house, role) ? (
                           <span className="label">

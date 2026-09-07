@@ -3,7 +3,7 @@ import Link from "next/link";
 import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
-import { T } from "@/components/Lang";
+import { LangSwitch, T } from "@/components/Lang";
 import { logout } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
@@ -95,6 +95,13 @@ export async function CornerMenu() {
           {session ? <EditThisList /> : null}
 
           <HelpLink />
+
+          <span className="bg-card-border h-6 w-px" aria-hidden />
+
+          {/* Here rather than on the checklists screen, because the language
+              somebody reads is not a property of one screen in one product.
+              This bar is on every page, so the switch is too. */}
+          <LangSwitch />
 
           <span className="bg-card-border h-6 w-px" aria-hidden />
 

@@ -9,6 +9,7 @@ import {
   RestoreChecklist,
   RetireChecklist,
 } from "@/components/checklists/RetireChecklist";
+import { RoleSpanish } from "@/components/checklists/RoleSpanish";
 import { BackLink } from "@/components/ui";
 import {
   parseSlug,
@@ -56,7 +57,7 @@ export default async function EditChecklistPage({
   // before the redirect did.
   const { data: rows } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase, active")
+    .select("id, house, role, role_es, phase, active")
     .eq("venue_id", venue);
 
   const list = (
@@ -64,6 +65,7 @@ export default async function EditChecklistPage({
       id: string;
       house: House;
       role: string;
+      role_es: string | null;
       phase: Phase;
       active: boolean;
     }[]
@@ -143,6 +145,8 @@ export default async function EditChecklistPage({
           {retired.length > 0 ? ` · ${retired.length} retired` : ""}
         </p>
       </header>
+
+      <RoleSpanish house={list.house} role={list.role} current={list.role_es} />
 
       {list.active ? null : (
         <section className="panel border-warn/30 mb-3">

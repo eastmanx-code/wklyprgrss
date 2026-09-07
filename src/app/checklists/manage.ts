@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import {
   MAX_ROLE_LENGTH,
   PHASE_ORDER,
+  roleSlug,
   slugFor,
   type House,
   type Phase,
@@ -168,6 +169,48 @@ function readDetail(raw: string): string[] | string {
     return "One of those lines is too long.";
   }
   return lines;
+}
+
+/**
+ * Names a position in Spanish, for every list that position owns.
+ *
+ * Written against the role rather than one checklist, because a position is
+ * one job with several lists under it. Setting it on the bartender's open list
+ * and not the close would give the same person two names for the same station
+ * depending which list they were looking at.
+ *
+ * Blank clears it, and the English is used again. Nothing else about the list
+ * changes: the role itself is still what the venue typed, the slug is still
+ * built from it, and every report still reads in English.
+ */
+export async function setRoleSpanish(
+  _prev: ManageState,
+  formData: FormData,
+): Promise<ManageState> {
+  const venue = await venueId();
+  if (!venue) return { error: "You are not signed in." };
+
+  const house = String(formData.get("house") ?? "") as House;
+  const role = String(formData.get("role") ?? "").trim();
+  const said = String(formData.get("roleEs") ?? "").trim();
+
+  if (house !== "FOH" && house !== "HOH") return { error: "Unknown house." };
+  if (!role) return { error: "Unknown position." };
+  if (said.length > MAX_ROLE_LENGTH) return { error: "That name is too long." };
+
+  const { error } = await db()
+    .from("close_checklists")
+    .update({ role_es: said || null })
+    .eq("venue_id", venue)
+    .eq("house", house)
+    .eq("role", role);
+  if (error) return { error: "Could not save that." };
+
+  revalidatePath("/checklists");
+  revalidatePath(
+    `/checklists/position/${house.toLowerCase()}/${roleSlug(role)}`,
+  );
+  return { error: null, ok: true };
 }
 
 /** Starts a list for a role this venue actually runs. */

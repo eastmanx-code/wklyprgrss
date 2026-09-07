@@ -53,6 +53,7 @@ export default async function HomePage({
         venues={venues}
         defaultVenueId={wanted?.id ?? ""}
         next={next && landing !== "/home" ? landing : undefined}
+        forceEs={lang === "es"}
       />
 
       <div className="mt-6 flex items-center justify-center gap-4">
