@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
+import { T } from "@/components/Lang";
 import { logout } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
@@ -59,7 +60,7 @@ export async function CornerMenu() {
 
           {home ? (
             <Link href={home} className="btn-ghost">
-              Home
+              <T en="Home" es="Inicio" />
             </Link>
           ) : null}
 
@@ -68,7 +69,11 @@ export async function CornerMenu() {
               href={isAdmin ? "/admin" : "/board"}
               className="btn-ghost whitespace-nowrap"
             >
-              {isAdmin ? "All venues" : "All"}
+              {isAdmin ? (
+                <T en="All venues" es="Todos los lugares" />
+              ) : (
+                <T en="All" es="Todos" />
+              )}
             </Link>
           ) : null}
 
@@ -78,7 +83,7 @@ export async function CornerMenu() {
               the twenty-one reading it. */}
           {session ? (
             <Link href="/checklists" className="btn-ghost">
-              Checklists
+              <T en="Checklists" es="Listas" />
             </Link>
           ) : null}
 
@@ -96,7 +101,7 @@ export async function CornerMenu() {
           {session ? (
             <form action={logout}>
               <button type="submit" className="btn-ghost">
-                Out
+                <T en="Out" es="Salir" />
               </button>
             </form>
           ) : null}

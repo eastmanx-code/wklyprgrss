@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 
 import { leaderLogin, type FormState } from "@/app/actions";
-import { T } from "@/components/Lang";
+import { T, useT } from "@/components/Lang";
 
 const initialState: FormState = { error: null };
 
@@ -22,6 +22,9 @@ export function LeaderLoginForm({
     leaderLogin,
     initialState,
   );
+  // An <option> takes text, not markup, so this one is read as a value.
+  const t = useT();
+  const selectPrompt = t("Select your venue", "Escoge tu lugar");
 
   return (
     <form action={formAction} className="panel space-y-6 p-6">
@@ -38,7 +41,7 @@ export function LeaderLoginForm({
             defaultValue={defaultVenueId}
           >
             <option value="" disabled>
-              Select your venue
+              {selectPrompt}
             </option>
             {venues.map((venue) => (
               <option key={venue.id} value={venue.id}>

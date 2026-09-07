@@ -54,7 +54,7 @@ async function load(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id, title")
+      .select("id, checklist_id, title, title_es")
       .in("checklist_id", checklistIds)
       .eq("active", true),
     db()
