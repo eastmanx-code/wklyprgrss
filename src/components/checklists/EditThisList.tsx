@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { T } from "@/components/Lang";
+
 /**
  * The way into a list's own editor, from the corner rather than the foot.
  *
@@ -45,7 +47,7 @@ export function EditThisList() {
 
   return (
     <Link href={`${pathname}/edit`} className="btn-ghost whitespace-nowrap">
-      Edit list
+      <T en="Edit list" es="Editar lista" />
     </Link>
   );
 }
@@ -68,7 +70,7 @@ export function HelpLink() {
       href={onTheLists ? "/help?for=checklists" : "/help"}
       className="btn-ghost whitespace-nowrap"
     >
-      How to
+      <T en="How to" es="Cómo usar" />
     </Link>
   );
 }
