@@ -3,13 +3,20 @@
 import { useActionState } from "react";
 
 import { leaderLogin, type FormState } from "@/app/actions";
+import { T } from "@/components/Lang";
 
 const initialState: FormState = { error: null };
 
 export function LeaderLoginForm({
   venues,
+  defaultVenueId = "",
+  next,
 }: {
   venues: { id: string; code: string; name: string }[];
+  /** Chosen by the link, for a QR taped to a wall in one building. */
+  defaultVenueId?: string;
+  /** Where that link wanted to go. Checked on the server before it is used. */
+  next?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     leaderLogin,
@@ -18,12 +25,18 @@ export function LeaderLoginForm({
 
   return (
     <form action={formAction} className="panel space-y-6 p-6">
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <div className="space-y-3">
         <label className="label" htmlFor="venueId">
-          Venue
+          <T en="Venue" es="Lugar" />
         </label>
         <span className="select-wrap">
-          <select id="venueId" name="venueId" className="field" defaultValue="">
+          <select
+            id="venueId"
+            name="venueId"
+            className="field"
+            defaultValue={defaultVenueId}
+          >
             <option value="" disabled>
               Select your venue
             </option>
@@ -63,7 +76,11 @@ export function LeaderLoginForm({
       ) : null}
 
       <button type="submit" className="btn mt-2 w-full" disabled={pending}>
-        {pending ? "Checking…" : "Continue"}
+        {pending ? (
+          <T en="Checking…" es="Revisando…" />
+        ) : (
+          <T en="Continue" es="Entrar" />
+        )}
       </button>
     </form>
   );

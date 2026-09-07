@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 /**
  * Which language a person reads the app in, kept on their own device.
@@ -114,4 +114,21 @@ export function LangSwitch({ className = "" }: { className?: string }) {
       ))}
     </div>
   );
+}
+
+/**
+ * A link that says which language it is for.
+ *
+ * The QR taped up in the prep room is printed in Spanish, so scanning it should
+ * open the app in Spanish rather than in English with a button that says so.
+ * It writes the same device setting the switch writes, so it is a one time
+ * arrival and not a mode: whoever scans it can switch back at the top of the
+ * screen, and the phone keeps whatever it was last told.
+ */
+export function LangFromLink({ lang }: { lang?: string }) {
+  useEffect(() => {
+    if (lang === "es") writeLang(true);
+    else if (lang === "en") writeLang(false);
+  }, [lang]);
+  return null;
 }
