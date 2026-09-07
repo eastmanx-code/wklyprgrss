@@ -20,7 +20,13 @@ import { BackLink } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
-type Row = { id: string; house: House; role: string; phase: Phase };
+type Row = {
+  id: string;
+  house: House;
+  role: string;
+  role_es: string | null;
+  phase: Phase;
+};
 
 /**
  * The clipboard. Front of house or heart of house, then the role, then open,
@@ -48,12 +54,25 @@ export default async function ChecklistsPage() {
   const { data: listRows } = venue
     ? await db()
         .from("close_checklists")
-        .select("id, house, role, phase")
+        .select("id, house, role, role_es, phase")
         .eq("venue_id", venue)
         .eq("active", true)
     : { data: [] };
 
   const lists = (listRows ?? []) as Row[];
+
+  /**
+   * The position, in Spanish, where somebody has written it.
+   *
+   * A role is free text on the checklist row and several rows share one: a
+   * bartender has an open list and a close list. First non-empty wins, so a
+   * position reads the same whichever of its lists carried the translation.
+   */
+  const roleEs = new Map<string, string>();
+  for (const row of lists) {
+    const said = row.role_es?.trim();
+    if (said && !roleEs.has(row.role)) roleEs.set(row.role, said);
+  }
 
   /**
    * Which lists are already signed for tonight.
@@ -257,7 +276,7 @@ export default async function ChecklistsPage() {
                         }`}
                       >
                         <span className="text-body tracking-[0.08em]">
-                          {role}
+                          <T en={role} es={roleEs.get(role) ?? role} />
                         </span>
                         {positionDone(house, role) ? (
                           <span className="label">
