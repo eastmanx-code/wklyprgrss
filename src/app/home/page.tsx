@@ -104,7 +104,7 @@ export default async function Home() {
               ? "Nothing set up yet · start your first list"
               : signed === lists.length
                 ? `All ${lists.length} signed for tonight`
-                : `${lists.length - signed} of ${lists.length} still open tonight`
+                : `${lists.length - signed} of ${lists.length} not done tonight`
           }
         />
 
@@ -122,9 +122,7 @@ export default async function Home() {
         />
       </ul>
 
-      <p className="label mt-6 text-center">
-        Lit means something is still open.
-      </p>
+      <p className="label mt-6 text-center">Lit means something is not done.</p>
     </main>
   );
 }

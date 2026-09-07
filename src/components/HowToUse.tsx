@@ -11,6 +11,7 @@
  * is worse than no page: the first thing it teaches is that the help is not
  * for you.
  */
+import { LangSwitch, T } from "@/components/Lang";
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
@@ -165,87 +166,148 @@ export function LeaderGuide({
 export function CloseGuide() {
   return (
     <>
+      {/* First, and not by accident. Somebody who cannot read the rest of this
+          page needs the section that gets them out of it, and the only word on
+          the screen they can be relied on to recognise is the name of their own
+          language. */}
       <section className="panel mb-3">
-        <h2 className="text-body font-medium">The rule</h2>
+        <h2 className="text-body font-medium">
+          <T en="Reading this in Spanish" es="Cambiar el idioma" />
+        </h2>
         <p className="note mt-4 leading-relaxed">
-          An item that asks for a photo{" "}
-          <strong>cannot be ticked by hand</strong>. Taking the photo is what
-          completes it. A tick says somebody remembered. A photo says it
-          happened.
+          <T
+            en="The English / Español switch is at the top of the checklists screen and again at the top of every list that has been translated. Tap Español and the items, the buttons and the sentence you sign all change over."
+            es="El botón English / Español está arriba de la pantalla de listas y otra vez arriba de cada lista que ya está traducida. Toca Español y los puntos, los botones y la frase que firmas cambian de idioma."
+          />
+        </p>
+        <p className="note mt-3 leading-relaxed">
+          <T
+            en="The phone remembers, so it is done once and never again. It is set per phone, so switching yours does not change the pad at the bar."
+            es="El teléfono se acuerda, así que solo lo haces una vez. Es por teléfono, así que cambiar el tuyo no cambia la tablet de la barra."
+          />
+        </p>
+        <LangSwitch className="mt-4" />
+      </section>
+
+      <section className="panel mb-3">
+        <h2 className="text-body font-medium">
+          <T en="The rule" es="La regla" />
+        </h2>
+        <p className="note mt-4 leading-relaxed">
+          <T
+            en="An item that asks for a photo cannot be ticked by hand. Taking the photo is what completes it. A tick says somebody remembered. A photo says it happened."
+            es="Un punto que pide foto no se puede marcar a mano. La foto es lo que lo completa. Una marca dice que alguien se acordó. Una foto dice que sí pasó."
+          />
         </p>
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-body font-medium">Walking a list</h2>
+        <h2 className="text-body font-medium">
+          <T en="Walking a list" es="Cómo hacer tu lista" />
+        </h2>
         <ol className="mt-5 space-y-4">
           <Step n={1}>
-            Pick your position, then the list you are on: open, mid or close.
+            <T
+              en="Pick your position, then the list you are on: open, mid or close."
+              es="Escoge tu puesto y luego la lista que te toca: apertura, medio turno o cierre."
+            />
           </Step>
           <Step n={2}>
-            Tap an item and put your initials in. It saves the moment you tap.
+            <T
+              en="Tap an item and put your initials in. It saves the moment you tap."
+              es="Toca un punto y pon tus iniciales. Se guarda en cuanto lo tocas."
+            />
           </Step>
           <Step n={3}>
-            Initials go on every item, not once at the start. Four people work a
-            close on one phone, and &ldquo;who did the restrooms&rdquo; has to
-            have an answer.
+            <T
+              en="Initials go on every item, not once at the start. Four people work a close on one phone, and “who did the restrooms” has to have an answer."
+              es="Las iniciales van en cada punto, no una sola vez al principio. Cuatro personas pueden hacer un cierre con un solo teléfono, y “quién hizo los baños” tiene que tener respuesta."
+            />
           </Step>
           <Step n={4}>
-            Where an item asks for a photo, a video or a note, that is what
-            finishes it. There is no way to mark it done without one.
+            <T
+              en="Working alone, the app carries your initials down to the items below. If somebody takes over, they type theirs over the row they are on and it carries theirs from there."
+              es="Si trabajas solo, la app va poniendo tus mismas iniciales en los puntos de abajo. Si alguien te releva, esa persona escribe las suyas encima del punto donde va y de ahí en adelante quedan las de ella."
+            />
+          </Step>
+          <Step n={5}>
+            <T
+              en="Where an item asks for a photo, a video or a note, that is what finishes it. There is no way to mark it done without one."
+              es="Cuando un punto pide foto, video o una nota, eso es lo que lo termina. No hay forma de marcarlo como hecho sin eso."
+            />
           </Step>
         </ol>
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-body font-medium">If the signal drops</h2>
+        <h2 className="text-body font-medium">
+          <T en="If the signal drops" es="Si se cae la señal" />
+        </h2>
         <p className="note mt-4 leading-relaxed">
-          Keep going. Ticks and photos are saved on the phone and go up on their
-          own once you are back in range, and a line at the top of the list says
-          what it is still holding.
+          <T
+            en="Keep going. Ticks and photos are saved on the phone and go up on their own once you are back in range, and a line at the top of the list says what it is still holding."
+            es="Sigue trabajando. Las marcas y las fotos se guardan en el teléfono y se suben solas cuando vuelvas a tener señal. Arriba de la lista aparece una línea que dice qué falta por subir."
+          />
         </p>
         <p className="note mt-3 leading-relaxed">
-          One catch: open the app while you still have signal. It cannot load
-          from cold with none.
+          <T
+            en="One catch: open the app while you still have signal. It cannot load from cold with none."
+            es="Una cosa: abre la app cuando todavía tengas señal. No puede cargar desde cero sin ella."
+          />
         </p>
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-body font-medium">Signing off</h2>
+        <h2 className="text-body font-medium">
+          <T en="Signing off" es="Firmar al final" />
+        </h2>
         <p className="note mt-4 leading-relaxed">
-          The MOD signs at the end. You type your name, sign, and the app
-          records exactly what you are putting your name to, naming anything
-          still open. Once it is signed the night is locked and nothing on it
-          can change.
+          <T
+            en="The MOD signs at the end. You type your name, sign, and the app records exactly what you are putting your name to, naming anything not done. Once it is signed the list is locked and nothing on it can change."
+            es="El MOD firma al final. Escribes tu nombre, firmas, y la app guarda exactamente lo que estás firmando, nombrando lo que quedó sin hacer. Una vez firmada, la lista se cierra y ya nada se puede cambiar."
+          />
         </p>
         <p className="note mt-3 leading-relaxed">
-          If the phone is still holding work, the signature waits until that
-          work has gone up. Signing over it would lose it.
+          <T
+            en="If the phone is still holding work, the signature waits until that work has gone up. Signing over it would lose it."
+            es="Si el teléfono todavía tiene trabajo sin subir, la firma espera hasta que suba. Firmar encima lo perdería."
+          />
         </p>
       </section>
 
       <section className="panel mb-3">
-        <h2 className="text-body font-medium">Writing a list</h2>
+        <h2 className="text-body font-medium">
+          <T en="Writing a list" es="Escribir una lista" />
+        </h2>
         <p className="note mt-4 leading-relaxed">
-          <strong>Edit list</strong> is in the menu while you are on one, and
-          again at the foot of it. A venue owns its own lists: you invent the
-          position, write the items, say which ones owe a photograph, and retire
-          them when the job changes.
+          <T
+            en="Edit list is in the menu while you are on one, and again at the foot of it. A venue owns its own lists: you invent the position, write the items, say which ones owe a photograph, and retire them when the job changes."
+            es="Editar lista está en el menú mientras estás en una, y también hasta abajo de ella. Cada lugar es dueño de sus propias listas: tú inventas el puesto, escribes los puntos, dices cuáles necesitan foto, y los retiras cuando cambia el trabajo."
+          />
+        </p>
+        <p className="note mt-3 leading-relaxed">
+          <T
+            en="Each item has a Spanish box under the title. Fill it in and that item reads in Spanish for anybody who has tapped Español. Leave it empty and nothing changes."
+            es="Cada punto tiene una casilla de español debajo del título. Si la llenas, ese punto se lee en español para quien haya tocado Español. Si la dejas vacía, no cambia nada."
+          />
         </p>
       </section>
 
       <section className="panel">
-        <h2 className="text-body font-medium">Reference photos</h2>
+        <h2 className="text-body font-medium">
+          <T en="Reference photos" es="Fotos de referencia" />
+        </h2>
         <p className="note mt-4 leading-relaxed">
-          The other direction from proof. Proof is what an item owes at the end
-          of the night. A reference is what <strong>right</strong> looks like,
-          and the crew sees it while they are doing the job. Open an item in the
-          editor and add one, up to four an item.
+          <T
+            en="The other direction from proof. Proof is what an item owes at the end of the night. A reference is what right looks like, and the crew sees it while they are doing the job. Open an item in the editor and add one, up to four an item."
+            es="Lo contrario de la prueba. La prueba es lo que un punto debe al final de la noche. Una referencia es cómo se ve bien, y el equipo la ve mientras hace el trabajo. Abre un punto en el editor y agrégala, hasta cuatro por punto."
+          />
         </p>
         <p className="note mt-3 leading-relaxed">
-          Shoot them on your own bar. Whoever runs it knows what a correct well
-          looks like there, and a picture taken anywhere else is a different
-          bar. It also means they get retaken the week the layout changes, by
-          the person who changed it.
+          <T
+            en="Shoot them on your own bar. Whoever runs it knows what a correct well looks like there, and a picture taken anywhere else is a different bar. It also means they get retaken the week the layout changes, by the person who changed it."
+            es="Tómalas en tu propia barra. Quien la maneja sabe cómo se ve bien ahí, y una foto tomada en otro lado es otra barra. También quiere decir que se vuelven a tomar la semana que cambia el acomodo, por la persona que lo cambió."
+          />
         </p>
       </section>
     </>

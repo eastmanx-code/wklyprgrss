@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { isAdminPin } from "@/lib/admin-pin";
+import { safeNext } from "@/lib/app";
 import {
   endSession,
   pinMatches,
@@ -30,7 +31,9 @@ export async function leaderLogin(
   if (!venue || !pinMatches(pin, venue.pin)) return { error: GENERIC_ERROR };
 
   await startLeaderSession(venue.id);
-  redirect("/home");
+  // Where the link asked for, when it asked. A QR in the prep room lands on
+  // the checklists rather than on a home screen nobody there has a use for.
+  redirect(safeNext(String(formData.get("next") ?? "") || undefined));
 }
 
 export async function adminLogin(

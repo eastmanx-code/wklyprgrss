@@ -77,7 +77,7 @@ async function ownedChecklist(checklistId: string) {
 async function ownedItem(itemId: string) {
   const { data } = await db()
     .from("close_items")
-    .select("id, checklist_id, position, title, detail, proof")
+    .select("id, checklist_id, position, title, title_es, detail, proof")
     .eq("id", itemId)
     .maybeSingle();
   const item = data as {
@@ -308,10 +308,16 @@ export async function addItem(
   const position =
     ((last as { position: number }[] | null)?.[0]?.position ?? 0) + 1;
 
+  const titleEs = readSpanish(formData);
+  if (titleEs !== null && titleEs.length > MAX_TITLE) {
+    return { error: "That Spanish name is too long." };
+  }
+
   const { error } = await db().from("close_items").insert({
     checklist_id: list.id,
     position,
     title,
+    title_es: titleEs,
     detail,
     proof,
     reference,
@@ -321,6 +327,18 @@ export async function addItem(
 
   revalidateFor(list);
   return { error: null, ok: true };
+}
+
+/**
+ * The item said again in Spanish, or nothing.
+ *
+ * Blank and absent are the same thing here. An empty box means nobody has
+ * needed a translation for this line, which is the ordinary case, and storing
+ * an empty string would make the list render a blank second row under it.
+ */
+function readSpanish(formData: FormData): string | null {
+  const said = String(formData.get("titleEs") ?? "").trim();
+  return said === "" ? null : said;
 }
 
 export async function updateItem(
@@ -345,9 +363,14 @@ export async function updateItem(
     return { error: "That heading is too long." };
   }
 
+  const titleEs = readSpanish(formData);
+  if (titleEs !== null && titleEs.length > MAX_TITLE) {
+    return { error: "That Spanish name is too long." };
+  }
+
   const { error } = await db()
     .from("close_items")
-    .update({ title, detail, proof, reference, section })
+    .update({ title, title_es: titleEs, detail, proof, reference, section })
     .eq("id", owned.item.id);
   if (error) return { error: "Could not save that. Try again." };
 

@@ -18,6 +18,8 @@ import {
   type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
+import { LangSwitch, useSpanish, useT } from "@/components/Lang";
+import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -54,11 +56,21 @@ type Capture = { url: string; kind: "photo" | "video" };
  * "3 saved on this device" does not say whether the photograph made it, which
  * is the one thing worth knowing when the signal drops mid-shot.
  */
-function describeHeld(ticks: number, proof: number): string {
+function describeHeld(ticks: number, proof: number, es = false): string {
   const parts: string[] = [];
-  if (ticks > 0) parts.push(`${ticks} ${ticks === 1 ? "tick" : "ticks"}`);
-  if (proof > 0) parts.push(`${proof} ${proof === 1 ? "photo" : "photos"}`);
-  return parts.join(" and ");
+  if (ticks > 0)
+    parts.push(
+      es
+        ? `${ticks} ${ticks === 1 ? "marca" : "marcas"}`
+        : `${ticks} ${ticks === 1 ? "tick" : "ticks"}`,
+    );
+  if (proof > 0)
+    parts.push(
+      es
+        ? `${proof} ${proof === 1 ? "foto" : "fotos"}`
+        : `${proof} ${proof === 1 ? "photo" : "photos"}`,
+    );
+  return parts.join(es ? " y " : " and ");
 }
 
 /** One capture slot: item number and which of that item's shots. */
@@ -75,11 +87,14 @@ const slotKey = (item: number, shot: number) => `${item}:${shot}`;
  */
 export function CloseChecklist({
   slug,
+  phase,
   items,
   referenceUrls,
   saved,
 }: {
   slug: string;
+  /** Open, mid or close. The words a person signs their name to come from it. */
+  phase: Phase;
   items: CloseItem[];
   /** Storage path -> signed URL, for the reference shots. Minted server-side. */
   referenceUrls: Record<string, string>;
@@ -138,14 +153,34 @@ export function CloseChecklist({
   const [pending, setPending] = useState<number | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
   const [signed, setSigned] = useState(Boolean(saved.certifiedAt));
-  const [certified, setCertified] = useState<string | null>(
-    saved.certifiedAt ? `Certified by ${saved.certifiedBy ?? "—"}` : null,
-  );
+  /**
+   * Signed, as facts rather than a sentence.
+   *
+   * It used to hold the finished English line, which meant the banner on a
+   * signed list stayed English after somebody switched the app to Spanish:
+   * the words had been baked in at the moment of signing. The screen reads
+   * these back in whatever language the phone is set to.
+   */
+  const [certified, setCertified] = useState<{
+    by: string | null;
+    done: number | null;
+  } | null>(saved.certifiedAt ? { by: saved.certifiedBy, done: null } : null);
   const [shortfall, setShortfall] = useState<string | null>(null);
   /** Work written here that the server has not taken yet. */
   const [outstanding, setOutstanding] = useState(0);
   const [heldProof, setHeldProof] = useState(0);
   const [offline, setOffline] = useState(false);
+
+  /** Which language the list is being read in. Set once, on this device. */
+  const spanish = useSpanish();
+  const t = useT();
+
+  /** Whether anything on this list has been translated at all. */
+  const hasSpanish = items.some((item) => item.titleEs);
+  // One reading of an item, used everywhere the person is shown it. The record
+  // and the reports stay English on purpose; the screen follows the reader.
+  const titleOf = (item: CloseItem) =>
+    spanish && item.titleEs ? item.titleEs : item.title;
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
   /**
    * Whether the signing block is showing while work is still outstanding.
@@ -344,7 +379,7 @@ export function CloseChecklist({
     // night that is already a record.
     setCertified((current) =>
       saved.certifiedAt && current === null
-        ? `Certified by ${saved.certifiedBy ?? "—"}`
+        ? { by: saved.certifiedBy, done: null }
         : current,
     );
   }, [saved, saving, items, outstanding]);
@@ -365,11 +400,37 @@ export function CloseChecklist({
   const untouched = doneCount === 0;
 
   /**
-   * Never prefilled. Ten items initialled ten times is the point — a single
-   * value applied to the whole night records who opened the app, not who did
-   * the work, and the second is the only one worth keeping.
+   * The initials on a row, carried down from the row before it.
+   *
+   * Every item still stores its own, because a single value stamped across the
+   * night would record who opened the app rather than who did the work. What
+   * changed is who pays for that. On a close four people share one pad and
+   * each types their own, which is the case this was written for. On a prep
+   * open one person walks twenty six items alone at six in the morning, and
+   * asking them to open a phone keyboard twenty six times to type the same two
+   * letters is most of what the app costs them.
+   *
+   * So it carries and stays editable. Alone, you type once. When somebody
+   * takes over they overtype the row they are on and it carries theirs from
+   * there. The record is identical either way: initials per item, entered by
+   * the person who did it.
    */
-  const initialsFor = (number: number) => rowInitials[number] ?? "";
+  const initialsFor = (number: number) => {
+    const own = rowInitials[number];
+    if (own !== undefined) return own;
+    // The nearest row above that somebody has signed for. Above rather than
+    // anywhere, so a list worked top to bottom carries forward and never
+    // reaches back to put an earlier person's letters on later work.
+    for (
+      let i = CLOSE_CHECKLIST.findIndex((it) => it.number === number) - 1;
+      i >= 0;
+      i -= 1
+    ) {
+      const said = rowInitials[CLOSE_CHECKLIST[i].number];
+      if (said?.trim()) return said;
+    }
+    return "";
+  };
 
   /** Nothing happens on a row until it is signed for. */
   function haveInitials(number: number) {
@@ -416,7 +477,11 @@ export function CloseChecklist({
     if (target.error || !target.signedUrl || !target.path) {
       // The server had an opinion — a certified night, a list that moved.
       // Repeating the call will not change it.
-      return { error: target.error ?? "Could not start the upload." };
+      return {
+        error:
+          target.error ??
+          t("Could not start the upload.", "No se pudo empezar la subida."),
+      };
     }
 
     const response = await fetch(target.signedUrl, {
@@ -674,7 +739,12 @@ export function CloseChecklist({
         }
       } catch {
         setSaving(false);
-        setShortfall("Could not upload that. Check your signal and try again.");
+        setShortfall(
+          t(
+            "Could not upload that. Check your signal and try again.",
+            "No se pudo subir. Revisa tu señal e inténtalo otra vez.",
+          ),
+        );
         return;
       }
     }
@@ -712,10 +782,13 @@ export function CloseChecklist({
   async function certify() {
     if (locked) return;
     const missing: string[] = [];
-    if (!certifier.trim()) missing.push("your name");
-    if (!signed || !signatureRef.current) missing.push("your signature");
+    if (!certifier.trim()) missing.push(t("your name", "tu nombre"));
+    if (!signed || !signatureRef.current)
+      missing.push(t("your signature", "tu firma"));
     if (missing.length > 0) {
-      setShortfall(`Still needed: ${missing.join(" and ")}.`);
+      setShortfall(
+        `${t("Still needed", "Todavía falta")}: ${missing.join(t(" and ", " y "))}.`,
+      );
       return;
     }
 
@@ -743,7 +816,12 @@ export function CloseChecklist({
       const before = await pendingWork();
       if (before.total > 0) {
         setSaving(true);
-        setShortfall("Sending what this device is still holding…");
+        setShortfall(
+          t(
+            "Sending what this device is still holding…",
+            "Enviando lo que todavía tiene este teléfono…",
+          ),
+        );
         await drain();
         const held = await pendingWork();
         setOutstanding(held.total);
@@ -751,7 +829,10 @@ export function CloseChecklist({
         setSaving(false);
         if (held.total > 0) {
           setShortfall(
-            `${describeHeld(held.total - held.proof, held.proof)} still to reach the server. Wait for them to send, or find signal, then sign.`,
+            `${describeHeld(held.total - held.proof, held.proof, spanish)} ${t(
+              "still to reach the server. Wait for them to send, or find signal, then sign.",
+              "todavía no llegan al servidor. Espera a que se envíen, o busca señal, y luego firma.",
+            )}`,
           );
           return;
         }
@@ -789,9 +870,7 @@ export function CloseChecklist({
       // "all ten" was written when there was one hard-coded ten-line list.
       // A venue writes its own now, and a six-line list was being told it had
       // finished ten.
-      doneCount === CLOSE_TOTAL
-        ? `Certified · all ${CLOSE_TOTAL}`
-        : `Certified · ${doneCount} of ${CLOSE_TOTAL}, ${CLOSE_TOTAL - doneCount} left open`,
+      { by: certifier.trim() || null, done: doneCount },
     );
   }
 
@@ -828,13 +907,38 @@ export function CloseChecklist({
     if (typeof navigator === "undefined" || navigator.onLine) router.refresh();
   }
 
-  const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
-  const attestationText =
-    doneCount === CLOSE_TOTAL
-      ? `${who} have completed every item on tonight's close. The venue is secured and ready for the opening team. I hold myself accountable for this team's work tonight.`
-      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following still open. I hold myself accountable for this team's work tonight, including what I am leaving open.`;
+  // Named by phase. This sentence is the record of who stood behind the shift,
+  // and it said "tonight's close" on a prep open worked at six in the morning.
+  //
+  // Said in the reader's language, because this is the one line in the app
+  // where not understanding it actually matters. A signature is a claim, and a
+  // claim nobody can read is not one.
+  const shift = SHIFT_WORDS[phase] ?? SHIFT_WORDS.close;
+  const name = certifier.trim();
+  const attestationText = spanish
+    ? doneCount === CLOSE_TOTAL
+      ? `${name ? `Yo, ${name},` : "Yo"} completé todos los puntos de ${shift.shiftEs}. ${shift.readyEs} Me hago responsable del trabajo de mi equipo ${shift.whenEs}.`
+      : `${name ? `Yo, ${name},` : "Yo"} completé ${doneCount} de los ${CLOSE_TOTAL} puntos de ${shift.shiftEs}, y estoy firmando con los siguientes sin hacer. Me hago responsable del trabajo de mi equipo ${shift.whenEs}, incluyendo lo que estoy dejando sin terminar.`
+    : doneCount === CLOSE_TOTAL
+      ? `${name ? `I, ${name},` : "I"} have completed every item on ${shift.shift}. ${shift.ready} I hold myself accountable for this team's work ${shift.when}.`
+      : `${name ? `I, ${name},` : "I"} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am signing with the following not done. I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
+
+  /**
+   * The banner over a signed list. Named by who, and by how much when this
+   * device is the one that signed it — a list reopened on another phone knows
+   * the name from the record and not the count.
+   */
+  const certifiedLabel = !certified
+    ? null
+    : certified.done === null
+      ? `${t("Signed by", "Firmada por")} ${certified.by ?? "—"}`
+      : certified.done === CLOSE_TOTAL
+        ? `${t("Signed", "Firmada")} · ${t("all", "las")} ${CLOSE_TOTAL}`
+        : `${t("Signed", "Firmada")} · ${certified.done} ${t("of", "de")} ${CLOSE_TOTAL}, ${
+            CLOSE_TOTAL - certified.done
+          } ${t("not done", "sin hacer")}`;
 
   return (
     <div className="space-y-3">
@@ -842,9 +946,12 @@ export function CloseChecklist({
           bottom of a phone belongs to the back/out bar. */}
       {locked ? (
         <section className="panel border-ink bg-ink text-paper px-4 py-3">
-          <p className="text-title tracking-[0.08em]">{certified}</p>
+          <p className="text-title tracking-[0.08em]">{certifiedLabel}</p>
           <p className="text-label mt-1 tracking-[0.08em] opacity-70">
-            Closed out and locked. Nothing on this night can change now.
+            {t(
+              "Signed and locked. Nothing on this list can change now.",
+              "Firmada y cerrada. Ya nada de esta lista puede cambiar.",
+            )}
           </p>
 
           {/* Behind a disclosure, not a button on the banner. Reopening a
@@ -905,31 +1012,44 @@ export function CloseChecklist({
           role="status"
         >
           {outstanding > 0
-            ? `${describeHeld(outstanding - heldProof, heldProof)} saved on this device${
+            ? `${describeHeld(outstanding - heldProof, heldProof, spanish)} ${t(
+                "saved on this device",
+                "guardadas en este teléfono",
+              )}${
                 offline
-                  ? " · no signal, it goes up when it returns"
-                  : " · sending"
+                  ? t(
+                      " · no signal, it goes up when it returns",
+                      " · sin señal, se sube cuando regrese",
+                    )
+                  : t(" · sending", " · enviando")
               }`
-            : "No signal. Keep going, everything is saved here."}
+            : t(
+                "No signal. Keep going, everything is saved here.",
+                "Sin señal. Sigue trabajando, todo se guarda aquí.",
+              )}
         </p>
       ) : null}
 
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-1 border-b px-4 py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {doneCount}/{CLOSE_TOTAL} done
+            {doneCount}/{CLOSE_TOTAL} {t("done", "hechos")}
           </p>
           <p className="label">
             {[
-              PHOTO_SHOTS ? `${PHOTO_SHOTS} photos` : null,
-              VIDEO_SHOTS ? `${VIDEO_SHOTS} video` : null,
-              NOTE_SHOTS ? `${NOTE_SHOTS} written` : null,
-              "nothing is timed",
+              PHOTO_SHOTS ? `${PHOTO_SHOTS} ${t("photos", "fotos")}` : null,
+              VIDEO_SHOTS ? `${VIDEO_SHOTS} ${t("video", "video")}` : null,
+              NOTE_SHOTS ? `${NOTE_SHOTS} ${t("written", "escritas")}` : null,
             ]
               .filter(Boolean)
               .join(" · ")}
           </p>
         </div>
+
+        {/* Only where somebody has translated something. On the other fourteen
+            lists it would be a control that does nothing, sitting at the top of
+            every screen to advertise a feature nobody there is using. */}
+        {hasSpanish ? <LangSwitch className="mt-2.5" /> : null}
         {/* One block per item, in order, showing which are open rather than how
             many. Filled left to right it read as a progress bar and item 7
             being the one nobody ever does was invisible. */}
@@ -944,15 +1064,18 @@ export function CloseChecklist({
           ))}
         </div>
 
-        {/* Named, in the header, the whole way down the page. It was only in
-            the panel at the bottom, which means you saw what you had missed
-            after you had decided you were finished. */}
-        {openItems.length > 0 ? (
-          <p className="text-warn mt-2 text-[12px] leading-snug tracking-[0.08em]">
-            <span className="opacity-70">Still open</span>{" "}
-            {openItems.map((item) => item.number).join(" · ")}
-          </p>
-        ) : null}
+        {/* The list of numbers that used to sit here is gone.
+            "Still open 1 · 2 · 3 … 26" was three problems at once. It said
+            "open" a hand's width under a heading reading "Open checklist",
+            where open is the shift, so one word carried two meanings on one
+            screen. On an untouched list it printed all twenty six across two
+            lines, which made "you have not started" the largest thing in front
+            of somebody who knew that. And a number is not something a person
+            can act on: 17 only helps once you have scrolled and counted to it.
+
+            The blocks above say the same thing and say it by position, which
+            is how somebody actually finds their place, and the count says the
+            rest. */}
       </section>
 
       <ul className="space-y-3">
@@ -1035,7 +1158,7 @@ export function CloseChecklist({
                       {/* Title stays white when checked — the card records what
                         was done, and a greyed title reads as cancelled. */}
                       <span className="text-title leading-tight tracking-[0.08em] break-words">
-                        {item.title}
+                        {titleOf(item)}
                       </span>
                       {/* Says how many, because three separate photographs is a
                         different job from one and a MOD scanning the list
@@ -1045,10 +1168,10 @@ export function CloseChecklist({
                           {shots.length > 1
                             ? `${taken}/${shots.length} ${shots[0].kind === "video" ? "videos" : "photos"}`
                             : shots[0].kind === "video"
-                              ? "Video"
+                              ? t("Video", "Video")
                               : shots[0].kind === "note"
-                                ? "Written"
-                                : "Photo"}
+                                ? t("Written", "Escrito")
+                                : t("Photo", "Foto")}
                         </span>
                       ) : null}
                     </span>
@@ -1107,7 +1230,7 @@ export function CloseChecklist({
                     spellCheck={false}
                     value={mine}
                     disabled={isDone || locked}
-                    aria-label={`Initials for ${item.title}`}
+                    aria-label={`${t("Initials for", "Iniciales para")} ${titleOf(item)}`}
                     onChange={(event) => {
                       setRowInitials((c) => ({
                         ...c,
@@ -1145,7 +1268,9 @@ export function CloseChecklist({
                       wanted ? "text-warn" : "text-muted"
                     }`}
                   >
-                    {wanted ? "Initial it" : "Initials"}
+                    {wanted
+                      ? t("Initial it", "Pon tus iniciales")
+                      : t("Initials", "Iniciales")}
                   </span>
                 </span>
               </div>
@@ -1163,7 +1288,9 @@ export function CloseChecklist({
                   these started. */}
               {item.reference && item.reference.length > 0 ? (
                 <div className="border-divider border-t px-4 py-4 sm:pl-[3.6rem]">
-                  <p className="label mb-2.5">What right looks like</p>
+                  <p className="label mb-2.5">
+                    {t("What right looks like", "Así se ve bien")}
+                  </p>
                   <ul className="flex flex-wrap gap-3">
                     {item.reference.map((ref, index) => {
                       const url = ref.path
@@ -1182,7 +1309,7 @@ export function CloseChecklist({
                             </a>
                           ) : (
                             <span className="bg-inset label text-muted flex h-24 w-full items-center justify-center rounded px-2 text-center">
-                              No photo yet
+                              {t("No photo yet", "Todavía sin foto")}
                             </span>
                           )}
                           <span className="text-ink/65 mt-1.5 block text-[12px] leading-snug break-words">
@@ -1222,7 +1349,9 @@ export function CloseChecklist({
                         />
 
                         {locked && !got && shot.kind !== "note" ? (
-                          <p className="label text-muted">Not captured</p>
+                          <p className="label text-muted">
+                            {t("Not captured", "Sin tomar")}
+                          </p>
                         ) : shot.kind === "note" ? (
                           <div className="w-full">
                             <textarea
@@ -1232,7 +1361,7 @@ export function CloseChecklist({
                               rows={3}
                               className="field w-full resize-none"
                               disabled={locked}
-                              placeholder="What was said"
+                              placeholder={t("What was said", "Qué se dijo")}
                               value={notes[key] ?? ""}
                               onChange={(event) => {
                                 const text = event.target.value;
@@ -1296,7 +1425,9 @@ export function CloseChecklist({
                         ) : got ? (
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="pill pill-done">
-                              {shot.kind === "video" ? "Recorded" : "Taken"}
+                              {shot.kind === "video"
+                                ? t("Recorded", "Grabado")
+                                : t("Taken", "Tomada")}
                             </span>
                             {locked ? null : (
                               <button
@@ -1317,7 +1448,9 @@ export function CloseChecklist({
                             className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
                           >
                             <CaptureGlyph kind={shot.kind} />
-                            {shot.kind === "video" ? "Record" : "Photograph"}
+                            {shot.kind === "video"
+                              ? t("Record", "Grabar")
+                              : t("Photograph", "Tomar foto")}
                           </button>
                         )}
 
@@ -1361,8 +1494,8 @@ export function CloseChecklist({
       <section className="panel mt-5">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
-            ? `Still open · ${openItems.length}`
-            : `All ${CLOSE_TOTAL} complete`}
+            ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
+            : `${t("All", "Las")} ${CLOSE_TOTAL} ${t("complete", "completas")}`}
         </p>
 
         {/* A reopened night says so, on its face. The record is only worth
@@ -1372,15 +1505,15 @@ export function CloseChecklist({
         {saved.history.length > 0 ? (
           <div className="border-warn/40 mt-3 rounded-[8px] border p-4">
             <p className="label text-warn">
-              Reopened{" "}
+              {t("Reopened", "Reabierta")}{" "}
               {saved.history.length === 1
-                ? "once"
-                : `${saved.history.length} times`}
+                ? t("once", "una vez")
+                : `${saved.history.length} ${t("times", "veces")}`}
             </p>
             <ul className="mt-2 space-y-1.5">
               {saved.history.map((entry, index) => (
                 <li key={index} className="label leading-snug">
-                  Certified by {entry.certifiedBy ?? "—"}
+                  {t("Signed by", "Firmada por")} {entry.certifiedBy ?? "—"}
                   {entry.certifiedAt
                     ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString(
                         "en-US",
@@ -1414,7 +1547,7 @@ export function CloseChecklist({
                       key={item.number}
                       className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
                     >
-                      {item.number} · {item.title}
+                      {item.number} · {titleOf(item)}
                     </li>
                   ))}
                 </ul>
@@ -1429,7 +1562,7 @@ export function CloseChecklist({
                 <input
                   id="certifier"
                   className="field"
-                  placeholder="Your name"
+                  placeholder={t("Your name", "Tu nombre")}
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
@@ -1457,7 +1590,10 @@ export function CloseChecklist({
               {confirmingEmpty ? (
                 <div className="border-warn/40 rounded-[8px] border p-4">
                   <p className="note text-warn">
-                    Nothing was checked tonight. Sign anyway?
+                    {t(
+                      "Nothing on this list was checked. Sign anyway?",
+                      "No se marcó nada en esta lista. ¿Firmar de todos modos?",
+                    )}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -1465,14 +1601,14 @@ export function CloseChecklist({
                       className="btn btn-sm"
                       onClick={() => void certify()}
                     >
-                      Yes, sign it
+                      {t("Yes, sign it", "Sí, firmar")}
                     </button>
                     <button
                       type="button"
                       className="btn-ghost"
                       onClick={() => setConfirmingEmpty(false)}
                     >
-                      Go back
+                      {t("Go back", "Regresar")}
                     </button>
                   </div>
                 </div>
@@ -1485,11 +1621,13 @@ export function CloseChecklist({
                 disabled={locked || saving}
               >
                 {saving
-                  ? "Saving…"
-                  : (certified ??
+                  ? t("Saving…", "Guardando…")
+                  : (certifiedLabel ??
                     (doneCount === CLOSE_TOTAL
-                      ? "Certify this close"
-                      : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
+                      ? t("Sign this list", "Firmar esta lista")
+                      : `${t("Sign with", "Firmar con")} ${
+                          CLOSE_TOTAL - doneCount
+                        } ${t("not done", "sin hacer")}`))}
               </button>
             </div>
           </>
@@ -1499,7 +1637,8 @@ export function CloseChecklist({
             className="btn-ghost mt-4"
             onClick={() => setSigningOpen(true)}
           >
-            Sign with {openItems.length} open
+            {t("Sign with", "Firmar con")} {openItems.length}{" "}
+            {t("not done", "sin hacer")}
           </button>
         )}
       </section>
@@ -1534,6 +1673,7 @@ function SignaturePad({
   locked: boolean;
   onInk: (dataUrl: string) => void;
 }) {
+  const t = useT();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<{ x: number; y: number }[][]>([]);
   const drawing = useRef(false);
@@ -1626,13 +1766,15 @@ function SignaturePad({
         />
         {!signed ? (
           <div className="label pointer-events-none absolute inset-0 grid place-items-center">
-            Sign here with your finger
+            {t("Sign here with your finger", "Firma aquí con el dedo")}
           </div>
         ) : null}
       </div>
       <p className="label">
-        Kept with the night&apos;s record, alongside what was open when you
-        signed.
+        {t(
+          "Kept with this list's record, alongside what was not done when you signed.",
+          "Se guarda con el registro de esta lista, junto con lo que quedó sin hacer cuando firmaste.",
+        )}
       </p>
     </div>
   );

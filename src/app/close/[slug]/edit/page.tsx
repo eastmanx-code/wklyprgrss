@@ -77,7 +77,9 @@ export default async function EditChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, reference, section, active")
+    .select(
+      "id, position, title, title_es, detail, proof, reference, section, active",
+    )
     .eq("checklist_id", list.id)
     .order("position");
 
@@ -85,6 +87,7 @@ export default async function EditChecklistPage({
     id: string;
     position: number;
     title: string;
+    title_es: string | null;
     detail: string[] | null;
     proof: Shot[] | null;
     reference: Reference[] | null;
@@ -107,6 +110,7 @@ export default async function EditChecklistPage({
     position: row.position,
     section: row.section,
     title: row.title,
+    titleEs: row.title_es,
     detail: row.detail ?? [],
     proof: row.proof ?? [],
     reference: row.reference ?? [],

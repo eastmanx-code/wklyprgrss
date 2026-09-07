@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { T } from "@/components/Lang";
 import {
+  HOUSE_ES,
+  PHASE_ES,
   houseName,
   phaseName,
   PHASE_ORDER,
@@ -105,10 +108,14 @@ export default async function PositionPage({
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href="/close">All positions</BackLink>
+      <BackLink href="/close">
+        <T en="All positions" es="Todos los puestos" />
+      </BackLink>
 
       <header className="mt-4 mb-5">
-        <p className="label">{houseName(house)}</p>
+        <p className="label">
+          <T en={houseName(house)} es={HOUSE_ES[house]} />
+        </p>
         <h1 className="mt-2 text-metric font-medium">{role}</h1>
       </header>
 
@@ -124,16 +131,18 @@ export default async function PositionPage({
               }`}
             >
               <span className="text-body tracking-[0.08em]">
-                {phaseName(list.phase)}
+                <T en={phaseName(list.phase)} es={PHASE_ES[list.phase]} />
               </span>
               {/* One state per row, and only when it is not the obvious one.
                   An unlit row is either finished or never written, which are
                   not the same thing and cannot be told apart by the grey. */}
               {!built.has(list.id) ? (
-                <span className="label">Nothing on it yet</span>
+                <span className="label">
+                  <T en="Nothing on it yet" es="Todavía no tiene nada" />
+                </span>
               ) : signedBy.has(list.id) ? (
                 <span className="label">
-                  Signed
+                  <T en="Signed" es="Firmada" />
                   {signedBy.get(list.id) ? ` · ${signedBy.get(list.id)}` : ""}
                 </span>
               ) : (

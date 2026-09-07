@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { LangSwitch, T } from "@/components/Lang";
 import { MissedList } from "@/components/close/MissedList";
 import { NewChecklistForm } from "@/components/close/NewChecklistForm";
-import { houseName, roleSlug, type House, type Phase } from "@/lib/checklists";
+import {
+  HOUSE_ES,
+  houseName,
+  roleSlug,
+  type House,
+  type Phase,
+} from "@/lib/checklists";
 import { currentNight, formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
@@ -49,6 +56,30 @@ export default async function ChecklistsPage() {
   const lists = (listRows ?? []) as Row[];
 
   /**
+   * Whether anybody at this venue has written a word of Spanish.
+   *
+   * The switch used to live inside a list, which is three screens past the
+   * point where somebody who cannot read English gets stuck. It belongs here,
+   * on the screen they land on, and it belongs here only where there is
+   * something behind it: on a venue with no translations it would be a control
+   * that changes nothing.
+   */
+  let venueHasSpanish = false;
+  if (lists.length > 0) {
+    const { data: esRows } = await db()
+      .from("close_items")
+      .select("id")
+      .in(
+        "checklist_id",
+        lists.map((l) => l.id),
+      )
+      .eq("active", true)
+      .not("title_es", "is", null)
+      .limit(1);
+    venueHasSpanish = (esRows ?? []).length > 0;
+  }
+
+  /**
    * Which lists are already signed for tonight.
    *
    * The colour on this screen is the night draining away. Everything starts
@@ -75,7 +106,7 @@ export default async function ChecklistsPage() {
     }
   }
 
-  /** Nothing left open under this position tonight. */
+  /** Every list under this position is signed. */
   const positionDone = (house: House, role: string) =>
     lists
       .filter((l) => l.house === house && l.role === role)
@@ -112,7 +143,11 @@ export default async function ChecklistsPage() {
       {/* The only close screen that had no way back at the top: it leaned on
           the bar at the foot, and the bar is gone. */}
       <BackLink href={session.role === "admin" ? "/close/locations" : "/home"}>
-        {session.role === "admin" ? "All locations" : "Home"}
+        {session.role === "admin" ? (
+          "All locations"
+        ) : (
+          <T en="Home" es="Inicio" />
+        )}
       </BackLink>
 
       <header className="mb-5">
@@ -120,10 +155,20 @@ export default async function ChecklistsPage() {
           {venueName ? `${venueName} · ` : ""}
           {formatNight(night)}
         </p>
-        <h1 className="mt-2 text-metric font-medium">Checklists</h1>
+        <h1 className="mt-2 text-metric font-medium">
+          <T en="Checklists" es="Listas" />
+        </h1>
         <p className="label mt-2">
-          Pick your position · lit means still open tonight
+          <T
+            en="Pick your position · lit means not signed yet"
+            es="Escoge tu puesto · lo iluminado no está firmado"
+          />
         </p>
+
+        {/* The one word on the screen a person who reads no English can still
+            read is the name of their own language, so the control says
+            Español rather than ES or a globe. */}
+        {venueHasSpanish ? <LangSwitch className="mt-3" /> : null}
       </header>
 
       {/* Above the clipboard, not behind a link. What keeps getting missed is
@@ -132,7 +177,12 @@ export default async function ChecklistsPage() {
       {real ? (
         <section className="panel border-warn/30 mb-5">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 className="card-title">What&apos;s getting missed</h2>
+            <h2 className="card-title">
+              <T
+                en="What's getting missed"
+                es="Lo que se está pasando por alto"
+              />
+            </h2>
             <p className="label">Last {real.nights} nights</p>
           </div>
 
@@ -199,7 +249,9 @@ export default async function ChecklistsPage() {
           {(["FOH", "HOH"] as House[]).map((house) =>
             positionsIn(house).length === 0 ? null : (
               <section key={house} className="panel">
-                <h2 className="card-title">{houseName(house)}</h2>
+                <h2 className="card-title">
+                  <T en={houseName(house)} es={HOUSE_ES[house]} />
+                </h2>
 
                 {/* Cards, not rows off a hairline. A position is the thing
                     you are here to tap, and a list of names divided by rules
@@ -220,7 +272,9 @@ export default async function ChecklistsPage() {
                           {role}
                         </span>
                         {positionDone(house, role) ? (
-                          <span className="label">Signed</span>
+                          <span className="label">
+                            <T en="Signed" es="Firmada" />
+                          </span>
                         ) : (
                           <span aria-hidden>→</span>
                         )}

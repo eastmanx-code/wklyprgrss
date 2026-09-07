@@ -3,7 +3,14 @@ import { notFound, redirect } from "next/navigation";
 
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
-import { parseSlug, phaseName, roleSlug, type Phase } from "@/lib/checklists";
+import { T } from "@/components/Lang";
+import {
+  PHASE_ES,
+  parseSlug,
+  phaseName,
+  roleSlug,
+  type Phase,
+} from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
@@ -17,6 +24,7 @@ type Row = {
   id: string;
   position: number;
   title: string;
+  title_es: string | null;
   detail: string[];
   proof: Shot[] | null;
   reference: Reference[] | null;
@@ -69,7 +77,7 @@ export default async function ChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, reference, section")
+    .select("id, position, title, title_es, detail, proof, reference, section")
     .eq("checklist_id", list.id)
     .eq("active", true)
     .order("position");
@@ -81,6 +89,7 @@ export default async function ChecklistPage({
     number: row.position,
     section: row.section,
     title: row.title,
+    titleEs: row.title_es,
     detail: row.detail ?? [],
     // An empty array is not "proof required of nothing", it is no proof — and
     // it used to arrive here as one, because an empty array is truthy. Every
@@ -164,7 +173,10 @@ export default async function ChecklistPage({
           {list.house} · {list.role} · {formatNight(night)}
         </p>
         <h1 className="text-metric mt-2 font-medium">
-          {phaseName(list.phase)} checklist
+          <T
+            en={`${phaseName(list.phase)} checklist`}
+            es={`Lista de ${PHASE_ES[list.phase].toLowerCase()}`}
+          />
         </h1>
       </header>
 
@@ -182,6 +194,7 @@ export default async function ChecklistPage({
       ) : (
         <CloseChecklist
           slug={slug}
+          phase={list.phase}
           items={items}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>

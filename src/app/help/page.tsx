@@ -1,3 +1,4 @@
+import { T } from "@/components/Lang";
 import { CloseGuide, LeaderGuide } from "@/components/HowToUse";
 import { BackLink } from "@/components/ui";
 import { APP_NAME } from "@/lib/app";
@@ -46,7 +47,9 @@ export default async function HelpPage({
 
   const close = (
     <section id="close">
-      <h2 className="label mb-3">Checklists</h2>
+      <h2 className="label mb-3">
+        <T en="Checklists" es="Listas" />
+      </h2>
       <CloseGuide />
     </section>
   );
@@ -56,12 +59,14 @@ export default async function HelpPage({
       {/* Named for where it goes. Both roles land on the same door now, so
           "All venues" on a link to it was describing the old destination. */}
       <BackLink href={session ? "/home" : "/"}>
-        {session ? "Home" : "Sign in"}
+        {session ? <T en="Home" es="Inicio" /> : "Sign in"}
       </BackLink>
 
       <header className="mt-4 mb-6">
         <p className="label">{APP_NAME}</p>
-        <h1 className="mt-2 text-metric font-medium">How to use this</h1>
+        <h1 className="mt-2 text-metric font-medium">
+          <T en="How to use this" es="Cómo usar esto" />
+        </h1>
       </header>
 
       <div className="space-y-8">
