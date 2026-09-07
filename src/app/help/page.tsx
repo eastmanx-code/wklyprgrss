@@ -28,7 +28,8 @@ export default async function HelpPage({
 }) {
   const session = await getSession();
   const asked = (await searchParams).for;
-  const closeFirst = asked === "close";
+  // "close" still works: it is in links printed before this was renamed.
+  const listsFirst = asked === "checklists" || asked === "close";
 
   const deadlineLabel = formatDeadline(currentWeekStart());
   // One guide each, for the people doing the work. There is a single admin and
@@ -70,7 +71,7 @@ export default async function HelpPage({
       </header>
 
       <div className="space-y-8">
-        {closeFirst ? (
+        {listsFirst ? (
           <>
             {close}
             {weekly}

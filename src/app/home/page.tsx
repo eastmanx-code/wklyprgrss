@@ -96,7 +96,7 @@ export default async function Home() {
             thing in front of somebody opening this during a shift, and the
             week is the thing they come back to. */}
         <Card
-          href="/close"
+          href="/checklists"
           title="Checklists"
           lit={nightOpen}
           note={
@@ -163,7 +163,7 @@ async function AdminHome() {
           last night's verdict, which is the reason to open the thing. */}
       <ul className="space-y-3">
         <Card
-          href="/close/locations"
+          href="/checklists/locations"
           title="Checklists"
           lit={failedLists > 0}
           note={
