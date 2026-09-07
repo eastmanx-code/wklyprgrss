@@ -18,7 +18,7 @@ import {
   type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
-import { LangSwitch, useSpanish, useT } from "@/components/Lang";
+import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
@@ -175,8 +175,6 @@ export function CloseChecklist({
   const spanish = useSpanish();
   const t = useT();
 
-  /** Whether anything on this list has been translated at all. */
-  const hasSpanish = items.some((item) => item.titleEs);
   // One reading of an item, used everywhere the person is shown it. The record
   // and the reports stay English on purpose; the screen follows the reader.
   const titleOf = (item: CloseItem) =>
@@ -1046,10 +1044,6 @@ export function CloseChecklist({
           </p>
         </div>
 
-        {/* Only where somebody has translated something. On the other fourteen
-            lists it would be a control that does nothing, sitting at the top of
-            every screen to advertise a feature nobody there is using. */}
-        {hasSpanish ? <LangSwitch className="mt-2.5" /> : null}
         {/* One block per item, in order, showing which are open rather than how
             many. Filled left to right it read as a progress bar and item 7
             being the one nobody ever does was invisible. */}

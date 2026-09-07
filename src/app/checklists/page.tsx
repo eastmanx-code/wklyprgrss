@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { LangSwitch, T } from "@/components/Lang";
+import { T } from "@/components/Lang";
 import { MissedList } from "@/components/checklists/MissedList";
 import { NewChecklistForm } from "@/components/checklists/NewChecklistForm";
 import {
@@ -54,30 +54,6 @@ export default async function ChecklistsPage() {
     : { data: [] };
 
   const lists = (listRows ?? []) as Row[];
-
-  /**
-   * Whether anybody at this venue has written a word of Spanish.
-   *
-   * The switch used to live inside a list, which is three screens past the
-   * point where somebody who cannot read English gets stuck. It belongs here,
-   * on the screen they land on, and it belongs here only where there is
-   * something behind it: on a venue with no translations it would be a control
-   * that changes nothing.
-   */
-  let venueHasSpanish = false;
-  if (lists.length > 0) {
-    const { data: esRows } = await db()
-      .from("close_items")
-      .select("id")
-      .in(
-        "checklist_id",
-        lists.map((l) => l.id),
-      )
-      .eq("active", true)
-      .not("title_es", "is", null)
-      .limit(1);
-    venueHasSpanish = (esRows ?? []).length > 0;
-  }
 
   /**
    * Which lists are already signed for tonight.
@@ -166,11 +142,6 @@ export default async function ChecklistsPage() {
             es="Escoge tu puesto · lo iluminado no está firmado"
           />
         </p>
-
-        {/* The one word on the screen a person who reads no English can still
-            read is the name of their own language, so the control says
-            Español rather than ES or a globe. */}
-        {venueHasSpanish ? <LangSwitch className="mt-3" /> : null}
       </header>
 
       {/* Above the clipboard, not behind a link. What keeps getting missed is
