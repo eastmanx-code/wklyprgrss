@@ -6,13 +6,19 @@ import { enrolVenue } from "./actions";
 import { Card } from "@/components/Card";
 import { RunCard } from "@/components/checklists/RunCard";
 import { BackLink } from "@/components/ui";
+import { T } from "@/components/Lang";
 import { previousNight } from "@/lib/close-status";
 import {
   nightCompliance,
   nightTrend,
   type VenueCompliance,
 } from "@/lib/compliance";
-import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import {
+  currentNight,
+  formatNight,
+  formatNightEs,
+  isNightOver,
+} from "@/lib/night";
 import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -25,6 +31,7 @@ type Row = {
   score: string;
   tier: "good" | "neutral" | "fail" | null;
   note: string;
+  noteEs: string;
 };
 
 /**
@@ -98,19 +105,33 @@ export default async function LocationsPage() {
       code: venue.code,
       score: row ? `${row.score}/10` : "—",
       tier: row?.tier ?? null,
+      // Said twice, because the row is built on the server and the language
+      // is on the device. "open" here used to mean not done, which is the
+      // collision this app spent a day getting rid of everywhere else.
       note: row
         ? [
             `${row.listsSigned} of ${row.listsTotal} signed`,
             ...(row.failed > 0
               ? [`${row.failed} failed`]
               : row.owed > row.ticked
-                ? [`${row.owed - row.ticked} open`]
+                ? [`${row.owed - row.ticked} not done`]
                 : []),
             // The sharper of the two signals, so it survives to the screen an
             // admin lands on rather than waiting two taps in.
             ...(row.bursted > 0 ? [`${row.bursted} not walked`] : []),
           ].join(" · ")
         : "No lists yet",
+      noteEs: row
+        ? [
+            `${row.listsSigned} de ${row.listsTotal} firmadas`,
+            ...(row.failed > 0
+              ? [`${row.failed} fallaron`]
+              : row.owed > row.ticked
+                ? [`${row.owed - row.ticked} sin hacer`]
+                : []),
+            ...(row.bursted > 0 ? [`${row.bursted} sin recorrer`] : []),
+          ].join(" · ")
+        : "Todavía sin listas",
     };
   };
 
@@ -138,14 +159,21 @@ export default async function LocationsPage() {
 
   return (
     <main>
-      <BackLink href="/home">Home</BackLink>
+      <BackLink href="/home">
+        <T en="Home" es="Inicio" />
+      </BackLink>
 
       {/* Named for what you came to do. It read "Last night", which is what
           the panel under it reports on, and a page whose heading is a report
           is a page nobody expects to walk into a list from. */}
       <header className="mt-4 mb-6">
-        <p className="label">Checklists · {formatNight(night)}</p>
-        <h1 className="text-metric mt-2 tracking-normal">Open a location</h1>
+        <p className="label">
+          <T en="Checklists" es="Listas" /> ·{" "}
+          <T en={formatNight(night)} es={formatNightEs(night)} />
+        </p>
+        <h1 className="text-metric mt-2 tracking-normal">
+          <T en="Open a location" es="Abrir un lugar" />
+        </h1>
       </header>
 
       {lists > 0 ? (
@@ -165,17 +193,24 @@ export default async function LocationsPage() {
       ) : null}
 
       <Card
-        title="Your locations"
+        title={<T en="Your locations" es="Tus lugares" />}
         hint={
-          lists === 0
-            ? "nothing running yet"
-            : `${lists} lists · ${signed} signed last night · tap one to open its lists`
+          lists === 0 ? (
+            <T en="nothing running yet" es="todavía no hay nada corriendo" />
+          ) : (
+            <T
+              en={`${lists} lists · ${signed} signed last night · tap one to open its lists`}
+              es={`${lists} listas · ${signed} firmadas anoche · toca una para abrir sus listas`}
+            />
+          )
         }
       >
         {running.length === 0 && idle.length === 0 ? (
           <p className="note text-muted leading-relaxed">
-            No venue is on the checklists yet. Add one below and write its first
-            list.
+            <T
+              en="No venue is on the checklists yet. Add one below and write its first list."
+              es="Todavía no hay ningún lugar en las listas. Agrega uno abajo y escribe su primera lista."
+            />
           </p>
         ) : (
           /* One list, worst first, no tier headings.
@@ -198,8 +233,10 @@ export default async function LocationsPage() {
             href={`/checklists/compliance?night=${night}`}
             className="ring-card-border text-ink mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
           >
-            Full report
-            <span className="text-muted">who signed, what was left</span>
+            <T en="Full report" es="Reporte completo" />
+            <span className="text-muted">
+              <T en="who signed, what was left" es="quién firmó, qué quedó" />
+            </span>
           </Link>
         ) : null}
       </Card>
@@ -210,14 +247,13 @@ export default async function LocationsPage() {
       {candidates.length > 0 ? (
         <details className="panel mt-4">
           <summary className="card-title cursor-pointer list-none">
-            Add a location
-            <span className="label ml-3">
-              {candidates.length} not on the checklists yet
-            </span>
+            <T en="Add a location" es="Agregar un lugar" />
           </summary>
           <p className="note text-muted mt-3 leading-relaxed">
-            Adding a venue puts it on the checklists and opens it, ready for its
-            first list. It has no bearing on the weekly walkthrough.
+            <T
+              en="Adding a venue puts it on the checklists and opens it, ready for its first list. It has no bearing on the weekly walkthrough."
+              es="Agregar un lugar lo pone en las listas y lo abre, listo para su primera lista. No afecta el recorrido semanal."
+            />
           </p>
           <ul className="mt-4 space-y-2">
             {candidates.map((venue) => (
@@ -290,7 +326,7 @@ function VenueBar({ row }: { row: Row }) {
             failed ? "text-on-warn" : ""
           }`}
         >
-          {row.note}
+          <T en={row.note} es={row.noteEs} />
         </span>
         <span className="shrink-0" aria-hidden>
           →

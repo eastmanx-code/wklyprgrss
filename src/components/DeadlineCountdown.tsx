@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { useT } from "@/components/Lang";
+
 /**
  * Compact time-to-deadline, shown on every screen.
  *
@@ -21,6 +23,7 @@ function format(ms: number): string {
 }
 
 export function DeadlineCountdown({ deadlineMs }: { deadlineMs: number }) {
+  const t = useT();
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -44,7 +47,7 @@ export function DeadlineCountdown({ deadlineMs }: { deadlineMs: number }) {
       }`}
       title="Time left to update every item"
     >
-      Deadline: {format(remaining)}
+      {t("Deadline", "Plazo")}: {format(remaining)}
     </span>
   );
 }
