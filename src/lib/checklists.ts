@@ -66,23 +66,61 @@ export function phaseName(phase: Phase): string {
  */
 export const SHIFT_WORDS: Record<
   Phase,
-  { shift: string; when: string; ready: string }
+  {
+    shift: string;
+    when: string;
+    ready: string;
+    shiftEs: string;
+    whenEs: string;
+    readyEs: string;
+  }
 > = {
   open: {
     shift: "today's open",
     when: "today",
     ready: "The venue is set and ready for service.",
+    shiftEs: "la apertura de hoy",
+    whenEs: "hoy",
+    readyEs: "El lugar está listo para el servicio.",
   },
   mid: {
     shift: "today's mid shift",
     when: "today",
     ready: "The venue is set and ready for the rest of service.",
+    shiftEs: "el medio turno de hoy",
+    whenEs: "hoy",
+    readyEs: "El lugar está listo para el resto del servicio.",
   },
   close: {
     shift: "tonight's close",
     when: "tonight",
     ready: "The venue is secured and ready for the opening team.",
+    shiftEs: "el cierre de esta noche",
+    whenEs: "esta noche",
+    readyEs: "El lugar está cerrado y listo para el equipo de apertura.",
   },
+};
+
+/**
+ * The two words on the crew path that are not proper nouns.
+ *
+ * A role is what a venue called it and stays as written: "Prep" is his job
+ * title in English on his schedule too. A phase and a house are the app's own
+ * vocabulary, and they are the signposts somebody follows to reach their list,
+ * so they are the ones that have to be readable.
+ *
+ * Cocina rather than a literal reading of heart of house. The kitchen is what
+ * the people in it call it.
+ */
+export const PHASE_ES: Record<Phase, string> = {
+  open: "Apertura",
+  mid: "Medio turno",
+  close: "Cierre",
+};
+
+export const HOUSE_ES: Record<House, string> = {
+  FOH: "Frente de casa",
+  HOH: "Cocina",
 };
 
 export const PHASE_ORDER: Phase[] = PHASES.map((p) => p.key);

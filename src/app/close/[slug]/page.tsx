@@ -3,7 +3,14 @@ import { notFound, redirect } from "next/navigation";
 
 import { CloseChecklist } from "@/components/close/CloseChecklist";
 import { BackLink } from "@/components/ui";
-import { parseSlug, phaseName, roleSlug, type Phase } from "@/lib/checklists";
+import { T } from "@/components/Lang";
+import {
+  PHASE_ES,
+  parseSlug,
+  phaseName,
+  roleSlug,
+  type Phase,
+} from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { currentNight, formatNight } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
@@ -166,7 +173,10 @@ export default async function ChecklistPage({
           {list.house} · {list.role} · {formatNight(night)}
         </p>
         <h1 className="text-metric mt-2 font-medium">
-          {phaseName(list.phase)} checklist
+          <T
+            en={`${phaseName(list.phase)} checklist`}
+            es={`Lista de ${PHASE_ES[list.phase].toLowerCase()}`}
+          />
         </h1>
       </header>
 

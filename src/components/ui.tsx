@@ -182,7 +182,8 @@ export function BackLink({
   children,
 }: {
   href: string;
-  children: string;
+  /** Words, or a <T> that picks which words. */
+  children: React.ReactNode;
 }) {
   return (
     <Link href={href} className="label hover:text-ink">

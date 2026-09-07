@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
 import {
@@ -18,6 +18,7 @@ import {
   type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
+import { LangSwitch, useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
@@ -55,53 +56,21 @@ type Capture = { url: string; kind: "photo" | "video" };
  * "3 saved on this device" does not say whether the photograph made it, which
  * is the one thing worth knowing when the signal drops mid-shot.
  */
-function describeHeld(ticks: number, proof: number): string {
+function describeHeld(ticks: number, proof: number, es = false): string {
   const parts: string[] = [];
-  if (ticks > 0) parts.push(`${ticks} ${ticks === 1 ? "tick" : "ticks"}`);
-  if (proof > 0) parts.push(`${proof} ${proof === 1 ? "photo" : "photos"}`);
-  return parts.join(" and ");
-}
-
-/**
- * Which language a person reads their list in, kept on their own device.
- *
- * Not a site setting and not a stacked pair. Stacking both languages under
- * every translated line doubles the list for the people who did not need it,
- * and a site-wide setting is a far larger job than the problem, which is one
- * position in one building. This swaps the item text and nothing else, so the
- * signature, the record and the reports stay in a single language.
- *
- * A tiny store rather than component state so the choice survives navigating
- * between lists, and so a second tab follows along.
- */
-const LANG_KEY = "ww-close-lang";
-const langListeners = new Set<() => void>();
-
-function subscribeLang(cb: () => void) {
-  langListeners.add(cb);
-  window.addEventListener("storage", cb);
-  return () => {
-    langListeners.delete(cb);
-    window.removeEventListener("storage", cb);
-  };
-}
-
-function readLang(): boolean {
-  try {
-    return window.localStorage.getItem(LANG_KEY) === "es";
-  } catch {
-    // Private windows throw on access. English, then.
-    return false;
-  }
-}
-
-function writeLang(es: boolean) {
-  try {
-    window.localStorage.setItem(LANG_KEY, es ? "es" : "en");
-  } catch {
-    // Nothing to do. The choice still holds for this visit.
-  }
-  for (const cb of langListeners) cb();
+  if (ticks > 0)
+    parts.push(
+      es
+        ? `${ticks} ${ticks === 1 ? "marca" : "marcas"}`
+        : `${ticks} ${ticks === 1 ? "tick" : "ticks"}`,
+    );
+  if (proof > 0)
+    parts.push(
+      es
+        ? `${proof} ${proof === 1 ? "foto" : "fotos"}`
+        : `${proof} ${proof === 1 ? "photo" : "photos"}`,
+    );
+  return parts.join(es ? " y " : " and ");
 }
 
 /** One capture slot: item number and which of that item's shots. */
@@ -184,24 +153,27 @@ export function CloseChecklist({
   const [pending, setPending] = useState<number | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
   const [signed, setSigned] = useState(Boolean(saved.certifiedAt));
-  const [certified, setCertified] = useState<string | null>(
-    saved.certifiedAt ? `Certified by ${saved.certifiedBy ?? "—"}` : null,
-  );
+  /**
+   * Signed, as facts rather than a sentence.
+   *
+   * It used to hold the finished English line, which meant the banner on a
+   * signed list stayed English after somebody switched the app to Spanish:
+   * the words had been baked in at the moment of signing. The screen reads
+   * these back in whatever language the phone is set to.
+   */
+  const [certified, setCertified] = useState<{
+    by: string | null;
+    done: number | null;
+  } | null>(saved.certifiedAt ? { by: saved.certifiedBy, done: null } : null);
   const [shortfall, setShortfall] = useState<string | null>(null);
   /** Work written here that the server has not taken yet. */
   const [outstanding, setOutstanding] = useState(0);
   const [heldProof, setHeldProof] = useState(0);
   const [offline, setOffline] = useState(false);
 
-  /**
-   * Which language the list is being read in.
-   *
-   * Read through useSyncExternalStore rather than an effect, because the
-   * device is the source of truth and the server has no opinion: its snapshot
-   * is English, so the first paint matches what the server sent and the switch
-   * settles immediately after.
-   */
-  const spanish = useSyncExternalStore(subscribeLang, readLang, () => false);
+  /** Which language the list is being read in. Set once, on this device. */
+  const spanish = useSpanish();
+  const t = useT();
 
   /** Whether anything on this list has been translated at all. */
   const hasSpanish = items.some((item) => item.titleEs);
@@ -407,7 +379,7 @@ export function CloseChecklist({
     // night that is already a record.
     setCertified((current) =>
       saved.certifiedAt && current === null
-        ? `Certified by ${saved.certifiedBy ?? "—"}`
+        ? { by: saved.certifiedBy, done: null }
         : current,
     );
   }, [saved, saving, items, outstanding]);
@@ -505,7 +477,11 @@ export function CloseChecklist({
     if (target.error || !target.signedUrl || !target.path) {
       // The server had an opinion — a certified night, a list that moved.
       // Repeating the call will not change it.
-      return { error: target.error ?? "Could not start the upload." };
+      return {
+        error:
+          target.error ??
+          t("Could not start the upload.", "No se pudo empezar la subida."),
+      };
     }
 
     const response = await fetch(target.signedUrl, {
@@ -763,7 +739,12 @@ export function CloseChecklist({
         }
       } catch {
         setSaving(false);
-        setShortfall("Could not upload that. Check your signal and try again.");
+        setShortfall(
+          t(
+            "Could not upload that. Check your signal and try again.",
+            "No se pudo subir. Revisa tu señal e inténtalo otra vez.",
+          ),
+        );
         return;
       }
     }
@@ -801,10 +782,13 @@ export function CloseChecklist({
   async function certify() {
     if (locked) return;
     const missing: string[] = [];
-    if (!certifier.trim()) missing.push("your name");
-    if (!signed || !signatureRef.current) missing.push("your signature");
+    if (!certifier.trim()) missing.push(t("your name", "tu nombre"));
+    if (!signed || !signatureRef.current)
+      missing.push(t("your signature", "tu firma"));
     if (missing.length > 0) {
-      setShortfall(`Still needed: ${missing.join(" and ")}.`);
+      setShortfall(
+        `${t("Still needed", "Todavía falta")}: ${missing.join(t(" and ", " y "))}.`,
+      );
       return;
     }
 
@@ -832,7 +816,12 @@ export function CloseChecklist({
       const before = await pendingWork();
       if (before.total > 0) {
         setSaving(true);
-        setShortfall("Sending what this device is still holding…");
+        setShortfall(
+          t(
+            "Sending what this device is still holding…",
+            "Enviando lo que todavía tiene este teléfono…",
+          ),
+        );
         await drain();
         const held = await pendingWork();
         setOutstanding(held.total);
@@ -840,7 +829,10 @@ export function CloseChecklist({
         setSaving(false);
         if (held.total > 0) {
           setShortfall(
-            `${describeHeld(held.total - held.proof, held.proof)} still to reach the server. Wait for them to send, or find signal, then sign.`,
+            `${describeHeld(held.total - held.proof, held.proof, spanish)} ${t(
+              "still to reach the server. Wait for them to send, or find signal, then sign.",
+              "todavía no llegan al servidor. Espera a que se envíen, o busca señal, y luego firma.",
+            )}`,
           );
           return;
         }
@@ -878,9 +870,7 @@ export function CloseChecklist({
       // "all ten" was written when there was one hard-coded ten-line list.
       // A venue writes its own now, and a six-line list was being told it had
       // finished ten.
-      doneCount === CLOSE_TOTAL
-        ? `Certified · all ${CLOSE_TOTAL}`
-        : `Certified · ${doneCount} of ${CLOSE_TOTAL}, ${CLOSE_TOTAL - doneCount} left open`,
+      { by: certifier.trim() || null, done: doneCount },
     );
   }
 
@@ -917,16 +907,38 @@ export function CloseChecklist({
     if (typeof navigator === "undefined" || navigator.onLine) router.refresh();
   }
 
-  const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
   // Named by phase. This sentence is the record of who stood behind the shift,
   // and it said "tonight's close" on a prep open worked at six in the morning.
+  //
+  // Said in the reader's language, because this is the one line in the app
+  // where not understanding it actually matters. A signature is a claim, and a
+  // claim nobody can read is not one.
   const shift = SHIFT_WORDS[phase] ?? SHIFT_WORDS.close;
-  const attestationText =
-    doneCount === CLOSE_TOTAL
-      ? `${who} have completed every item on ${shift.shift}. ${shift.ready} I hold myself accountable for this team's work ${shift.when}.`
-      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am signing with the following not done. I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
+  const name = certifier.trim();
+  const attestationText = spanish
+    ? doneCount === CLOSE_TOTAL
+      ? `${name ? `Yo, ${name},` : "Yo"} completé todos los puntos de ${shift.shiftEs}. ${shift.readyEs} Me hago responsable del trabajo de mi equipo ${shift.whenEs}.`
+      : `${name ? `Yo, ${name},` : "Yo"} completé ${doneCount} de los ${CLOSE_TOTAL} puntos de ${shift.shiftEs}, y estoy firmando con los siguientes sin hacer. Me hago responsable del trabajo de mi equipo ${shift.whenEs}, incluyendo lo que estoy dejando sin terminar.`
+    : doneCount === CLOSE_TOTAL
+      ? `${name ? `I, ${name},` : "I"} have completed every item on ${shift.shift}. ${shift.ready} I hold myself accountable for this team's work ${shift.when}.`
+      : `${name ? `I, ${name},` : "I"} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am signing with the following not done. I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
+
+  /**
+   * The banner over a signed list. Named by who, and by how much when this
+   * device is the one that signed it — a list reopened on another phone knows
+   * the name from the record and not the count.
+   */
+  const certifiedLabel = !certified
+    ? null
+    : certified.done === null
+      ? `${t("Signed by", "Firmada por")} ${certified.by ?? "—"}`
+      : certified.done === CLOSE_TOTAL
+        ? `${t("Signed", "Firmada")} · ${t("all", "las")} ${CLOSE_TOTAL}`
+        : `${t("Signed", "Firmada")} · ${certified.done} ${t("of", "de")} ${CLOSE_TOTAL}, ${
+            CLOSE_TOTAL - certified.done
+          } ${t("not done", "sin hacer")}`;
 
   return (
     <div className="space-y-3">
@@ -934,9 +946,12 @@ export function CloseChecklist({
           bottom of a phone belongs to the back/out bar. */}
       {locked ? (
         <section className="panel border-ink bg-ink text-paper px-4 py-3">
-          <p className="text-title tracking-[0.08em]">{certified}</p>
+          <p className="text-title tracking-[0.08em]">{certifiedLabel}</p>
           <p className="text-label mt-1 tracking-[0.08em] opacity-70">
-            Signed and locked. Nothing on this list can change now.
+            {t(
+              "Signed and locked. Nothing on this list can change now.",
+              "Firmada y cerrada. Ya nada de esta lista puede cambiar.",
+            )}
           </p>
 
           {/* Behind a disclosure, not a button on the banner. Reopening a
@@ -997,25 +1012,34 @@ export function CloseChecklist({
           role="status"
         >
           {outstanding > 0
-            ? `${describeHeld(outstanding - heldProof, heldProof)} saved on this device${
+            ? `${describeHeld(outstanding - heldProof, heldProof, spanish)} ${t(
+                "saved on this device",
+                "guardadas en este teléfono",
+              )}${
                 offline
-                  ? " · no signal, it goes up when it returns"
-                  : " · sending"
+                  ? t(
+                      " · no signal, it goes up when it returns",
+                      " · sin señal, se sube cuando regrese",
+                    )
+                  : t(" · sending", " · enviando")
               }`
-            : "No signal. Keep going, everything is saved here."}
+            : t(
+                "No signal. Keep going, everything is saved here.",
+                "Sin señal. Sigue trabajando, todo se guarda aquí.",
+              )}
         </p>
       ) : null}
 
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-1 border-b px-4 py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {doneCount}/{CLOSE_TOTAL} done
+            {doneCount}/{CLOSE_TOTAL} {t("done", "hechos")}
           </p>
           <p className="label">
             {[
-              PHOTO_SHOTS ? `${PHOTO_SHOTS} photos` : null,
-              VIDEO_SHOTS ? `${VIDEO_SHOTS} video` : null,
-              NOTE_SHOTS ? `${NOTE_SHOTS} written` : null,
+              PHOTO_SHOTS ? `${PHOTO_SHOTS} ${t("photos", "fotos")}` : null,
+              VIDEO_SHOTS ? `${VIDEO_SHOTS} ${t("video", "video")}` : null,
+              NOTE_SHOTS ? `${NOTE_SHOTS} ${t("written", "escritas")}` : null,
             ]
               .filter(Boolean)
               .join(" · ")}
@@ -1025,30 +1049,7 @@ export function CloseChecklist({
         {/* Only where somebody has translated something. On the other fourteen
             lists it would be a control that does nothing, sitting at the top of
             every screen to advertise a feature nobody there is using. */}
-        {hasSpanish ? (
-          <div className="mt-2.5 flex gap-1" role="group" aria-label="Language">
-            {(
-              [
-                ["en", "English", false],
-                ["es", "Español", true],
-              ] as const
-            ).map(([key, label, es]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => writeLang(es)}
-                aria-pressed={spanish === es}
-                className={`min-h-9 rounded px-3 text-label tracking-[0.08em] ${
-                  spanish === es
-                    ? "bg-ink text-paper"
-                    : "ring-card-border text-muted ring-1"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        ) : null}
+        {hasSpanish ? <LangSwitch className="mt-2.5" /> : null}
         {/* One block per item, in order, showing which are open rather than how
             many. Filled left to right it read as a progress bar and item 7
             being the one nobody ever does was invisible. */}
@@ -1167,10 +1168,10 @@ export function CloseChecklist({
                           {shots.length > 1
                             ? `${taken}/${shots.length} ${shots[0].kind === "video" ? "videos" : "photos"}`
                             : shots[0].kind === "video"
-                              ? "Video"
+                              ? t("Video", "Video")
                               : shots[0].kind === "note"
-                                ? "Written"
-                                : "Photo"}
+                                ? t("Written", "Escrito")
+                                : t("Photo", "Foto")}
                         </span>
                       ) : null}
                     </span>
@@ -1229,7 +1230,7 @@ export function CloseChecklist({
                     spellCheck={false}
                     value={mine}
                     disabled={isDone || locked}
-                    aria-label={`Initials for ${item.title}`}
+                    aria-label={`${t("Initials for", "Iniciales para")} ${titleOf(item)}`}
                     onChange={(event) => {
                       setRowInitials((c) => ({
                         ...c,
@@ -1267,7 +1268,9 @@ export function CloseChecklist({
                       wanted ? "text-warn" : "text-muted"
                     }`}
                   >
-                    {wanted ? "Initial it" : "Initials"}
+                    {wanted
+                      ? t("Initial it", "Pon tus iniciales")
+                      : t("Initials", "Iniciales")}
                   </span>
                 </span>
               </div>
@@ -1285,7 +1288,9 @@ export function CloseChecklist({
                   these started. */}
               {item.reference && item.reference.length > 0 ? (
                 <div className="border-divider border-t px-4 py-4 sm:pl-[3.6rem]">
-                  <p className="label mb-2.5">What right looks like</p>
+                  <p className="label mb-2.5">
+                    {t("What right looks like", "Así se ve bien")}
+                  </p>
                   <ul className="flex flex-wrap gap-3">
                     {item.reference.map((ref, index) => {
                       const url = ref.path
@@ -1304,7 +1309,7 @@ export function CloseChecklist({
                             </a>
                           ) : (
                             <span className="bg-inset label text-muted flex h-24 w-full items-center justify-center rounded px-2 text-center">
-                              No photo yet
+                              {t("No photo yet", "Todavía sin foto")}
                             </span>
                           )}
                           <span className="text-ink/65 mt-1.5 block text-[12px] leading-snug break-words">
@@ -1344,7 +1349,9 @@ export function CloseChecklist({
                         />
 
                         {locked && !got && shot.kind !== "note" ? (
-                          <p className="label text-muted">Not captured</p>
+                          <p className="label text-muted">
+                            {t("Not captured", "Sin tomar")}
+                          </p>
                         ) : shot.kind === "note" ? (
                           <div className="w-full">
                             <textarea
@@ -1354,7 +1361,7 @@ export function CloseChecklist({
                               rows={3}
                               className="field w-full resize-none"
                               disabled={locked}
-                              placeholder="What was said"
+                              placeholder={t("What was said", "Qué se dijo")}
                               value={notes[key] ?? ""}
                               onChange={(event) => {
                                 const text = event.target.value;
@@ -1418,7 +1425,9 @@ export function CloseChecklist({
                         ) : got ? (
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="pill pill-done">
-                              {shot.kind === "video" ? "Recorded" : "Taken"}
+                              {shot.kind === "video"
+                                ? t("Recorded", "Grabado")
+                                : t("Taken", "Tomada")}
                             </span>
                             {locked ? null : (
                               <button
@@ -1439,7 +1448,9 @@ export function CloseChecklist({
                             className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
                           >
                             <CaptureGlyph kind={shot.kind} />
-                            {shot.kind === "video" ? "Record" : "Photograph"}
+                            {shot.kind === "video"
+                              ? t("Record", "Grabar")
+                              : t("Photograph", "Tomar foto")}
                           </button>
                         )}
 
@@ -1483,8 +1494,8 @@ export function CloseChecklist({
       <section className="panel mt-5">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
-            ? `Not done · ${openItems.length}`
-            : `All ${CLOSE_TOTAL} complete`}
+            ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
+            : `${t("All", "Las")} ${CLOSE_TOTAL} ${t("complete", "completas")}`}
         </p>
 
         {/* A reopened night says so, on its face. The record is only worth
@@ -1494,15 +1505,15 @@ export function CloseChecklist({
         {saved.history.length > 0 ? (
           <div className="border-warn/40 mt-3 rounded-[8px] border p-4">
             <p className="label text-warn">
-              Reopened{" "}
+              {t("Reopened", "Reabierta")}{" "}
               {saved.history.length === 1
-                ? "once"
-                : `${saved.history.length} times`}
+                ? t("once", "una vez")
+                : `${saved.history.length} ${t("times", "veces")}`}
             </p>
             <ul className="mt-2 space-y-1.5">
               {saved.history.map((entry, index) => (
                 <li key={index} className="label leading-snug">
-                  Certified by {entry.certifiedBy ?? "—"}
+                  {t("Signed by", "Firmada por")} {entry.certifiedBy ?? "—"}
                   {entry.certifiedAt
                     ? ` at ${new Date(entry.certifiedAt).toLocaleTimeString(
                         "en-US",
@@ -1551,7 +1562,7 @@ export function CloseChecklist({
                 <input
                   id="certifier"
                   className="field"
-                  placeholder="Your name"
+                  placeholder={t("Your name", "Tu nombre")}
                   autoComplete="off"
                   autoCorrect="off"
                   spellCheck={false}
@@ -1579,7 +1590,10 @@ export function CloseChecklist({
               {confirmingEmpty ? (
                 <div className="border-warn/40 rounded-[8px] border p-4">
                   <p className="note text-warn">
-                    Nothing on this list was checked. Sign anyway?
+                    {t(
+                      "Nothing on this list was checked. Sign anyway?",
+                      "No se marcó nada en esta lista. ¿Firmar de todos modos?",
+                    )}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -1587,14 +1601,14 @@ export function CloseChecklist({
                       className="btn btn-sm"
                       onClick={() => void certify()}
                     >
-                      Yes, sign it
+                      {t("Yes, sign it", "Sí, firmar")}
                     </button>
                     <button
                       type="button"
                       className="btn-ghost"
                       onClick={() => setConfirmingEmpty(false)}
                     >
-                      Go back
+                      {t("Go back", "Regresar")}
                     </button>
                   </div>
                 </div>
@@ -1607,11 +1621,13 @@ export function CloseChecklist({
                 disabled={locked || saving}
               >
                 {saving
-                  ? "Saving…"
-                  : (certified ??
+                  ? t("Saving…", "Guardando…")
+                  : (certifiedLabel ??
                     (doneCount === CLOSE_TOTAL
-                      ? "Certify this list"
-                      : `Certify with ${CLOSE_TOTAL - doneCount} not done`))}
+                      ? t("Sign this list", "Firmar esta lista")
+                      : `${t("Sign with", "Firmar con")} ${
+                          CLOSE_TOTAL - doneCount
+                        } ${t("not done", "sin hacer")}`))}
               </button>
             </div>
           </>
@@ -1621,7 +1637,8 @@ export function CloseChecklist({
             className="btn-ghost mt-4"
             onClick={() => setSigningOpen(true)}
           >
-            Sign with {openItems.length} not done
+            {t("Sign with", "Firmar con")} {openItems.length}{" "}
+            {t("not done", "sin hacer")}
           </button>
         )}
       </section>
@@ -1656,6 +1673,7 @@ function SignaturePad({
   locked: boolean;
   onInk: (dataUrl: string) => void;
 }) {
+  const t = useT();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<{ x: number; y: number }[][]>([]);
   const drawing = useRef(false);
@@ -1748,13 +1766,15 @@ function SignaturePad({
         />
         {!signed ? (
           <div className="label pointer-events-none absolute inset-0 grid place-items-center">
-            Sign here with your finger
+            {t("Sign here with your finger", "Firma aquí con el dedo")}
           </div>
         ) : null}
       </div>
       <p className="label">
-        Kept with this list&apos;s record, alongside what was not done when you
-        signed.
+        {t(
+          "Kept with this list's record, alongside what was not done when you signed.",
+          "Se guarda con el registro de esta lista, junto con lo que quedó sin hacer cuando firmaste.",
+        )}
       </p>
     </div>
   );
