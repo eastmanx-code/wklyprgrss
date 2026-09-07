@@ -11,7 +11,7 @@ import {
   type House,
   type Phase,
 } from "@/lib/checklists";
-import { currentNight, formatNight } from "@/lib/night";
+import { currentNight, formatNight, formatNightEs } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
@@ -146,7 +146,7 @@ export default async function ChecklistsPage() {
         href={session.role === "admin" ? "/checklists/locations" : "/home"}
       >
         {session.role === "admin" ? (
-          "All locations"
+          <T en="All locations" es="Todas las ubicaciones" />
         ) : (
           <T en="Home" es="Inicio" />
         )}
@@ -155,7 +155,7 @@ export default async function ChecklistsPage() {
       <header className="mb-5">
         <p className="label">
           {venueName ? `${venueName} · ` : ""}
-          {formatNight(night)}
+          <T en={formatNight(night)} es={formatNightEs(night)} />
         </p>
         <h1 className="mt-2 text-metric font-medium">
           <T en="Checklists" es="Listas" />
@@ -185,13 +185,21 @@ export default async function ChecklistsPage() {
                 es="Lo que se está pasando por alto"
               />
             </h2>
-            <p className="label">Last {real.nights} nights</p>
+            <p className="label">
+              <T
+                en={`Last ${real.nights} nights`}
+                es={`Últimas ${real.nights} noches`}
+              />
+            </p>
           </div>
 
           <div className="mt-4">
             {real.missed.length === 0 ? (
               <p className="note text-muted">
-                Nothing left open in the window.
+                <T
+                  en="Nothing left open in the window."
+                  es="No quedó nada sin hacer en este periodo."
+                />
               </p>
             ) : (
               <MissedList rows={real.missed.slice(0, 4)} />
@@ -206,15 +214,22 @@ export default async function ChecklistsPage() {
               href="/checklists/compliance"
               className="bg-inset text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
             >
-              Last night
-              <span className="text-muted">what failed, who signed</span>
+              <T en="Last night" es="Anoche" />
+              <span className="text-muted">
+                <T en="what failed, who signed" es="qué falló, quién firmó" />
+              </span>
             </Link>
             <Link
               href="/checklists/rollup"
               className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
             >
-              Full report
-              <span className="text-muted">by role, by night, by venue</span>
+              <T en="Full report" es="Reporte completo" />
+              <span className="text-muted">
+                <T
+                  en="by role, by night, by venue"
+                  es="por puesto, por noche, por lugar"
+                />
+              </span>
             </Link>
           </div>
         </section>

@@ -1,3 +1,7 @@
+"use client";
+
+import { useSpanish, useT } from "@/components/Lang";
+import { PHASE_ES, phaseName } from "@/lib/checklists";
 import type { MissedRow } from "@/lib/rollup-math";
 
 /**
@@ -10,6 +14,8 @@ import type { MissedRow } from "@/lib/rollup-math";
  * accent on the panel.
  */
 export function MissedList({ rows }: { rows: MissedRow[] }) {
+  const spanish = useSpanish();
+  const t = useT();
   return (
     <ul>
       {rows.map((row) => {
@@ -20,9 +26,11 @@ export function MissedList({ rows }: { rows: MissedRow[] }) {
             className="border-divider border-t py-3 first:border-t-0 first:pt-0"
           >
             <div className="flex items-baseline justify-between gap-4">
-              <span className="text-body min-w-0 break-words">{row.item}</span>
+              <span className="text-body min-w-0 break-words">
+                {spanish && row.itemEs ? row.itemEs : row.item}
+              </span>
               <span className="label text-warn shrink-0 tabular-nums">
-                {row.open} of {row.of}
+                {row.open} {t("of", "de")} {row.of}
               </span>
             </div>
             <div className="mt-2 flex items-center gap-3">
@@ -33,7 +41,8 @@ export function MissedList({ rows }: { rows: MissedRow[] }) {
                 />
               </span>
               <span className="label shrink-0">
-                {row.house} · {row.role} · {row.phase}
+                {row.house} · {row.role} ·{" "}
+                {spanish ? PHASE_ES[row.phase] : phaseName(row.phase)}
               </span>
             </div>
           </li>

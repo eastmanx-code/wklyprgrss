@@ -27,6 +27,8 @@ export type MissedRow = {
   role: string;
   phase: "open" | "mid" | "close";
   item: string;
+  /** The same item in Spanish, where somebody has written it. */
+  itemEs: string | null;
   /** Nights the item finished with no tick against it. */
   open: number;
   of: number;
@@ -56,7 +58,12 @@ export type ChecklistRow = {
   role: string;
   phase: "open" | "mid" | "close";
 };
-export type ItemRow = { id: string; checklist_id: string; title: string };
+export type ItemRow = {
+  id: string;
+  checklist_id: string;
+  title: string;
+  title_es?: string | null;
+};
 export type NightRow = {
   id: string;
   checklist_id: string;
@@ -130,6 +137,7 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
         role: list.role,
         phase: list.phase,
         item: item.title,
+        itemEs: item.title_es ?? null,
         open,
         of: window.length,
       };

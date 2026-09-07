@@ -117,6 +117,25 @@ export function formatNight(night: string): string {
   return nightLabelFormatter.format(new Date(Date.UTC(y, m - 1, d)));
 }
 
+const nightLabelFormatterEs = new Intl.DateTimeFormat("es-MX", {
+  timeZone: "UTC",
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+});
+
+/**
+ * The same date, read by somebody who reads Spanish.
+ *
+ * A date is the first thing on every one of these screens and it was the last
+ * thing still in English on a page that had otherwise flipped, which reads as
+ * the translation having given up half way rather than as a date.
+ */
+export function formatNightEs(night: string): string {
+  const [y, m, d] = night.split("-").map(Number);
+  return nightLabelFormatterEs.format(new Date(Date.UTC(y, m - 1, d)));
+}
+
 const clockFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: TZ,
   hour: "numeric",

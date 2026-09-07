@@ -12,7 +12,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
-import { currentNight, formatNight } from "@/lib/night";
+import { currentNight, formatNight, formatNightEs } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
 import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
@@ -170,7 +170,8 @@ export default async function ChecklistPage({
 
       <header className="mt-4 mb-5">
         <p className="label">
-          {list.house} · {list.role} · {formatNight(night)}
+          {list.house} · {list.role} ·{" "}
+          <T en={formatNight(night)} es={formatNightEs(night)} />
         </p>
         <h1 className="text-metric mt-2 font-medium">
           <T
