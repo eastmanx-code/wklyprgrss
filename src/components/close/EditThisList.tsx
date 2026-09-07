@@ -47,3 +47,25 @@ export function EditThisList() {
     </Link>
   );
 }
+
+/**
+ * "How to", pointed at the product you are actually in.
+ *
+ * The link sits in the menu on every screen and used to lead to the weekly
+ * board's instructions from inside a checklist, which taught a bartender
+ * halfway through a close that the help was written for somebody else. The
+ * page holds both guides; this decides which one it opens on.
+ */
+export function HelpLink() {
+  const pathname = usePathname();
+  const inTheClose = pathname === "/close" || pathname.startsWith("/close/");
+
+  return (
+    <Link
+      href={inTheClose ? "/help?for=close" : "/help"}
+      className="btn-ghost whitespace-nowrap"
+    >
+      How to
+    </Link>
+  );
+}

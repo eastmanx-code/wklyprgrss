@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
-import { EditThisList } from "@/components/close/EditThisList";
+import { EditThisList, HelpLink } from "@/components/close/EditThisList";
 import { logout } from "@/app/actions";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
@@ -89,9 +89,7 @@ export async function CornerMenu() {
               person setting one up. */}
           {session ? <EditThisList /> : null}
 
-          <Link href="/help" className="btn-ghost">
-            How to
-          </Link>
+          <HelpLink />
 
           <span className="bg-card-border h-6 w-px" aria-hidden />
 
