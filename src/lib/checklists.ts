@@ -46,6 +46,45 @@ export function phaseName(phase: Phase): string {
   return PHASES.find((p) => p.key === phase)?.name ?? phase;
 }
 
+/**
+ * How a shift is named in the sentence somebody puts their name to.
+ *
+ * The attestation used to say "tonight's close" on every list in the app,
+ * including a prep open somebody signs at nine in the morning. A signature is
+ * the one piece of text here that has to be exactly true: it is what gets read
+ * back weeks later when a night is in question, and it named a shift that
+ * person did not work.
+ *
+ * Words rather than clock time. The app files everything against a night, so
+ * an open worked at six in the morning belongs to the night before it by the
+ * house rule — correct for the record and nonsense to read. This says the
+ * shift the person is standing in.
+ *
+ * `ready` is the claim being made, which is different per phase and not a
+ * wording detail: closing hands the building to the opening team, opening
+ * hands it to service.
+ */
+export const SHIFT_WORDS: Record<
+  Phase,
+  { shift: string; when: string; ready: string }
+> = {
+  open: {
+    shift: "today's open",
+    when: "today",
+    ready: "The venue is set and ready for service.",
+  },
+  mid: {
+    shift: "today's mid shift",
+    when: "today",
+    ready: "The venue is set and ready for the rest of service.",
+  },
+  close: {
+    shift: "tonight's close",
+    when: "tonight",
+    ready: "The venue is secured and ready for the opening team.",
+  },
+};
+
 export const PHASE_ORDER: Phase[] = PHASES.map((p) => p.key);
 
 /**

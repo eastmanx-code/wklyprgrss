@@ -213,9 +213,9 @@ export function CloseGuide() {
         <h2 className="text-body font-medium">Signing off</h2>
         <p className="note mt-4 leading-relaxed">
           The MOD signs at the end. You type your name, sign, and the app
-          records exactly what you are putting your name to, naming anything
-          still open. Once it is signed the night is locked and nothing on it
-          can change.
+          records exactly what you are putting your name to, naming anything not
+          done. Once it is signed the list is locked and nothing on it can
+          change.
         </p>
         <p className="note mt-3 leading-relaxed">
           If the phone is still holding work, the signature waits until that

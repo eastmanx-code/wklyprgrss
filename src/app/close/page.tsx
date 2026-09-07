@@ -75,7 +75,7 @@ export default async function ChecklistsPage() {
     }
   }
 
-  /** Nothing left open under this position tonight. */
+  /** Every list under this position is signed. */
   const positionDone = (house: House, role: string) =>
     lists
       .filter((l) => l.house === house && l.role === role)
@@ -122,7 +122,7 @@ export default async function ChecklistsPage() {
         </p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
         <p className="label mt-2">
-          Pick your position · lit means not done tonight
+          Pick your position · lit means not signed yet
         </p>
       </header>
 

@@ -184,6 +184,7 @@ export default async function ChecklistPage({
       ) : (
         <CloseChecklist
           slug={slug}
+          phase={list.phase}
           items={items}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>

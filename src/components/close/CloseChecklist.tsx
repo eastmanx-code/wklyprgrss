@@ -18,6 +18,7 @@ import {
   type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
+import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -117,11 +118,14 @@ const slotKey = (item: number, shot: number) => `${item}:${shot}`;
  */
 export function CloseChecklist({
   slug,
+  phase,
   items,
   referenceUrls,
   saved,
 }: {
   slug: string;
+  /** Open, mid or close. The words a person signs their name to come from it. */
+  phase: Phase;
   items: CloseItem[];
   /** Storage path -> signed URL, for the reference shots. Minted server-side. */
   referenceUrls: Record<string, string>;
@@ -201,6 +205,10 @@ export function CloseChecklist({
 
   /** Whether anything on this list has been translated at all. */
   const hasSpanish = items.some((item) => item.titleEs);
+  // One reading of an item, used everywhere the person is shown it. The record
+  // and the reports stay English on purpose; the screen follows the reader.
+  const titleOf = (item: CloseItem) =>
+    spanish && item.titleEs ? item.titleEs : item.title;
   const [confirmingEmpty, setConfirmingEmpty] = useState(false);
   /**
    * Whether the signing block is showing while work is still outstanding.
@@ -910,10 +918,13 @@ export function CloseChecklist({
   }
 
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
+  // Named by phase. This sentence is the record of who stood behind the shift,
+  // and it said "tonight's close" on a prep open worked at six in the morning.
+  const shift = SHIFT_WORDS[phase] ?? SHIFT_WORDS.close;
   const attestationText =
     doneCount === CLOSE_TOTAL
-      ? `${who} have completed every item on tonight's close. The venue is secured and ready for the opening team. I hold myself accountable for this team's work tonight.`
-      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following not done. I hold myself accountable for this team's work tonight, including what I am leaving unfinished.`;
+      ? `${who} have completed every item on ${shift.shift}. ${shift.ready} I hold myself accountable for this team's work ${shift.when}.`
+      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am signing with the following not done. I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
 
@@ -925,7 +936,7 @@ export function CloseChecklist({
         <section className="panel border-ink bg-ink text-paper px-4 py-3">
           <p className="text-title tracking-[0.08em]">{certified}</p>
           <p className="text-label mt-1 tracking-[0.08em] opacity-70">
-            Closed out and locked. Nothing on this night can change now.
+            Signed and locked. Nothing on this list can change now.
           </p>
 
           {/* Behind a disclosure, not a button on the banner. Reopening a
@@ -1146,7 +1157,7 @@ export function CloseChecklist({
                       {/* Title stays white when checked — the card records what
                         was done, and a greyed title reads as cancelled. */}
                       <span className="text-title leading-tight tracking-[0.08em] break-words">
-                        {spanish && item.titleEs ? item.titleEs : item.title}
+                        {titleOf(item)}
                       </span>
                       {/* Says how many, because three separate photographs is a
                         different job from one and a MOD scanning the list
@@ -1525,7 +1536,7 @@ export function CloseChecklist({
                       key={item.number}
                       className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
                     >
-                      {item.number} · {item.title}
+                      {item.number} · {titleOf(item)}
                     </li>
                   ))}
                 </ul>
@@ -1568,7 +1579,7 @@ export function CloseChecklist({
               {confirmingEmpty ? (
                 <div className="border-warn/40 rounded-[8px] border p-4">
                   <p className="note text-warn">
-                    Nothing was checked tonight. Sign anyway?
+                    Nothing on this list was checked. Sign anyway?
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -1599,8 +1610,8 @@ export function CloseChecklist({
                   ? "Saving…"
                   : (certified ??
                     (doneCount === CLOSE_TOTAL
-                      ? "Certify this close"
-                      : `Certify with ${CLOSE_TOTAL - doneCount} open`))}
+                      ? "Certify this list"
+                      : `Certify with ${CLOSE_TOTAL - doneCount} not done`))}
               </button>
             </div>
           </>
@@ -1610,7 +1621,7 @@ export function CloseChecklist({
             className="btn-ghost mt-4"
             onClick={() => setSigningOpen(true)}
           >
-            Sign with {openItems.length} open
+            Sign with {openItems.length} not done
           </button>
         )}
       </section>
@@ -1742,7 +1753,7 @@ function SignaturePad({
         ) : null}
       </div>
       <p className="label">
-        Kept with the night&apos;s record, alongside what was open when you
+        Kept with this list&apos;s record, alongside what was not done when you
         signed.
       </p>
     </div>
