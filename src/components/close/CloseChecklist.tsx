@@ -230,9 +230,19 @@ export function CloseChecklist({
    * the next thing, and it costs one query rather than a realtime connection
    * to hold open on a phone that keeps sleeping. Only while the tab is
    * actually in front of someone.
+   *
+   * Never while offline, which is the whole reason the queue exists. Every
+   * route here is force-dynamic, so a refresh is a fetch to the server for a
+   * fresh payload; with no signal that fetch fails, Next falls back to a hard
+   * navigation, and a hard navigation with no connection is the browser's own
+   * offline page. The person is then looking at an error instead of the list
+   * they were halfway through, within fifteen seconds of walking into the one
+   * place this product is for. The queue underneath was working the whole
+   * time and never got the chance to prove it.
    */
   useEffect(() => {
     const pull = () => {
+      if (typeof navigator !== "undefined" && !navigator.onLine) return;
       if (document.visibilityState === "visible") router.refresh();
     };
     const id = window.setInterval(pull, 15_000);
@@ -812,8 +822,10 @@ export function CloseChecklist({
     // Local state unlocks the page immediately; the refresh is what brings
     // back the history the server just wrote. Without it the night reopens
     // and shows no sign it was ever signed, which is the opposite of the
-    // point.
-    router.refresh();
+    // point. Skipped with no signal for the same reason as the poll: the
+    // reopen already succeeded on the server, and a failed refresh would
+    // throw the person off the page to show them something they can wait for.
+    if (typeof navigator === "undefined" || navigator.onLine) router.refresh();
   }
 
   const who = certifier.trim() ? `I, ${certifier.trim()},` : "I";
