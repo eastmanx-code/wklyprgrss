@@ -122,7 +122,7 @@ export default async function ChecklistsPage() {
         </p>
         <h1 className="mt-2 text-metric font-medium">Checklists</h1>
         <p className="label mt-2">
-          Pick your position · lit means still open tonight
+          Pick your position · lit means not done tonight
         </p>
       </header>
 

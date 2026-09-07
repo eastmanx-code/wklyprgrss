@@ -913,7 +913,7 @@ export function CloseChecklist({
   const attestationText =
     doneCount === CLOSE_TOTAL
       ? `${who} have completed every item on tonight's close. The venue is secured and ready for the opening team. I hold myself accountable for this team's work tonight.`
-      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following still open. I hold myself accountable for this team's work tonight, including what I am leaving open.`;
+      : `${who} have completed ${doneCount} of the ${CLOSE_TOTAL} items on tonight's close, and I am signing with the following not done. I hold myself accountable for this team's work tonight, including what I am leaving unfinished.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
 
@@ -1052,15 +1052,18 @@ export function CloseChecklist({
           ))}
         </div>
 
-        {/* Named, in the header, the whole way down the page. It was only in
-            the panel at the bottom, which means you saw what you had missed
-            after you had decided you were finished. */}
-        {openItems.length > 0 ? (
-          <p className="text-warn mt-2 text-[12px] leading-snug tracking-[0.08em]">
-            <span className="opacity-70">Still open</span>{" "}
-            {openItems.map((item) => item.number).join(" · ")}
-          </p>
-        ) : null}
+        {/* The list of numbers that used to sit here is gone.
+            "Still open 1 · 2 · 3 … 26" was three problems at once. It said
+            "open" a hand's width under a heading reading "Open checklist",
+            where open is the shift, so one word carried two meanings on one
+            screen. On an untouched list it printed all twenty six across two
+            lines, which made "you have not started" the largest thing in front
+            of somebody who knew that. And a number is not something a person
+            can act on: 17 only helps once you have scrolled and counted to it.
+
+            The blocks above say the same thing and say it by position, which
+            is how somebody actually finds their place, and the count says the
+            rest. */}
       </section>
 
       <ul className="space-y-3">
@@ -1469,7 +1472,7 @@ export function CloseChecklist({
       <section className="panel mt-5">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
-            ? `Still open · ${openItems.length}`
+            ? `Not done · ${openItems.length}`
             : `All ${CLOSE_TOTAL} complete`}
         </p>
 
