@@ -979,7 +979,6 @@ export function CloseChecklist({
               PHOTO_SHOTS ? `${PHOTO_SHOTS} photos` : null,
               VIDEO_SHOTS ? `${VIDEO_SHOTS} video` : null,
               NOTE_SHOTS ? `${NOTE_SHOTS} written` : null,
-              "nothing is timed",
             ]
               .filter(Boolean)
               .join(" · ")}
