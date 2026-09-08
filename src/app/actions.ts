@@ -34,8 +34,32 @@ export async function leaderLogin(
   if (!pin) return { error: GENERIC_ERROR, code: "pin" };
 
   const venue = await getVenue(venueId);
-  if (!venue || !pinMatches(pin, venue.pin))
+  if (!venue) return { error: GENERIC_ERROR, code: "pin" };
+
+  if (!pinMatches(pin, venue.pin)) {
+    /**
+     * A manager PIN typed at the crew door.
+     *
+     * There are two doors and they look the same, so a manager reaches for the
+     * one in front of them and gets "that PIN doesn't match", which reads as
+     * "your PIN is wrong" rather than "wrong door". That happened three times
+     * in one afternoon: once trying to add items, once trying to reopen a
+     * night, and once at this screen with the right code in hand.
+     *
+     * The PIN already says which person it belongs to. It should not also
+     * require knowing which screen to be standing on. So a code that opens the
+     * admin door opens it from here too, and the crew door is unchanged for
+     * everybody holding the venue code.
+     *
+     * Not a new way in. Anyone who could do this could already do it at the
+     * admin screen, which is linked at the foot of this one.
+     */
+    if (await isAdminPin(pin)) {
+      await startAdminSession();
+      redirect(safeNext(String(formData.get("next") ?? "") || undefined));
+    }
     return { error: GENERIC_ERROR, code: "pin" };
+  }
 
   await startLeaderSession(venue.id);
   // Where the link asked for, when it asked. A QR in the prep room lands on
