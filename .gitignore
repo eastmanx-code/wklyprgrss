@@ -48,3 +48,4 @@ next-env.d.ts
 .rollup-check
 .pace-check
 .night-check
+.name-check
