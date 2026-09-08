@@ -206,6 +206,7 @@ export default async function ChecklistPage({
           slug={slug}
           phase={list.phase}
           items={items}
+          night={night}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>
               (row.reference ?? []).flatMap((ref) => {

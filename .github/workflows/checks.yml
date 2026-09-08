@@ -59,6 +59,9 @@ jobs:
       - name: Adoption fixtures
         run: npm run check-adopt
 
+      - name: Due fixtures
+        run: npm run check-due
+
       # Last, because it is the slowest and the least specific. Built without
       # credentials on purpose: every route is force-dynamic, so a build that
       # needs a database to succeed would be a build hiding a data fetch that

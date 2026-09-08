@@ -9,6 +9,11 @@
  * worked out by hand, so that changing a definition has to be deliberate.
  */
 import { computeRollup, computeGroup } from "../.rollup-check/rollup-math.js";
+// The same rule the app passes in, so these cases prove what actually runs
+// rather than a copy of it.
+import { dueOnNight } from "../.rollup-check/due.js";
+
+const isDue = (item, night) => dueOnNight(item.section, night);
 
 let pass = 0, fail = 0;
 const is = (label, got, want) => {
@@ -89,6 +94,43 @@ const group = computeGroup({
   ticks: [{ night_id: "n1", item_id: "i1" }],
 }, W, new Map([["V1", "HAWK"], ["V2", "ISFO"]]));
 is("group", group, [{ code: "HAWK", done: 1, of: 3 }, { code: "ISFO", done: 0, of: 3 }]);
+
+// ------------------------------------------------------- the deep clean rota
+//
+// A heading that names a weekday means the item is owed that night and no
+// other. Counting a deep clean item against all seven nights was what made a
+// finished job read as six sevenths missed, put those items at the top of the
+// list of things nobody does, and marked the venue down for running the list
+// exactly as it is written.
+{
+  // A full week. 2026-07-27 is a Monday.
+  const week = ["2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30", "2026-07-31", "2026-08-01", "2026-08-02"];
+  const deep = [{ id: "D", venue_id: "V", house: "FOH", role: "Bar deep clean", phase: "mid" }];
+  const days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  const rota = days.map((section, i) => ({ id: `d${i}`, checklist_id: "D", title: section, section }));
+  const opened = week.map((n, i) => ({ id: `w${i}`, checklist_id: "D", night: n, certified_at: "t", certified_by: "Cy" }));
+  const allTicks = rota.map((item, i) => ({ night_id: `w${i}`, item_id: item.id }));
+
+  // Nobody does any of it: each item is owed once in the week, missed once.
+  const nothing = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [] }, week, isDue);
+  is("rota: each item owed one night in seven", [...new Set(nothing.missed.map((m) => m.of))], [1]);
+  is("rota: seven items each missed once", nothing.missed.length, 7);
+  is("rota: the week is seven owed not forty nine", nothing.byRole, [{ role: "Bar deep clean", done: 0, of: 7 }]);
+
+  // The week done exactly as written: one item a night, on its own day.
+  const asWritten = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, isDue);
+  is("rota: doing it right reports nothing missed", asWritten.missed, []);
+  is("rota: and reads as complete", asWritten.byRole, [{ role: "Bar deep clean", done: 7, of: 7 }]);
+  is("rota: the venue is not marked down for it",
+    computeGroup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, new Map([["V", "HOOD"]]), isDue),
+    [{ code: "HOOD", done: 7, of: 7 }]);
+
+  // Only Monday's done.
+  const mondayOnly = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [{ night_id: "w0", item_id: "d0" }] }, week, isDue);
+  is("rota: Monday done leaves six owed", mondayOnly.missed.length, 6);
+  is("rota: and Monday is not among them", mondayOnly.missed.some((m) => m.item === "MONDAY"), false);
+  is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7 }]);
+}
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
 process.exit(fail ? 1 : 0);

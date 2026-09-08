@@ -1,3 +1,4 @@
+import { dueOnNight } from "./due";
 import "server-only";
 
 import { currentNight, shiftNights } from "./night";
@@ -54,7 +55,7 @@ async function load(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id, title, title_es")
+      .select("id, checklist_id, title, title_es, section")
       .in("checklist_id", checklistIds)
       .eq("active", true),
     db()
@@ -91,7 +92,10 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
   const window = nightWindow();
   const data = await load([venueId], window);
   if (!data || data.nights.length === 0) return null;
-  return computeRollup(data, window);
+  // The rota rule, handed to a module that keeps itself import free.
+  return computeRollup(data, window, (item, night) =>
+    dueOnNight(item.section, night),
+  );
 }
 
 /**
@@ -111,5 +115,7 @@ export async function groupRollup(): Promise<GroupRow[] | null> {
     ]),
   );
 
-  return computeGroup(data, window, codeOf);
+  return computeGroup(data, window, codeOf, (item, night) =>
+    dueOnNight(item.section, night),
+  );
 }

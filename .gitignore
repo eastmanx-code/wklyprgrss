@@ -51,3 +51,4 @@ next-env.d.ts
 
 # npm run check-adopt compiles the pure module here
 .adopt-check
+.due-check
