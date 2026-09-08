@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { compressToJpeg } from "@/lib/compress";
+import { deviceId } from "@/lib/device";
 import {
   blobFor,
   canQueue,
@@ -30,6 +31,7 @@ import {
   recordCapture,
   reopenNight,
   saveNote,
+  verifyNight,
   tickItem,
 } from "@/app/checklists/actions";
 
@@ -43,6 +45,15 @@ export type SavedNight = {
   >;
   certifiedBy: string | null;
   certifiedAt: string | null;
+  /**
+   * The second signature. Somebody else on the crew saying the work is done.
+   *
+   * Separate from the first because they are two different claims: I did this,
+   * and I checked it. One box was being asked to carry both, and on the first
+   * night it carried neither.
+   */
+  verifiedBy: string | null;
+  verifiedAt: string | null;
   /** Certifications this night has already had, oldest first. */
   history: {
     certifiedBy: string | null;
@@ -222,6 +233,21 @@ export function CloseChecklist({
   const [reopenPin, setReopenPin] = useState("");
   const [reopenReason, setReopenReason] = useState("");
   const [reopenError, setReopenError] = useState<string | null>(null);
+
+  /**
+   * The second signature, kept apart from the first all the way down.
+   *
+   * Two claims, two names, two pads. Sharing any of it would let one person's
+   * finger stand for both, which is the exact thing this is here to stop.
+   */
+  const [verified, setVerified] = useState<{ by: string | null } | null>(
+    saved.verifiedAt ? { by: saved.verifiedBy } : null,
+  );
+  const [verifier, setVerifier] = useState("");
+  const [verifierSigned, setVerifierSigned] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
+  const verifierSignatureRef = useRef<string | null>(null);
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
   const notesRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
@@ -906,6 +932,7 @@ export function CloseChecklist({
       data.set("certifiedBy", certifier.trim());
       data.set("attestation", attestationText);
       data.set("signature", signatureRef.current ?? "");
+      data.set("device", deviceId());
       data.set(
         "openAtSigning",
         JSON.stringify(openItems.map((i) => `${i.number} · ${i.title}`)),
@@ -924,6 +951,56 @@ export function CloseChecklist({
       // finished ten.
       { by: certifier.trim() || null, done: doneCount },
     );
+  }
+
+  /**
+   * The second person signs.
+   *
+   * Deliberately not gated on a code. This is a witness, not a permission:
+   * everybody who can walk a list can also check somebody else's, and a code
+   * in front of it would mean the list that most needs a second pair of eyes
+   * at three in the morning is the one that cannot get them.
+   *
+   * The server refuses the same name twice and records which phone each
+   * signature came off, so one person signing both is visible in the report
+   * rather than prevented here with a rule that would also block real pairs.
+   */
+  async function check() {
+    if (!verifier.trim()) {
+      setCheckError(t("Put your name in.", "Escribe tu nombre."));
+      return;
+    }
+    if (!verifierSigned || !verifierSignatureRef.current) {
+      setCheckError(t("A signature is required.", "Se requiere una firma."));
+      return;
+    }
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("verifiedBy", verifier.trim());
+    data.set("signature", verifierSignatureRef.current);
+    data.set("device", deviceId());
+
+    setChecking(true);
+    let result: { error: string | null };
+    try {
+      result = await verifyNight({ error: null }, data);
+    } catch {
+      setChecking(false);
+      setCheckError(
+        t(
+          "Could not save that. Check your signal and try again.",
+          "No se pudo guardar. Revisa tu señal e inténtalo otra vez.",
+        ),
+      );
+      return;
+    }
+    setChecking(false);
+    if (result.error) {
+      setCheckError(result.error);
+      return;
+    }
+    setCheckError(null);
+    setVerified({ by: verifier.trim() });
   }
 
   /**
@@ -950,6 +1027,12 @@ export function CloseChecklist({
     setSigned(false);
     setCertifier("");
     signatureRef.current = null;
+    // The check went with the signature it was checking.
+    setVerified(null);
+    setVerifier("");
+    setVerifierSigned(false);
+    setCheckError(null);
+    verifierSignatureRef.current = null;
     // Local state unlocks the page immediately; the refresh is what brings
     // back the history the server just wrote. Without it the night reopens
     // and shows no sign it was ever signed, which is the opposite of the
@@ -1628,7 +1711,10 @@ export function CloseChecklist({
             <div className="mt-5 space-y-4">
               <div className="space-y-2">
                 <label className="label" htmlFor="certifier">
-                  MOD certifying (required)
+                  {t(
+                    "Who did this work (required)",
+                    "Quién hizo el trabajo (requerido)",
+                  )}
                 </label>
                 <input
                   id="certifier"
@@ -1700,6 +1786,84 @@ export function CloseChecklist({
                           CLOSE_TOTAL - doneCount
                         } ${t("not done", "sin hacer")}`))}
               </button>
+
+              {/* The second signature.
+                  Only after the first, because checking work nobody has signed
+                  for is checking a claim that has not been made yet. Its own
+                  name box and its own pad: sharing either would let one
+                  person's finger stand for both, which is the thing this is
+                  here to stop. */}
+              {locked ? (
+                <div className="border-divider border-t pt-4">
+                  {verified ? (
+                    <p className="label">
+                      {t("Checked by", "Revisada por")} · {verified.by ?? "—"}
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <p className="label text-warn">
+                          {t(
+                            "Waiting on a second signature",
+                            "Falta una segunda firma",
+                          )}
+                        </p>
+                        <p className="note text-muted mt-1.5 leading-relaxed">
+                          {t(
+                            "Somebody else who worked tonight checks this and signs. Not the person who did it. A lead if one is in the space, the other closer if not.",
+                            "Otra persona que trabajó esta noche lo revisa y firma. No quien lo hizo. Un líder si hay uno, y si no, el otro que cierra.",
+                          )}
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="label" htmlFor="verifier">
+                          {t(
+                            "Who checked it (required)",
+                            "Quién lo revisó (requerido)",
+                          )}
+                        </label>
+                        <input
+                          id="verifier"
+                          className="field"
+                          placeholder={t("Your name", "Tu nombre")}
+                          autoComplete="off"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          value={verifier}
+                          onChange={(event) => setVerifier(event.target.value)}
+                        />
+                      </div>
+
+                      <SignaturePad
+                        signed={verifierSigned}
+                        onSignedChange={setVerifierSigned}
+                        locked={false}
+                        onInk={(dataUrl) => {
+                          verifierSignatureRef.current = dataUrl;
+                        }}
+                      />
+
+                      {checkError ? (
+                        <p role="alert" className="text-body text-warn">
+                          {checkError}
+                        </p>
+                      ) : null}
+
+                      <button
+                        type="button"
+                        className="btn w-full"
+                        onClick={() => void check()}
+                        disabled={checking}
+                      >
+                        {checking
+                          ? t("Saving…", "Guardando…")
+                          : t("I checked this work", "Yo revisé este trabajo")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
           </>
         ) : (
