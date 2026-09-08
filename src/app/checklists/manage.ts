@@ -77,7 +77,18 @@ async function mayEdit(): Promise<boolean> {
   return session?.role === "admin";
 }
 
-const NOT_YOURS = "Only an admin can change a list. Ask for that to be done.";
+/**
+ * A refusal that says where the door is.
+ *
+ * This said "ask for that to be done" and stopped, which is a dead end for the
+ * one person it was never meant to stop. A venue lead came to add items the
+ * afternoon this shipped, got refused with nowhere to go, and had to text to
+ * find out that a second sign in exists and their manager PIN already works on
+ * it. The lock is right. Refusing somebody without telling them the way in is
+ * not.
+ */
+const NOT_YOURS =
+  "Changing a list needs a manager sign in. Go to /admin/login and use your manager PIN, not the venue code.";
 
 /** A checklist row, if it belongs to this session's venue. */
 async function ownedChecklist(checklistId: string) {
