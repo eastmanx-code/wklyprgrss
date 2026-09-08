@@ -66,11 +66,15 @@ async function venueId(): Promise<string | null> {
  *
  * The two levels this app has are the venue PIN and the admin PIN, and there
  * is no third that separates a leader from the crew holding the same code. So
- * the line is drawn where it can actually be drawn: anything that changes what
- * the crew is asked to do needs the admin session. Reference shots stay open
- * below this, because they only ever add a picture of what right looks like,
- * a wrong one is visible the moment it lands, and taking them is a job a
- * venue lead is given rather than one they have to ask for.
+ * the line is drawn where it can actually be drawn: everything that writes a
+ * list needs the admin session.
+ *
+ * Reference shots were left open below this line at first, on the grounds that
+ * taking them is a job a venue lead is given rather than one they have to ask
+ * for. That was wrong twice over. They live on the edit screen, which is now
+ * managers only, so an open action behind a hidden door protects nobody and
+ * can still be called directly. And the lead it was meant to accommodate signs
+ * in with a manager PIN anyway, which he had all along and nobody had told him.
  */
 async function mayEdit(): Promise<boolean> {
   const session = await getSession();
@@ -482,6 +486,7 @@ export async function referenceTarget(
   itemId: string,
   slot: number,
 ): Promise<{ error: string | null; path?: string; signedUrl?: string }> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
   const owned = await ownedItem(itemId);
   if (!owned) return { error: "That item is not available." };
   if (!Number.isInteger(slot) || slot < 0 || slot >= MAX_REFERENCES) {
@@ -516,6 +521,7 @@ export async function setReference(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
