@@ -12,7 +12,8 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
-import { currentNight, formatNight, formatNightEs } from "@/lib/night";
+import { activeNight } from "@/lib/active-night";
+import { formatNight, formatNightEs } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
 import { closeVenueId } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
@@ -105,8 +106,10 @@ export default async function ChecklistPage({
       row.reference && row.reference.length > 0 ? row.reference : undefined,
   }));
 
-  // Tonight, if anyone has started it. Read-only here — the actions create it.
-  const night = currentNight();
+  // The night this list is on, which between four and seven in the morning is
+  // not the same as the night the calendar is on. Read-only here — the actions
+  // create the row.
+  const night = await activeNight(list.id);
   const { data: nightRow } = await db()
     .from("close_nights")
     .select("id, certified_at, certified_by, history")
