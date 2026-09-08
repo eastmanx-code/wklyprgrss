@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { isAdminPin } from "@/lib/admin-pin";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
+import { nameProblem } from "@/lib/name";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 export type CloseState = { error: string | null };
@@ -370,8 +371,10 @@ export async function certifyNight(
   const attestation = String(formData.get("attestation") ?? "").trim();
   const signature = String(formData.get("signature") ?? "");
   const openAtSigning = String(formData.get("openAtSigning") ?? "[]");
+  const device = String(formData.get("device") ?? "").slice(0, 40);
 
-  if (!who) return { error: "Say who is certifying." };
+  const problem = nameProblem(who);
+  if (problem) return { error: problem };
   if (!signature) return { error: "A signature is required." };
 
   const list = await checklistFor(slug);
@@ -387,6 +390,7 @@ export async function certifyNight(
     .update({
       certified_at: new Date().toISOString(),
       certified_by: who,
+      certified_device: device || null,
       // Written once, never updated. See supabase/014_close_signed_list.sql.
       list_at_signing: frozen,
       // Verbatim: if the wording ever changes, the record still shows what
@@ -398,6 +402,77 @@ export async function certifyNight(
     .eq("id", night);
 
   if (error) return { error: "Could not certify that. Try again." };
+
+  revalidatePath(`/checklists/${slug}`);
+  return { error: null };
+}
+
+/**
+ * The second signature: somebody who did not do the work saying they checked it.
+ *
+ * The first night showed why this exists. Seven of the eight signed lists were
+ * signed by the person whose initials are on every tick, and at close nobody
+ * signed anybody else's work. The single signature was recording who was
+ * holding the phone, not who checked the bar.
+ *
+ * A list is not finished until this is on it. That is the point rather than a
+ * side effect: a missing countersign is the only honest answer to the question
+ * nobody could get out of the old record, which is whether there is a manager
+ * here at closing time.
+ *
+ * Typed rather than proven, by decision. So the device is recorded and
+ * compared with the one that signed the work. This stops nobody: a person
+ * alone at three in the morning with a list that will not complete can put any
+ * name in this box. It means the report can see that both signatures came off
+ * the same phone forty seconds apart, which is the shape of somebody signing
+ * their own work twice, and it can say so instead of counting it as checked.
+ */
+export async function verifyNight(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const who = String(formData.get("verifiedBy") ?? "").trim();
+  const signature = String(formData.get("signature") ?? "");
+  const device = String(formData.get("device") ?? "").slice(0, 40);
+
+  const problem = nameProblem(who);
+  if (problem) return { error: problem };
+  if (!signature) return { error: "A signature is required." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await activeNight(list.id);
+
+  const { data } = await db()
+    .from("close_nights")
+    .select("id, certified_at, verified_at")
+    .eq("checklist_id", list.id)
+    .eq("night", night)
+    .maybeSingle();
+  const row = data as {
+    id: string;
+    certified_at: string | null;
+    verified_at: string | null;
+  } | null;
+
+  // Order matters. Checking work nobody has signed for is checking a claim
+  // that has not been made yet.
+  if (!row?.certified_at)
+    return { error: "Nobody has signed this list yet." };
+  if (row.verified_at) return { error: "This list is already checked." };
+
+  const { error } = await db()
+    .from("close_nights")
+    .update({
+      verified_at: new Date().toISOString(),
+      verified_by: who,
+      verified_signature: signature,
+      verified_device: device || null,
+    })
+    .eq("id", row.id);
+
+  if (error) return { error: "Could not save that. Try again." };
 
   revalidatePath(`/checklists/${slug}`);
   return { error: null };
