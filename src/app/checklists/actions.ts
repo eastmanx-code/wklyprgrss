@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { sweepCaptures } from "@/lib/adopt";
 import { isAdminPin } from "@/lib/admin-pin";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
@@ -382,6 +383,12 @@ export async function certifyNight(
   const night = await nightId(list.id);
   if (!night) return { error: "Could not open tonight." };
   if (await isLocked(night)) return { error: "Tonight is already certified." };
+
+  // Before the snapshot, not after. A photograph that reached storage and
+  // never got its row is evidence the server already holds, and freezing a
+  // record that calls that item open would be signing a lie into the one
+  // document nobody can edit afterwards.
+  await sweepCaptures(list.id, night);
 
   const frozen = await listAtSigning(list.id, night);
 

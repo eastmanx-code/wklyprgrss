@@ -12,6 +12,7 @@ import {
 } from "@/lib/checklists";
 import type { ProofKind, Reference, Shot } from "@/lib/close-checklist";
 import { closeVenueId } from "@/lib/close-venue";
+import { getSession } from "@/lib/session";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 /**
@@ -53,6 +54,30 @@ function readSection(formData: FormData): string | null {
 async function venueId(): Promise<string | null> {
   return closeVenueId();
 }
+
+/**
+ * Writing a list is not the same permission as walking one.
+ *
+ * Every action in this file was scoped to a venue and to nothing else, which
+ * read as a permission check and was not one. The venue PIN is printed on the
+ * QR code by the checklist rack and handed to everybody who works there, so
+ * "belongs to this venue" resolved to "anybody at all". A barback could retire
+ * the close list on the way past it.
+ *
+ * The two levels this app has are the venue PIN and the admin PIN, and there
+ * is no third that separates a leader from the crew holding the same code. So
+ * the line is drawn where it can actually be drawn: anything that changes what
+ * the crew is asked to do needs the admin session. Reference shots stay open
+ * below this, because they only ever add a picture of what right looks like,
+ * a wrong one is visible the moment it lands, and taking them is a job a
+ * venue lead is given rather than one they have to ask for.
+ */
+async function mayEdit(): Promise<boolean> {
+  const session = await getSession();
+  return session?.role === "admin";
+}
+
+const NOT_YOURS = "Only an admin can change a list. Ask for that to be done.";
 
 /** A checklist row, if it belongs to this session's venue. */
 async function ownedChecklist(checklistId: string) {
@@ -187,6 +212,8 @@ export async function setRoleSpanish(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const venue = await venueId();
   if (!venue) return { error: "You are not signed in." };
 
@@ -218,6 +245,8 @@ export async function createChecklist(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const venue = await venueId();
   if (!venue) return { error: "You are not signed in." };
 
@@ -291,6 +320,8 @@ export async function retireChecklist(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
   if (!list) return { error: "That list is not available." };
 
@@ -307,6 +338,8 @@ export async function restoreChecklist(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
   if (!list) return { error: "That list is not available." };
 
@@ -322,6 +355,8 @@ export async function addItem(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
   if (!list) return { error: "That list is not available." };
 
@@ -388,6 +423,8 @@ export async function updateItem(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
@@ -505,6 +542,8 @@ export async function retireItem(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
@@ -520,6 +559,8 @@ export async function restoreItem(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
 
@@ -544,6 +585,8 @@ export async function moveItem(
   _prev: ManageState,
   formData: FormData,
 ): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
   const owned = await ownedItem(String(formData.get("itemId") ?? ""));
   if (!owned) return { error: "That item is not available." };
   const up = String(formData.get("direction") ?? "") === "up";

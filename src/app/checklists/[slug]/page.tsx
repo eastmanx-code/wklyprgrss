@@ -192,12 +192,14 @@ export default async function ChecklistPage({
             does — an empty list that could be certified would report a venue as
             covered for doing nothing.
           </p>
-          <Link
-            href={`/checklists/${slug}/edit`}
-            className="btn mt-4 inline-flex"
-          >
-            Write the list
-          </Link>
+          {session.role === "admin" ? (
+            <Link
+              href={`/checklists/${slug}/edit`}
+              className="btn mt-4 inline-flex"
+            >
+              Write the list
+            </Link>
+          ) : null}
         </section>
       ) : (
         <CloseChecklist

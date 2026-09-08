@@ -48,3 +48,6 @@ next-env.d.ts
 .rollup-check
 .pace-check
 .night-check
+
+# npm run check-adopt compiles the pure module here
+.adopt-check
