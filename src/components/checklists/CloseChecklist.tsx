@@ -22,6 +22,7 @@ import {
 } from "@/lib/outbox";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
+import { dayOfSection, dueOnNight } from "@/lib/due";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -91,6 +92,7 @@ export function CloseChecklist({
   slug,
   phase,
   items,
+  night,
   referenceUrls,
   saved,
 }: {
@@ -98,15 +100,39 @@ export function CloseChecklist({
   /** Open, mid or close. The words a person signs their name to come from it. */
   phase: Phase;
   items: CloseItem[];
+  /**
+   * The night this list is on, as currentNight sees it.
+   *
+   * Passed rather than worked out here so the screen and the server agree.
+   * A phone with the wrong date would otherwise ask for the wrong day's deep
+   * clean and mark the right one missed.
+   */
+  night: string;
   /** Storage path -> signed URL, for the reference shots. Minted server-side. */
   referenceUrls: Record<string, string>;
   saved: SavedNight;
 }) {
   const router = useRouter();
   const CLOSE_CHECKLIST = items;
-  const CLOSE_TOTAL = items.length;
+
+  /**
+   * What tonight actually asks for.
+   *
+   * A deep clean list is seven items under seven day headings and one of them
+   * is tonight's. Counting all seven meant a bartender who did exactly the job
+   * saw 0 of 7 and a button offering to sign with seven not done, so doing it
+   * right read as failing and nobody touched those lists. Every other list has
+   * no day headings, so this is all of it and nothing changes.
+   *
+   * The rows for the other days still render. Hiding them would take away the
+   * one place a person can see what is coming, and somebody who gets ahead on
+   * tomorrow's should be able to tick it.
+   */
+  const isDue = (item: CloseItem) => dueOnNight(item.section, night);
+  const dueItems = items.filter(isDue);
+  const CLOSE_TOTAL = dueItems.length;
   const shotsOfKind = (kind: ProofKind) =>
-    items.flatMap((item) => item.proof ?? []).filter((s) => s.kind === kind)
+    dueItems.flatMap((item) => item.proof ?? []).filter((s) => s.kind === kind)
       .length;
   const PHOTO_SHOTS = shotsOfKind("photo");
   const VIDEO_SHOTS = shotsOfKind("video");
@@ -401,8 +427,8 @@ export function CloseChecklist({
     (item.proof ?? []).filter((shot, index) =>
       shotFilled(item.number, index, shot.kind),
     ).length;
-  const doneCount = CLOSE_CHECKLIST.filter((item) => done[item.number]).length;
-  const openItems = CLOSE_CHECKLIST.filter((item) => !done[item.number]);
+  const doneCount = dueItems.filter((item) => done[item.number]).length;
+  const openItems = dueItems.filter((item) => !done[item.number]);
   const untouched = doneCount === 0;
 
   /**
@@ -1076,7 +1102,7 @@ export function CloseChecklist({
             many. Filled left to right it read as a progress bar and item 7
             being the one nobody ever does was invisible. */}
         <div className="mt-2.5 flex gap-[3px]" aria-hidden>
-          {CLOSE_CHECKLIST.map((item) => (
+          {dueItems.map((item) => (
             <span
               key={item.number}
               className={`h-1.5 flex-1 rounded-[1px] ${
@@ -1128,13 +1154,36 @@ export function CloseChecklist({
             : [];
           const runDone = run.filter((other) => done[other.number]).length;
 
+          /**
+           * A heading that names a day is a rota, not a grouping.
+           *
+           * Six of the seven rows on a deep clean list belong to other nights.
+           * They stay on the page, because this is the only place somebody can
+           * see what is coming and because getting ahead should be possible,
+           * but they are not what tonight is asking for and must not look like
+           * six things left undone.
+           */
+          const sectionDay = dayOfSection(item.section);
+          const notTonight = sectionDay !== null && !isDue(item);
+
           return (
-            <li key={item.number} className="panel p-0">
+            <li
+              key={item.number}
+              className={`panel p-0 ${notTonight ? "opacity-45" : ""}`}
+            >
               {heading ? (
-                <p className="label border-divider text-warn flex items-baseline justify-between gap-3 border-b px-4 py-2.5">
+                <p
+                  className={`label border-divider flex items-baseline justify-between gap-3 border-b px-4 py-2.5 ${
+                    notTonight ? "text-muted" : "text-warn"
+                  }`}
+                >
                   <span className="break-words">{heading}</span>
                   <span className="shrink-0 tabular-nums">
-                    {runDone}/{run.length}
+                    {sectionDay === null
+                      ? `${runDone}/${run.length}`
+                      : notTonight
+                        ? t("another night", "otra noche")
+                        : t("tonight", "esta noche")}
                   </span>
                 </p>
               ) : null}

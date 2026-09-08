@@ -58,11 +58,36 @@ export type ChecklistRow = {
   role: string;
   phase: "open" | "mid" | "close";
 };
+/**
+ * Whether an item was owed on a night.
+ *
+ * Passed in rather than imported, because this module is a leaf on purpose:
+ * no imports is what lets scripts/check-rollup.mjs compile and run it with no
+ * database and no bundler. The real rule lives in due.ts and the caller hands
+ * it over; the fixtures hand over the same one, so what is proved here is what
+ * runs.
+ *
+ * Defaults to "everything, always", which is what every list without day
+ * headings means and what this file assumed before deep clean lists existed.
+ */
+export type IsDue = (item: ItemRow, night: string) => boolean;
+
+const ALWAYS: IsDue = () => true;
+
 export type ItemRow = {
   id: string;
   checklist_id: string;
   title: string;
   title_es?: string | null;
+  /**
+   * The heading, because one that names a weekday is a rota.
+   *
+   * A deep clean item is owed one night in seven. Counting it against all
+   * seven made every one of them look six sevenths missed for ever, put them
+   * at the top of the list of things nobody does, and dragged the venue's
+   * whole score down for running the list correctly.
+   */
+  section?: string | null;
 };
 export type NightRow = {
   id: string;
@@ -86,7 +111,11 @@ export type Loaded = {
  * has never been checked against a case somebody worked out by hand is a
  * report that gets believed and should not be.
  */
-export function computeRollup(data: Loaded, window: string[]): Rollup {
+export function computeRollup(
+  data: Loaded,
+  window: string[],
+  isDue: IsDue = ALWAYS,
+): Rollup {
   const { checklists, items, nights, ticks } = data;
 
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
@@ -128,7 +157,11 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
     .map((item) => {
       const list = checklists.find((c) => c.id === item.checklist_id)!;
       let open = 0;
+      let asked = 0;
       for (const night of window) {
+        // A night this item was not owed on is not a night it was missed on.
+        if (!isDue(item, night)) continue;
+        asked += 1;
         const row = nightAt.get(`${list.id}:${night}`);
         if (!row || !ticked.has(`${row.id}:${item.id}`)) open += 1;
       }
@@ -139,11 +172,11 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
         item: item.title,
         itemEs: item.title_es ?? null,
         open,
-        of: window.length,
+        of: asked,
       };
     })
-    .filter((row) => row.open > 0)
-    .sort((a, b) => b.open - a.open);
+    .filter((row) => row.of > 0 && row.open > 0)
+    .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
 
   // Completion by role, over the same window and the same denominator.
   const byRole = [...new Set(checklists.map((c) => c.role))]
@@ -153,11 +186,15 @@ export function computeRollup(data: Loaded, window: string[]): Rollup {
       let of = 0;
       for (const list of lists) {
         const owed = itemsOf.get(list.id) ?? [];
-        of += owed.length * window.length;
         for (const night of window) {
+          // Only the items this night actually asked for, on both sides of
+          // the fraction. A rota item counted in the denominator every night
+          // and achievable on one is a score nobody can move.
+          const due = owed.filter((item) => isDue(item, night));
+          of += due.length;
           const row = nightAt.get(`${list.id}:${night}`);
           if (!row) continue;
-          done += owed.filter((item) =>
+          done += due.filter((item) =>
             ticked.has(`${row.id}:${item.id}`),
           ).length;
         }
@@ -192,6 +229,7 @@ export function computeGroup(
   data: Loaded,
   window: string[],
   codeOf: Map<string, string>,
+  isDue: IsDue = ALWAYS,
 ): GroupRow[] {
   const { checklists, items, nights, ticks } = data;
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
@@ -204,11 +242,15 @@ export function computeGroup(
     const owed = items.filter((item) => item.checklist_id === list.id);
     const code = codeOf.get(list.venue_id) ?? "—";
     const running = totals.get(code) ?? { done: 0, of: 0 };
-    running.of += owed.length * window.length;
     for (const night of window) {
+      // Same rule as the per role figure: a rota item counts on the nights it
+      // is owed and on no others, or a venue is marked down for running the
+      // deep clean the way it is written.
+      const due = owed.filter((item) => isDue(item, night));
+      running.of += due.length;
       const row = nightAt.get(`${list.id}:${night}`);
       if (!row) continue;
-      running.done += owed.filter((item) =>
+      running.done += due.filter((item) =>
         ticked.has(`${row.id}:${item.id}`),
       ).length;
     }

@@ -2,6 +2,7 @@ import "server-only";
 
 import { closeStatus, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
+import { dueOnNight } from "./due";
 import { currentNight, isNightOver, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 import { tierOf } from "./status";
@@ -317,19 +318,33 @@ export async function listDetail(
     proofCount.set(row.item_id, (proofCount.get(row.item_id) ?? 0) + 1);
   }
 
-  const outcomes: ItemOutcome[] = items.map((item) => {
-    const tick = tickOf.get(item.id);
-    return {
-      id: item.id,
-      title: item.title,
-      section: item.section,
-      ticked: Boolean(tick),
-      initials: tick?.initials?.trim() || null,
-      at: tick?.created_at ?? null,
-      proofWanted: (item.proof ?? []).map((p) => p.kind),
-      proofGiven: proofCount.get(item.id) ?? 0,
-    };
-  });
+  const outcomes: ItemOutcome[] = items
+    /**
+     * Only what this night asked for.
+     *
+     * A deep clean list files its seven items under seven day headings, one
+     * per night. Reporting all seven every night turned a finished job into
+     * six misses, which is the same lie the tick screen was telling and lands
+     * in the place it actually gets acted on.
+     *
+     * An item filed under another day that somebody did anyway stays in, so
+     * getting ahead is still credited. Only the ones nobody was asked for and
+     * nobody did drop out.
+     */
+    .filter((item) => dueOnNight(item.section, night) || tickOf.has(item.id))
+    .map((item) => {
+      const tick = tickOf.get(item.id);
+      return {
+        id: item.id,
+        title: item.title,
+        section: item.section,
+        ticked: Boolean(tick),
+        initials: tick?.initials?.trim() || null,
+        at: tick?.created_at ?? null,
+        proofWanted: (item.proof ?? []).map((p) => p.kind),
+        proofGiven: proofCount.get(item.id) ?? 0,
+      };
+    });
 
   const times = ticks
     .map((t) => t.created_at)
