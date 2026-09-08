@@ -90,9 +90,20 @@ export const QUEUE_BYTES_MAX = 60 * 1024 * 1024;
 
 let open: Promise<IDBDatabase> | null = null;
 
+/**
+ * Set the first time the store refuses to open.
+ *
+ * Not a cache of a slow answer, a memory of a permanent one. A browser that
+ * will not open the database on the first shot will not open it on the tenth,
+ * and every attempt after the first is another second of a person watching
+ * nothing happen.
+ */
+let shut = false;
+
 function db(): Promise<IDBDatabase> {
   if (open) return open;
-  open = new Promise((resolve, reject) => {
+  open = new Promise<IDBDatabase>((resolve, reject) => {
+    // `open` itself throws in a sandboxed frame, before any handler can run.
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const held = request.result;
@@ -105,6 +116,12 @@ function db(): Promise<IDBDatabase> {
     };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
+    // A version change nobody closed. It will never resolve on its own.
+    request.onblocked = () => reject(new Error("blocked"));
+  }).catch((error) => {
+    shut = true;
+    open = null;
+    throw error;
   });
   return open;
 }
@@ -125,40 +142,101 @@ function run<T>(
   );
 }
 
-/** Whether this browser can queue at all. */
+/**
+ * Whether this browser can queue at all.
+ *
+ * This used to ask only whether `indexedDB` was a word the browser knew, which
+ * is a different question and the wrong one. iOS Safari in a private window
+ * knows the word and then refuses to open the database, so the check passed,
+ * the write threw, nothing caught it, and the person holding the phone saw the
+ * camera do nothing at all. That cost three photographs and two unsigned lists
+ * on the first real night. Now a store that has refused to open once is known
+ * to be shut, and every caller has somewhere else to go.
+ */
 export function canQueue(): boolean {
-  return typeof indexedDB !== "undefined";
+  return typeof indexedDB !== "undefined" && !shut;
 }
 
-/** Put a tick in the queue, replacing any earlier one for the same item. */
-export async function enqueue(op: TickOp): Promise<void> {
-  await run(STORE, "readwrite", (store) => store.put(op));
+/**
+ * Ask the store to open, rather than assuming it will.
+ *
+ * The honest version of `canQueue`, for the one place that can afford to wait
+ * for the answer: the screen deciding on load whether it is holding work.
+ */
+export async function queueWorks(): Promise<boolean> {
+  if (!canQueue()) return false;
+  try {
+    await db();
+    return true;
+  } catch {
+    return false;
+  }
 }
+
+/**
+ * Put a tick in the queue, replacing any earlier one for the same item.
+ *
+ * Says whether it landed instead of throwing. A tap that cannot be stored has
+ * to go to the network right now, and a caller cannot make that call if the
+ * failure arrives as an exception nobody is standing under.
+ */
+export async function enqueue(op: TickOp): Promise<boolean> {
+  try {
+    await run(STORE, "readwrite", (store) => store.put(op));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Why a capture did not make it into the queue.
+ *
+ * `full` is the device carrying all it agreed to carry. `unavailable` is the
+ * store refusing to work at all. They read the same to the person holding the
+ * phone and mean different things to the code: neither is a reason to lose the
+ * shot, and both leave sending it now as the only way through.
+ */
+export type Held =
+  | { stored: true }
+  | { stored: false; reason: "full" | "unavailable" };
 
 /**
  * Put a capture in the queue, bytes and all.
  *
- * Refuses rather than throws when the device is already carrying too much, so
- * the caller can say something useful instead of the camera appearing broken.
+ * Never throws. Every way this can fail ends with the caller having to send
+ * the bytes itself, so the failures come back as answers rather than as
+ * exceptions, and the word for what went wrong is left to the screen, which
+ * knows which language the person reads.
  */
-export async function enqueueProof(
-  op: ProofOp,
-  blob: Blob,
-): Promise<{ error: string | null }> {
-  const held = await queuedBytes();
-  if (held + blob.size > QUEUE_BYTES_MAX) {
-    return {
-      error:
-        "This device is holding as much as it can offline. Find signal so the photos already taken can go up.",
-    };
+export async function enqueueProof(op: ProofOp, blob: Blob): Promise<Held> {
+  try {
+    const held = await queuedBytes();
+    if (held + blob.size > QUEUE_BYTES_MAX) {
+      return { stored: false, reason: "full" };
+    }
+    await run(BLOBS, "readwrite", (store) => store.put(blob, op.key));
+    await run(STORE, "readwrite", (store) => store.put(op));
+    return { stored: true };
+  } catch {
+    return { stored: false, reason: "unavailable" };
   }
-  await run(BLOBS, "readwrite", (store) => store.put(blob, op.key));
-  await run(STORE, "readwrite", (store) => store.put(op));
-  return { error: null };
 }
 
+/**
+ * What is waiting to go up.
+ *
+ * Empty when the store will not open. A screen that cannot read the queue is
+ * in the same position as a screen with nothing in it, and saying so quietly
+ * beats an unhandled rejection in the middle of a shift.
+ */
 export async function queued(): Promise<Op[]> {
-  const all = await run<Op[]>(STORE, "readonly", (store) => store.getAll());
+  let all: Op[];
+  try {
+    all = await run<Op[]>(STORE, "readonly", (store) => store.getAll());
+  } catch {
+    return [];
+  }
   // Oldest first. Two items are independent, but replaying in the order the
   // person worked keeps the server's own stamps in the same order as the
   // shift, which is what a report reads back.
@@ -173,12 +251,24 @@ export async function queuedBytes(): Promise<number> {
 
 /** One queued capture's bytes, for the upload or for a preview. */
 export async function blobFor(key: string): Promise<Blob | undefined> {
-  return run<Blob | undefined>(BLOBS, "readonly", (store) => store.get(key));
+  try {
+    return await run<Blob | undefined>(BLOBS, "readonly", (store) =>
+      store.get(key),
+    );
+  } catch {
+    return undefined;
+  }
 }
 
 async function drop(key: string): Promise<void> {
-  await run(STORE, "readwrite", (store) => store.delete(key));
-  await run(BLOBS, "readwrite", (store) => store.delete(key));
+  try {
+    await run(STORE, "readwrite", (store) => store.delete(key));
+    await run(BLOBS, "readwrite", (store) => store.delete(key));
+  } catch {
+    // The store went away mid-drain. Whatever is left in it is unreachable
+    // anyway, and throwing here would take down the drain that is currently
+    // getting the rest of the night up.
+  }
 }
 
 export type Pending = { ticks: number; proof: number; total: number };

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { compressToJpeg, decodeMessage } from "@/lib/compress";
+import { compressToJpeg } from "@/lib/compress";
 import {
   blobFor,
   canQueue,
@@ -13,7 +13,9 @@ import {
   pending as pendingWork,
   proofKey,
   queued,
+  queueWorks,
   tickKey,
+  type Held,
   type Op,
   type ProofOp,
   type TickOp,
@@ -224,17 +226,23 @@ export function CloseChecklist({
    * harder on a phone in a cold room only spends battery.
    */
   useEffect(() => {
-    if (!canQueue()) return;
-
     const mark = () => setOffline(!navigator.onLine);
     mark();
 
-    void pendingWork().then((held) => {
-      setOutstanding(held.total);
-      setHeldProof(held.proof);
+    // Asked rather than assumed. A store that exists and will not open reads
+    // as usable right up to the moment a photograph needs keeping, so the one
+    // place that can afford to wait for the real answer waits for it. The
+    // offline banner is wired up either way: knowing there is no signal is
+    // worth having on a phone that cannot queue, and is worth more.
+    void queueWorks().then((works) => {
+      if (!works) return;
+      void pendingWork().then((held) => {
+        setOutstanding(held.total);
+        setHeldProof(held.proof);
+      });
+      void rehydrate();
+      void drain();
     });
-    void rehydrate();
-    void drain();
 
     const back = () => {
       mark();
@@ -540,9 +548,11 @@ export function CloseChecklist({
    * write is durable in the browser before this returns, and the sending is
    * somebody else's problem a few lines down.
    *
-   * Falls back to the old direct call where IndexedDB is missing, which is
-   * private windows on some browsers. Worse behaviour offline, same behaviour
-   * on.
+   * Falls back to the old direct call where the queue will not take it, which
+   * is private windows on some browsers. Worse behaviour offline, same
+   * behaviour on. The fallback turns on the queue actually refusing rather
+   * than on the browser looking like it might, because the browsers that lose
+   * work are the ones that look fine and are not.
    */
   async function persistTick(item: CloseItem, on: boolean) {
     const op: TickOp = {
@@ -555,19 +565,29 @@ export function CloseChecklist({
       clientAt: new Date().toISOString(),
     };
 
-    if (!canQueue()) {
-      setSaving(true);
-      const result = await tickItem({ error: null }, sendable(op));
-      setSaving(false);
-      if (result.error) setShortfall(result.error);
+    if (canQueue() && (await enqueue(op))) {
+      const held = await pendingWork();
+      setOutstanding(held.total);
+      setHeldProof(held.proof);
+      void drain();
       return;
     }
 
-    await enqueue(op);
-    const held = await pendingWork();
-    setOutstanding(held.total);
-    setHeldProof(held.proof);
-    void drain();
+    // Nowhere to keep it, so it goes now or not at all.
+    setSaving(true);
+    try {
+      const result = await tickItem({ error: null }, sendable(op));
+      if (result.error) setShortfall(result.error);
+    } catch {
+      setShortfall(
+        t(
+          "Could not save that. Check your signal and tap it again.",
+          "No se pudo guardar. Revisa tu señal y tócalo otra vez.",
+        ),
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
   /** Marks the moment, so the next poll defers to this device. */
@@ -699,10 +719,10 @@ export function CloseChecklist({
     if (kind === "photo") {
       try {
         upload = await compressToJpeg(file);
-      } catch (error) {
-        setSaving(false);
-        setShortfall(decodeMessage(error));
-        return;
+      } catch {
+        // A photograph that will not shrink still counts. Sending the whole
+        // original costs bytes; refusing it costs a list nobody can sign.
+        upload = file;
       }
     }
 
@@ -719,30 +739,30 @@ export function CloseChecklist({
       clientAt: new Date().toISOString(),
     };
 
-    if (canQueue()) {
-      const stored = await enqueueProof(op, upload);
-      if (stored.error) {
-        setSaving(false);
-        setShortfall(stored.error);
-        return;
-      }
-    } else {
-      // No store to keep it in, so it goes now or not at all.
+    const held: Held = canQueue()
+      ? await enqueueProof(op, upload)
+      : { stored: false, reason: "unavailable" };
+
+    if (!held.stored) {
+      // Nowhere to keep it, so it goes now or not at all.
+      let wrong: string | null = null;
       try {
-        const result = await sendProof(op, upload);
-        if (result.error) {
-          setSaving(false);
-          setShortfall(result.error);
-          return;
-        }
+        wrong = (await sendProof(op, upload)).error;
       } catch {
+        wrong =
+          held.reason === "full"
+            ? t(
+                "This phone is holding all the photos it can and there is no signal to send them. Find signal and try again.",
+                "Este teléfono ya guarda todas las fotos que puede y no hay señal para enviarlas. Busca señal e inténtalo otra vez.",
+              )
+            : t(
+                "Could not upload that. Check your signal and try again.",
+                "No se pudo subir. Revisa tu señal e inténtalo otra vez.",
+              );
+      }
+      if (wrong) {
         setSaving(false);
-        setShortfall(
-          t(
-            "Could not upload that. Check your signal and try again.",
-            "No se pudo subir. Revisa tu señal e inténtalo otra vez.",
-          ),
-        );
+        setShortfall(wrong);
         return;
       }
     }
@@ -753,10 +773,10 @@ export function CloseChecklist({
     setCaptures((current) => ({ ...current, [shotKey]: { url, kind } }));
     setSaving(false);
 
-    if (canQueue()) {
-      const held = await pendingWork();
-      setOutstanding(held.total);
-      setHeldProof(held.proof);
+    if (held.stored) {
+      const waiting = await pendingWork();
+      setOutstanding(waiting.total);
+      setHeldProof(waiting.proof);
       void drain();
     }
 
