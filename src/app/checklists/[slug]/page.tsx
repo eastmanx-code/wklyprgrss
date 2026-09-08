@@ -251,13 +251,17 @@ export default async function ChecklistPage({
 
       {/* Under the work, not over it.
 
-          The venue still owns its list — the way to change it is on the list
-          itself rather than in an admin screen somebody has to be told about.
-          But it sat directly beneath the title, which on a phone put "edit the
+          It sat directly beneath the title, which on a phone put "edit the
           checklist" one tap away and above the first line of it. The person
           holding this at one in the morning is walking the list, not writing
-          it; whoever is rewriting it will scroll. */}
-      {rows.length > 0 ? (
+          it; whoever is rewriting it will scroll.
+
+          Managers only now. The venue code is on the QR by the rack, so this
+          was offering the whole crew a door that refuses almost everything
+          behind it — which is how a venue lead spent an afternoon finding out
+          by text that a manager sign in exists. A door that is not for you
+          should not be in front of you. */}
+      {rows.length > 0 && session.role === "admin" ? (
         <Link
           href={`/checklists/${slug}/edit`}
           className="btn-ghost mt-6 inline-flex min-h-11"
