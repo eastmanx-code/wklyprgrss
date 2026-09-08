@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { isAdminPin } from "@/lib/admin-pin";
 import { closeVenueId } from "@/lib/close-venue";
-import { currentNight } from "@/lib/night";
+import { activeNight } from "@/lib/active-night";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 export type CloseState = { error: string | null };
@@ -61,7 +61,10 @@ async function checklistFor(slug: string) {
  * first person's work to already be.
  */
 async function nightId(checklistId: string): Promise<string | null> {
-  const night = currentNight();
+  // Where the work belongs, not what the calendar says. Between four and
+  // seven in the morning those differ, and the difference is a shift's record
+  // split in half.
+  const night = await activeNight(checklistId);
 
   // Upsert rather than check-then-insert. Two people ticking in the same
   // second both saw no row and both inserted; the second lost the unique
@@ -437,7 +440,7 @@ export async function reopenNight(
       "id, certified_at, certified_by, attestation, signature, open_at_signing, history",
     )
     .eq("checklist_id", list.id)
-    .eq("night", currentNight())
+    .eq("night", await activeNight(list.id))
     .maybeSingle();
 
   const row = data as {

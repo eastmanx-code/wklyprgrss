@@ -71,6 +71,65 @@ export function currentNight(now: Date = new Date()): string {
   return toIsoDate(hour < NIGHT_ENDS_HOUR ? dateOnly - DAY_MS : dateOnly);
 }
 
+/**
+ * How long after the changeover a shift can still be finishing.
+ *
+ * The night is a pure function of the clock, so at 4am the answer changes and
+ * every screen rendered after it asks about a different night. That is right
+ * for a report and wrong for a crew: a close still being walked at 4:05 had
+ * its board empty itself in front of them and its remaining ticks filed under
+ * the next night, splitting one shift's record in two.
+ *
+ * Three hours is the outer bound on "still finishing". It is not the test on
+ * its own — activity is — but it stops a night that was reopened at nine in
+ * the evening from being mistaken for one somebody is standing in.
+ */
+export const CARRY_HOURS = 3;
+
+/**
+ * How recently a list must have been touched to count as still being walked.
+ *
+ * This is the real test, and it is what separates a close running past four
+ * from a prep open starting at six. Yesterday's prep was last touched
+ * twenty-four hours ago; a close in progress was touched minutes ago.
+ *
+ * Ninety minutes rather than something tighter because a cellar or a walk-in
+ * is a long job with no taps in it, and rolling somebody onto a new night
+ * mid-shift is the failure this exists to prevent.
+ */
+export const CARRY_MINUTES = 90;
+
+/** The hours after the changeover when a shift may still be running. */
+export function inCarryWindow(now: Date = new Date()): boolean {
+  const { hour } = pacificParts(now);
+  return hour >= NIGHT_ENDS_HOUR && hour < NIGHT_ENDS_HOUR + CARRY_HOURS;
+}
+
+/**
+ * Is the night before this one still live?
+ *
+ * `lastActivity` is the most recent thing that happened on it: a tick, or the
+ * signature. The signature counts because signing is not the end of somebody's
+ * involvement — a MOD who signs at 3:55 and spots a mistake at 4:05 has to be
+ * able to reopen the night they just signed, not the empty one that replaced
+ * it.
+ *
+ * A time in the future is not activity. A phone clock can be wrong and a
+ * server clock can skew, and neither is a reason to hand a crew the wrong
+ * night.
+ */
+export function carriesForward(
+  lastActivity: string | null,
+  now: Date = new Date(),
+): boolean {
+  if (!inCarryWindow(now)) return false;
+  if (!lastActivity) return false;
+  const at = Date.parse(lastActivity);
+  if (Number.isNaN(at)) return false;
+  const minutes = (now.getTime() - at) / 60_000;
+  return minutes >= 0 && minutes <= CARRY_MINUTES;
+}
+
 /** Shift a night by whole days. */
 export function shiftNights(night: string, days: number): string {
   const [y, m, d] = night.split("-").map(Number);
