@@ -295,7 +295,11 @@ export default async function ChecklistsPage() {
         </div>
       )}
 
-      <NewChecklistForm />
+      {/* Starting a whole new list is an admin job, and the form sat here for
+          anybody holding the venue code — which is everybody, since the code
+          is on the QR by the rack. The server refuses it either way now; this
+          is so nobody is offered a button that is going to say no. */}
+      {session.role === "admin" ? <NewChecklistForm /> : null}
 
       {/* The way out of the building you are in. Without it the cookie is a
           one-way door and the only way back to another venue is the address
