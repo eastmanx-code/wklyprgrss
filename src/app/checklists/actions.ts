@@ -243,12 +243,15 @@ export async function captureTarget(
   if (await isLocked(night)) return { error: "Tonight is already certified." };
 
   // Photos are re-encoded to JPEG in the browser before they get here, so
-  // that extension is always true. Video is uploaded as shot.
+  // jpg is nearly always right. Nearly: a photograph the phone could not
+  // re-encode is sent whole rather than refused, and it arrives saying so.
+  // Filing that under .jpg would leave a picture nobody can open. Video is
+  // uploaded as shot.
   const safe = extension
     .replace(/[^a-z0-9]/gi, "")
     .slice(0, 5)
     .toLowerCase();
-  const ext = kind === "photo" ? "jpg" : safe || "mov";
+  const ext = kind === "photo" ? safe || "jpg" : safe || "mov";
   const path = `close/${night}/${itemId}/${shotIndex}-${Date.now()}.${ext}`;
   const { data, error } = await db()
     .storage.from(PHOTO_BUCKET)
