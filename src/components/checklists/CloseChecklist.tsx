@@ -476,14 +476,30 @@ export function CloseChecklist({
   const initialsFor = (number: number) => {
     const own = rowInitials[number];
     if (own !== undefined) return own;
+    const index = CLOSE_CHECKLIST.findIndex((it) => it.number === number);
+    const mine = dayOfSection(CLOSE_CHECKLIST[index]?.section);
     // The nearest row above that somebody has signed for. Above rather than
     // anywhere, so a list worked top to bottom carries forward and never
     // reaches back to put an earlier person's letters on later work.
-    for (
-      let i = CLOSE_CHECKLIST.findIndex((it) => it.number === number) - 1;
-      i >= 0;
-      i -= 1
-    ) {
+    for (let i = index - 1; i >= 0; i -= 1) {
+      /**
+       * Never across a night.
+       *
+       * The carry was written for a close list, where one person walks
+       * twenty six items in order and typing the same two letters twenty six
+       * times is most of what the app costs them. A rota list is the opposite
+       * shape: seven rows, seven different nights, one of them tonight. Left
+       * alone, Monday's letters were carried onto Tuesday through Sunday, so
+       * the screen showed somebody had initialled all seven days when they
+       * had initialled one, and six rows marked ANOTHER NIGHT wore a name
+       * that nobody had put there.
+       *
+       * On a rota list this stops the carry dead, which is the right answer:
+       * each night is one job and whoever does it types their own. Lists with
+       * no day headings are untouched, and so are headings like CLOSING SQUAD
+       * and FIRST CUTS, which group work rather than schedule it.
+       */
+      if (dayOfSection(CLOSE_CHECKLIST[i].section) !== mine) break;
       const said = rowInitials[CLOSE_CHECKLIST[i].number];
       if (said?.trim()) return said;
     }
