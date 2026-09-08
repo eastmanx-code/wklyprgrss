@@ -1,0 +1,64 @@
+# What has to be true before a change reaches a venue.
+#
+# Until now the only thing running on a pull request was Netlify's deploy
+# preview, which proves the app built and nothing else. Lint, types and the
+# fixtures were run by hand, which works exactly as long as the person pushing
+# remembers, and the record of this project is that they are all found by
+# somebody looking at a screen at one in the morning.
+#
+# Every command here is one a contributor already runs locally, in the same
+# order, so a green run means the same thing on both sides.
+name: Checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push supersedes the first. There is no value in finishing a run
+# against a commit nobody is going to merge.
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # ci rather than install: the lockfile is the answer, and a run that
+      # quietly resolves a different tree is not testing what will ship.
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Types
+        run: npm run typecheck
+
+      # The three that hold the decisions nobody can eyeball: what counts as a
+      # night, what counts as a walk rather than a swipe, and what counts as
+      # missed.
+      - name: Night fixtures
+        run: npm run check-night
+
+      - name: Pace fixtures
+        run: npm run check-pace
+
+      - name: Rollup fixtures
+        run: npm run check-rollup
+
+      # Last, because it is the slowest and the least specific. Built without
+      # credentials on purpose: every route is force-dynamic, so a build that
+      # needs a database to succeed would be a build hiding a data fetch that
+      # should not be there.
+      - name: Build
+        run: npm run build
