@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { sweepCaptures } from "@/lib/adopt";
 import { isAdminPin } from "@/lib/admin-pin";
+import { nameProblem, samePerson } from "@/lib/name";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -374,8 +375,13 @@ export async function certifyNight(
   const attestation = String(formData.get("attestation") ?? "").trim();
   const signature = String(formData.get("signature") ?? "");
   const openAtSigning = String(formData.get("openAtSigning") ?? "[]");
+  const device = String(formData.get("device") ?? "").slice(0, 40);
 
-  if (!who) return { error: "Say who is certifying." };
+  // "NULL" and "no MOD ON DUTY" both came through this box on the first night.
+  // The second is not somebody messing about, it is a person reporting the
+  // truth in the only field they had.
+  const problem = nameProblem(who);
+  if (problem) return { error: problem };
   if (!signature) return { error: "A signature is required." };
 
   const list = await checklistFor(slug);
@@ -397,6 +403,7 @@ export async function certifyNight(
     .update({
       certified_at: new Date().toISOString(),
       certified_by: who,
+      certified_device: device || null,
       // Written once, never updated. See supabase/014_close_signed_list.sql.
       list_at_signing: frozen,
       // Verbatim: if the wording ever changes, the record still shows what
@@ -408,6 +415,92 @@ export async function certifyNight(
     .eq("id", night);
 
   if (error) return { error: "Could not certify that. Try again." };
+
+  revalidatePath(`/checklists/${slug}`);
+  return { error: null };
+}
+
+/**
+ * The second signature: somebody else on the crew saying the work is done.
+ *
+ * The first night showed what one signature actually recorded. Seven of the
+ * eight signed lists were signed by the person whose initials are on every
+ * tick, and at close nobody signed anybody else's work. The single signature
+ * was recording who was holding the phone, not who checked the bar.
+ *
+ * Not a manager's signature, by decision. There is no manager guaranteed at
+ * close, and the rule from the people who run the floor is that closers sign
+ * off for one another. So this asks for a second person, whoever that is: a
+ * lead if one is in the space, the other closer if not.
+ *
+ * No PIN. A PIN would make this a permission, and it is not one, it is a
+ * witness. Everybody who can work the list can also check somebody else's, and
+ * putting a code in front of it at three in the morning would mean the list
+ * that most needs a second pair of eyes is the one that cannot get them.
+ *
+ * Typed rather than proven, so the device is recorded and compared with the
+ * one that signed the work. This stops nobody. It means the report can see
+ * that both signatures came off the same phone forty seconds apart, which is
+ * the shape of one person signing twice, and say so rather than counting it as
+ * checked.
+ */
+export async function verifyNight(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const who = String(formData.get("verifiedBy") ?? "").trim();
+  const signature = String(formData.get("signature") ?? "");
+  const device = String(formData.get("device") ?? "").slice(0, 40);
+
+  const problem = nameProblem(who);
+  if (problem) return { error: problem };
+  if (!signature) return { error: "A signature is required." };
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await activeNight(list.id);
+
+  const { data } = await db()
+    .from("close_nights")
+    .select("id, certified_at, certified_by, verified_at")
+    .eq("checklist_id", list.id)
+    .eq("night", night)
+    .maybeSingle();
+  const row = data as {
+    id: string;
+    certified_at: string | null;
+    certified_by: string | null;
+    verified_at: string | null;
+  } | null;
+
+  // Order matters. Checking work nobody has signed for is checking a claim
+  // that has not been made yet.
+  if (!row?.certified_at) {
+    return { error: "Nobody has signed this list yet." };
+  }
+  if (row.verified_at) return { error: "This list is already checked." };
+
+  // The one thing worth refusing outright. Everything subtler than an exact
+  // repeat is left to the device stamp, because a rule that guesses wrong
+  // blocks a real second signer with no way round it.
+  if (samePerson(row.certified_by ?? "", who)) {
+    return {
+      error: "Somebody else has to check this. Get the other closer to sign.",
+    };
+  }
+
+  const { error } = await db()
+    .from("close_nights")
+    .update({
+      verified_at: new Date().toISOString(),
+      verified_by: who,
+      verified_signature: signature,
+      verified_device: device || null,
+    })
+    .eq("id", row.id);
+
+  if (error) return { error: "Could not save that. Try again." };
 
   revalidatePath(`/checklists/${slug}`);
   return { error: null };

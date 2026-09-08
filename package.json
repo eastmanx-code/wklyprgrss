@@ -22,6 +22,7 @@
     "check-rollup": "tsc src/lib/rollup-math.ts src/lib/due.ts --outDir .rollup-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-rollup.mjs",
     "check-adopt": "tsc src/lib/adopt-names.ts --outDir .adopt-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-adopt.mjs",
     "check-due": "tsc src/lib/due.ts --outDir .due-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-due.mjs",
+    "check-name": "tsc src/lib/name.ts --outDir .name-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-name.mjs",
     "test-venue": "node --env-file=.env.local scripts/test-venue.mjs",
     "cleared": "node --env-file=.env.local scripts/cleared.mjs"
   },

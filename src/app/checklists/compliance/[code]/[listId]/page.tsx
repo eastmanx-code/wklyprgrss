@@ -110,6 +110,27 @@ export default async function ListCompliancePage({
               ? `Last tick ${formatClock(detail.lastTickAt)} · ${open.length} left open`
               : "Nobody opened this list"}
         </p>
+        {/* The second signature, or its absence.
+            A list nobody checked is the honest answer to a question the old
+            record could not answer at all, so it is said plainly rather than
+            left as a blank. sameDevice is shown and not judged: a shared iPad
+            behind the bar makes it true for two genuinely different people,
+            and the same two names off one phone a minute apart is the shape of
+            one person signing twice. Worth seeing, not worth the app ruling
+            on. */}
+        {signed ? (
+          <p
+            className={`mt-1 text-label tracking-[0.08em] ${
+              detail.verifiedBy ? "text-muted" : "text-warn"
+            }`}
+          >
+            {detail.verifiedBy
+              ? `Checked by ${detail.verifiedBy.trim()}${
+                  detail.verifiedAt ? ` · ${formatClock(detail.verifiedAt)}` : ""
+                }${detail.sameDevice ? " · both signatures off one phone" : ""}`
+              : "Nobody checked this"}
+          </p>
+        ) : null}
         {detail.reopened > 0 ? (
           <p
             className={`mt-1 text-label tracking-[0.08em] ${

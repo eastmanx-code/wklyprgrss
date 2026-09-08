@@ -228,6 +228,18 @@ export type ListDetail = {
   ticked: number;
   owed: number;
   certifiedBy: string | null;
+  /**
+   * The second signature, and whether it came off the same phone.
+   *
+   * A list nobody checked is the honest answer to a question the old record
+   * could not answer at all. `sameDevice` is not proof of anything on its own:
+   * a shared iPad behind the bar makes it true for two genuinely different
+   * people. It is worth showing next to the two names and letting a person
+   * decide, which is the same rule the pace reading follows.
+   */
+  verifiedBy: string | null;
+  verifiedAt: string | null;
+  sameDevice: boolean;
   certifiedAt: string | null;
   /** What was still open at the moment somebody signed, as stored then. */
   openAtSigning: number | null;
@@ -271,7 +283,7 @@ export async function listDetail(
       .order("position"),
     db()
       .from("close_nights")
-      .select("id, certified_at, certified_by, open_at_signing, history")
+      .select("id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, history")
       .eq("checklist_id", checklistId)
       .eq("night", night)
       .maybeSingle(),
@@ -289,6 +301,10 @@ export async function listDetail(
     id: string;
     certified_at: string | null;
     certified_by: string | null;
+    verified_at: string | null;
+    verified_by: string | null;
+    certified_device: string | null;
+    verified_device: string | null;
     open_at_signing: unknown;
     history: unknown[] | null;
   } | null;
@@ -366,6 +382,12 @@ export async function listDetail(
     owed: outcomes.length,
     certifiedBy: stored?.certified_by ?? null,
     certifiedAt: stored?.certified_at ?? null,
+    verifiedBy: stored?.verified_by ?? null,
+    verifiedAt: stored?.verified_at ?? null,
+    sameDevice: Boolean(
+      stored?.certified_device &&
+        stored.certified_device === stored.verified_device,
+    ),
     openAtSigning: Array.isArray(stored?.open_at_signing)
       ? stored.open_at_signing.length
       : null,
