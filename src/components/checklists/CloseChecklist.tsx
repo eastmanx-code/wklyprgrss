@@ -493,10 +493,11 @@ export function CloseChecklist({
     const response = await fetch(target.signedUrl, {
       method: "PUT",
       headers: {
+        // The bytes' own word first. A compressed photograph always says
+        // image/jpeg; an original that would not compress says what it is.
         "content-type":
-          op.shot === "photo"
-            ? "image/jpeg"
-            : blob.type || "application/octet-stream",
+          blob.type ||
+          (op.shot === "photo" ? "image/jpeg" : "application/octet-stream"),
       },
       body: blob,
     });
@@ -716,13 +717,20 @@ export function CloseChecklist({
     setSaving(true);
 
     let upload: Blob = file;
+    // Normally empty for a photograph, because a photograph is re-encoded to
+    // JPEG before it leaves the phone. It carries the truth in the one case
+    // where that did not happen.
+    let extension = kind === "video" ? (file.name.split(".").pop() ?? "") : "";
     if (kind === "photo") {
       try {
         upload = await compressToJpeg(file);
       } catch {
         // A photograph that will not shrink still counts. Sending the whole
         // original costs bytes; refusing it costs a list nobody can sign.
+        // It goes up under its own name, because a HEIC filed as a .jpg is a
+        // picture nobody can open later, which is its own kind of losing it.
         upload = file;
+        extension = file.name.split(".").pop() ?? "";
       }
     }
 
@@ -733,7 +741,7 @@ export function CloseChecklist({
       itemId: item.id ?? "",
       shotIndex,
       shot: kind,
-      extension: kind === "video" ? (file.name.split(".").pop() ?? "") : "",
+      extension,
       initials: initialsFor(item.number),
       bytes: upload.size,
       clientAt: new Date().toISOString(),
