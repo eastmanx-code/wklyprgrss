@@ -9,6 +9,7 @@ import {
   type ListVerdict,
 } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
+import { shortOf } from "@/lib/short";
 import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -81,13 +82,12 @@ export default async function VenueCompliancePage({
             verdict before the piles do. */}
         <p
           className={`note mt-2 ${
-            pile("unsigned").length + pile("gaps").length > 0
-              ? "text-warn"
-              : "text-muted"
+            venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
           }`}
         >
-          {venue.listsSigned} of {venue.listsTotal} lists signed ·{" "}
-          {venue.ticked} of {venue.owed} items signed off
+          <span className="text-title tabular-nums">{venue.score}/10</span>
+          {" · "}
+          {shortOf(venue)}
         </p>
       </header>
 

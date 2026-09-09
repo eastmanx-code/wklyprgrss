@@ -14,11 +14,18 @@ const C = 2 * Math.PI * R;
 export function Dial({
   percent,
   caption,
+  label,
   tone = "var(--ink)",
   size = 176,
 }: {
   percent: number;
   caption: React.ReactNode;
+  /**
+   * What to print inside the ring, when it is not the percentage. The
+   * checklists score out of ten everywhere else, and a ring that says 73%
+   * beside a row that says 7/10 is one number in two units.
+   */
+  label?: string;
   tone?: string;
   /**
    * How wide the ring is allowed to get. It shrinks to fit a narrower column
@@ -67,7 +74,7 @@ export function Dial({
             className="text-ink leading-none tracking-normal tabular-nums"
             style={{ fontSize: `${Math.round(size * 0.3)}px` }}
           >
-            {percent}%
+            {label ?? `${percent}%`}
           </span>
         </div>
       </div>

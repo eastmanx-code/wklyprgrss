@@ -178,17 +178,17 @@ export function NightNav({ night, base }: { night: string; base: string }) {
  * the bad nights are and every one of them is a link, so getting to the
  * Tuesday three weeks ago is one tap rather than twenty.
  *
- * The colour is a severity ramp rather than a good/bad flag: quiet for the
- * nights that went well, and one hue rising through it for the two that did
- * not. Twenty-four blocks shouting "fine" would drown the six that are the
- * point of the page.
+ * Two buckets and no legend: quiet grey for a night where every list was
+ * done and signed, yellow for a night where something was not. The same rule
+ * as the rollup's strip. Twenty-four blocks shouting "fine" would drown the
+ * six that are the point of the page, and three shades needed a key to read.
  */
 export function NightStrip({
   nights,
   current,
   base,
 }: {
-  nights: { night: string; state: "complete" | "gaps" | "missed" }[];
+  nights: { night: string; state: "complete" | "short" }[];
   current: string;
   base: string;
 }) {
@@ -196,8 +196,7 @@ export function NightStrip({
 
   const fill = {
     complete: "bg-ink/20 hover:bg-ink/30",
-    gaps: "bg-warn/40 hover:bg-warn/60",
-    missed: "bg-warn hover:bg-warn/80",
+    short: "bg-warn hover:bg-warn/80",
   } as const;
 
   return (
@@ -212,10 +211,8 @@ export function NightStrip({
             href={`${base}?night=${n.night}`}
             aria-label={`${formatNight(n.night)} · ${
               n.state === "complete"
-                ? "all done and signed"
-                : n.state === "gaps"
-                  ? "something not done or not signed"
-                  : "nothing signed"
+                ? "every list done and signed"
+                : "something not done or not signed"
             }`}
             aria-current={n.night === current ? "date" : undefined}
             className={`aspect-square rounded-[2px] ${fill[n.state]} ${
@@ -223,21 +220,6 @@ export function NightStrip({
             }`}
           />
         ))}
-      </div>
-
-      <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
-        <span className="label flex items-center gap-2">
-          <span className="bg-ink/20 size-3 rounded-[2px]" />
-          All done and signed
-        </span>
-        <span className="label flex items-center gap-2">
-          <span className="bg-warn/40 size-3 rounded-[2px]" />
-          Something not done or not signed
-        </span>
-        <span className="label flex items-center gap-2">
-          <span className="bg-warn size-3 rounded-[2px]" />
-          Nothing signed
-        </span>
       </div>
     </div>
   );

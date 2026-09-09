@@ -14,6 +14,7 @@ import { closeVenueId } from "@/lib/close-venue";
 import { currentNight, formatNight, isNightOver } from "@/lib/night";
 import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
+import { shortOf } from "@/lib/short";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -74,13 +75,15 @@ export default async function CompliancePage({
       : null;
   }
 
-  const failing = venues.filter((v) => v.tier === "fail");
-  const listsFailed = venues.reduce((n, v) => n + v.failed, 0);
-  // The lists that finished but did not happen. Kept apart from the failures
-  // because it is a different accusation: a fail says the work was not done,
-  // this says the record of it cannot be believed.
-  const signed = venues.reduce((n, v) => n + v.listsSigned, 0);
-  const lists = venues.reduce((n, v) => n + v.listsTotal, 0);
+  // One ruler, summed. Done and signed, not signed, not done and still going
+  // add up to the lists, on every venue and so here too.
+  const sum = (pick: (v: VenueCompliance) => number) =>
+    venues.reduce((n, v) => n + pick(v), 0);
+  const lists = sum((v) => v.total);
+  const done = sum((v) => v.done);
+  const notSigned = sum((v) => v.notSigned);
+  const notDone = sum((v) => v.notDone);
+  const short = notSigned + notDone;
 
   const of = (tier: "good" | "neutral" | "fail") =>
     venues.filter((v) => v.tier === tier);
@@ -95,40 +98,26 @@ export default async function CompliancePage({
   const ran = trend.filter((t) => t.ran);
   const points = ran.map((t) => ({
     weekStart: t.night,
-    percent: t.ticked,
-    approvedPercent: t.signed,
+    // One line, lists done and signed. Two lines needed a legend.
+    percent: t.done,
+    approvedPercent: t.done,
   }));
 
-  // A night is complete when every list was signed and nothing was left on
-  // them, signed with gaps when somebody put their name to it but items were
-  // still open, and never certified when nobody signed at all.
-  const strip = trend.map((t) => ({
+  // Two buckets, the same as the rollup's strip: every list done and signed,
+  // or something was not.
+  // Running nights only. Thirty calendar squares over a venue four nights
+  // into the app painted twenty six of them "nothing signed" for nights the
+  // app did not exist, which is the 30 of 30 mistake wearing a different hat.
+  const strip = ran.map((t) => ({
     night: t.night,
-    state:
-      t.signed === 0
-        ? ("missed" as const)
-        : t.signed >= 100 && t.ticked >= 100
-          ? ("complete" as const)
-          : ("gaps" as const),
+    state: t.done >= 100 ? ("complete" as const) : ("short" as const),
   }));
-
-  // Items ticked across every list that was owed. The same measure the ring
-  // on the weekly board carries, asked of a night instead of a week.
-  const owed = venues.reduce((n, v) => n + v.owed, 0);
-  const ticked = venues.reduce((n, v) => n + v.ticked, 0);
 
   // Best and worst are only a comparison when there is something to compare
   // to. With one venue running they are the same row printed twice.
   const ranked = [...venues].sort((a, b) => b.score - a.score);
   const best = ranked.length > 1 ? ranked[0] : null;
   const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
-
-  const headline =
-    venues.length === 0
-      ? "No lists ran"
-      : listsFailed > 0
-        ? `${listsFailed} ${listsFailed === 1 ? "list" : "lists"} failed`
-        : "Nothing failed";
 
   /**
    * Where back goes.
@@ -168,14 +157,14 @@ export default async function CompliancePage({
         base="/checklists/compliance"
       />
 
-      {venues.length > 0 && ran.length > 0 ? (
+      {venues.length > 0 && ran.length >= 2 ? (
         <div className="mt-4">
           <RunCard
-            ticked={ticked}
-            owed={owed}
+            done={done}
+            total={lists}
             nights={points.length}
             points={points}
-            failed={listsFailed > 0}
+            failed={short > 0}
             labelLeft={formatNight(ran[0].night)}
             labelRight={formatNight(night)}
             best={best}
@@ -188,22 +177,14 @@ export default async function CompliancePage({
         <Card
           title="Last night"
           hint={[
-            `${lists} lists · ${signed} signed · ${failing.length} ${
-              failing.length === 1 ? "venue" : "venues"
-            } failing`,
-            over
-              ? "the night is over, so anything unsigned stayed unsigned"
-              : "still running, so unsigned lists count as open rather than failed",
+            ...(short === 0 && lists > 0
+              ? [over ? "every list done and signed" : "nothing short yet"]
+              : []),
+            ...(notSigned > 0 ? [`${notSigned} not signed`] : []),
+            ...(notDone > 0 ? [`${notDone} not done`] : []),
+            ...(over ? [] : ["still running"]),
           ].join(" · ")}
         >
-          <p
-            className={`text-metric leading-[1.15] ${
-              listsFailed > 0 ? "text-warn" : "text-ink"
-            }`}
-          >
-            {headline}
-          </p>
-
           {venues.length === 0 ? (
             <p className="note text-muted mt-4 leading-relaxed">
               Nothing to report. A venue appears here once it has a list written
@@ -216,9 +197,7 @@ export default async function CompliancePage({
           <Tier title="Good" venues={of("good")} night={night} />
 
           <p className="label mt-6">
-            Score is items signed off out of items owed, out of ten. Good 8 to
-            10 · neutral 6 or 7 · fail 5 or under. A list nobody signed fails
-            however much was done on it.
+            Score is lists done and signed, out of ten.
           </p>
         </Card>
       </div>
@@ -253,12 +232,7 @@ function Tier({
                 score={venue.score}
                 code={venue.code}
                 tier={venue.tier}
-                note={[
-                  `${venue.listsSigned} of ${venue.listsTotal} signed`,
-                  venue.failed > 0
-                    ? `${venue.failed} failed`
-                    : `${venue.owed - venue.ticked} open`,
-                ].join(" · ")}
+                note={shortOf(venue)}
               />
             </Link>
           </li>

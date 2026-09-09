@@ -65,25 +65,38 @@ export type ListVerdict = {
   flag: string | null;
 };
 
+/**
+ * One venue's night, counted in lists.
+ *
+ * One ruler. A list is done and signed, or it is not signed, or it was
+ * signed with something not done; while the night is still running it can
+ * also be still going. Those add up to `total`, always, and the score is
+ * done and signed over total. Items are not counted here at all: they
+ * belong to a list's own row, and a page that scored items and counted
+ * lists read as two reports that disagreed.
+ */
 export type VenueCompliance = {
   code: string;
-  /** Items ticked out of items owed, scaled to ten. */
+  /** Lists done and signed out of lists on the night, scaled to ten. */
   score: number;
   tier: "good" | "neutral" | "fail";
-  owed: number;
-  ticked: number;
   lists: ListVerdict[];
-  listsSigned: number;
-  listsTotal: number;
-  failed: number;
-  /** Lists whose ticks arrived too fast to have been a walk. */
-  bursted: number;
+  /** Every list that has something written on it. */
+  total: number;
+  /** Signed, with every item owed that night signed off. */
+  done: number;
+  /** Signed, with something left on it. */
+  notDone: number;
+  /** Nobody signed, and the night is over. */
+  notSigned: number;
+  /** Still being worked, because the night is not over yet. */
+  going: number;
 };
 
 /** The ten-point scale the weekly board already uses. */
-export function scoreOf(ticked: number, owed: number): number {
-  if (owed === 0) return 0;
-  return Math.round((ticked / owed) * 10);
+export function scoreOf(done: number, total: number): number {
+  if (total === 0) return 0;
+  return Math.round((done / total) * 10);
 }
 
 /**
@@ -233,21 +246,21 @@ export async function nightCompliance(
     // Empty lists are out of both halves of the ratio. Nobody can tick an item
     // that was never written, and counting the zero against the venue would
     // report a setup mistake as a crew failure.
-    const counted = venueRows.filter((r) => !r.empty);
-    const owed = counted.reduce((n, r) => n + r.items_on_list, 0);
-    const ticked = counted.reduce((n, r) => n + r.ticked, 0);
+    const count = (group: ListGroup) =>
+      lists.filter((l) => l.group === group).length;
+    const done = count("done");
+    const total = lists.length - count("empty");
 
     venues.push({
       code,
-      score: scoreOf(ticked, owed),
-      tier: tierOf(ticked, owed),
-      owed,
-      ticked,
+      score: scoreOf(done, total),
+      tier: tierOf(done, total),
       lists,
-      listsSigned: counted.filter((r) => r.certified).length,
-      listsTotal: counted.length,
-      failed: lists.filter((l) => l.state === "fail").length,
-      bursted: counted.filter((r) => r.pace.burst).length,
+      total,
+      done,
+      notDone: count("gaps"),
+      notSigned: count("unsigned"),
+      going: count("going"),
     });
   }
 
@@ -489,18 +502,17 @@ export function failuresByRole(
 /**
  * The shape of the last few weeks, one point per night.
  *
- * Two measures, because one of them is easy. Items ticked mostly climbs on
- * its own; lists signed is the one that says a manager stood at the end of a
- * shift and put their name to it, and the gap between them is the nights that
- * got walked but never closed out. A chart of ticks alone would draw that as
- * progress.
+ * Two measures, in lists, the same ruler as every other number. Signed is
+ * the easier one: a name on the list. Done and signed is the one the report
+ * is scored on, and the gap between the two lines is the lists somebody
+ * signed with things still left on them.
  *
  * Four queries for the whole window rather than one per night. Thirty nights
  * at four queries each is a hundred and twenty round trips for a sparkline.
  */
 export async function nightTrend(
   window: string[],
-): Promise<{ night: string; ticked: number; signed: number; ran: boolean }[]> {
+): Promise<{ night: string; done: number; signed: number; ran: boolean }[]> {
   if (window.length === 0) return [];
 
   const { data: checklistRows } = await db()
@@ -513,7 +525,7 @@ export async function nightTrend(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id")
+      .select("id, checklist_id, section")
       .in("checklist_id", ids)
       .eq("active", true),
     db()
@@ -524,7 +536,11 @@ export async function nightTrend(
       .lte("night", window[window.length - 1]),
   ]);
 
-  const items = (itemRows ?? []) as { id: string; checklist_id: string }[];
+  const items = (itemRows ?? []) as {
+    id: string;
+    checklist_id: string;
+    section: string | null;
+  }[];
   const nights = (nightRows ?? []) as {
     id: string;
     checklist_id: string;
@@ -532,36 +548,47 @@ export async function nightTrend(
     certified_at: string | null;
   }[];
 
-  let ticks: { night_id: string }[] = [];
+  let ticks: { night_id: string; item_id: string }[] = [];
   if (nights.length > 0) {
     const { data } = await db()
       .from("close_ticks")
-      .select("night_id")
+      .select("night_id, item_id")
       .in(
         "night_id",
         nights.map((n) => n.id),
       );
-    ticks = (data ?? []) as { night_id: string }[];
+    ticks = (data ?? []) as { night_id: string; item_id: string }[];
   }
 
-  const tickedOn = new Map<string, number>();
-  for (const t of ticks) {
-    tickedOn.set(t.night_id, (tickedOn.get(t.night_id) ?? 0) + 1);
+  const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
+  const itemsOf = new Map<string, typeof items>();
+  for (const item of items) {
+    const held = itemsOf.get(item.checklist_id) ?? [];
+    held.push(item);
+    itemsOf.set(item.checklist_id, held);
   }
+
+  // Done and signed: a name on it, and every item owed that night ticked.
+  // The same rule the rollup and the night page use, or the line and the
+  // ring disagree about the same night.
+  const complete = (row: { id: string; checklist_id: string; night: string }) =>
+    (itemsOf.get(row.checklist_id) ?? [])
+      .filter((item) => dueOnNight(item.section, row.night))
+      .every((item) => ticked.has(`${row.id}:${item.id}`));
 
   // Every list that exists is owed every night in the window. A night nobody
   // opened has to count against the total or the quietest night reads as the
   // cleanest, which is the same trap the status feed was built to avoid.
-  const owedPerNight = items.length;
   const listsPerNight = ids.length;
 
   return window.map((night) => {
     const rows = nights.filter((n) => n.night === night);
-    const ticked = rows.reduce((n, r) => n + (tickedOn.get(r.id) ?? 0), 0);
-    const signed = rows.filter((r) => r.certified_at).length;
+    const signedRows = rows.filter((r) => r.certified_at);
+    const signed = signedRows.length;
+    const done = signedRows.filter(complete).length;
     return {
       night,
-      ticked: owedPerNight === 0 ? 0 : (ticked / owedPerNight) * 100,
+      done: listsPerNight === 0 ? 0 : (done / listsPerNight) * 100,
       signed: listsPerNight === 0 ? 0 : (signed / listsPerNight) * 100,
       // Whether anybody opened anything at all. A night before the programme
       // started is not a night at nought, and a line that runs flat along the

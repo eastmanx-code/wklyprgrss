@@ -27,6 +27,7 @@ export function Trend({
   dashedLabel = "filed",
   target,
   showApproved = true,
+  tenScale = false,
 }: {
   points: { weekStart: string; percent: number; approvedPercent: number }[];
   labelLeft: string;
@@ -42,6 +43,12 @@ export function Trend({
   target?: number;
   /** Off for a house that is not being scored yet — it has nothing signed off. */
   showApproved?: boolean;
+  /**
+   * Label the axis and the latest point out of ten rather than a hundred.
+   * The plot is the same; only the words on it change, so the line reads in
+   * the unit every other number on the page is in.
+   */
+  tenScale?: boolean;
 }) {
   if (points.length < 2) return null;
 
@@ -141,13 +148,13 @@ export function Trend({
 
         {/* Axis labels outside the plot: inside, they sit on the data. */}
         <div className="relative w-8 shrink-0">
-          {GRIDLINES.map((g) => (
+          {GRIDLINES.filter((g) => !tenScale || g % 50 === 0).map((g) => (
             <span
               key={g}
               className="label absolute right-0 -translate-y-1/2"
               style={{ top: `${y(g)}%` }}
             >
-              {g}
+              {tenScale ? g / 10 : g}
             </span>
           ))}
         </div>
@@ -158,7 +165,8 @@ export function Trend({
       <div className="mt-3 flex items-baseline justify-between gap-x-4">
         <span className="label shrink-0">{labelLeft}</span>
         <span className="label shrink-0">
-          {labelRight} · {Math.round(lead)}%
+          {labelRight} ·{" "}
+          {tenScale ? `${Math.round(lead / 10)}/10` : `${Math.round(lead)}%`}
         </span>
       </div>
       {showApproved ? (

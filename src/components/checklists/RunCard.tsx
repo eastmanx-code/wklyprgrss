@@ -19,8 +19,8 @@ import { Trend } from "@/components/Trend";
  * is the truth and looks like it.
  */
 export function RunCard({
-  ticked,
-  owed,
+  done,
+  total,
   nights,
   points,
   failed,
@@ -29,8 +29,9 @@ export function RunCard({
   best,
   worst,
 }: {
-  ticked: number;
-  owed: number;
+  /** Lists done and signed, out of lists on the night. The one ruler. */
+  done: number;
+  total: number;
   nights: number;
   points: { weekStart: string; percent: number; approvedPercent: number }[];
   /** Whether anything failed, which decides whether the ring is lit. */
@@ -40,7 +41,7 @@ export function RunCard({
   best: { code: string; score: number } | null;
   worst: { code: string; score: number } | null;
 }) {
-  const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
+  const share = total === 0 ? 0 : Math.round((done / total) * 100);
 
   return (
     <Card
@@ -50,11 +51,9 @@ export function RunCard({
       <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
         <Dial
           percent={share}
+          label={`${Math.round(share / 10)}/10`}
           caption={
-            <T
-              en={`${ticked} of ${owed} items signed off`}
-              es={`${ticked} de ${owed} puntos firmados`}
-            />
+            <T en="lists done and signed" es="listas hechas y firmadas" />
           }
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />
@@ -64,9 +63,9 @@ export function RunCard({
             points={points}
             labelLeft={labelLeft}
             labelRight={labelRight}
-            solidLabel="lists signed"
-            dashedLabel="items signed off"
             target={80}
+            showApproved={false}
+            tenScale
           />
         ) : (
           <p className="note text-muted self-center leading-relaxed">

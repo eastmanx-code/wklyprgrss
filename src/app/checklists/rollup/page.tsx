@@ -11,34 +11,42 @@ import { getSession } from "@/lib/session";
 export const dynamic = "force-dynamic";
 
 /**
- * A severity ramp, not a good/bad flag.
- *
- * The grid read backwards: a complete night was a solid white block and a
- * night nobody certified was a small yellow one, so twenty-four blocks
- * shouting "fine" drowned the six that were the point of the page. Quiet grey
- * for the nights that went well, and one hue rising through it for the two
- * that didn't — soft where a night was signed with gaps, full where nobody
- * signed at all.
+ * Two buckets, no legend. Quiet grey for a night where every list was done
+ * and signed, yellow for a night where something was not. Twenty-four blocks
+ * shouting "fine" would drown the six that are the point of the page, and
+ * three shades needed a key to read.
  */
 const NIGHT_STATE: Record<string, string> = {
   c: "bg-ink/20",
-  g: "bg-warn/40",
   m: "bg-warn",
 };
 
+/** Lists done and signed, out of ten. The same score as every other page. */
+function scoreOf(done: number, of: number): number {
+  return of === 0 ? 0 : Math.round((done / of) * 10);
+}
+
+/**
+ * A bar with the score on the end of it. Coloured by the same bands the
+ * tiers use, fail at five and under and neutral at six or seven, so a bar
+ * here and a row on the group screen agree about what yellow means.
+ */
 function Bar({ done, of }: { done: number; of: number }) {
-  const pct = Math.round((done / of) * 100);
+  const pct = of === 0 ? 0 : Math.round((done / of) * 100);
+  const score = scoreOf(done, of);
   return (
     <span className="flex min-w-0 flex-1 items-center gap-3">
       <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
         <span
           className={`block h-full rounded-[1px] ${
-            pct < 75 ? "bg-warn" : pct < 90 ? "bg-warn/40" : "bg-ink/30"
+            score <= 5 ? "bg-warn" : score <= 7 ? "bg-warn/40" : "bg-ink/30"
           }`}
           style={{ width: `${pct}%` }}
         />
       </span>
-      <span className="label tabular-nums shrink-0">{pct}%</span>
+      <span className="label w-8 shrink-0 text-right tabular-nums">
+        {score}/10
+      </span>
     </span>
   );
 }
@@ -96,7 +104,7 @@ export default async function RollupPage() {
 
   const nights = real.nights;
   const strip = real.strip;
-  const unsigned = real.unsigned;
+  const latest = real.latest;
   const missed = real.missed;
   const byRole = real.byRole;
   const certifiers = real.certifiers;
@@ -125,9 +133,9 @@ export default async function RollupPage() {
           header that costs half a phone screen is not a header. */}
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Lists signed</p>
+          <p className="label">Score · lists done and signed</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {real.signed} of {real.owed}
+            {scoreOf(real.done, real.of)}/10
           </p>
         </div>
         <div
@@ -141,31 +149,29 @@ export default async function RollupPage() {
             />
           ))}
         </div>
-        <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
-          <span className="label flex items-center gap-2">
-            <span className="bg-ink/20 size-3 rounded-[2px]" />
-            Every list
-          </span>
-          <span className="label flex items-center gap-2">
-            <span className="bg-warn/40 size-3 rounded-[2px]" />
-            Most
-          </span>
-          <span className="label flex items-center gap-2">
-            <span className="bg-warn size-3 rounded-[2px]" />
-            Half or fewer
-          </span>
-        </div>
-        {/* The answer to "which ones", on the page, so nobody has to ask. */}
-        {unsigned && unsigned.lists.length > 0 ? (
-          <p className="note text-muted mt-3">
-            Not signed {formatNight(unsigned.night)}:{" "}
-            {unsigned.lists
+        {/* The answer to "which ones", on the page, so nobody has to ask.
+            Two lines, because they are two different conversations. */}
+        {latest && latest.notSigned.length > 0 ? (
+          <p className="note text-warn mt-3">
+            Not signed {formatNight(latest.night)}:{" "}
+            {latest.notSigned
               .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
               .join(" · ")}
           </p>
-        ) : unsigned ? (
+        ) : null}
+        {latest && latest.notDone.length > 0 ? (
+          <p className="note text-warn mt-1">
+            Not done {formatNight(latest.night)}:{" "}
+            {latest.notDone
+              .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
+              .join(" · ")}
+          </p>
+        ) : null}
+        {latest &&
+        latest.notSigned.length === 0 &&
+        latest.notDone.length === 0 ? (
           <p className="note text-muted mt-3">
-            Every list signed {formatNight(unsigned.night)}.
+            Every list done and signed {formatNight(latest.night)}.
           </p>
         ) : null}
       </section>
@@ -179,34 +185,18 @@ export default async function RollupPage() {
           </div>
           {missed.length === 0 ? (
             <p className="note text-muted mt-1">
-              Nothing has been left open in the window. That is the whole goal,
-              and it is rare enough to be worth checking the list is being used.
+              Nothing left undone in the last {nights} nights.
             </p>
-          ) : (
-            <p className="label mt-3">
-              Nights it was owed and nobody signed it off.
-            </p>
-          )}
+          ) : null}
         </section>
 
         <section className="panel">
-          <p className="label">Each position · items signed off</p>
+          <p className="label">Each position</p>
           <ul className="mt-3 space-y-3">
             {byRole.map((row) => (
-              <li key={row.role}>
-                <div className="flex items-center gap-3">
-                  <span className="label w-24 shrink-0">{row.role}</span>
-                  <Bar done={row.done} of={row.of} />
-                </div>
-                {/* The number that explains the bar. A position at 50% that
-                    opened its list two nights of four and did everything on
-                    both is not half a position; it is a list not being
-                    opened, which is a different conversation. */}
-                {row.opened < row.nights ? (
-                  <p className="label text-warn mt-1 pl-[6.75rem]">
-                    opened the list {row.opened} of {row.nights} nights
-                  </p>
-                ) : null}
+              <li key={row.role} className="flex items-center gap-3">
+                <span className="label w-24 shrink-0">{row.role}</span>
+                <Bar done={row.done} of={row.of} />
               </li>
             ))}
           </ul>
@@ -251,11 +241,7 @@ export default async function RollupPage() {
         </section>
       </div>
 
-      <p className="label mt-6">
-        {real
-          ? `Counted over the last ${nights} nights. An item is open on a night with no tick against it, and every night in the window counts — including the ones nobody opened the list.`
-          : "Every figure on this page is invented, to show the shape of the report. It becomes real the night the first checklist is stored."}
-      </p>
+      <p className="label mt-6">Counted over the last {nights} nights.</p>
     </main>
   );
 }

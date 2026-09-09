@@ -20,6 +20,7 @@ import {
   isNightOver,
 } from "@/lib/night";
 import { nightWindow } from "@/lib/rollup";
+import { shortOf, shortOfEs } from "@/lib/short";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -94,9 +95,10 @@ export default async function LocationsPage() {
     scored.map((v) => [v.code, v]),
   );
 
-  const failedLists = scored.reduce((n, v) => n + v.failed, 0);
-  const signed = scored.reduce((n, v) => n + v.listsSigned, 0);
-  const lists = scored.reduce((n, v) => n + v.listsTotal, 0);
+  // One ruler, summed: lists done and signed, over lists on the night.
+  const lists = scored.reduce((n, v) => n + v.total, 0);
+  const done = scored.reduce((n, v) => n + v.done, 0);
+  const short = scored.reduce((n, v) => n + v.notSigned + v.notDone, 0);
 
   const lineFor = (venue: (typeof venues)[number]): Row => {
     const row = scoreOf.get(venue.code);
@@ -106,31 +108,10 @@ export default async function LocationsPage() {
       score: row ? `${row.score}/10` : "—",
       tier: row?.tier ?? null,
       // Said twice, because the row is built on the server and the language
-      // is on the device. "open" here used to mean not done, which is the
-      // collision this app spent a day getting rid of everywhere else.
-      note: row
-        ? [
-            `${row.listsSigned} of ${row.listsTotal} signed`,
-            ...(row.failed > 0
-              ? [`${row.failed} failed`]
-              : row.owed > row.ticked
-                ? [`${row.owed - row.ticked} not done`]
-                : []),
-            // The sharper of the two signals, so it survives to the screen an
-            // admin lands on rather than waiting two taps in.
-          ].join(" · ")
-        : "No lists yet",
-      noteEs: row
-        ? [
-            `${row.listsSigned} de ${row.listsTotal} firmadas`,
-            ...(row.failed > 0
-              ? [`${row.failed} fallaron`]
-              : row.owed > row.ticked
-                ? [`${row.owed - row.ticked} sin hacer`]
-                : []),
-            ...(row.bursted > 0 ? [`${row.bursted} sin recorrer`] : []),
-          ].join(" · ")
-        : "Todavía sin listas",
+      // is on the device. The same three counts the night page opens with,
+      // so the row and the page it opens agree to the number.
+      note: row ? shortOf(row) : "No lists yet",
+      noteEs: row ? shortOfEs(row) : "Todavía sin listas",
     };
   };
 
@@ -150,11 +131,10 @@ export default async function LocationsPage() {
   const ran = trend.filter((t) => t.ran);
   const points = ran.map((t) => ({
     weekStart: t.night,
-    percent: t.ticked,
-    approvedPercent: t.signed,
+    // One line, lists done and signed. Two lines needed a legend.
+    percent: t.done,
+    approvedPercent: t.done,
   }));
-  const ticked = scored.reduce((n, v) => n + v.ticked, 0);
-  const owed = scored.reduce((n, v) => n + v.owed, 0);
   // Only a comparison when there is something to compare against.
   const ranked = [...scored].sort((a, b) => b.score - a.score);
   const best = ranked.length > 1 ? ranked[0] : null;
@@ -182,11 +162,11 @@ export default async function LocationsPage() {
       {lists > 0 && ran.length > 0 ? (
         <div className="mb-4">
           <RunCard
-            ticked={ticked}
-            owed={owed}
+            done={done}
+            total={lists}
             nights={points.length}
             points={points}
-            failed={failedLists > 0}
+            failed={short > 0}
             labelLeft={formatNight(ran[0].night)}
             labelRight={formatNight(night)}
             best={best}
@@ -202,8 +182,8 @@ export default async function LocationsPage() {
             <T en="nothing running yet" es="todavía no hay nada corriendo" />
           ) : (
             <T
-              en={`${lists} lists · ${signed} signed last night · tap one to open its lists`}
-              es={`${lists} listas · ${signed} firmadas anoche · toca una para abrir sus listas`}
+              en="last night's score · tap one to open its lists"
+              es="la nota de anoche · toca una para abrir sus listas"
             />
           )
         }

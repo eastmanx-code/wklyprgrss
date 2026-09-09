@@ -183,7 +183,9 @@ async function AdminHome() {
 
   const venues = await nightCompliance(night);
   const failingVenues = venues.filter((v) => v.tier === "fail").length;
-  const failedLists = venues.reduce((n, v) => n + v.failed, 0);
+  // Not signed and not done, which are the two ways a list is short of done
+  // and signed. The same ruler as every report page.
+  const failedLists = venues.reduce((n, v) => n + v.notSigned + v.notDone, 0);
 
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
@@ -213,19 +215,19 @@ async function AdminHome() {
               <T
                 en={`${formatNight(night)} · ${failedLists} ${
                   failedLists === 1 ? "list" : "lists"
-                } failed across ${failingVenues} ${
+                } not done and signed at ${failingVenues} ${
                   failingVenues === 1 ? "venue" : "venues"
                 }`}
                 es={`${formatNightEs(night)} · ${failedLists} ${
-                  failedLists === 1 ? "lista falló" : "listas fallaron"
-                } en ${failingVenues} ${
+                  failedLists === 1 ? "lista" : "listas"
+                } sin hacer y firmar en ${failingVenues} ${
                   failingVenues === 1 ? "lugar" : "lugares"
                 }`}
               />
             ) : (
               <T
-                en={`${formatNight(night)} · nothing failed`}
-                es={`${formatNightEs(night)} · nada falló`}
+                en={`${formatNight(night)} · every list done and signed`}
+                es={`${formatNightEs(night)} · todas las listas hechas y firmadas`}
               />
             )
           }
