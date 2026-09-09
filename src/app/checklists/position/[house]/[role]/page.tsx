@@ -27,6 +27,8 @@ type Row = {
   role: string;
   role_es: string | null;
   phase: Phase;
+  /** Set where this position runs one list per room rather than per phase. */
+  room: string | null;
 };
 
 /**
@@ -53,7 +55,7 @@ export default async function PositionPage({
 
   const { data } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase")
+    .select("id, house, role, role_es, phase, room")
     .eq("venue_id", venue)
     .eq("house", house)
     .eq("active", true);
@@ -113,8 +115,22 @@ export default async function PositionPage({
   const roleEs =
     lists.map((l) => l.role_es?.trim()).find((said) => Boolean(said)) ?? null;
 
-  const ordered = [...lists].sort(
-    (a, b) => PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
+  /**
+   * Rooms where the phases usually are.
+   *
+   * A bartender's position holds open, mid and close. A deep clean holds one
+   * job a night in three rooms, all of them mid, so listing them by phase
+   * would print "Mid shift" three times. Where a position carries rooms, the
+   * rooms are what somebody is choosing between and the phase is noise.
+   *
+   * Alphabetical for rooms, because there is no running order between them
+   * the way there is between open and close.
+   */
+  const byRoom = lists.some((row) => row.room?.trim());
+  const ordered = [...lists].sort((a, b) =>
+    byRoom
+      ? (a.room ?? "").localeCompare(b.room ?? "")
+      : PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
   );
 
   return (
@@ -136,7 +152,7 @@ export default async function PositionPage({
         {ordered.map((list) => (
           <li key={list.id}>
             <Link
-              href={`/checklists/${slugFor(list.house, list.role, list.phase)}`}
+              href={`/checklists/${slugFor(list.house, list.role, list.phase, list.room)}`}
               className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
                 !built.has(list.id) || signedBy.has(list.id)
                   ? "bg-inset text-muted ring-divider ring-1 ring-inset"
@@ -144,7 +160,12 @@ export default async function PositionPage({
               }`}
             >
               <span className="text-body tracking-[0.08em]">
-                <T en={phaseName(list.phase)} es={PHASE_ES[list.phase]} />
+                {/* A room is a place and reads the same in both languages. */}
+                {list.room?.trim() ? (
+                  list.room
+                ) : (
+                  <T en={phaseName(list.phase)} es={PHASE_ES[list.phase]} />
+                )}
               </span>
               {/* One state per row, and only when it is not the obvious one.
                   An unlit row is either finished or never written, which are

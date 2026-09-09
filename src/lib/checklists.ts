@@ -126,39 +126,11 @@ export const HOUSE_ES: Record<House, string> = {
 export const PHASE_ORDER: Phase[] = PHASES.map((p) => p.key);
 
 /**
- * A list's address. Lower case and hyphenated, so "Kitchen MOD" and
- * "kitchen mod" reach the same place — a leader typing a role twice with
- * different capitals should not end up with two lists.
+ * Addresses live in slug.ts, which has no imports so the fixtures can run it.
+ * Re-exported here because every caller already reaches for this module and a
+ * second import path would be the only thing that changed.
  */
-export function slugFor(house: House, role: string, phase: Phase): string {
-  return `${house}-${role}-${phase}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-}
-
-/**
- * A position's address, for the screen that lists what that position owns.
- *
- * Same shaping as slugFor, so "Bar Deep Clean" and "bar deep clean" are one
- * position rather than two rows a MOD has to guess between.
- */
-export function roleSlug(role: string): string {
-  return role.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-}
-
-/**
- * Back out of a slug. The role is the middle, which is why it may contain
- * hyphens and the house and phase may not — they come from fixed lists.
- */
-export function parseSlug(
-  slug: string,
-): { house: string; role: string; phase: string } | null {
-  const parts = slug.split("-");
-  if (parts.length < 3) return null;
-  return {
-    house: parts[0],
-    role: parts.slice(1, -1).join(" "),
-    phase: parts[parts.length - 1],
-  };
-}
+export { matchSlug, roleSlug, slugFor, type Addressable } from "./slug";
 
 /** The one rule about roles: it has to be something, and not an essay. */
 export const MAX_ROLE_LENGTH = 40;

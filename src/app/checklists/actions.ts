@@ -7,6 +7,7 @@ import { isAdminPin } from "@/lib/admin-pin";
 import { nameProblem, samePerson } from "@/lib/name";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
+import { matchSlug } from "@/lib/slug";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 export type CloseState = { error: string | null };
@@ -28,29 +29,28 @@ async function venueId(): Promise<string | null> {
 async function checklistFor(slug: string) {
   const venue = await venueId();
   if (!venue) return null;
-  const [house, ...rest] = slug.split("-");
-  const phase = rest[rest.length - 1];
-  const role = rest.slice(0, -1).join(" ");
   // Matched in JS rather than with ilike: the slug is user input and ilike
   // treats % and _ as wildcards, so foh-%-close would match whatever role
   // came back first. The set is a handful of rows per venue.
+  //
+  // Compared against each list's own address rather than taken apart. This
+  // was the third copy of that parsing, and the one that decides which list a
+  // tick lands on, so a near miss here writes work against the wrong bar.
   const { data } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase")
+    .select("id, house, role, phase, room")
     .eq("venue_id", venue)
     .eq("active", true);
 
-  const rows = (data ?? []) as {
-    id: string;
-    house: string;
-    role: string;
-    phase: string;
-  }[];
-  const match = rows.find(
-    (row) =>
-      row.house.toLowerCase() === house.toLowerCase() &&
-      row.role.toLowerCase() === role.toLowerCase() &&
-      row.phase.toLowerCase() === phase.toLowerCase(),
+  const match = matchSlug(
+    (data ?? []) as {
+      id: string;
+      house: string;
+      role: string;
+      phase: string;
+      room: string | null;
+    }[],
+    slug,
   );
   return match ? { id: match.id } : null;
 }

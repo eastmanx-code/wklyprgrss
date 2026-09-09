@@ -6,7 +6,8 @@ import { BackLink } from "@/components/ui";
 import { T } from "@/components/Lang";
 import {
   PHASE_ES,
-  parseSlug,
+  matchSlug,
+  type House,
   phaseName,
   roleSlug,
   type Phase,
@@ -48,33 +49,29 @@ export default async function ChecklistPage({
   const venue = await closeVenueId(session);
   if (!venue) notFound();
 
-  const parsed = parseSlug(slug);
-  if (!parsed) notFound();
-
   // Matched in JS rather than with ilike: the slug is user input and ilike
   // treats % and _ as wildcards, so foh-%-close would match whatever role came
   // back first. A venue has a handful of lists.
   const { data: listRows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase")
+    .select("id, house, role, role_es, phase, room")
     .eq("venue_id", venue)
     .eq("active", true);
 
-  const list =
-    (
-      (listRows ?? []) as {
-        id: string;
-        house: string;
-        role: string;
-        role_es: string | null;
-        phase: Phase;
-      }[]
-    ).find(
-      (row) =>
-        row.house.toLowerCase() === parsed.house.toLowerCase() &&
-        row.role.toLowerCase() === parsed.role.toLowerCase() &&
-        row.phase.toLowerCase() === parsed.phase.toLowerCase(),
-    ) ?? null;
+  // Compared against each list's own address rather than taken apart. A role
+  // with a hyphen in it, or a room where the phase was expected, used to
+  // resolve to nothing or to the wrong bar's list.
+  const list = matchSlug(
+    (listRows ?? []) as {
+      id: string;
+      house: House;
+      role: string;
+      role_es: string | null;
+      phase: Phase;
+      room: string | null;
+    }[],
+    slug,
+  );
   if (!list) notFound();
 
   const { data: itemRows } = await db()
