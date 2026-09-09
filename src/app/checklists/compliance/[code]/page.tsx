@@ -92,14 +92,14 @@ export default async function VenueCompliancePage({
       </header>
 
       <Pile
-        title="Nobody signed"
+        title="Not signed off"
         rows={pile("unsigned")}
         warn
         code={code}
         night={night}
       />
       <Pile
-        title="Not done"
+        title="Not checked off"
         rows={pile("gaps")}
         warn
         code={code}
@@ -112,7 +112,7 @@ export default async function VenueCompliancePage({
         night={night}
       />
       <Pile
-        title="Done and signed"
+        title="Checked off and signed off"
         rows={pile("done")}
         code={code}
         night={night}

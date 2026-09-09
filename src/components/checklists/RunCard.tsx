@@ -29,7 +29,7 @@ export function RunCard({
   best,
   worst,
 }: {
-  /** Lists done and signed, out of lists on the night. The one ruler. */
+  /** Lists checked off and signed off, out of lists on the night. */
   done: number;
   total: number;
   nights: number;
@@ -53,7 +53,10 @@ export function RunCard({
           percent={share}
           label={`${Math.round(share / 10)}/10`}
           caption={
-            <T en="lists done and signed" es="listas hechas y firmadas" />
+            <T
+              en="lists checked off and signed off"
+              es="listas marcadas y firmadas"
+            />
           }
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />

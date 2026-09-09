@@ -11,20 +11,20 @@ import type { VenueCompliance } from "./compliance";
  */
 export function shortOf(venue: VenueCompliance): string {
   const parts = [
-    ...(venue.notSigned > 0 ? [`${venue.notSigned} not signed`] : []),
-    ...(venue.notDone > 0 ? [`${venue.notDone} not done`] : []),
+    ...(venue.notDone > 0 ? [`${venue.notDone} not checked off`] : []),
+    ...(venue.notSigned > 0 ? [`${venue.notSigned} not signed off`] : []),
     ...(venue.going > 0 ? [`${venue.going} still going`] : []),
   ];
-  return parts.length > 0 ? parts.join(" · ") : "every list done and signed";
+  return parts.length > 0
+    ? parts.join(" · ")
+    : "all checked off and signed off";
 }
 
 export function shortOfEs(venue: VenueCompliance): string {
   const parts = [
+    ...(venue.notDone > 0 ? [`${venue.notDone} sin marcar`] : []),
     ...(venue.notSigned > 0 ? [`${venue.notSigned} sin firmar`] : []),
-    ...(venue.notDone > 0 ? [`${venue.notDone} sin terminar`] : []),
     ...(venue.going > 0 ? [`${venue.going} en curso`] : []),
   ];
-  return parts.length > 0
-    ? parts.join(" · ")
-    : "todas las listas hechas y firmadas";
+  return parts.length > 0 ? parts.join(" · ") : "todas marcadas y firmadas";
 }

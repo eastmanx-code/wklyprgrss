@@ -178,10 +178,10 @@ export default async function CompliancePage({
           title="Last night"
           hint={[
             ...(short === 0 && lists > 0
-              ? [over ? "every list done and signed" : "nothing short yet"]
+              ? [over ? "all checked off and signed off" : "nothing short yet"]
               : []),
-            ...(notSigned > 0 ? [`${notSigned} not signed`] : []),
-            ...(notDone > 0 ? [`${notDone} not done`] : []),
+            ...(notDone > 0 ? [`${notDone} not checked off`] : []),
+            ...(notSigned > 0 ? [`${notSigned} not signed off`] : []),
             ...(over ? [] : ["still running"]),
           ].join(" · ")}
         >
@@ -197,7 +197,7 @@ export default async function CompliancePage({
           <Tier title="Good" venues={of("good")} night={night} />
 
           <p className="label mt-6">
-            Score is lists done and signed, out of ten.
+            Score is lists checked off and signed off, out of ten.
           </p>
         </Card>
       </div>

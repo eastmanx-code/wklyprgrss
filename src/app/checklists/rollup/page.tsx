@@ -21,7 +21,7 @@ const NIGHT_STATE: Record<string, string> = {
   m: "bg-warn",
 };
 
-/** Lists done and signed, out of ten. The same score as every other page. */
+/** Lists checked off and signed off, out of ten. The same score everywhere. */
 function scoreOf(done: number, of: number): number {
   return of === 0 ? 0 : Math.round((done / of) * 10);
 }
@@ -133,7 +133,7 @@ export default async function RollupPage() {
           header that costs half a phone screen is not a header. */}
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Score · lists done and signed</p>
+          <p className="label">Score · checked off and signed off</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
             {scoreOf(real.done, real.of)}/10
           </p>
@@ -153,7 +153,7 @@ export default async function RollupPage() {
             Two lines, because they are two different conversations. */}
         {latest && latest.notSigned.length > 0 ? (
           <p className="note text-warn mt-3">
-            Not signed {formatNight(latest.night)}:{" "}
+            Not signed off {formatNight(latest.night)}:{" "}
             {latest.notSigned
               .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
               .join(" · ")}
@@ -161,7 +161,7 @@ export default async function RollupPage() {
         ) : null}
         {latest && latest.notDone.length > 0 ? (
           <p className="note text-warn mt-1">
-            Not done {formatNight(latest.night)}:{" "}
+            Not checked off {formatNight(latest.night)}:{" "}
             {latest.notDone
               .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
               .join(" · ")}
@@ -171,7 +171,7 @@ export default async function RollupPage() {
         latest.notSigned.length === 0 &&
         latest.notDone.length === 0 ? (
           <p className="note text-muted mt-3">
-            Every list done and signed {formatNight(latest.night)}.
+            Every list checked off and signed off {formatNight(latest.night)}.
           </p>
         ) : null}
       </section>

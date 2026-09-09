@@ -211,8 +211,8 @@ export function NightStrip({
             href={`${base}?night=${n.night}`}
             aria-label={`${formatNight(n.night)} · ${
               n.state === "complete"
-                ? "every list done and signed"
-                : "something not done or not signed"
+                ? "every list checked off and signed off"
+                : "something not checked off or not signed off"
             }`}
             aria-current={n.night === current ? "date" : undefined}
             className={`aspect-square rounded-[2px] ${fill[n.state]} ${

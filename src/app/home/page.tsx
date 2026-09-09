@@ -215,19 +215,19 @@ async function AdminHome() {
               <T
                 en={`${formatNight(night)} · ${failedLists} ${
                   failedLists === 1 ? "list" : "lists"
-                } not done and signed at ${failingVenues} ${
+                } not checked off or not signed off at ${failingVenues} ${
                   failingVenues === 1 ? "venue" : "venues"
                 }`}
                 es={`${formatNightEs(night)} · ${failedLists} ${
                   failedLists === 1 ? "lista" : "listas"
-                } sin hacer y firmar en ${failingVenues} ${
+                } sin marcar o sin firmar en ${failingVenues} ${
                   failingVenues === 1 ? "lugar" : "lugares"
                 }`}
               />
             ) : (
               <T
-                en={`${formatNight(night)} · every list done and signed`}
-                es={`${formatNightEs(night)} · todas las listas hechas y firmadas`}
+                en={`${formatNight(night)} · every list checked off and signed off`}
+                es={`${formatNightEs(night)} · todas las listas marcadas y firmadas`}
               />
             )
           }

@@ -77,17 +77,17 @@ export type ListVerdict = {
  */
 export type VenueCompliance = {
   code: string;
-  /** Lists done and signed out of lists on the night, scaled to ten. */
+  /** Lists checked off and signed off, out of lists on the night, in tenths. */
   score: number;
   tier: "good" | "neutral" | "fail";
   lists: ListVerdict[];
   /** Every list that has something written on it. */
   total: number;
-  /** Signed, with every item owed that night signed off. */
+  /** Checked off and signed off: every item owed that night, and a name. */
   done: number;
   /** Signed, with something left on it. */
   notDone: number;
-  /** Nobody signed, and the night is over. */
+  /** Not signed off, and the night is over. */
   notSigned: number;
   /** Still being worked, because the night is not over yet. */
   going: number;
@@ -147,7 +147,7 @@ export function verdictOf(
         group: "gaps",
         // The things themselves, where there are few enough to read. Three
         // names is a to-do list; nine is a count.
-        reason: `${name} · ${signature} · not done: ${leftWords(row.open_titles)}`,
+        reason: `${name} · signed off ${signature} · not checked off: ${leftWords(row.open_titles)}`,
       };
     }
     return {
@@ -155,7 +155,7 @@ export function verdictOf(
       flag,
       state: "pass",
       group: "done",
-      reason: `${name} · ${count} signed off · ${signature}`,
+      reason: `${name} · checked off · signed off ${signature}`,
     };
   }
 
@@ -165,7 +165,9 @@ export function verdictOf(
       flag,
       state: nightOver ? "fail" : "open",
       group: nightOver ? "unsigned" : "going",
-      reason: nightOver ? `${name} · never opened` : `${name} · not started`,
+      reason: nightOver
+        ? `${name} · nothing checked off · not signed off`
+        : `${name} · not started`,
     };
   }
 
@@ -175,8 +177,8 @@ export function verdictOf(
     state: nightOver ? "fail" : "open",
     group: nightOver ? "unsigned" : "going",
     reason: nightOver
-      ? `${name} · ${count} signed off · nobody signed`
-      : `${name} · ${count} signed off · still going`,
+      ? `${name} · ${count} checked off · not signed off`
+      : `${name} · ${count} checked off · still going`,
   };
 }
 
