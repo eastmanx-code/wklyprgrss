@@ -232,7 +232,13 @@ export default async function CompliancePage({
   );
 }
 
-/** A group heading and its rows, or nothing when the group is empty. */
+/**
+ * A group heading and its rows, or nothing when the group is empty.
+ *
+ * Under each venue, the lists that failed, by name, with the fact that
+ * failed them. "3 fails" with the three two taps away was a count standing
+ * in for the report; the report is the three.
+ */
 function Tier({
   title,
   venues,
@@ -244,26 +250,53 @@ function Tier({
 }) {
   if (venues.length === 0) return null;
   return (
-    <div className="mt-6">
-      <p className="label border-divider border-t pt-4">
+    <div className="mt-5">
+      <p className="label">
         {title} · {venues.length}
       </p>
-      <ul className="-mx-3 mt-2 space-y-[2px]">
-        {venues.map((venue) => (
-          <li key={venue.code}>
-            <Link
-              href={`/checklists/compliance/${venue.code}?night=${night}`}
-              className="block"
-            >
-              <ScoreBar
-                score={venue.score}
-                code={venue.code}
-                tier={venue.tier}
-                note={shortOf(venue)}
-              />
-            </Link>
-          </li>
-        ))}
+      <ul className="-mx-3 mt-2 space-y-3">
+        {venues.map((venue) => {
+          const fails = venue.lists.filter((l) => l.state === "fail");
+          return (
+            <li key={venue.code}>
+              <Link
+                href={`/checklists/compliance/${venue.code}?night=${night}`}
+                className="block"
+              >
+                <ScoreBar
+                  score={venue.score}
+                  code={venue.code}
+                  tier={venue.tier}
+                  note={shortOf(venue)}
+                />
+              </Link>
+              {fails.length > 0 ? (
+                <ul className="mt-1 space-y-[2px] pl-3">
+                  {fails.map((list) => {
+                    const why = list.facts.find((f) => f.warn);
+                    return (
+                      <li key={list.row.checklist_id}>
+                        <Link
+                          href={`/checklists/compliance/${venue.code}/${list.row.checklist_id}?night=${night}`}
+                          className="text-warn hover:bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2"
+                        >
+                          <span className="text-body font-medium">
+                            {list.name}
+                          </span>
+                          {why ? (
+                            <span className="label text-warn">
+                              {why.label} · {why.value}
+                            </span>
+                          ) : null}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
