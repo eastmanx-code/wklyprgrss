@@ -215,6 +215,9 @@ export function NightStrip({
       {/* Ten across on a phone, fifteen on a laptop, and never capped: capped
           at a phone's width it sat tucked in the corner of a screen three
           times wider. A tap target still has to survive a thumb at 2am. */}
+      {/* A day number under each square. Without it the strip read as a
+          row of venues to somebody seeing it cold, and a calendar that
+          needs explaining is not a calendar. */}
       <div className="grid grid-cols-10 gap-1 lg:grid-cols-15">
         {nights.map((n) => (
           <Link
@@ -226,10 +229,21 @@ export function NightStrip({
                 : "something not checked off or not signed off"
             }`}
             aria-current={n.night === current ? "date" : undefined}
-            className={`aspect-square rounded-[2px] ${fill[n.state]} ${
-              n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
-            }`}
-          />
+            className="flex flex-col items-center gap-1"
+          >
+            <span
+              className={`block aspect-square w-full rounded-[2px] ${fill[n.state]} ${
+                n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
+              }`}
+            />
+            <span
+              className={`label tabular-nums ${
+                n.night === current ? "text-ink" : ""
+              }`}
+            >
+              {Number(n.night.slice(8, 10))}
+            </span>
+          </Link>
         ))}
       </div>
     </div>
@@ -248,29 +262,42 @@ export function ListBar({
   list,
   code,
   night,
+  full = false,
 }: {
   list: ListVerdict;
   code: string;
   night: string;
+  /**
+   * Every item left, by its whole title. On the venue's own page a manager
+   * is reading to act, and "the carts" is not enough to act on. Off on the
+   * locations screen, where the bar is a summary and the first clause is.
+   */
+  full?: boolean;
 }) {
   const failed = list.state === "fail";
+  const open = list.row.open;
   const verdict =
     list.group === "unsigned"
       ? "not signed off"
       : list.group === "gaps"
-        ? "not checked off"
+        ? `${open} not checked off`
         : list.group === "going"
           ? "still going"
           : list.group === "empty"
             ? "nothing on it"
             : "checked off and signed off";
-  // The long fact last, so a name and a verdict are always on the first
-  // line and the item that was left runs on its own.
-  const facts = [...list.facts].sort(
-    (a, b) =>
-      Number(!!a.warn && a.label === "not checked off") -
-      Number(!!b.warn && b.label === "not checked off"),
-  );
+  // What is missing outranks who did the rest: the fail first and in
+  // weight, then the record of who checked and who signed, muted.
+  const missing = list.facts.filter((f) => f.warn);
+  const record = list.facts.filter((f) => !f.warn);
+  const line = (facts: typeof list.facts) =>
+    facts.map((fact, i) => (
+      <span key={fact.label}>
+        {i > 0 ? " · " : ""}
+        {fact.label} {fact.value}
+      </span>
+    ));
+  const items = full && list.group === "gaps" ? list.row.open_titles : null;
   return (
     <li>
       <Link
@@ -285,29 +312,28 @@ export function ListBar({
         <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
           {verdict}
         </span>
-        <span
-          className={`col-span-2 text-label tracking-[0.08em] uppercase ${
-            failed ? "text-on-warn/80" : "text-muted"
-          }`}
-        >
-          {facts.map((fact, i) => (
-            <span key={fact.label}>
-              {i > 0 ? " · " : ""}
-              {fact.label}{" "}
-              <span
-                className={
-                  fact.warn
-                    ? failed
-                      ? "text-on-warn font-medium"
-                      : "font-medium"
-                    : ""
-                }
-              >
-                {fact.value}
-              </span>
-            </span>
-          ))}
-        </span>
+        {/* The missing items, one to a line, in full, where the page is
+            for acting on them; the first clause where it is a summary. */}
+        {items ? (
+          <ul className="col-span-2 text-body font-medium">
+            {items.map((title) => (
+              <li key={title}>{title}</li>
+            ))}
+          </ul>
+        ) : missing.length > 0 ? (
+          <span className="col-span-2 text-body font-medium">
+            {line(missing)}
+          </span>
+        ) : null}
+        {record.length > 0 ? (
+          <span
+            className={`col-span-2 text-body ${
+              failed ? "text-on-warn/75" : "text-muted"
+            }`}
+          >
+            {line(record)}
+          </span>
+        ) : null}
       </Link>
     </li>
   );

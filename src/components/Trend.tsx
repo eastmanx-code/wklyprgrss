@@ -137,13 +137,22 @@ export function Trend({
             />
           </svg>
 
-          {/* Positioned in percentages rather than user units so the dot stays
-              round under the stretched viewBox. */}
-          <span
-            className="bg-ink absolute h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ left: "100%", top: `${y(lead)}%` }}
-            aria-hidden
-          />
+          {/* One dot per night, positioned in percentages rather than user
+              units so they stay round under the stretched viewBox. A line
+              alone read as a slope; the dots say it is four readings. */}
+          {points.map((p, i) => (
+            <span
+              key={p.weekStart}
+              className={`bg-ink absolute -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                i === points.length - 1 ? "h-2 w-2" : "h-1.5 w-1.5"
+              }`}
+              style={{
+                left: `${x(i)}%`,
+                top: `${y(showApproved ? p.approvedPercent : p.percent)}%`,
+              }}
+              aria-hidden
+            />
+          ))}
         </div>
 
         {/* Axis labels outside the plot: inside, they sit on the data. */}
@@ -157,6 +166,15 @@ export function Trend({
               {tenScale ? g / 10 : g}
             </span>
           ))}
+          {/* The target, named where the dashed line meets the axis. */}
+          {target !== undefined ? (
+            <span
+              className="label text-warn absolute right-0 -translate-y-1/2"
+              style={{ top: `${y(target)}%` }}
+            >
+              {tenScale ? target / 10 : target}
+            </span>
+          ) : null}
         </div>
       </div>
 

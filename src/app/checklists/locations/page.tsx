@@ -185,37 +185,26 @@ export default async function LocationsPage({
         <T en="Home" es="Inicio" />
       </BackLink>
 
-      <header className="mt-4 mb-6">
-        <p className="label">
-          <T en={formatNight(night)} es={formatNightEs(night)} /> ·{" "}
-          {over ? (
-            <T en="night closed" es="noche cerrada" />
-          ) : (
-            <T en="still running" es="en curso" />
-          )}
-        </p>
-        <h1 className="text-metric mt-2 tracking-normal">
-          <T en="Locations" es="Lugares" />
-        </h1>
+      {/* The night being read, and the way to the ones either side of it,
+          in the header where a reader looks first for which night this is. */}
+      <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div>
+          <p className="label">
+            <T en={formatNight(night)} es={formatNightEs(night)} /> ·{" "}
+            {over ? (
+              <T en="night closed" es="noche cerrada" />
+            ) : (
+              <T en="still running" es="en curso" />
+            )}
+          </p>
+          <h1 className="text-metric mt-2 tracking-normal">
+            <T en="Locations" es="Lugares" />
+          </h1>
+        </div>
+        <NightNav night={night} base="/checklists/locations" />
       </header>
 
-      {lists > 0 && ran.length >= 2 ? (
-        <div>
-          <RunCard
-            done={done}
-            total={lists}
-            nights={points.length}
-            points={points}
-            failed={short > 0}
-            labelLeft={formatNight(ran[0].night)}
-            labelRight={formatNight(night)}
-            best={best}
-            worst={worst}
-          />
-        </div>
-      ) : null}
-
-      <div className="mt-4">
+      <div>
         <Card
           title={
             over ? (
@@ -228,21 +217,28 @@ export default async function LocationsPage({
             lists === 0 ? (
               <T en="nothing running yet" es="todavía no hay nada corriendo" />
             ) : (
+              /* The counts that make the score, so 8/10 beside 3 fails
+                 reconciles at a glance: twelve of fifteen, three short,
+                 eight in ten. */
               <T
-                en={
+                en={[
+                  `${done} of ${lists} lists checked off and signed off`,
                   short > 0
                     ? `${short} ${short === 1 ? "fail" : "fails"}`
                     : over
                       ? "no fails"
-                      : "no fails yet"
-                }
-                es={
+                      : "no fails yet",
+                  `${Math.round((done / lists) * 10)}/10`,
+                ].join(" · ")}
+                es={[
+                  `${done} de ${lists} listas marcadas y firmadas`,
                   short > 0
                     ? `${short} ${short === 1 ? "falla" : "fallas"}`
                     : over
                       ? "sin fallas"
-                      : "sin fallas todavía"
-                }
+                      : "sin fallas todavía",
+                  `${Math.round((done / lists) * 10)}/10`,
+                ].join(" · ")}
               />
             )
           }
@@ -274,14 +270,26 @@ export default async function LocationsPage({
               ))}
             </ul>
           )}
-
-          {/* The foot of the same card. The strip is for jumping; this is
-              for stepping. */}
-          <div className="border-divider mt-5 border-t pt-4">
-            <NightNav night={night} base="/checklists/locations" />
-          </div>
         </Card>
       </div>
+
+      {/* The run, under the night. What failed is the reason to open the
+          page; how the month is going is the second thing. */}
+      {lists > 0 && ran.length >= 2 ? (
+        <div className="mt-4">
+          <RunCard
+            done={done}
+            total={lists}
+            nights={points.length}
+            points={points}
+            failed={short > 0}
+            labelLeft={formatNight(ran[0].night)}
+            labelRight={formatNight(night)}
+            best={best}
+            worst={worst}
+          />
+        </div>
+      ) : null}
 
       {/* A line, folded. Adding a building is a thing you do once, and a
           panel for it under the report was one more box on a page of them. */}

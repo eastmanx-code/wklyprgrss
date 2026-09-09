@@ -74,27 +74,33 @@ export default async function VenueCompliancePage({
         {session.role === "admin" ? "All locations" : "Checklists"}
       </BackLink>
 
-      <header className="mt-4 mb-5">
-        <p className="label">
-          {formatNightSpan(night)}
-          {name === code ? "" : ` · ${code}`}
-        </p>
-        <h1 className="text-metric mt-2 leading-tight font-medium break-words">
-          {name}
-        </h1>
-        {/* The whole night in one line, and the only numbers on the page
-            that are not attached to a list. */}
-        {/* Yellow the moment anything is short, so the line reads as a
-            verdict before the piles do. */}
-        <p
-          className={`note mt-2 ${
-            venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
-          }`}
-        >
-          <span className="text-title tabular-nums">{venue.score}/10</span>
-          {" · "}
-          {shortOf(venue)}
-        </p>
+      {/* The night, the venue, the score, and the way to the nights either
+          side, all in the header. */}
+      <header className="mt-4 mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div>
+          <p className="label">
+            {formatNightSpan(night)}
+            {name === code ? "" : ` · ${code}`}
+          </p>
+          <h1 className="text-metric mt-2 leading-tight font-medium break-words">
+            {name}
+          </h1>
+          {/* Yellow the moment anything is short, so the line reads as a
+              verdict before the bars do. The counts that make the score
+              sit beside it. */}
+          <p
+            className={`note mt-2 ${
+              venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
+            }`}
+          >
+            <span className="text-title tabular-nums">{venue.score}/10</span>
+            {" · "}
+            {venue.done} of {venue.total} checked off and signed off
+            {" · "}
+            {shortOf(venue)}
+          </p>
+        </div>
+        <NightNav night={night} base={`/checklists/compliance/${code}`} />
       </header>
 
       {/* One panel, every list a bar, fails first. The same bars the weekly
@@ -124,6 +130,7 @@ export default async function VenueCompliancePage({
                   list={list}
                   code={code}
                   night={night}
+                  full
                 />
               ))}
             </ul>
@@ -150,9 +157,11 @@ export default async function VenueCompliancePage({
           <details className="group mt-5">
             <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
               <span>Checked off and signed off · {pile("done").length}</span>
-              <span className="text-muted">
-                <span className="group-open:hidden">show</span>
-                <span className="hidden group-open:inline">hide</span>
+              <span
+                className="text-muted transition-transform group-open:rotate-90"
+                aria-hidden
+              >
+                ▸
               </span>
             </summary>
             <ul className="mt-2 space-y-[2px]">
@@ -186,19 +195,16 @@ export default async function VenueCompliancePage({
           </>
         ) : null}
 
-        {/* The foot of the same panel: the night before, the thirty-night
-            view, the night after. Three things that were three orphans
-            down the page. */}
-        <div className="border-divider mt-5 border-t pt-4">
-          <NightNav night={night} base={`/checklists/compliance/${code}`}>
-            <Link
-              href={`/checklists/rollup?code=${code}`}
-              className="label hover:text-ink inline-flex min-h-11 items-center"
-            >
-              What keeps getting missed
-            </Link>
-          </NightNav>
-        </div>
+        {/* The thirty-night view, in the foot of the same card. */}
+        <p className="border-divider mt-5 border-t pt-4">
+          <Link
+            href={`/checklists/rollup?code=${code}`}
+            className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
+          >
+            What keeps getting missed · last 30 nights
+            <span aria-hidden>→</span>
+          </Link>
+        </p>
       </Card>
     </main>
   );
