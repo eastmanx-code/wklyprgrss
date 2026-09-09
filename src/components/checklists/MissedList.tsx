@@ -30,7 +30,7 @@ export function MissedList({ rows }: { rows: MissedRow[] }) {
                 {spanish && row.itemEs ? row.itemEs : row.item}
               </span>
               <span className="label text-warn shrink-0 tabular-nums">
-                {row.open} {t("of", "de")} {row.of}
+                {t("missed", "faltó")} {row.open} {t("of", "de")} {row.of}
               </span>
             </div>
             <div className="mt-2 flex items-center gap-3">

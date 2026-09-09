@@ -68,7 +68,19 @@ export type Rollup = {
    */
   unsigned: { night: string; lists: UnsignedList[] } | null;
   missed: MissedRow[];
-  byRole: { role: string; done: number; of: number }[];
+  /**
+   * Per position: items done over items owed across the running nights, and
+   * how many of those nights the position opened a list at all. The second
+   * number is what explains the first. A barback at 50% who opened the list
+   * on two nights of four and did everything on both is not half a barback.
+   */
+  byRole: {
+    role: string;
+    done: number;
+    of: number;
+    opened: number;
+    nights: number;
+  }[];
   certifiers: { who: string; nights: number }[];
 };
 
@@ -240,6 +252,7 @@ export function computeRollup(
       const lists = checklists.filter((c) => c.role === role);
       let done = 0;
       let of = 0;
+      const openedOn = new Set<string>();
       for (const list of lists) {
         const owed = itemsOf.get(list.id) ?? [];
         for (const night of live) {
@@ -250,12 +263,13 @@ export function computeRollup(
           of += due.length;
           const row = nightAt.get(`${list.id}:${night}`);
           if (!row) continue;
+          openedOn.add(night);
           done += due.filter((item) =>
             ticked.has(`${row.id}:${item.id}`),
           ).length;
         }
       }
-      return { role, done, of };
+      return { role, done, of, opened: openedOn.size, nights: live.length };
     })
     .filter((row) => row.of > 0)
     .sort((a, b) => b.done / b.of - a.done / a.of);

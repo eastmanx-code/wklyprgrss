@@ -173,7 +173,7 @@ export default async function RollupPage() {
       <div className="space-y-4">
         {/* The point of the whole exercise. */}
         <section className="panel border-warn/30">
-          <p className="label">What keeps getting left open</p>
+          <p className="label">Left undone most often</p>
           <div className="mt-3">
             <MissedList rows={missed.slice(0, 12)} />
           </div>
@@ -184,31 +184,39 @@ export default async function RollupPage() {
             </p>
           ) : (
             <p className="label mt-3">
-              Ranked by how many nights the item finished with no tick against
-              it.
+              Nights it was owed and nobody ticked it.
             </p>
           )}
         </section>
 
         <section className="panel">
-          <p className="label">By role · items completed</p>
+          <p className="label">Each position · items done</p>
           <ul className="mt-3 space-y-3">
             {byRole.map((row) => (
-              <li key={row.role} className="flex items-center gap-3">
-                <span className="label w-24 shrink-0">{row.role}</span>
-                <Bar done={row.done} of={row.of} />
+              <li key={row.role}>
+                <div className="flex items-center gap-3">
+                  <span className="label w-24 shrink-0">{row.role}</span>
+                  <Bar done={row.done} of={row.of} />
+                </div>
+                {/* The number that explains the bar. A position at 50% that
+                    opened its list two nights of four and did everything on
+                    both is not half a position; it is a list not being
+                    opened, which is a different conversation. */}
+                {row.opened < row.nights ? (
+                  <p className="label text-warn mt-1 pl-[6.75rem]">
+                    opened the list {row.opened} of {row.nights} nights
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>
         </section>
 
         <section className="panel">
-          <p className="label">Certified by</p>
+          <p className="label">Who signs</p>
           <ul className="mt-3">
             {certifiers.length === 0 ? (
-              <li className="note text-muted">
-                Nobody has signed a night in this window.
-              </li>
+              <li className="note text-muted">Nobody has signed a list yet.</li>
             ) : null}
             {certifiers.map((row) => (
               <li
@@ -216,7 +224,9 @@ export default async function RollupPage() {
                 className="border-divider flex items-baseline justify-between gap-4 border-t py-2.5 first:border-t-0"
               >
                 <span className="text-body">{row.who}</span>
-                <span className="label tabular-nums">{row.nights} nights</span>
+                <span className="label tabular-nums">
+                  {row.nights} {row.nights === 1 ? "list" : "lists"}
+                </span>
               </li>
             ))}
           </ul>

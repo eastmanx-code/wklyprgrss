@@ -46,6 +46,12 @@ export type CloseStatusRow = {
   certified_at: string | null;
   /** Signed with items still open — the state worth a conversation. */
   signed_with_gaps: boolean;
+  /**
+   * What was left open, by name. "3 still open" is a count somebody has to
+   * go and look up; "the Sysco order, the carts" is a thing they can act on
+   * from the report, which is the only reason the report exists.
+   */
+  open_titles: string[];
   /** How many times a signature on this night has been undone and redone. */
   reopened: number;
   /**
@@ -91,7 +97,7 @@ export async function closeStatus(
       db().from("venues").select("id, code").eq("close_active", true),
       db()
         .from("close_items")
-        .select("id, checklist_id, section")
+        .select("id, checklist_id, section, title")
         .in("checklist_id", ids)
         .eq("active", true),
       db()
@@ -111,6 +117,7 @@ export async function closeStatus(
     id: string;
     checklist_id: string;
     section: string | null;
+    title: string;
   }[];
   const nights = (nightRows ?? []) as {
     id: string;
@@ -198,6 +205,11 @@ export async function closeStatus(
         certified_by: row?.certified_by ?? null,
         certified_at: row?.certified_at ?? null,
         signed_with_gaps: certified && ticked < owed,
+        open_titles: row
+          ? asked
+              .filter((i) => !tickOf.has(`${row.id}:${i.id}`))
+              .map((i) => i.title)
+          : asked.map((i) => i.title),
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
         pace: row ? paceOf(timesOn.get(row.id) ?? [], window) : NO_TICKS,
       };

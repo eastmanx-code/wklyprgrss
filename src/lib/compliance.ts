@@ -4,7 +4,13 @@ import { closeStatus, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
 import { dueOnNight } from "./due";
 import { listName } from "./slug";
-import { currentNight, formatClock, isNightOver, nightEndsAt, shiftNights } from "./night";
+import {
+  currentNight,
+  formatClock,
+  isNightOver,
+  nightEndsAt,
+  shiftNights,
+} from "./night";
 import { paceOf, type Pace } from "./pace";
 import { tierOf } from "./status";
 
@@ -31,9 +37,19 @@ import { tierOf } from "./status";
  */
 export type ListState = "pass" | "fail" | "open" | "empty";
 
+/**
+ * Which pile a list goes in on the night page, in the order a person reads
+ * them: what nobody signed, what was signed with things left, what is done,
+ * what is still going. Plainer than pass and fail, which are verdicts, and a
+ * manager reading this at ten in the morning wants to know what happened,
+ * not what the app decided about it.
+ */
+export type ListGroup = "unsigned" | "gaps" | "done" | "going" | "empty";
+
 export type ListVerdict = {
   row: CloseStatusRow;
   state: ListState;
+  group: ListGroup;
   /** Why, in the words the row itself justifies. Shown on the list. */
   reason: string;
   /**
@@ -83,21 +99,28 @@ export function verdictOf(
   row: CloseStatusRow,
   nightOver: boolean,
 ): ListVerdict {
-  // Said once, carried on every branch. A list can be a clean pass and still
-  // have been thumbed through, which is exactly the case a verdict alone
-  // cannot express.
-  const flag = row.pace.burst ? row.pace.note : null;
+  // Said once, carried on every branch. A list can be done and signed and
+  // still have been thumbed through in two minutes, which is exactly the case
+  // a pass alone cannot express. Short: the count and the span, not a
+  // sentence. The panel that explained pace as a concept is gone; the number
+  // explains itself.
+  const flag = row.pace.burst
+    ? `ticked in ${spanWords(row.pace.spanSeconds)}`
+    : null;
 
   if (row.empty) {
     return {
       row,
       flag,
       state: "empty",
+      group: "empty",
       reason: `${listName(row.role, row.room)} · nothing written on it yet`,
     };
   }
 
-  const name = listName(row.role, row.room);
+  // "YB Bartender close", so the row says which list without a badge above
+  // it. The phase is already a word; it does not need translating into one.
+  const name = `${listName(row.role, row.room)} ${row.phase}`;
   const count = `${row.ticked} of ${row.items_on_list}`;
   // Who, and when. The when was missing, and a card that says "signed by
   // Ethan" on a night that ran from four in the afternoon to four in the
@@ -112,13 +135,17 @@ export function verdictOf(
         row,
         flag,
         state: "fail",
-        reason: `${name} · ${row.open} open · signed ${signature}`,
+        group: "gaps",
+        // The things themselves, where there are few enough to read. Three
+        // names is a to-do list; nine is a count.
+        reason: `${name} · ${signature} · left ${leftWords(row.open_titles)}`,
       };
     }
     return {
       row,
       flag,
       state: "pass",
+      group: "done",
       reason: `${name} · ${count} · ${signature}`,
     };
   }
@@ -128,6 +155,7 @@ export function verdictOf(
       row,
       flag,
       state: nightOver ? "fail" : "open",
+      group: nightOver ? "unsigned" : "going",
       reason: nightOver ? `${name} · never opened` : `${name} · not started`,
     };
   }
@@ -136,10 +164,34 @@ export function verdictOf(
     row,
     flag,
     state: nightOver ? "fail" : "open",
+    group: nightOver ? "unsigned" : "going",
     reason: nightOver
-      ? `${name} · ${count} · nobody signed`
-      : `${name} · ${count} · in progress`,
+      ? `${name} · ${count} done · nobody signed`
+      : `${name} · ${count} · still going`,
   };
+}
+
+/** "98 seconds", "4 minutes": a span somebody can picture. */
+function spanWords(seconds: number): string {
+  if (seconds < 120) return `${Math.round(seconds)} seconds`;
+  return `${Math.round(seconds / 60)} minutes`;
+}
+
+/**
+ * What was left, said as things rather than as a number where that is short
+ * enough to read. Titles on these lists run to a paragraph, so each is cut
+ * to its first clause.
+ */
+function leftWords(titles: string[]): string {
+  if (titles.length === 0) return "nothing";
+  if (titles.length > 3) return `${titles.length} things`;
+  return titles
+    .map((t) => {
+      const first = t.split(/[.:]/)[0].trim();
+      return first.length > 48 ? `${first.slice(0, 46).trim()}…` : first;
+    })
+    .join(", ")
+    .toLowerCase();
 }
 
 /** The order a shift runs in, which is not the order the alphabet runs in. */
@@ -297,7 +349,9 @@ export async function listDetail(
       .order("position"),
     db()
       .from("close_nights")
-      .select("id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, history")
+      .select(
+        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, history",
+      )
       .eq("checklist_id", checklistId)
       .eq("night", night)
       .maybeSingle(),
@@ -401,7 +455,7 @@ export async function listDetail(
     verifiedAt: stored?.verified_at ?? null,
     sameDevice: Boolean(
       stored?.certified_device &&
-        stored.certified_device === stored.verified_device,
+      stored.certified_device === stored.verified_device,
     ),
     openAtSigning: Array.isArray(stored?.open_at_signing)
       ? stored.open_at_signing.length
@@ -456,9 +510,7 @@ export function failuresByRole(
  */
 export async function nightTrend(
   window: string[],
-): Promise<
-  { night: string; ticked: number; signed: number; ran: boolean }[]
-> {
+): Promise<{ night: string; ticked: number; signed: number; ran: boolean }[]> {
   if (window.length === 0) return [];
 
   const { data: checklistRows } = await db()

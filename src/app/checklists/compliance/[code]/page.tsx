@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import {
-  NightNav,
-  ScoreBar,
-  VerdictRow,
-} from "@/components/checklists/Compliance";
+import { NightNav } from "@/components/checklists/Compliance";
 import { BackLink } from "@/components/ui";
-import { phaseName } from "@/lib/checklists";
-import { failuresByRole, nightCompliance } from "@/lib/compliance";
+import {
+  nightCompliance,
+  type ListGroup,
+  type ListVerdict,
+} from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
@@ -19,11 +18,16 @@ export const dynamic = "force-dynamic";
 const NIGHT = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
- * One venue's night, list by list.
+ * One venue's night, list by list, in plain words.
  *
- * The score on the screen before says something is wrong. This says which
- * list, which position owns it, and why — because "3 of 10" sends a manager
- * hunting and "prep close, never opened, line cook" does not.
+ * It had a score bar, a panel explaining what pace means, a table of failures
+ * by position, and a card per list stamped PASS or FAIL — four ways of saying
+ * the same night, and a manager reading it at ten in the morning still had to
+ * text to ask which two lists were missed. Now it is four piles in the order a
+ * person asks about them: what nobody signed, what was signed with things
+ * left, what is still going, what is done. Each row is a sentence with names
+ * and times in it. No verdicts; verdicts are a thing the app decided, and the
+ * report is for what happened.
  */
 export default async function VenueCompliancePage({
   params,
@@ -53,8 +57,9 @@ export default async function VenueCompliancePage({
   const venue = (await nightCompliance(night)).find((v) => v.code === code);
   if (!venue) notFound();
 
-  const byRole = failuresByRole(venue.lists);
   const name = await venueNameOf(code);
+  const pile = (group: ListGroup) =>
+    venue.lists.filter((list) => list.group === group);
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
@@ -62,93 +67,106 @@ export default async function VenueCompliancePage({
         All venues
       </BackLink>
 
-      {/* The name over the code. The code is what the URL and the board
-          carry; the heading is where somebody checks they are looking at the
-          right building, and "HOOD" is not what anybody calls it. */}
       <header className="mt-4 mb-5">
         <p className="label">
           {formatNightSpan(night)}
           {name === code ? "" : ` · ${code}`}
         </p>
-        {/* Wraps rather than truncates. A venue whose name runs past the
-            phone is a venue whose report says "Youngblood Bar and Kit",
-            and the heading is the one line on the page whose whole job is
-            saying which building this is. */}
         <h1 className="text-metric mt-2 leading-tight font-medium break-words">
           {name}
         </h1>
+        {/* The whole night in one line, and the only numbers on the page
+            that are not attached to a list. */}
+        <p className="note text-muted mt-2">
+          {venue.listsSigned} of {venue.listsTotal} lists signed ·{" "}
+          {venue.ticked} of {venue.owed} items done
+        </p>
       </header>
 
-      <ScoreBar
-        score={venue.score}
+      <Pile
+        title="Nobody signed"
+        rows={pile("unsigned")}
+        warn
         code={code}
-        tier={venue.tier}
-        note={`${venue.ticked} of ${venue.owed} items · ${venue.listsSigned} of ${venue.listsTotal} lists signed`}
+        night={night}
+      />
+      <Pile
+        title="Signed with things left"
+        rows={pile("gaps")}
+        warn
+        code={code}
+        night={night}
+      />
+      <Pile
+        title="Still going"
+        rows={pile("going")}
+        code={code}
+        night={night}
+      />
+      <Pile
+        title="Done and signed"
+        rows={pile("done")}
+        code={code}
+        night={night}
+      />
+      <Pile
+        title="Nothing written on the list yet"
+        rows={pile("empty")}
+        code={code}
+        night={night}
       />
 
-      {/* Louder than the fails, and above them, because it is the one thing
-          on this page a score cannot say. A list can be ten out of ten,
-          signed, and worthless. */}
-      {venue.bursted > 0 ? (
-        <section className="panel border-warn/30 mt-3">
-          <h2 className="card-title text-warn">
-            {venue.bursted} {venue.bursted === 1 ? "list" : "lists"} ticked too
-            fast to have been walked
-          </h2>
-          <p className="label mt-2">A pace, not a verdict. Ask, do not act.</p>
-        </section>
-      ) : null}
+      <NightNav night={night} base={`/checklists/compliance/${code}`} />
+    </main>
+  );
+}
 
-      {/* Three fails at one venue read as a bad night. Three fails that are
-          all the same position read as one conversation with one person, and
-          that is invisible until something groups on it. */}
-      {byRole.length > 0 ? (
-        <section className="panel border-warn/30 mt-3">
-          <h2 className="card-title">Where the failures sit</h2>
-          <ul className="mt-3 space-y-2">
-            {byRole.map((row) => (
-              <li
-                key={row.role}
-                className="border-divider flex items-baseline justify-between gap-4 border-t pt-2 first:border-t-0 first:pt-0"
-              >
-                <span className="text-body">{row.role}</span>
-                <span className="label tabular-nums">
-                  {row.failed} of {row.of} failed
-                </span>
-              </li>
-            ))}
-          </ul>
-          {byRole.length === 1 && byRole[0].failed > 1 ? (
-            <p className="note text-muted mt-3 leading-relaxed">
-              Every failure tonight belongs to one position. That is a
-              conversation with one person, not a venue problem.
-            </p>
-          ) : null}
-        </section>
-      ) : null}
-
-      <ul className="mt-3 space-y-2">
-        {venue.lists.map((list) => (
+/**
+ * One pile of lists. Empty piles do not appear: "Nobody signed · 0" is a
+ * line about nothing, and a good night should read shorter than a bad one.
+ */
+function Pile({
+  title,
+  rows,
+  warn,
+  code,
+  night,
+}: {
+  title: string;
+  rows: ListVerdict[];
+  warn?: boolean;
+  code: string;
+  night: string;
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <section className={`panel mt-3 ${warn ? "border-warn/30" : ""}`}>
+      <p className="label">
+        {title} · {rows.length}
+      </p>
+      <ul className="mt-3">
+        {rows.map((list) => (
           /* Keyed on the list itself. Role plus phase plus house was unique
-             until a position could run three lists that share all three, and
-             three deep cleans then collided on one key. */
-          <li key={list.row.checklist_id}>
+             until a position could run three lists that share all three. */
+          <li
+            key={list.row.checklist_id}
+            className="border-divider border-t py-2.5 first:border-t-0 first:pt-0"
+          >
             <Link
               href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
               className="block"
             >
-              <VerdictRow
-                name={`${phaseName(list.row.phase)} · ${list.row.house}`}
-                state={list.state}
-                reason={list.reason}
-                flag={list.flag}
-              />
+              <span className="text-body">{list.reason}</span>
+              {/* The pace, where it is worth saying. A number, not a
+                  verdict: somebody who worked off paper and entered it after
+                  looks the same from here. */}
+              {list.flag ? (
+                <span className="label text-warn mt-1 block">{list.flag}</span>
+              ) : null}
             </Link>
           </li>
         ))}
       </ul>
-
-      <NightNav night={night} base={`/checklists/compliance/${code}`} />
-    </main>
+    </section>
   );
 }

@@ -54,7 +54,7 @@ is("nothing unsigned on the latest night", r.unsigned, { night: W[1], lists: [] 
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
 is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);
 // 2 items x 2 nights = 4 owed; 3 ticks.
-is("byRole", r.byRole, [{ role: "MOD", done: 3, of: 4 }]);
+is("byRole", r.byRole, [{ role: "MOD", done: 3, of: 4, opened: 2, nights: 2 }]);
 is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
 
 // ------------------------------------------------------- which nights count
@@ -68,7 +68,8 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   const ignored = computeRollup({ checklists: [...checklists, line], items, nights: ranAll, ticks: [] }, W);
   is("ignored list: the venue ran three nights", ignored.nights, 3);
   is("ignored list: every item fully open", ignored.missed.map((m) => m.open), [3, 3]);
-  is("ignored list: byRole", ignored.byRole, [{ role: "MOD", done: 0, of: 6 }]);
+  // The number that explains a bad bar: the list was never opened.
+  is("ignored list: byRole says the list was not opened", ignored.byRole, [{ role: "MOD", done: 0, of: 6, opened: 0, nights: 3 }]);
   is("ignored list: half the lists signed reads as half or fewer", ignored.strip, "mmm");
   is("ignored list: three of six signed", [ignored.signed, ignored.owed], [3, 6]);
   // The question a manager asks of "3 of 6" is which ones. Named, with the
@@ -90,7 +91,7 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   is("first week: only the nights it ran", firstWeek.nights, 1);
   is("first week: strip is one night long", firstWeek.strip, "c");
   is("first week: one item, one night, once", firstWeek.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 1]]);
-  is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 1, of: 2 }]);
+  is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 1, of: 2, opened: 1, nights: 1 }]);
 }
 
 // Nothing recorded at all. The caller shows the one honest line instead of
@@ -237,12 +238,12 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   const nothing = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [] }, week, isDue);
   is("rota: each item owed one night in seven", [...new Set(nothing.missed.map((m) => m.of))], [1]);
   is("rota: seven items each missed once", nothing.missed.length, 7);
-  is("rota: the week is seven owed not forty nine", nothing.byRole, [{ role: "Bar deep clean", done: 0, of: 7 }]);
+  is("rota: the week is seven owed not forty nine", nothing.byRole, [{ role: "Bar deep clean", done: 0, of: 7, opened: 7, nights: 7 }]);
 
   // The week done exactly as written: one item a night, on its own day.
   const asWritten = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, isDue);
   is("rota: doing it right reports nothing missed", asWritten.missed, []);
-  is("rota: and reads as complete", asWritten.byRole, [{ role: "Bar deep clean", done: 7, of: 7 }]);
+  is("rota: and reads as complete", asWritten.byRole, [{ role: "Bar deep clean", done: 7, of: 7, opened: 7, nights: 7 }]);
   is("rota: the venue is not marked down for it",
     computeGroup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, new Map([["V", "HOOD"]]), isDue),
     [{ code: "HOOD", done: 7, of: 7 }]);
@@ -251,7 +252,7 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   const mondayOnly = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [{ night_id: "w0", item_id: "d0" }] }, week, isDue);
   is("rota: Monday done leaves six owed", mondayOnly.missed.length, 6);
   is("rota: and Monday is not among them", mondayOnly.missed.some((m) => m.item === "MONDAY"), false);
-  is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7 }]);
+  is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7, opened: 7, nights: 7 }]);
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
