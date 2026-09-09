@@ -289,7 +289,20 @@ export async function recordCapture(
     return { error: "Something went wrong. Try again." };
   }
 
-  await db()
+  // What this slot pointed at before, so the picture it replaces does not
+  // stay in storage for ever. Somebody retaking a shot three times left three
+  // files and one row, and only the newest was reachable from anywhere.
+  const { data: before } = await db()
+    .from("close_proof")
+    .select("storage_path")
+    .eq("night_id", night)
+    .eq("item_id", itemId)
+    .eq("shot_index", shotIndex)
+    .maybeSingle();
+  const replaced =
+    (before as { storage_path: string | null } | null)?.storage_path ?? null;
+
+  const { error } = await db()
     .from("close_proof")
     .upsert(
       {
@@ -303,6 +316,19 @@ export async function recordCapture(
       },
       { onConflict: "night_id,item_id,shot_index" },
     );
+  if (error) return { error: "Could not save that. Try again." };
+
+  // Only after the row is safely pointing somewhere else, and only if nothing
+  // else points at it. The adoption sweep can re-point another row at a file
+  // this one was using, and a tidy-up that deletes evidence is worse than the
+  // litter it was cleaning.
+  if (replaced && replaced !== path) {
+    const { count } = await db()
+      .from("close_proof")
+      .select("id", { count: "exact", head: true })
+      .eq("storage_path", replaced);
+    if (!count) await db().storage.from(PHOTO_BUCKET).remove([replaced]);
+  }
 
   revalidatePath(`/checklists/${slug}`);
   return { error: null };
