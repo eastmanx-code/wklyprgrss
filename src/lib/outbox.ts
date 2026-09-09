@@ -270,7 +270,15 @@ export async function enqueue(op: TickOp): Promise<boolean> {
  * shot, and both leave sending it now as the only way through.
  */
 export type Held =
-  | { stored: true }
+  | {
+      stored: true;
+      /**
+       * Set when the bytes only went in the second way. Not a failure and
+       * nobody is told, but worth a row: it is how we find out whether the
+       * fallback is carrying a phone, and how many.
+       */
+      fellBack?: string;
+    }
   | {
       stored: false;
       reason: "full" | "unavailable";
@@ -292,9 +300,9 @@ export async function enqueueProof(op: ProofOp, blob: Blob): Promise<Held> {
     if (held + blob.size > QUEUE_BYTES_MAX) {
       return { stored: false, reason: "full" };
     }
-    await run(BLOBS, "readwrite", (store) => store.put(blob, op.key));
+    const fellBack = await putBytes(op.key, blob);
     await run(STORE, "readwrite", (store) => store.put(op));
-    return { stored: true };
+    return fellBack ? { stored: true, fellBack } : { stored: true };
   } catch (problem) {
     // The browser's own words, carried out rather than swallowed. Without
     // them every refusal reads the same and none of them names a fix.
@@ -328,12 +336,70 @@ export async function queuedBytes(): Promise<number> {
   return all.reduce((n, op) => n + (op.kind === "proof" ? op.bytes : 0), 0);
 }
 
-/** One queued capture's bytes, for the upload or for a preview. */
+/**
+ * The bytes, and what they were.
+ *
+ * WebKit will not put a Blob in an object store on some iPhones. It fails with
+ * "Error preparing Blob/File data to be stored in object store", which the
+ * record caught eleven times in one night at the pilot venue. The store opens
+ * fine, ticks go in fine, and only the photographs are refused — which is
+ * exactly the shape of the very first night, when every tick landed and three
+ * photographs vanished.
+ *
+ * The same phone will take a plain ArrayBuffer. So the bytes go in as one,
+ * with their type beside them, because an ArrayBuffer on its own has
+ * forgotten whether it was a JPEG or a video and the upload has to say.
+ */
+type StoredBytes = { buffer: ArrayBuffer; type: string };
+
+function isStoredBytes(value: unknown): value is StoredBytes {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    (value as StoredBytes).buffer instanceof ArrayBuffer
+  );
+}
+
+/**
+ * Keep a capture's bytes, whichever way this browser will take them.
+ *
+ * The Blob first, because it is the cheap one: the browser can keep a large
+ * video on disk rather than pulling it through memory. The buffer second,
+ * because reading a fifty megabyte video into memory to store it is a bad
+ * trade to make on every phone for the sake of the few that need it.
+ */
+async function putBytes(key: string, blob: Blob): Promise<string | undefined> {
+  try {
+    await run(BLOBS, "readwrite", (store) => store.put(blob, key));
+    return undefined;
+  } catch (problem) {
+    // Fall through. The reason is carried out so the record can say the
+    // fallback was used rather than leaving it looking like an ordinary night.
+    const held: StoredBytes = {
+      buffer: await blob.arrayBuffer(),
+      type: blob.type,
+    };
+    await run(BLOBS, "readwrite", (store) => store.put(held, key));
+    return words(problem);
+  }
+}
+
+/**
+ * One queued capture's bytes, for the upload or for a preview.
+ *
+ * Comes back a Blob whichever way it went in, so nothing above this line has
+ * to know that two ways exist.
+ */
 export async function blobFor(key: string): Promise<Blob | undefined> {
   try {
-    return await run<Blob | undefined>(BLOBS, "readonly", (store) =>
+    const held = await run<unknown>(BLOBS, "readonly", (store) =>
       store.get(key),
     );
+    if (held instanceof Blob) return held;
+    if (isStoredBytes(held)) {
+      return new Blob([held.buffer], { type: held.type });
+    }
+    return undefined;
   } catch {
     return undefined;
   }
