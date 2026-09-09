@@ -296,36 +296,46 @@ export default async function LocationsPage({
           them. */}
       {candidates.length > 0 ? (
         <details className="group mt-6">
-          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center rounded px-4 text-label tracking-[0.08em] ring-1">
+          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1">
             <T en="Add a location" es="Agregar un lugar" />
+            <span
+              className="text-muted transition-transform group-open:rotate-90"
+              aria-hidden
+            >
+              ▸
+            </span>
           </summary>
-          <p className="note text-muted mt-3 leading-relaxed">
-            <T
-              en="Adding a venue puts it on the checklists and opens it, ready for its first list. It has no bearing on the weekly walkthrough."
-              es="Agregar un lugar lo pone en las listas y lo abre, listo para su primera lista. No afecta el recorrido semanal."
-            />
-          </p>
-          <ul className="mt-4 space-y-2">
-            {candidates.map((venue) => (
-              <li key={venue.id}>
-                <form action={enrolVenue}>
-                  <input type="hidden" name="venueId" value={venue.id} />
-                  <button
-                    type="submit"
-                    className="bg-inset hover:ring-muted/30 flex min-h-11 w-full flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2 text-left hover:ring-1 hover:ring-inset"
-                  >
-                    <span className="text-body w-16 shrink-0 tracking-[0.08em]">
-                      {venue.code}
-                    </span>
-                    {venue.name && venue.name !== venue.code ? (
-                      <span className="label">{venue.name}</span>
-                    ) : null}
-                    <span className="label ml-auto shrink-0">Add</span>
-                  </button>
-                </form>
-              </li>
-            ))}
-          </ul>
+          {/* Open, the list sits in a panel of its own. Spilled onto the
+              page, twenty bars ran off the bottom with nothing holding them. */}
+          <div className="panel mt-3">
+            <p className="note text-muted leading-relaxed">
+              <T
+                en="Adding a venue puts it on the checklists and opens it, ready for its first list. It has no bearing on the weekly walkthrough."
+                es="Agregar un lugar lo pone en las listas y lo abre, listo para su primera lista. No afecta el recorrido semanal."
+              />
+            </p>
+            <ul className="mt-4 space-y-2">
+              {candidates.map((venue) => (
+                <li key={venue.id}>
+                  <form action={enrolVenue}>
+                    <input type="hidden" name="venueId" value={venue.id} />
+                    <button
+                      type="submit"
+                      className="bg-inset hover:ring-muted/30 flex min-h-11 w-full flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2 text-left hover:ring-1 hover:ring-inset"
+                    >
+                      <span className="text-body w-16 shrink-0 tracking-[0.08em]">
+                        {venue.code}
+                      </span>
+                      {venue.name && venue.name !== venue.code ? (
+                        <span className="label">{venue.name}</span>
+                      ) : null}
+                      <span className="label ml-auto shrink-0">Add</span>
+                    </button>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </div>
         </details>
       ) : null}
     </main>
