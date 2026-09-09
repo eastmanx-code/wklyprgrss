@@ -119,7 +119,7 @@ export default async function VenueCompliancePage({
         night={night}
       />
       <Pile
-        title="No fail"
+        title="checked off and signed off"
         rows={pile("done")}
         folded
         code={code}
@@ -138,14 +138,14 @@ export default async function VenueCompliancePage({
 
       {/* The same rows over thirty nights: what keeps getting left. Reached
           from here, where a manager is already looking at fails, and from
-          nowhere the crew opens. */}
+          nowhere the crew opens. A line, not a third box. */}
       <p className="mt-6">
         <Link
           href={`/checklists/rollup?code=${code}`}
-          className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+          className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
         >
-          What keeps getting missed
-          <span className="text-muted">last 30 nights</span>
+          What keeps getting missed · last 30 nights
+          <span aria-hidden>→</span>
         </Link>
       </p>
     </main>
@@ -188,7 +188,7 @@ function Pile({
     </span>
   );
   const list = (
-    <ul className="mt-3">
+    <ul className={folded ? "" : "mt-3"}>
       {rows.map((list) => (
         /* Keyed on the list itself. Role plus phase plus house was unique
              until a position could run three lists that share all three. */
@@ -206,14 +206,24 @@ function Pile({
       ))}
     </ul>
   );
+  // Folded, it is one quiet line, not a third kind of box under two yellow
+  // ones: "12 lists checked off and signed off · show". Open, it is the
+  // same panel as the rest.
   if (folded) {
     return (
-      <details className={`mt-3 rounded-[8px] border px-5 py-4 ${shell}`}>
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-          {heading}
-          <span className="label">tap to open</span>
+      <details className="group mt-4">
+        <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
+          <span>
+            {rows.length} {rows.length === 1 ? "list" : "lists"} {title}
+          </span>
+          <span className="text-muted">
+            · <span className="group-open:hidden">show</span>
+            <span className="hidden group-open:inline">hide</span>
+          </span>
         </summary>
-        {list}
+        <section className={`mt-2 rounded-[8px] border px-5 py-4 ${shell}`}>
+          {list}
+        </section>
       </details>
     );
   }
