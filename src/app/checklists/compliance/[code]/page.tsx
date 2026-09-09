@@ -65,8 +65,14 @@ export default async function VenueCompliancePage({
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href={`/checklists/compliance?night=${night}`}>
-        All venues
+      <BackLink
+        href={
+          session.role === "admin"
+            ? `/checklists/locations?night=${night}`
+            : "/checklists"
+        }
+      >
+        {session.role === "admin" ? "All locations" : "Checklists"}
       </BackLink>
 
       <header className="mt-4 mb-5">
@@ -129,6 +135,19 @@ export default async function VenueCompliancePage({
       <div className="mt-3">
         <NightNav night={night} base={`/checklists/compliance/${code}`} />
       </div>
+
+      {/* The same rows over thirty nights: what keeps getting left. Reached
+          from here, where a manager is already looking at fails, and from
+          nowhere the crew opens. */}
+      <p className="mt-6">
+        <Link
+          href={`/checklists/rollup?code=${code}`}
+          className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
+        >
+          What keeps getting missed
+          <span className="text-muted">last 30 nights</span>
+        </Link>
+      </p>
     </main>
   );
 }

@@ -7,6 +7,7 @@ import { groupRollup, venueRollup } from "@/lib/rollup";
 import { listName } from "@/lib/slug";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
+import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
@@ -62,12 +63,33 @@ function Bar({ done, of }: { done: number; of: number }) {
  * which is a lesson that outlives the sample. A venue with nothing recorded
  * now gets one honest line instead.
  */
-export default async function RollupPage() {
+export default async function RollupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ code?: string }>;
+}) {
   const session = await getSession();
   if (!session) redirect("/");
 
-  const venue = await closeVenueId(session);
+  // An admin arrives from a venue's night carrying its code. Anyone else
+  // has one venue and the app knows which; a code in their address bar is
+  // ignored, because a URL is not a permission.
+  const askedCode = (await searchParams).code?.toUpperCase();
+  let venue: string | null = null;
+  if (session.role === "admin" && askedCode) {
+    const { data } = await db()
+      .from("venues")
+      .select("id")
+      .eq("code", askedCode)
+      .maybeSingle();
+    venue = (data as { id: string } | null)?.id ?? null;
+  }
+  if (!venue) venue = await closeVenueId(session);
   const venueName = venue ? await closeVenueName(venue) : null;
+  const back =
+    session.role === "admin" && askedCode
+      ? `/checklists/compliance/${askedCode}`
+      : "/checklists";
 
   const real = venue ? await venueRollup(venue) : null;
   const group = real ? await groupRollup() : null;
@@ -84,7 +106,7 @@ export default async function RollupPage() {
   if (!real) {
     return (
       <main className="close-flow mx-auto max-w-2xl pb-4">
-        <BackLink href="/checklists">All checklists</BackLink>
+        <BackLink href={back}>Back</BackLink>
         <header className="mt-4 mb-5">
           <p className="label">{venueName ?? "This venue"}</p>
           <h1 className="mt-2 text-metric font-medium">
@@ -112,7 +134,7 @@ export default async function RollupPage() {
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href="/checklists">All checklists</BackLink>
+      <BackLink href={back}>Back</BackLink>
 
       <header className="mt-4 mb-5">
         {/* Named from the row, not typed in. It read "Night Hawk" on every

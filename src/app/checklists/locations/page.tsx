@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { enrolVenue } from "./actions";
 
 import { Card } from "@/components/Card";
+import { NightNav, NightStrip } from "@/components/checklists/Compliance";
 import { RunCard } from "@/components/checklists/RunCard";
 import { BackLink } from "@/components/ui";
 import { T } from "@/components/Lang";
@@ -18,6 +19,7 @@ import {
   formatNight,
   formatNightEs,
   isNightOver,
+  shiftNights,
 } from "@/lib/night";
 import { nightWindow } from "@/lib/rollup";
 import { shortOf, shortOfEs } from "@/lib/short";
@@ -26,6 +28,8 @@ import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+const NIGHT = /^\d{4}-\d{2}-\d{2}$/;
+
 type Row = {
   id: string;
   code: string;
@@ -33,33 +37,45 @@ type Row = {
   tier: "good" | "neutral" | "fail" | null;
   note: string;
   noteEs: string;
+  /** The lists that failed, by name, with the fact that failed them. */
+  fails: VenueCompliance["lists"];
 };
 
 /**
- * How the buildings did last night, and which one you want.
+ * Every venue, one night. The admin's whole report, and the door into each
+ * building.
  *
- * Written in the weekly board's language on purpose. It is the same company,
- * the same three tiers, the same lime bar for a fail, and somebody who has
- * read "Everyone's progress" already knows how to read this: a headline, then
- * groups worst first, then a bar per row with the number in a fixed column
- * down the left. A second product that invents its own layout is a second
- * product to learn.
+ * There is one fact under all of this: a list, on a night, was checked off
+ * by somebody and signed off by somebody, or it was not. This screen is
+ * those rows summed per venue, with the ones that failed named under each.
+ * A venue's night is the same rows for one building; a list's night is one
+ * row opened up. Nothing here is computed a second way.
  *
- * Compliance is not a separate destination either. It is the report on the
- * checklists, so it leads the page you pick a location from: the picker is
- * the report.
+ * It used to be two screens, this one and a "close compliance" page that
+ * was this one with a different heading, and every fix had to land twice.
  *
  * A leader never sees this. They have one building and the app knows which.
  */
-export default async function LocationsPage() {
+export default async function LocationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ night?: string }>;
+}) {
   const session = await getSession();
   if (!session) redirect("/");
   if (session.role !== "admin") redirect("/checklists");
 
-  // The night with a verdict on it. Before the roll at 4am that is still last
-  // night; after it, the one that just ended.
+  // The night with a verdict on it, unless one was asked for. Before the
+  // roll at 4am that is still last night; after it, the one that just ended.
   const tonight = currentNight();
-  const night = isNightOver(tonight) ? tonight : previousNight(tonight);
+  const asked = (await searchParams).night;
+  const night =
+    asked && NIGHT.test(asked)
+      ? asked
+      : isNightOver(tonight)
+        ? tonight
+        : previousNight(tonight);
+  const over = isNightOver(night);
 
   const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
     db()
@@ -80,9 +96,7 @@ export default async function LocationsPage() {
 
   // In the programme, and the ones that could be. Membership is its own flag:
   // `active` governs the weekly walkthrough and a venue can run one without
-  // the other. Before this existed the screen had to list the whole table,
-  // which put twenty-six rows of "no lists yet" under the one venue running
-  // them, and half of those were venues that had closed or never opened.
+  // the other.
   const enrolled = venues.filter((v) => v.close_active);
   const candidates = venues.filter((v) => !v.close_active && v.active);
 
@@ -95,7 +109,8 @@ export default async function LocationsPage() {
     scored.map((v) => [v.code, v]),
   );
 
-  // One ruler, summed: lists done and signed, over lists on the night.
+  // One ruler, summed: lists checked off and signed off, over lists on the
+  // night. The fails are the rest, and they are named below.
   const lists = scored.reduce((n, v) => n + v.total, 0);
   const done = scored.reduce((n, v) => n + v.done, 0);
   const short = scored.reduce((n, v) => n + v.notSigned + v.notDone, 0);
@@ -108,34 +123,54 @@ export default async function LocationsPage() {
       score: row ? `${row.score}/10` : "—",
       tier: row?.tier ?? null,
       // Said twice, because the row is built on the server and the language
-      // is on the device. The same three counts the night page opens with,
-      // so the row and the page it opens agree to the number.
+      // is on the device. The same words the venue's night opens with.
       note: row ? shortOf(row) : "No lists yet",
       noteEs: row ? shortOfEs(row) : "Todavía sin listas",
+      fails: row ? row.lists.filter((l) => l.state === "fail") : [],
     };
   };
 
+  // Worst first. Knowing which building needs you is what the order is for.
+  const TIER = { fail: 0, neutral: 1, good: 2 } as const;
   const running = enrolled
     .filter((v) => (counts.get(v.id) ?? 0) > 0)
-    .map(lineFor);
+    .map(lineFor)
+    .sort(
+      (a, b) =>
+        (a.tier ? TIER[a.tier] : 3) - (b.tier ? TIER[b.tier] : 3) ||
+        a.code.localeCompare(b.code),
+    );
   const idle = enrolled
     .filter((v) => (counts.get(v.id) ?? 0) === 0)
     .map(lineFor);
 
-  // The same run the full report draws, on the screen a manager lands on.
+  // The run. The window reaches tonight whichever night is open, so the
+  // strip keeps every square and there is always a way forward; the chart
+  // ends at the night being read.
   const window = nightWindow(30, night);
-  const trend = await nightTrend(window);
+  const span: string[] = [...window];
+  for (let n = shiftNights(night, 1); n <= tonight && span.length < 90; ) {
+    span.push(n);
+    n = shiftNights(n, 1);
+  }
+  const all = await nightTrend(span);
   // Only the nights something ran. Charted over the whole window, the line
   // began with three flat weeks at nought that were not bad nights, they were
   // nights before the venue had the app.
-  const ran = trend.filter((t) => t.ran);
+  const ran = all.filter((t) => t.ran && t.night <= night);
   const points = ran.map((t) => ({
     weekStart: t.night,
-    // One line, lists done and signed. Two lines needed a legend.
     percent: t.done,
     approvedPercent: t.done,
   }));
-  // Only a comparison when there is something to compare against.
+  // Two buckets, no legend: every list checked off and signed off, or not.
+  const strip = all
+    .filter((t) => t.ran)
+    .map((t) => ({
+      night: t.night,
+      state: t.done >= 100 ? ("complete" as const) : ("short" as const),
+    }));
+  // Best and worst only when there is something to compare against.
   const ranked = [...scored].sort((a, b) => b.score - a.score);
   const best = ranked.length > 1 ? ranked[0] : null;
   const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
@@ -146,21 +181,25 @@ export default async function LocationsPage() {
         <T en="Home" es="Inicio" />
       </BackLink>
 
-      {/* Named for what you came to do. It read "Last night", which is what
-          the panel under it reports on, and a page whose heading is a report
-          is a page nobody expects to walk into a list from. */}
       <header className="mt-4 mb-6">
         <p className="label">
-          <T en="Checklists" es="Listas" /> ·{" "}
-          <T en={formatNight(night)} es={formatNightEs(night)} />
+          <T en={formatNight(night)} es={formatNightEs(night)} /> ·{" "}
+          {over ? (
+            <T en="night closed" es="noche cerrada" />
+          ) : (
+            <T en="still running" es="en curso" />
+          )}
         </p>
         <h1 className="text-metric mt-2 tracking-normal">
-          <T en="Open a location" es="Abrir un lugar" />
+          <T en="Locations" es="Lugares" />
         </h1>
       </header>
 
-      {lists > 0 && ran.length > 0 ? (
-        <div className="mb-4">
+      {/* The month, tappable. One square per night the group ran. */}
+      <NightStrip nights={strip} current={night} base="/checklists/locations" />
+
+      {lists > 0 && ran.length >= 2 ? (
+        <div className="mt-4">
           <RunCard
             done={done}
             total={lists}
@@ -175,59 +214,71 @@ export default async function LocationsPage() {
         </div>
       ) : null}
 
-      <Card
-        title={<T en="Your locations" es="Tus lugares" />}
-        hint={
-          lists === 0 ? (
-            <T en="nothing running yet" es="todavía no hay nada corriendo" />
+      <div className="mt-4">
+        <Card
+          title={
+            over ? (
+              <T en="Last night" es="Anoche" />
+            ) : (
+              <T en="Tonight" es="Esta noche" />
+            )
+          }
+          hint={
+            lists === 0 ? (
+              <T en="nothing running yet" es="todavía no hay nada corriendo" />
+            ) : (
+              <T
+                en={[
+                  short > 0
+                    ? `${short} ${short === 1 ? "fail" : "fails"}`
+                    : over
+                      ? "no fails"
+                      : "no fails yet",
+                  "tap the code to open its lists, the fails to see them",
+                ].join(" · ")}
+                es={[
+                  short > 0
+                    ? `${short} ${short === 1 ? "falla" : "fallas"}`
+                    : over
+                      ? "sin fallas"
+                      : "sin fallas todavía",
+                  "toca el código para abrir sus listas, las fallas para verlas",
+                ].join(" · ")}
+              />
+            )
+          }
+        >
+          {running.length === 0 && idle.length === 0 ? (
+            <p className="note text-muted leading-relaxed">
+              <T
+                en="No venue is on the checklists yet. Add one below and write its first list."
+                es="Todavía no hay ningún lugar en las listas. Agrega uno abajo y escribe su primera lista."
+              />
+            </p>
           ) : (
+            <ul className="-mx-3 space-y-3">
+              {[...running, ...idle].map((row) => (
+                <VenueBar key={row.id} row={row} night={night} />
+              ))}
+            </ul>
+          )}
+
+          <p className="label mt-6">
             <T
-              en="last night's score · tap one to open its lists"
-              es="la nota de anoche · toca una para abrir sus listas"
-            />
-          )
-        }
-      >
-        {running.length === 0 && idle.length === 0 ? (
-          <p className="note text-muted leading-relaxed">
-            <T
-              en="No venue is on the checklists yet. Add one below and write its first list."
-              es="Todavía no hay ningún lugar en las listas. Agrega uno abajo y escribe su primera lista."
+              en="Score is lists checked off and signed off, out of ten."
+              es="La nota es listas marcadas y firmadas, sobre diez."
             />
           </p>
-        ) : (
-          /* One list, worst first, no tier headings.
-           *
-           * The headings were the whole problem: grouped under Fail and
-           * Neutral and Good, with a score in a fixed column, the venues read
-           * as rows of a report rather than as the doors they are, and the
-           * only way into a checklist stopped looking like a way into
-           * anything. The score stays, because knowing which building needs
-           * you is why the order is what it is. The arrow says it opens. */
-          <ul className="-mx-3 space-y-[2px]">
-            {[...running, ...idle].map((row) => (
-              <VenueBar key={row.id} row={row} night={night} />
-            ))}
-          </ul>
-        )}
+        </Card>
+      </div>
 
-        {/* Only when there is a group to report on. With one venue running,
-            the group page is that venue again by another road, and a button
-            called "full report" beside a row that already opens the venue's
-            night read as a second, better report that did not exist. */}
-        {running.length > 1 ? (
-          <Link
-            href={`/checklists/compliance?night=${night}`}
-            className="ring-card-border text-ink mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
-          >
-            <T en="Every venue, last night" es="Todos los lugares, anoche" />
-          </Link>
-        ) : null}
-      </Card>
+      {/* Last night, next night. The strip is for jumping; this is for
+          stepping. */}
+      <div className="mt-3">
+        <NightNav night={night} base="/checklists/locations" />
+      </div>
 
-      {/* Folded away. Adding a building is a thing you do once, and twenty
-          rows of it above the one venue you are actually here for is the page
-          reading as a directory rather than a report. */}
+      {/* Folded away. Adding a building is a thing you do once. */}
       {candidates.length > 0 ? (
         <details className="panel mt-4">
           <summary className="card-title cursor-pointer list-none">
@@ -267,16 +318,12 @@ export default async function LocationsPage() {
 }
 
 /**
- * One venue's night as a bar, in the weekly board's proportions.
+ * One venue's night as a bar, in the weekly board's proportions, with the
+ * lists that failed named under it.
  *
- * Same fixed columns, so the scores line up down the left however long the
- * names are, and the same one height whatever it scored. Order carries
- * severity; the bar does not grow to shout.
- *
- * Two doors on one bar. The code and score open the venue's lists, which
- * is what the page is titled for. The fails open the venue's night, which
- * is what the fails are about. One link for the whole bar sent "3 fails"
- * to the tick screen, and the report it was describing was nowhere.
+ * Two doors on the bar. The code and score open the venue's lists; the fails
+ * open its night. Each failed list under it opens that list's own night, so
+ * the item somebody skipped is one tap from here.
  */
 function VenueBar({ row, night }: { row: Row; night: string }) {
   const failed = row.tier === "fail";
@@ -284,50 +331,76 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
     ? "bg-warn text-on-warn hover:bg-warn/90"
     : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset";
   return (
-    <li className="flex gap-[2px]">
-      <Link
-        href={`/checklists/enter/${row.id}`}
-        className={`flex min-w-0 flex-1 items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
-      >
-        <span
-          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
-            failed ? "text-on-warn" : "text-ink"
-          }`}
-        >
-          {row.code}
-        </span>
-        <span
-          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
-            failed
-              ? "text-on-warn"
-              : row.tier === "neutral"
-                ? "text-warn"
-                : row.tier === "good"
-                  ? "text-ink"
-                  : "text-muted"
-          }`}
-        >
-          {row.score}
-        </span>
-        <span className={`label ml-auto ${failed ? "text-on-warn" : ""}`}>
-          <T en="open lists" es="abrir listas" />
-        </span>
-      </Link>
-      {row.tier ? (
+    <li>
+      <div className="flex gap-[2px]">
         <Link
-          href={`/checklists/compliance/${row.code}?night=${night}`}
-          className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 ${shell}`}
+          href={`/checklists/enter/${row.id}`}
+          className={`flex min-w-0 flex-1 items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
         >
-          <span className={`label ${failed ? "text-on-warn" : ""}`}>
+          <span
+            className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+              failed ? "text-on-warn" : "text-ink"
+            }`}
+          >
+            {row.code}
+          </span>
+          <span
+            className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
+              failed
+                ? "text-on-warn"
+                : row.tier === "neutral"
+                  ? "text-warn"
+                  : row.tier === "good"
+                    ? "text-ink"
+                    : "text-muted"
+            }`}
+          >
+            {row.score}
+          </span>
+          <span className={`label ml-auto ${failed ? "text-on-warn" : ""}`}>
+            <T en="open lists" es="abrir listas" />
+          </span>
+        </Link>
+        {row.tier ? (
+          <Link
+            href={`/checklists/compliance/${row.code}?night=${night}`}
+            className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 ${shell}`}
+          >
+            <span className={`label ${failed ? "text-on-warn" : ""}`}>
+              <T en={row.note} es={row.noteEs} />
+            </span>
+            <span aria-hidden>→</span>
+          </Link>
+        ) : (
+          <span
+            className={`label flex items-center rounded-[4px] px-3 ${shell}`}
+          >
             <T en={row.note} es={row.noteEs} />
           </span>
-          <span aria-hidden>→</span>
-        </Link>
-      ) : (
-        <span className={`label flex items-center rounded-[4px] px-3 ${shell}`}>
-          <T en={row.note} es={row.noteEs} />
-        </span>
-      )}
+        )}
+      </div>
+      {row.fails.length > 0 ? (
+        <ul className="mt-1 space-y-[2px] pl-3">
+          {row.fails.map((list) => {
+            const why = list.facts.find((f) => f.warn);
+            return (
+              <li key={list.row.checklist_id}>
+                <Link
+                  href={`/checklists/compliance/${row.code}/${list.row.checklist_id}?night=${night}`}
+                  className="text-warn hover:bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2"
+                >
+                  <span className="text-body font-medium">{list.name}</span>
+                  {why ? (
+                    <span className="label text-warn">
+                      {why.label} · {why.value}
+                    </span>
+                  ) : null}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </li>
   );
 }

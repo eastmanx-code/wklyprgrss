@@ -85,6 +85,16 @@ export async function closeVenueName(venueId: string): Promise<string | null> {
   return row ? (row.name ?? row.code) : null;
 }
 
+/** A venue's code, for a link into the report screens that carry it. */
+export async function closeVenueCode(venueId: string): Promise<string | null> {
+  const { data } = await db()
+    .from("venues")
+    .select("code")
+    .eq("id", venueId)
+    .maybeSingle();
+  return (data as { code: string } | null)?.code ?? null;
+}
+
 /**
  * A venue's display name, looked up by its code.
  *

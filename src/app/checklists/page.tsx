@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { T } from "@/components/Lang";
-import { MissedList } from "@/components/checklists/MissedList";
 import { NewChecklistForm } from "@/components/checklists/NewChecklistForm";
 import {
   HOUSE_ES,
@@ -12,8 +11,11 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import { currentNight, formatNight, formatNightEs } from "@/lib/night";
-import { venueRollup } from "@/lib/rollup";
-import { closeVenueId, closeVenueName } from "@/lib/close-venue";
+import {
+  closeVenueCode,
+  closeVenueId,
+  closeVenueName,
+} from "@/lib/close-venue";
 import { getSession, mayManage } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
@@ -50,6 +52,7 @@ export default async function ChecklistsPage() {
   // saying which, which is how an admin edits the wrong venue's list.
   if (!venue && session.role === "admin") redirect("/checklists/locations");
   const venueName = venue ? await closeVenueName(venue) : null;
+  const venueCode = venue ? await closeVenueCode(venue) : null;
 
   const { data: listRows } = venue
     ? await db()
@@ -108,17 +111,6 @@ export default async function ChecklistsPage() {
       .every((l) => signed.has(l.id));
 
   /**
-   * Real nights only. No sample rows.
-   *
-   * Until a list is signed there is nothing to report, and the screen used to
-   * fill the gap with invented figures — "Stanchions polished · 9 of 30
-   * nights" on a venue that has never signed anything. A manager reading that
-   * on login has no way to tell it from tracking, and the first thing it
-   * taught anybody was that the number cannot be trusted.
-   */
-  const real = venue ? await venueRollup(venue) : null;
-
-  /**
    * The positions a house runs, each once.
    *
    * Not the lists. A position owns up to three of them and printing all three
@@ -163,88 +155,23 @@ export default async function ChecklistsPage() {
         </p>
       </header>
 
-      {/* Above the clipboard, not behind a link. What keeps getting missed is
-          the reason any of this exists, and a report you have to go and ask
-          for is a report nobody reads. */}
-      {real ? (
-        <section className="panel border-warn/30 mb-5">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h2 className="card-title">
-              <T
-                en="What's getting missed"
-                es="Lo que se está pasando por alto"
-              />
-            </h2>
-            <p className="label">
-              {/* The nights this venue actually ran, not thirty off the
-                  calendar. A venue in its first week read "Last 30 nights"
-                  over a panel where every line said 30 of 30. */}
-              <T
-                en={`${real.nights} nights so far`}
-                es={`${real.nights} noches hasta ahora`}
-              />
-            </p>
-          </div>
-
-          <div className="mt-4">
-            {real.missed.length === 0 ? (
-              <p className="note text-muted">
-                <T
-                  en="Nothing left open in the window."
-                  es="No quedó nada sin hacer en este periodo."
-                />
-              </p>
-            ) : (
-              <MissedList rows={real.missed.slice(0, 4)} />
-            )}
-          </div>
-
-          {/* Two reports, two questions. This one is the month; the other is
-              last night, which is the one somebody opens at ten in the
-              morning wanting to know who signed what. */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Link
-              href="/checklists/compliance"
-              className="bg-inset text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
-            >
-              <T en="Last night" es="Anoche" />
-              <span className="text-muted">
-                <T en="what failed, who signed" es="qué falló, quién firmó" />
-              </span>
-            </Link>
-            <Link
-              href="/checklists/rollup"
-              className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
-            >
-              <T en="Full report" es="Reporte completo" />
-              <span className="text-muted">
-                <T
-                  en="by role, by night, by venue"
-                  es="por puesto, por noche, por lugar"
-                />
-              </span>
-            </Link>
-          </div>
-        </section>
-      ) : (
-        <section className="panel-quiet mb-5">
-          <h2 className="card-title">What&apos;s getting missed</h2>
-          <p className="note text-muted mt-2 leading-relaxed">
-            Nothing signed off yet. This fills in from the first night somebody
-            signs a list and shows what keeps being left open.
-          </p>
-          {/* Reachable before the first signature, deliberately. Until one
-              exists, the night report is the only screen that can say nobody
-              has opened anything, which is the thing worth knowing. */}
+      {/* The report is not on this screen. This is the clipboard the crew
+          opens to tick and sign, and a month of misses above it is the
+          public shame the report is not for. A manager gets one link to the
+          venue's night; a leader gets the lists. */}
+      {mayManage(session) && venueCode ? (
+        <p className="mb-5">
           <Link
-            href="/checklists/compliance"
-            className="bg-inset text-ink mt-4 inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em]"
+            href={`/checklists/compliance/${venueCode}`}
+            className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
           >
-            Last night
-            <span className="text-muted">what failed, who signed</span>
+            <T en="Last night" es="Anoche" />
+            <span className="text-muted">
+              <T en="what failed, who signed" es="qué falló, quién firmó" />
+            </span>
           </Link>
-        </section>
-      )}
+        </p>
+      ) : null}
 
       {lists.length === 0 ? (
         <section className="panel mb-5">
