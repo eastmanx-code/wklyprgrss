@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { sweepCaptures } from "@/lib/adopt";
-import { isAdminPin } from "@/lib/admin-pin";
+import { pinHolder } from "@/lib/admin-pin";
 import { nameProblem, samePerson } from "@/lib/name";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
@@ -556,12 +556,23 @@ export async function reopenNight(
   const pin = String(formData.get("pin") ?? "");
   const reason = String(formData.get("reason") ?? "").trim();
 
-  if (!(await isAdminPin(pin))) {
-    return { error: "That PIN doesn't match. Try again." };
-  }
+  const holder = await pinHolder(pin);
+  if (!holder) return { error: "That PIN doesn't match. Try again." };
 
   const list = await checklistFor(slug);
   if (!list) return { error: "That checklist is not available." };
+
+  // A manager's code reopens their own venue's night and nobody else's. Every
+  // code used to be an admin code, so the only check that could be made was
+  // whether the PIN was real. Refused in the same words as a wrong PIN,
+  // because "right code, wrong building" is a thing worth not confirming to
+  // somebody standing at the wrong bar.
+  if (holder.kind === "manager") {
+    const venue = await venueId();
+    if (!venue || holder.venueId !== venue) {
+      return { error: "That PIN doesn't match. Try again." };
+    }
+  }
 
   const { data } = await db()
     .from("close_nights")

@@ -14,7 +14,7 @@ import {
 import { currentNight, formatNight, formatNightEs } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
 
@@ -302,7 +302,7 @@ export default async function ChecklistsPage() {
           anybody holding the venue code — which is everybody, since the code
           is on the QR by the rack. The server refuses it either way now; this
           is so nobody is offered a button that is going to say no. */}
-      {session.role === "admin" ? <NewChecklistForm /> : null}
+      {mayManage(session) ? <NewChecklistForm /> : null}
 
       {/* The way out of the building you are in. Without it the cookie is a
           one-way door and the only way back to another venue is the address

@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { findOrphans, removeOrphans } from "@/lib/orphans";
 import { forgetSignedUrl } from "@/lib/photos";
-import { getSession } from "@/lib/session";
+import { getSession, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, awaitingReview } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -26,9 +27,7 @@ async function isAdmin(): Promise<boolean> {
  * keeps using isAdmin().
  */
 async function canManage(venueId: string): Promise<boolean> {
-  const session = await getSession();
-  if (session?.role === "admin") return true;
-  return session?.role === "leader" && session.venueId === venueId;
+  return mayReachVenue(await getSession(), venueId);
 }
 
 /** The venue an item belongs to, for permission checks. */
@@ -402,7 +401,18 @@ export async function wipeVenue(formData: FormData) {
   refresh(venueId);
 }
 
-/** Adds an admin code. Admin only, obviously. */
+/**
+ * Adds a code. Admin only, obviously.
+ *
+ * A venue makes it a manager's: that venue's lists and reports, plus editing
+ * and reopening, and nothing else. No venue makes it a full admin code, which
+ * is every venue, the grading board and this screen.
+ *
+ * The venue is checked against the table rather than trusted. It arrives from
+ * a select, but a select is a form field and a form field is whatever the
+ * person sending it wants it to be, and a code scoped to an id that is not a
+ * venue would be a code that opens nothing and reads as if it should.
+ */
 export async function addAdminPin(
   _prev: AdminState,
   formData: FormData,
@@ -411,12 +421,24 @@ export async function addAdminPin(
 
   const pin = String(formData.get("pin") ?? "").trim();
   const label = String(formData.get("label") ?? "").trim();
+  const venueId = String(formData.get("venueId") ?? "").trim();
   if (!/^\d{6}$/.test(pin)) return { error: "Code must be 6 digits." };
   if (!label) return { error: "Give it a name, so you know what to revoke." };
   if (label.length > MAX_TITLE_LENGTH)
     return { error: "That name is too long." };
 
-  const { error } = await db().from("admin_pins").insert({ pin, label });
+  if (venueId) {
+    const { data } = await db()
+      .from("venues")
+      .select("id")
+      .eq("id", venueId)
+      .maybeSingle();
+    if (!data) return { error: "That venue is not there." };
+  }
+
+  const { error } = await db()
+    .from("admin_pins")
+    .insert({ pin, label, venue_id: venueId || null });
   if (error) {
     return {
       error:
@@ -430,7 +452,49 @@ export async function addAdminPin(
   return OK;
 }
 
-/** Revokes an admin code. The env master key isn't in this table, so it stays. */
+/**
+ * Photographs nothing points at: how many, and then gone.
+ *
+ * Two presses on purpose. It is the only thing in this product that deletes a
+ * photograph nobody asked to delete, so the first press only counts them and
+ * the second one has to be aimed at a number the person has read.
+ *
+ * The list is taken again inside the delete rather than carried across from
+ * the screen — between looking and pressing, somebody can have finished a
+ * shift.
+ */
+export type OrphanState = {
+  error: string | null;
+  found?: { count: number; bytes: number };
+  removed?: { count: number; bytes: number };
+};
+
+export async function sweepOrphans(
+  _prev: OrphanState,
+  formData: FormData,
+): Promise<OrphanState> {
+  if (!(await isAdmin())) return { error: "Not signed in." };
+
+  try {
+    if (String(formData.get("confirm") ?? "") !== "yes") {
+      const found = await findOrphans();
+      return {
+        error: null,
+        found: {
+          count: found.length,
+          bytes: found.reduce((n, file) => n + file.bytes, 0),
+        },
+      };
+    }
+
+    const { removed, bytes } = await removeOrphans();
+    return { error: null, removed: { count: removed, bytes } };
+  } catch {
+    return { error: "Could not read storage. Try again." };
+  }
+}
+
+/** Revokes a code. The env master key isn't in this table, so it stays. */
 export async function revokeAdminPin(formData: FormData) {
   if (!(await isAdmin())) return;
 

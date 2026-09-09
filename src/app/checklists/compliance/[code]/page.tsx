@@ -39,10 +39,10 @@ export default async function VenueCompliancePage({
   const asked = (await searchParams).night;
   const night = asked && NIGHT.test(asked) ? asked : currentNight();
 
-  // A leader can read their own venue and no other, whatever they type in the
-  // address bar. The group screen filters its list; this one has to enforce
-  // it, because a URL is not a permission.
-  if (session.role === "leader") {
+  // Anybody but an admin reads their own venue and no other, whatever they
+  // type in the address bar. The group screen filters its list; this one has
+  // to enforce it, because a URL is not a permission.
+  if (session.role !== "admin") {
     const mine = await closeVenueId(session);
     const { data } = mine
       ? await db().from("venues").select("code").eq("id", mine).maybeSingle()

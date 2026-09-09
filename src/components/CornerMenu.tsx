@@ -5,7 +5,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
 import { LangSwitch, T } from "@/components/Lang";
 import { SignOut } from "@/components/SignOut";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
 
 /**
@@ -27,6 +27,7 @@ export async function CornerMenu() {
   // product you are here for. What differs is the second link. An admin's
   // "all venues" is the grading board; a leader's is everybody's scores.
   const isAdmin = session?.role === "admin";
+  const canEdit = mayManage(session);
   const home = session ? "/home" : null;
 
   return (
@@ -92,7 +93,11 @@ export async function CornerMenu() {
               the foot of the list, below every item on it, which is right for
               somebody walking it at one in the morning and useless for the
               person setting one up. */}
-          {session ? <EditThisList /> : null}
+          {/* Managers only, like the link at the foot of a list. This one was
+              shown to anybody signed in, so the crew holding the venue code
+              off the QR by the rack were being offered a door that refuses
+              them — the exact thing the foot of the list stopped doing. */}
+          {canEdit ? <EditThisList /> : null}
 
           <HelpLink />
 

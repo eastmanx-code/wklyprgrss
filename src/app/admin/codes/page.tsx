@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { AdminPins, type AdminPin } from "@/components/admin/AdminPins";
+import { AdminPins, type CodeVenue } from "@/components/admin/AdminPins";
+import { OrphanSweep } from "@/components/admin/OrphanSweep";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
+import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -17,11 +19,12 @@ export const dynamic = "force-dynamic";
  * into a page that isn't about it.
  */
 export default async function AdminCodesPage() {
-  if ((await getSession())?.role !== "admin") redirect("/admin/login");
+  const session = await getSession();
+  if (session?.role !== "admin") redirect(notAdminGoesTo(Boolean(session)));
 
   const { data: adminPins } = await db()
     .from("admin_pins")
-    .select("id, pin, label")
+    .select("id, pin, label, venue_id")
     .order("created_at");
 
   // The only screen that reads venue PINs. getVenues() deliberately never
@@ -39,7 +42,25 @@ export default async function AdminCodesPage() {
         <h1 className="mt-2 text-metric font-medium">Admin codes</h1>
       </header>
 
-      <AdminPins pins={(adminPins ?? []) as AdminPin[]} />
+      <AdminPins
+        pins={(
+          (adminPins ?? []) as {
+            id: string;
+            pin: string;
+            label: string;
+            venue_id: string | null;
+          }[]
+        ).map((row) => ({
+          id: row.id,
+          pin: row.pin,
+          label: row.label,
+          venueId: row.venue_id,
+        }))}
+        venues={((venues ?? []) as CodeVenue[]).map((venue) => ({
+          id: venue.id,
+          code: venue.code,
+        }))}
+      />
 
       <section className="mt-12">
         <h2 className="card-title">Venue codes</h2>
@@ -67,6 +88,17 @@ export default async function AdminCodesPage() {
             ),
           )}
         </ul>
+      </section>
+
+      {/* Housekeeping, on the screen that already holds the things only an
+          admin can do, rather than on a dashboard somebody reads every day. */}
+      <section className="mt-12">
+        <h2 className="card-title">Storage</h2>
+        <p className="label text-muted mt-1.5">
+          Checklist photos with nothing pointing at them
+        </p>
+        <hr className="border-divider my-4 border-0 border-t" />
+        <OrphanSweep />
       </section>
 
       <p className="mt-8">

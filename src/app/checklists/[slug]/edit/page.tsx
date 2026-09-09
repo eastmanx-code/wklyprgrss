@@ -21,7 +21,7 @@ import {
 import type { Reference, Shot } from "@/lib/close-checklist";
 import { signedUrls } from "@/lib/photos";
 import { closeVenueId } from "@/lib/close-venue";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -42,10 +42,14 @@ export default async function EditChecklistPage({
 
   const session = await getSession();
   if (!session) redirect("/");
+  // The whole screen, not just the buttons on it. Every action here already
+  // refuses the crew, but the editor itself opened for anybody holding the
+  // venue code off the QR by the rack — a door that is not for you should not
+  // be in front of you, which is the rule the foot of the list already keeps.
+  if (!mayManage(session)) redirect(`/checklists/${slug}`);
 
   const venue = await closeVenueId(session);
   if (!venue) notFound();
-
 
   // Matched in JS: the slug is user input and ilike treats % and _ as
   // wildcards, so foh-%-close would match whatever came back first.

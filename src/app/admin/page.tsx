@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
+import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import { getDashboard, gradersByHouse } from "@/lib/status";
 import {
@@ -21,7 +22,8 @@ export const dynamic = "force-dynamic";
  * on it, rather than the read-only one.
  */
 export default async function AdminDashboardPage() {
-  if ((await getSession())?.role !== "admin") redirect("/admin/login");
+  const session = await getSession();
+  if (session?.role !== "admin") redirect(notAdminGoesTo(Boolean(session)));
 
   const { weekStart, rows, byHouse } = await getDashboard();
 

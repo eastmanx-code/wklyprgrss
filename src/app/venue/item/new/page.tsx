@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { NewItemForm } from "@/components/admin/NewItemForm";
 import { BackLink } from "@/components/ui";
-import { getSession } from "@/lib/session";
+import { getSession, venueOfSession } from "@/lib/session";
 import { getVenue } from "@/lib/status";
 import { houseName, type House } from "@/lib/types";
 
@@ -26,11 +26,10 @@ export default async function NewItemPage({
   const session = await getSession();
   if (!session) redirect("/");
 
-  // A leader's venue comes from their session and never from the URL; only an
-  // admin, who may work on any venue, is told which one by the link. The
-  // action re-checks either way.
-  const venueId =
-    session.role === "leader" ? session.venueId : (venueParam ?? "");
+  // A leader's or a manager's venue comes from their session and never from
+  // the URL; only an admin, who may work on any venue, is told which one by
+  // the link. The action re-checks either way.
+  const venueId = venueOfSession(session) ?? venueParam ?? "";
   if (!venueId) notFound();
 
   const venue = await getVenue(venueId);
