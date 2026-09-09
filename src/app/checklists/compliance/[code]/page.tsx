@@ -112,7 +112,13 @@ export default async function VenueCompliancePage({
         code={code}
         night={night}
       />
-      <Pile title="No fail" rows={pile("done")} code={code} night={night} />
+      <Pile
+        title="No fail"
+        rows={pile("done")}
+        folded
+        code={code}
+        night={night}
+      />
       <Pile
         title="Nothing written on the list yet"
         rows={pile("empty")}
@@ -130,17 +136,24 @@ export default async function VenueCompliancePage({
 /**
  * One pile of lists. Empty piles do not appear: "Nobody signed · 0" is a
  * line about nothing, and a good night should read shorter than a bad one.
+ *
+ * A folded pile shows its heading and count and opens on a tap. The lists
+ * with no fail are the who record and belong on the page, but twelve of
+ * them under two fails made the page mostly record, and the page is for
+ * the fails.
  */
 function Pile({
   title,
   rows,
   warn,
+  folded,
   code,
   night,
 }: {
   title: string;
   rows: ListVerdict[];
   warn?: boolean;
+  folded?: boolean;
   code: string;
   night: string;
 }) {
@@ -150,28 +163,45 @@ function Pile({
   // grey boxes, and the whole point of the page is that these two are not.
   const shell = warn ? "bg-warn text-on-warn border-warn" : "panel";
   const rule = warn ? "border-on-warn/25" : "border-divider";
+  const heading = (
+    <span className={`label ${warn ? "text-on-warn" : ""}`}>
+      {title} · {rows.length}
+    </span>
+  );
+  const list = (
+    <ul className="mt-3">
+      {rows.map((list) => (
+        /* Keyed on the list itself. Role plus phase plus house was unique
+             until a position could run three lists that share all three. */
+        <li
+          key={list.row.checklist_id}
+          className={`${rule} border-t py-2.5 first:border-t-0 first:pt-0`}
+        >
+          <Link
+            href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
+            className="block"
+          >
+            <Facts list={list} warn={warn} />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+  if (folded) {
+    return (
+      <details className={`mt-3 rounded-[8px] border px-5 py-4 ${shell}`}>
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+          {heading}
+          <span className="label">tap to open</span>
+        </summary>
+        {list}
+      </details>
+    );
+  }
   return (
     <section className={`mt-3 rounded-[8px] border px-5 py-4 ${shell}`}>
-      <p className={`label ${warn ? "text-on-warn" : ""}`}>
-        {title} · {rows.length}
-      </p>
-      <ul className="mt-3">
-        {rows.map((list) => (
-          /* Keyed on the list itself. Role plus phase plus house was unique
-             until a position could run three lists that share all three. */
-          <li
-            key={list.row.checklist_id}
-            className={`${rule} border-t py-2.5 first:border-t-0 first:pt-0`}
-          >
-            <Link
-              href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
-              className="block"
-            >
-              <Facts list={list} warn={warn} />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <p>{heading}</p>
+      {list}
     </section>
   );
 }
