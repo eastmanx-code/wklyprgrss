@@ -70,9 +70,13 @@ export function Dial({
             sitting on, so the stroke cut through both ends of it. Widening the
             ring only moves where it clips. */}
         <div className="absolute inset-0 flex items-center justify-center">
+          {/* Sized to what is printed. "8/10" is a character wider than
+              "80%" and at the same size it touched the stroke. */}
           <span
             className="text-ink leading-none tracking-normal tabular-nums"
-            style={{ fontSize: `${Math.round(size * 0.3)}px` }}
+            style={{
+              fontSize: `${Math.round(size * ((label ?? `${percent}%`).length > 3 ? 0.22 : 0.3))}px`,
+            }}
           >
             {label ?? `${percent}%`}
           </span>

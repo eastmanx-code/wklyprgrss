@@ -228,22 +228,20 @@ export default async function LocationsPage({
               <T en="nothing running yet" es="todavía no hay nada corriendo" />
             ) : (
               <T
-                en={[
+                en={
                   short > 0
                     ? `${short} ${short === 1 ? "fail" : "fails"}`
                     : over
                       ? "no fails"
-                      : "no fails yet",
-                  "tap the code to open its lists, the fails to see them",
-                ].join(" · ")}
-                es={[
+                      : "no fails yet"
+                }
+                es={
                   short > 0
                     ? `${short} ${short === 1 ? "falla" : "fallas"}`
                     : over
                       ? "sin fallas"
-                      : "sin fallas todavía",
-                  "toca el código para abrir sus listas, las fallas para verlas",
-                ].join(" · ")}
+                      : "sin fallas todavía"
+                }
               />
             )
           }
@@ -256,7 +254,7 @@ export default async function LocationsPage({
               />
             </p>
           ) : (
-            <ul className="-mx-3 space-y-3">
+            <ul className="space-y-3">
               {[...running, ...idle].map((row) => (
                 <VenueBar key={row.id} row={row} night={night} />
               ))}
@@ -364,7 +362,7 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
         {row.tier ? (
           <Link
             href={`/checklists/compliance/${row.code}?night=${night}`}
-            className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 ${shell}`}
+            className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 whitespace-nowrap ${shell}`}
           >
             <span className={`label ${failed ? "text-on-warn" : ""}`}>
               <T en={row.note} es={row.noteEs} />
@@ -373,25 +371,25 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
           </Link>
         ) : (
           <span
-            className={`label flex items-center rounded-[4px] px-3 ${shell}`}
+            className={`label flex shrink-0 items-center rounded-[4px] px-3 whitespace-nowrap ${shell}`}
           >
             <T en={row.note} es={row.noteEs} />
           </span>
         )}
       </div>
       {row.fails.length > 0 ? (
-        <ul className="mt-1 space-y-[2px] pl-3">
+        <ul className="mt-1">
           {row.fails.map((list) => {
             const why = list.facts.find((f) => f.warn);
             return (
               <li key={list.row.checklist_id}>
                 <Link
                   href={`/checklists/compliance/${row.code}/${list.row.checklist_id}?night=${night}`}
-                  className="text-warn hover:bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2"
+                  className="text-warn hover:bg-inset grid grid-cols-[minmax(0,1fr)] gap-y-0.5 rounded-[4px] px-3 py-2"
                 >
                   <span className="text-body font-medium">{list.name}</span>
                   {why ? (
-                    <span className="label text-warn">
+                    <span className="label text-warn min-w-0 truncate">
                       {why.label} · {why.value}
                     </span>
                   ) : null}

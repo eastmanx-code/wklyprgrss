@@ -61,6 +61,15 @@ export default async function ListCompliancePage({
   const name = await venueNameOf(code);
   const open = detail.items.filter((i) => !i.ticked);
   const signed = Boolean(detail.certifiedAt);
+  const short = open.length > 0 || !signed;
+  // Who checked things off: the initials on the ticks, each once.
+  const by = [
+    ...new Set(
+      detail.items
+        .filter((i) => i.ticked && i.initials)
+        .map((i) => i.initials!.toUpperCase()),
+    ),
+  ].join(", ");
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
@@ -80,86 +89,74 @@ export default async function ListCompliancePage({
         </h1>
       </header>
 
-      {/* The signature, and the two timestamps either side of it. A list
-          signed three minutes after the last tick and four hours before the
-          doors shut is the whole story of the night, and no count shows it. */}
+      {/* The same two questions every level asks, answered for one list:
+          checked off by whom, signed off by whom. Yellow the moment either
+          answer is a fail. It used to say "never signed" over "last signed
+          off 2:07 AM" and "signature undone and redone", three lines that
+          each meant something and together meant nothing. */}
       <section
         className={`rounded-[4px] px-4 py-3 ${
-          signed && open.length > 0 ? "bg-warn text-on-warn" : "bg-inset"
+          short ? "bg-warn text-on-warn" : "bg-inset"
         }`}
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <span className="text-body">
-            {signed
-              ? `Signed by ${detail.certifiedBy?.trim() || "somebody unnamed"}`
-              : "Never signed"}
-          </span>
-          <span className="text-body tabular-nums">
+        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
+          <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+            checked off
+          </dt>
+          <dd
+            className={`text-body ${
+              open.length > 0 ? "font-medium" : short ? "" : "text-muted"
+            }`}
+          >
             {detail.ticked} of {detail.owed}
-          </span>
-        </div>
-        <p
-          className={`mt-1 text-label tracking-[0.08em] ${
-            signed && open.length > 0 ? "text-on-warn" : "text-muted"
-          }`}
-        >
-          {signed && detail.certifiedAt
-            ? `${formatClock(detail.certifiedAt)}${
-                detail.lastTickAt
-                  ? ` · last signed off ${formatClock(detail.lastTickAt)}`
-                  : ""
-              }${open.length > 0 ? ` · ${open.length} not done` : " · all done"}`
-            : detail.lastTickAt
-              ? `Last signed off ${formatClock(detail.lastTickAt)} · ${open.length} not done`
-              : "Nobody opened this list"}
-        </p>
-        {/* The second signature, or its absence.
-            A list nobody checked is the honest answer to a question the old
-            record could not answer at all, so it is said plainly rather than
-            left as a blank. sameDevice is shown and not judged: a shared iPad
-            behind the bar makes it true for two genuinely different people,
-            and the same two names off one phone a minute apart is the shape of
-            one person signing twice. Worth seeing, not worth the app ruling
-            on. */}
-        {signed ? (
-          <p
-            className={`mt-1 text-label tracking-[0.08em] ${
-              detail.verifiedBy ? "text-muted" : "text-warn"
+            {by ? ` by ${by}` : detail.ticked > 0 ? " by no initials" : ""}
+          </dd>
+          <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+            signed off
+          </dt>
+          <dd
+            className={`text-body ${
+              !signed ? "font-medium" : short ? "" : "text-muted"
             }`}
           >
-            {detail.verifiedBy
-              ? `Checked by ${detail.verifiedBy.trim()}${
-                  detail.verifiedAt
-                    ? ` · ${formatClock(detail.verifiedAt)}`
+            {signed
+              ? `${detail.certifiedBy?.trim() || "no name"}${
+                  detail.certifiedAt
+                    ? ` ${formatClock(detail.certifiedAt)}`
                     : ""
-                }${detail.sameDevice ? " · both signatures off one phone" : ""}`
-              : "Nobody checked this"}
-          </p>
-        ) : null}
-        {detail.reopened > 0 ? (
-          <p
-            className={`mt-1 text-label tracking-[0.08em] ${
-              signed && open.length > 0 ? "text-on-warn" : "text-warn"
-            }`}
-          >
-            Signature undone and redone {detail.reopened}{" "}
-            {detail.reopened === 1 ? "time" : "times"}
-          </p>
-        ) : null}
+                }`
+              : detail.lastTickAt
+                ? "nobody"
+                : "nobody, and nobody opened it"}
+          </dd>
+          {/* The second signature, where there was one. A shared iPad makes
+              "one phone" true for two different people, so it is shown and
+              not judged. */}
+          {detail.verifiedBy ? (
+            <>
+              <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+                verified
+              </dt>
+              <dd className={`text-body ${short ? "" : "text-muted"}`}>
+                {detail.verifiedBy.trim()}
+                {detail.verifiedAt ? ` ${formatClock(detail.verifiedAt)}` : ""}
+                {detail.sameDevice ? " · same phone as the signature" : ""}
+              </dd>
+            </>
+          ) : null}
+          {detail.reopened > 0 ? (
+            <>
+              <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+                signature
+              </dt>
+              <dd className="text-body font-medium">
+                undone {detail.reopened}{" "}
+                {detail.reopened === 1 ? "time" : "times"}
+              </dd>
+            </>
+          ) : null}
+        </dl>
       </section>
-
-      {/* How long it took, as a fact and nothing more. We do not fail on
-          time, only on what was not done and what was not signed, so there
-          is no panel here saying a list went too fast. The span is on the
-          page because it is true; what to make of it is a conversation. */}
-      {detail.pace.ticks >= 2 ? (
-        <p className="label mt-2">
-          Done over {describeSpan(detail.pace.spanSeconds)} ·{" "}
-          {detail.pace.secondsPerItem >= 60
-            ? `about ${Math.round(detail.pace.secondsPerItem / 60)} minutes an item`
-            : `${detail.pace.secondsPerItem} seconds an item`}
-        </p>
-      ) : null}
 
       {/* The lag is a fact, never an accusation. Since the offline queue
           shipped it mostly means somebody worked a cellar with no signal. */}
@@ -204,7 +201,7 @@ export default async function ListCompliancePage({
                   ? `${item.initials ?? "no initials"}${
                       item.at ? ` · ${formatClock(item.at)}` : ""
                     }`
-                  : "Open"}
+                  : "not checked off"}
               </span>
               {/* What the item asked for against what arrived. A ticked item
                   that owed a photograph and produced none is a tick with
@@ -227,11 +224,6 @@ export default async function ListCompliancePage({
           ))}
         </ul>
       )}
-
-      <p className="label mt-5">
-        Every item signed off carries the initials typed on it and the moment it
-        was signed, so a shared iPad still says who did what.
-      </p>
     </main>
   );
 }
