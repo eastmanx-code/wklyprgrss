@@ -103,6 +103,15 @@ let open: Promise<IDBDatabase> | null = null;
 let shut = false;
 
 /**
+ * The one refusal that goes away on its own.
+ *
+ * Blocked means another tab in this browser is holding an older version of the
+ * database open. The moment that tab closes, this works. Every other refusal
+ * is permanent for the life of the page.
+ */
+const BLOCKED = "blocked by another tab holding an older version";
+
+/**
  * What the browser actually said, the first time it refused.
  *
  * The refusal used to be reported as the words "queue unavailable" and nothing
@@ -132,7 +141,25 @@ function db(): Promise<IDBDatabase> {
         held.createObjectStore(BLOBS);
       }
     };
-    request.onsuccess = () => resolve(request.result);
+    request.onsuccess = () => {
+      const held = request.result;
+      // Yield instead of blocking. Without this a tab somebody left open
+      // stops every other tab in that browser from ever upgrading, and the
+      // person holding the phone has no way to know which tab is doing it —
+      // the app simply stops keeping their work, on that device, for ever.
+      // This is the standard pairing for onblocked and it was missing.
+      held.onversionchange = () => {
+        held.close();
+        open = null;
+      };
+      // Safari closes a connection out from under a backgrounded tab. Letting
+      // go of the handle here means the next call opens a fresh one rather
+      // than using one that throws on every transaction it is given.
+      held.onclose = () => {
+        open = null;
+      };
+      resolve(held);
+    };
     // request.error, not a message of our own. It is a DOMException whose name
     // is the diagnosis: QuotaExceededError is a full phone, VersionError is a
     // database newer than this build, UnknownError on iOS is usually the
@@ -142,11 +169,17 @@ function db(): Promise<IDBDatabase> {
     // A version change nobody closed. It will never resolve on its own, and on
     // a phone with a dozen Safari tabs it is the likeliest of the three: one
     // old tab holding version 1 open blocks every new one for ever.
-    request.onblocked = () =>
-      reject(new Error("blocked by another tab holding an older version"));
+    request.onblocked = () => reject(new Error(BLOCKED));
   }).catch((error: unknown) => {
-    shut = true;
-    shutBecause = words(error);
+    const why = words(error);
+    shutBecause = why;
+    // Latch on the permanent ones only. A browser that is out of room or has
+    // given up on the origin will not open on the tenth try either, and every
+    // attempt after the first is another second of somebody watching nothing
+    // happen. Blocked is not that: it clears the moment the other tab goes,
+    // and latching it turned a tab somebody could close into a phone that had
+    // stopped keeping work until the whole browser was restarted.
+    shut = why !== BLOCKED;
     open = null;
     throw error;
   });
