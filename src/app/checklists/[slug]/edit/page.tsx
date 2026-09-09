@@ -12,7 +12,7 @@ import {
 import { RoleSpanish } from "@/components/checklists/RoleSpanish";
 import { BackLink } from "@/components/ui";
 import {
-  parseSlug,
+  matchSlug,
   phaseName,
   slugFor,
   type House,
@@ -46,8 +46,6 @@ export default async function EditChecklistPage({
   const venue = await closeVenueId(session);
   if (!venue) notFound();
 
-  const parsed = parseSlug(slug);
-  if (!parsed) notFound();
 
   // Matched in JS: the slug is user input and ilike treats % and _ as
   // wildcards, so foh-%-close would match whatever came back first.
@@ -57,23 +55,22 @@ export default async function EditChecklistPage({
   // before the redirect did.
   const { data: rows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, active")
+    .select("id, house, role, role_es, phase, room, active")
     .eq("venue_id", venue);
 
-  const list = (
+  // Compared against each list's own address rather than taken apart, the
+  // same way the list screen does it.
+  const list = matchSlug(
     (rows ?? []) as {
       id: string;
       house: House;
       role: string;
       role_es: string | null;
       phase: Phase;
+      room: string | null;
       active: boolean;
-    }[]
-  ).find(
-    (row) =>
-      row.house.toLowerCase() === parsed.house.toLowerCase() &&
-      row.role.toLowerCase() === parsed.role.toLowerCase() &&
-      row.phase.toLowerCase() === parsed.phase.toLowerCase(),
+    }[],
+    slug,
   );
   if (!list) notFound();
 
@@ -128,7 +125,7 @@ export default async function EditChecklistPage({
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
       <BackLink
-        href={`/checklists/${slugFor(list.house, list.role, list.phase)}`}
+        href={`/checklists/${slugFor(list.house, list.role, list.phase, list.room)}`}
       >
         Back to the list
       </BackLink>

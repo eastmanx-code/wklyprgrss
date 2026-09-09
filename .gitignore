@@ -53,3 +53,4 @@ next-env.d.ts
 .adopt-check
 .due-check
 .name-check
+.slug-check

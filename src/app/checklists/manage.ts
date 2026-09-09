@@ -100,7 +100,7 @@ async function ownedChecklist(checklistId: string) {
   if (!venue) return null;
   const { data } = await db()
     .from("close_checklists")
-    .select("id, venue_id, house, role, phase")
+    .select("id, venue_id, house, role, phase, room")
     .eq("id", checklistId)
     .maybeSingle();
   const row = data as {
@@ -109,6 +109,7 @@ async function ownedChecklist(checklistId: string) {
     house: House;
     role: string;
     phase: Phase;
+    room: string | null;
   } | null;
   if (!row || row.venue_id !== venue) return null;
   return row;
@@ -134,8 +135,15 @@ async function ownedItem(itemId: string) {
   return list ? { item, list } : null;
 }
 
-function revalidateFor(list: { house: House; role: string; phase: Phase }) {
-  const slug = slugFor(list.house, list.role, list.phase);
+function revalidateFor(list: {
+  house: House;
+  role: string;
+  phase: Phase;
+  room?: string | null;
+}) {
+  // With the room, or a deep clean edit clears the cache for an address that
+  // does not exist and leaves the one somebody is looking at stale.
+  const slug = slugFor(list.house, list.role, list.phase, list.room);
   revalidatePath("/checklists");
   revalidatePath(`/checklists/${slug}`);
   revalidatePath(`/checklists/${slug}/edit`);
@@ -291,7 +299,7 @@ export async function createChecklist(
   const wanted = slugFor(house, role, phase);
   const { data: siblings } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase, active")
+    .select("id, house, role, phase, room, active")
     .eq("venue_id", venue);
 
   const found =
@@ -301,9 +309,12 @@ export async function createChecklist(
         house: House;
         role: string;
         phase: Phase;
+        room: string | null;
         active: boolean;
       }[]
-    ).find((row) => slugFor(row.house, row.role, row.phase) === wanted) ?? null;
+    ).find(
+      (row) => slugFor(row.house, row.role, row.phase, row.room) === wanted,
+    ) ?? null;
   if (found) {
     if (found.active) return { error: "That list already exists." };
     await db()
