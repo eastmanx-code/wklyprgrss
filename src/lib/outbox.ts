@@ -21,6 +21,8 @@
  * five megabytes of strings, and cannot take a photograph.
  */
 
+import { words } from "./trouble";
+
 const DB_NAME = "ww-close";
 const DB_VERSION = 2;
 const STORE = "outbox";
@@ -100,6 +102,22 @@ let open: Promise<IDBDatabase> | null = null;
  */
 let shut = false;
 
+/**
+ * What the browser actually said, the first time it refused.
+ *
+ * The refusal used to be reported as the words "queue unavailable" and nothing
+ * else, which is the same string whether the store threw, the open was blocked
+ * by a tab holding an older version, or the phone is out of room. Three
+ * different problems with three different fixes, and the record could not tell
+ * them apart — which is precisely the hole the record was added to close.
+ */
+let shutBecause: string | null = null;
+
+/** The browser's own words for why the queue is shut, if it is. */
+export function queueTrouble(): string | null {
+  return shutBecause;
+}
+
 function db(): Promise<IDBDatabase> {
   if (open) return open;
   open = new Promise<IDBDatabase>((resolve, reject) => {
@@ -115,11 +133,20 @@ function db(): Promise<IDBDatabase> {
       }
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-    // A version change nobody closed. It will never resolve on its own.
-    request.onblocked = () => reject(new Error("blocked"));
-  }).catch((error) => {
+    // request.error, not a message of our own. It is a DOMException whose name
+    // is the diagnosis: QuotaExceededError is a full phone, VersionError is a
+    // database newer than this build, UnknownError on iOS is usually the
+    // storage layer having given up on the whole origin.
+    request.onerror = () =>
+      reject(request.error ?? new Error("open failed with no error given"));
+    // A version change nobody closed. It will never resolve on its own, and on
+    // a phone with a dozen Safari tabs it is the likeliest of the three: one
+    // old tab holding version 1 open blocks every new one for ever.
+    request.onblocked = () =>
+      reject(new Error("blocked by another tab holding an older version"));
+  }).catch((error: unknown) => {
     shut = true;
+    shutBecause = words(error);
     open = null;
     throw error;
   });
@@ -155,6 +182,18 @@ function run<T>(
  */
 export function canQueue(): boolean {
   return typeof indexedDB !== "undefined" && !shut;
+}
+
+/**
+ * Why a caller that skipped the queue skipped it.
+ *
+ * `canQueue` answers yes or no and the no has two causes: a browser with no
+ * IndexedDB at all, and a store that refused to open earlier in this page's
+ * life. They are not the same problem and the record has to say which.
+ */
+export function whyNotQueued(): string {
+  if (typeof indexedDB === "undefined") return "no indexedDB in this browser";
+  return shutBecause ?? "the store is shut for a reason nobody recorded";
 }
 
 /**
@@ -199,7 +238,12 @@ export async function enqueue(op: TickOp): Promise<boolean> {
  */
 export type Held =
   | { stored: true }
-  | { stored: false; reason: "full" | "unavailable" };
+  | {
+      stored: false;
+      reason: "full" | "unavailable";
+      /** What the browser said, where it said anything. */
+      why?: string;
+    };
 
 /**
  * Put a capture in the queue, bytes and all.
@@ -218,8 +262,10 @@ export async function enqueueProof(op: ProofOp, blob: Blob): Promise<Held> {
     await run(BLOBS, "readwrite", (store) => store.put(blob, op.key));
     await run(STORE, "readwrite", (store) => store.put(op));
     return { stored: true };
-  } catch {
-    return { stored: false, reason: "unavailable" };
+  } catch (problem) {
+    // The browser's own words, carried out rather than swallowed. Without
+    // them every refusal reads the same and none of them names a fix.
+    return { stored: false, reason: "unavailable", why: words(problem) };
   }
 }
 
