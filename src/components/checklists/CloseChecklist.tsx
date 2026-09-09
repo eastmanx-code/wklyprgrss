@@ -13,9 +13,10 @@ import {
   flush,
   pending as pendingWork,
   proofKey,
-  queued,
   queueWorks,
+  queued,
   tickKey,
+  whyNotQueued,
   type Held,
   type Op,
   type ProofOp,
@@ -911,7 +912,7 @@ export function CloseChecklist({
 
     const held: Held = canQueue()
       ? await enqueueProof(op, upload)
-      : { stored: false, reason: "unavailable" };
+      : { stored: false, reason: "unavailable", why: whyNotQueued() };
 
     if (!held.stored) {
       // Nowhere to keep it, so it goes now or not at all. Whether that worked
@@ -940,6 +941,11 @@ export function CloseChecklist({
         step: "store",
         detail: [
           held.reason === "full" ? "queue full" : "queue unavailable",
+          // The browser's own words. Without them every refusal reads the
+          // same and none of them names a fix: a full phone, a tab holding
+          // an older version open, and a storage layer that has given up on
+          // the origin are three problems with one string between them.
+          held.why,
           why,
         ]
           .filter(Boolean)
