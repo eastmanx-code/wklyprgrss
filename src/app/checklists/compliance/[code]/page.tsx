@@ -240,10 +240,13 @@ function Facts({ list, warn }: { list: ListVerdict; warn?: boolean }) {
       <p className={`text-title font-medium ${warn ? "text-on-warn" : ""}`}>
         {list.name}
       </p>
-      <dl className="mt-2 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
+      {/* One label column width on every card, and baselines that meet.
+          Sized to the widest label the page uses, so "checked off" sits in
+          the same place whether or not "not checked off" is on the card. */}
+      <dl className="mt-2 grid grid-cols-[8.5rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1">
         {list.facts.map((fact) => (
           <Fragment key={fact.label}>
-            <dt className={`label pt-0.5 ${warn ? "text-on-warn/70" : ""}`}>
+            <dt className={`label ${warn ? "text-on-warn/70" : ""}`}>
               {fact.label}
             </dt>
             <dd

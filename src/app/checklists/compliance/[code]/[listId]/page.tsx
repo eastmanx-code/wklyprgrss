@@ -99,8 +99,8 @@ export default async function ListCompliancePage({
           short ? "bg-warn text-on-warn" : "bg-inset"
         }`}
       >
-        <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
-          <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+        <dl className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1">
+          <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
             checked off
           </dt>
           <dd
@@ -111,7 +111,7 @@ export default async function ListCompliancePage({
             {detail.ticked} of {detail.owed}
             {by ? ` by ${by}` : detail.ticked > 0 ? " by no initials" : ""}
           </dd>
-          <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+          <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
             signed off
           </dt>
           <dd
@@ -134,7 +134,7 @@ export default async function ListCompliancePage({
               not judged. */}
           {detail.verifiedBy ? (
             <>
-              <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+              <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
                 verified
               </dt>
               <dd className={`text-body ${short ? "" : "text-muted"}`}>
@@ -146,7 +146,7 @@ export default async function ListCompliancePage({
           ) : null}
           {detail.reopened > 0 ? (
             <>
-              <dt className={`label pt-0.5 ${short ? "text-on-warn/70" : ""}`}>
+              <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
                 signature
               </dt>
               <dd className="text-body font-medium">

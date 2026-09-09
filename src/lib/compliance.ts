@@ -231,15 +231,17 @@ export function verdictOf(
 /**
  * What was left, said as things rather than as a number where that is short
  * enough to read. Titles on these lists run to a paragraph, so each is cut
- * to its first clause.
+ * to its first clause: up to the first full stop, colon or comma, and no
+ * more than a few words. "Detail both carts" is the thing; the rest of the
+ * sentence is on the list's own page.
  */
 function leftWords(titles: string[]): string {
   if (titles.length === 0) return "nothing";
   if (titles.length > 3) return `${titles.length} things`;
   return titles
     .map((t) => {
-      const first = t.split(/[.:]/)[0].trim();
-      return first.length > 48 ? `${first.slice(0, 46).trim()}…` : first;
+      const first = t.split(/[.:,(]/)[0].trim();
+      return first.length > 32 ? `${first.slice(0, 30).trim()}…` : first;
     })
     .join(", ")
     .toLowerCase();
