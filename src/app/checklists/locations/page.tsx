@@ -206,20 +206,21 @@ export default async function LocationsPage() {
            * you is why the order is what it is. The arrow says it opens. */
           <ul className="-mx-3 space-y-[2px]">
             {[...running, ...idle].map((row) => (
-              <VenueBar key={row.id} row={row} />
+              <VenueBar key={row.id} row={row} night={night} />
             ))}
           </ul>
         )}
 
-        {lists > 0 ? (
+        {/* Only when there is a group to report on. With one venue running,
+            the group page is that venue again by another road, and a button
+            called "full report" beside a row that already opens the venue's
+            night read as a second, better report that did not exist. */}
+        {running.length > 1 ? (
           <Link
             href={`/checklists/compliance?night=${night}`}
             className="ring-card-border text-ink mt-5 inline-flex min-h-11 items-center gap-2 self-start rounded px-4 text-label tracking-[0.08em] ring-1"
           >
-            <T en="Full report" es="Reporte completo" />
-            <span className="text-muted">
-              <T en="who signed, what was left" es="quién firmó, qué quedó" />
-            </span>
+            <T en="Every venue, last night" es="Todos los lugares, anoche" />
           </Link>
         ) : null}
       </Card>
@@ -271,18 +272,22 @@ export default async function LocationsPage() {
  * Same fixed columns, so the scores line up down the left however long the
  * names are, and the same one height whatever it scored. Order carries
  * severity; the bar does not grow to shout.
+ *
+ * Two doors on one bar. The code and score open the venue's lists, which
+ * is what the page is titled for. The fails open the venue's night, which
+ * is what the fails are about. One link for the whole bar sent "3 fails"
+ * to the tick screen, and the report it was describing was nowhere.
  */
-function VenueBar({ row }: { row: Row }) {
+function VenueBar({ row, night }: { row: Row; night: string }) {
   const failed = row.tier === "fail";
+  const shell = failed
+    ? "bg-warn text-on-warn hover:bg-warn/90"
+    : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset";
   return (
-    <li>
+    <li className="flex gap-[2px]">
       <Link
         href={`/checklists/enter/${row.id}`}
-        className={`bg-inset flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${
-          failed
-            ? "bg-warn text-on-warn hover:bg-warn/90"
-            : "hover:ring-muted/30 hover:ring-1 hover:ring-inset"
-        }`}
+        className={`flex min-w-0 flex-1 items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
       >
         <span
           className={`text-title w-16 shrink-0 tracking-[0.08em] ${
@@ -304,17 +309,25 @@ function VenueBar({ row }: { row: Row }) {
         >
           {row.score}
         </span>
-        <span
-          className={`label ml-auto shrink-0 text-right ${
-            failed ? "text-on-warn" : ""
-          }`}
-        >
-          <T en={row.note} es={row.noteEs} />
-        </span>
-        <span className="shrink-0" aria-hidden>
-          →
+        <span className={`label ml-auto ${failed ? "text-on-warn" : ""}`}>
+          <T en="open lists" es="abrir listas" />
         </span>
       </Link>
+      {row.tier ? (
+        <Link
+          href={`/checklists/compliance/${row.code}?night=${night}`}
+          className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 ${shell}`}
+        >
+          <span className={`label ${failed ? "text-on-warn" : ""}`}>
+            <T en={row.note} es={row.noteEs} />
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      ) : (
+        <span className={`label flex items-center rounded-[4px] px-3 ${shell}`}>
+          <T en={row.note} es={row.noteEs} />
+        </span>
+      )}
     </li>
   );
 }
