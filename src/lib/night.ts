@@ -176,6 +176,24 @@ export function formatNight(night: string): string {
   return nightLabelFormatter.format(new Date(Date.UTC(y, m - 1, d)));
 }
 
+const weekdayFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: "UTC",
+  weekday: "short",
+});
+
+/**
+ * "Tue Sep 8 · into Wed" — both ends of the night, because it has two.
+ *
+ * A close signed at three in the morning belongs to the night that started
+ * the evening before, and a page headed with only that evening's date, read
+ * the next afternoon, made a manager ask what day it was. Fair question.
+ */
+export function formatNightSpan(night: string): string {
+  const [y, m, d] = shiftNights(night, 1).split("-").map(Number);
+  const morning = weekdayFormatter.format(new Date(Date.UTC(y, m - 1, d)));
+  return `${formatNight(night)} · into ${morning}`;
+}
+
 const nightLabelFormatterEs = new Intl.DateTimeFormat("es-MX", {
   timeZone: "UTC",
   weekday: "short",

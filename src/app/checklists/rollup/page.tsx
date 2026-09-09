@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 
 import { MissedList } from "@/components/checklists/MissedList";
 import { BackLink } from "@/components/ui";
+import { formatNight } from "@/lib/night";
 import { groupRollup, venueRollup } from "@/lib/rollup";
+import { listName } from "@/lib/slug";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 
@@ -94,7 +96,7 @@ export default async function RollupPage() {
 
   const nights = real.nights;
   const strip = real.strip;
-  const certified = real.certified;
+  const unsigned = real.unsigned;
   const missed = real.missed;
   const byRole = real.byRole;
   const certifiers = real.certifiers;
@@ -123,9 +125,9 @@ export default async function RollupPage() {
           header that costs half a phone screen is not a header. */}
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Nights certified</p>
+          <p className="label">Lists signed</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {certified} of {nights}
+            {real.signed} of {real.owed}
           </p>
         </div>
         <div
@@ -142,17 +144,30 @@ export default async function RollupPage() {
         <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
           <span className="label flex items-center gap-2">
             <span className="bg-ink/20 size-3 rounded-[2px]" />
-            All complete
+            Every list
           </span>
           <span className="label flex items-center gap-2">
             <span className="bg-warn/40 size-3 rounded-[2px]" />
-            Signed with gaps
+            Most
           </span>
           <span className="label flex items-center gap-2">
             <span className="bg-warn size-3 rounded-[2px]" />
-            Never certified
+            Half or fewer
           </span>
         </div>
+        {/* The answer to "which ones", on the page, so nobody has to ask. */}
+        {unsigned && unsigned.lists.length > 0 ? (
+          <p className="note text-muted mt-3">
+            Not signed {formatNight(unsigned.night)}:{" "}
+            {unsigned.lists
+              .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
+              .join(" · ")}
+          </p>
+        ) : unsigned ? (
+          <p className="note text-muted mt-3">
+            Every list signed {formatNight(unsigned.night)}.
+          </p>
+        ) : null}
       </section>
 
       <div className="space-y-4">

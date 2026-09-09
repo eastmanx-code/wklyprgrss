@@ -1,6 +1,7 @@
 import "server-only";
 
 import { db } from "./supabase";
+import { dueOnNight } from "./due";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 
@@ -90,7 +91,7 @@ export async function closeStatus(
       db().from("venues").select("id, code").eq("close_active", true),
       db()
         .from("close_items")
-        .select("id, checklist_id")
+        .select("id, checklist_id, section")
         .in("checklist_id", ids)
         .eq("active", true),
       db()
@@ -106,7 +107,11 @@ export async function closeStatus(
       v.code,
     ]),
   );
-  const items = (itemRows ?? []) as { id: string; checklist_id: string }[];
+  const items = (itemRows ?? []) as {
+    id: string;
+    checklist_id: string;
+    section: string | null;
+  }[];
   const nights = (nightRows ?? []) as {
     id: string;
     checklist_id: string;
@@ -136,10 +141,10 @@ export async function closeStatus(
   }
 
   const nightOf = new Map(nights.map((n) => [n.checklist_id, n]));
-  const tickedOn = new Map<string, number>();
+  const tickOf = new Set<string>();
   const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
   for (const t of ticks) {
-    tickedOn.set(t.night_id, (tickedOn.get(t.night_id) ?? 0) + 1);
+    tickOf.add(`${t.night_id}:${t.item_id}`);
     const held = timesOn.get(t.night_id);
     const stamp = { at: t.created_at, claimedAt: t.client_at };
     if (held) held.push(stamp);
@@ -156,9 +161,24 @@ export async function closeStatus(
   return checklists
     .filter((list) => code.has(list.venue_id))
     .map((list) => {
-      const owed = items.filter((i) => i.checklist_id === list.id).length;
       const row = nightOf.get(list.id);
-      const ticked = row ? (tickedOn.get(row.id) ?? 0) : 0;
+      // Only the items this night asked for. A deep clean carries one job per
+      // weekday under a heading that names the day, and counting all seven
+      // against tonight reported a list done exactly as written as signed
+      // with six still open — a failure, on the report, for doing it right.
+      // The same rule the drill-in page already used; this summary did not.
+      // Anything ticked counts whether or not it was owed, so a job done on
+      // the wrong day is still visible rather than quietly dropped.
+      const asked = items.filter(
+        (i) =>
+          i.checklist_id === list.id &&
+          (dueOnNight(i.section, night) ||
+            (row ? tickOf.has(`${row.id}:${i.id}`) : false)),
+      );
+      const owed = asked.length;
+      const ticked = row
+        ? asked.filter((i) => tickOf.has(`${row.id}:${i.id}`)).length
+        : 0;
       const certified = Boolean(row?.certified_at);
       return {
         night,

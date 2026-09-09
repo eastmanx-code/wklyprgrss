@@ -42,7 +42,7 @@ async function load(
 ): Promise<Loaded | null> {
   let checklistQuery = db()
     .from("close_checklists")
-    .select("id, venue_id, house, role, phase")
+    .select("id, venue_id, house, role, phase, room")
     .eq("active", true);
   if (venueIds) checklistQuery = checklistQuery.in("venue_id", venueIds);
 

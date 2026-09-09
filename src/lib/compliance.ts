@@ -4,7 +4,7 @@ import { closeStatus, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
 import { dueOnNight } from "./due";
 import { listName } from "./slug";
-import { currentNight, isNightOver, nightEndsAt, shiftNights } from "./night";
+import { currentNight, formatClock, isNightOver, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 import { tierOf } from "./status";
 
@@ -97,8 +97,14 @@ export function verdictOf(
     };
   }
 
+  const name = listName(row.role, row.room);
+  const count = `${row.ticked} of ${row.items_on_list}`;
+  // Who, and when. The when was missing, and a card that says "signed by
+  // Ethan" on a night that ran from four in the afternoon to four in the
+  // morning leaves the reader to guess which end.
   const who = row.certified_by?.trim();
-  const signed = who ? ` by ${who}` : "";
+  const at = row.certified_at ? formatClock(row.certified_at) : "";
+  const signature = [who, at].filter(Boolean).join(" ");
 
   if (row.certified) {
     if (row.open > 0) {
@@ -106,14 +112,14 @@ export function verdictOf(
         row,
         flag,
         state: "fail",
-        reason: `${listName(row.role, row.room)} · signed${signed} with ${row.open} still open`,
+        reason: `${name} · ${row.open} open · signed ${signature}`,
       };
     }
     return {
       row,
       flag,
       state: "pass",
-      reason: `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · signed${signed}`,
+      reason: `${name} · ${count} · ${signature}`,
     };
   }
 
@@ -122,9 +128,7 @@ export function verdictOf(
       row,
       flag,
       state: nightOver ? "fail" : "open",
-      reason: nightOver
-        ? `${listName(row.role, row.room)} · never opened · 0 of ${row.items_on_list}`
-        : `${listName(row.role, row.room)} · not started · 0 of ${row.items_on_list}`,
+      reason: nightOver ? `${name} · never opened` : `${name} · not started`,
     };
   }
 
@@ -133,10 +137,13 @@ export function verdictOf(
     flag,
     state: nightOver ? "fail" : "open",
     reason: nightOver
-      ? `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · nobody signed`
-      : `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · in progress`,
+      ? `${name} · ${count} · nobody signed`
+      : `${name} · ${count} · in progress`,
   };
 }
+
+/** The order a shift runs in, which is not the order the alphabet runs in. */
+const PHASE_ORDER: Record<string, number> = { open: 0, mid: 1, close: 2 };
 
 /** Fails first, then whatever is still open, then the ones that are done. */
 const STATE_ORDER: Record<ListState, number> = {
@@ -174,8 +181,11 @@ export async function nightCompliance(
       .sort(
         (a, b) =>
           STATE_ORDER[a.state] - STATE_ORDER[b.state] ||
-          a.row.role.localeCompare(b.row.role) ||
-          a.row.phase.localeCompare(b.row.phase),
+          // Then the shape of the night: opens, mids, closes. Sorted by role
+          // first, the passes read as a scramble of phases and the page had
+          // no order a person could see.
+          PHASE_ORDER[a.row.phase] - PHASE_ORDER[b.row.phase] ||
+          a.row.role.localeCompare(b.row.role),
       );
 
     // Empty lists are out of both halves of the ratio. Nobody can tick an item

@@ -10,7 +10,7 @@ import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
 import { failuresByRole, nightCompliance } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
-import { currentNight, formatNight } from "@/lib/night";
+import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -67,7 +67,7 @@ export default async function VenueCompliancePage({
           right building, and "HOOD" is not what anybody calls it. */}
       <header className="mt-4 mb-5">
         <p className="label">
-          {formatNight(night)}
+          {formatNightSpan(night)}
           {name === code ? "" : ` · ${code}`}
         </p>
         {/* Wraps rather than truncates. A venue whose name runs past the
@@ -95,11 +95,7 @@ export default async function VenueCompliancePage({
             {venue.bursted} {venue.bursted === 1 ? "list" : "lists"} ticked too
             fast to have been walked
           </h2>
-          <p className="note text-muted mt-3 leading-relaxed">
-            Marked on the lists below. It is a pace, not a verdict: somebody who
-            worked off paper and entered it after looks the same from here.
-            Worth asking about rather than acting on.
-          </p>
+          <p className="label mt-2">A pace, not a verdict. Ask, do not act.</p>
         </section>
       ) : null}
 

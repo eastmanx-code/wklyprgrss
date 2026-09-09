@@ -45,9 +45,12 @@ const ticks = [
 const r = computeRollup({ checklists, items, nights, ticks }, W);
 
 // Night 3 has no row anywhere, so the venue was not running: two nights count.
-is("strip", r.strip, "cg");
+// The strip is about signing: every list was signed on both, gaps or not.
+is("strip", r.strip, "cc");
 is("certified", r.certified, 2);
 is("nights", r.nights, 2);
+is("lists signed over the running nights", [r.signed, r.owed], [2, 2]);
+is("nothing unsigned on the latest night", r.unsigned, { night: W[1], lists: [] });
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
 is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);
 // 2 items x 2 nights = 4 owed; 3 ticks.
@@ -66,7 +69,14 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   is("ignored list: the venue ran three nights", ignored.nights, 3);
   is("ignored list: every item fully open", ignored.missed.map((m) => m.open), [3, 3]);
   is("ignored list: byRole", ignored.byRole, [{ role: "MOD", done: 0, of: 6 }]);
-  is("ignored list: no night is certified", ignored.strip, "mmm");
+  is("ignored list: half the lists signed reads as half or fewer", ignored.strip, "mmm");
+  is("ignored list: three of six signed", [ignored.signed, ignored.owed], [3, 6]);
+  // The question a manager asks of "3 of 6" is which ones. Named, with the
+  // room where there is one, so three deep cleans do not read as one word.
+  is("ignored list: the unsigned one is named", ignored.unsigned, {
+    night: W[2],
+    lists: [{ role: "MOD", room: null, phase: "close" }],
+  });
 }
 
 // A venue in its first week is not thirty of thirty on every line. Nights
@@ -78,7 +88,7 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
     W,
   );
   is("first week: only the nights it ran", firstWeek.nights, 1);
-  is("first week: strip is one night long", firstWeek.strip, "g");
+  is("first week: strip is one night long", firstWeek.strip, "c");
   is("first week: one item, one night, once", firstWeek.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 1]]);
   is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 1, of: 2 }]);
 }
@@ -91,6 +101,56 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   is("nothing recorded: nothing to rank", silent.missed, []);
   is("nothing recorded: no strip", silent.strip, "");
   is("nothing recorded: no roles", silent.byRole, []);
+}
+
+// Most of the lists signed is its own state: not every one, not half or
+// fewer. Three lists, two signed.
+{
+  const three = [
+    ...checklists,
+    { id: "L2", venue_id: "V", house: "HOH", role: "Line", phase: "close" },
+    { id: "L3", venue_id: "V", house: "FOH", role: "Deep clean", phase: "mid", room: "Noble" },
+  ];
+  const most = computeRollup({
+    checklists: three, items,
+    nights: [
+      { id: "n1", checklist_id: "L", night: W[0], certified_at: "t", certified_by: "Ana" },
+      { id: "n2", checklist_id: "L2", night: W[0], certified_at: "t", certified_by: "Bo" },
+      { id: "n3", checklist_id: "L3", night: W[0], certified_at: null, certified_by: null },
+    ],
+    ticks: [],
+  }, W);
+  is("most signed", most.strip, "g");
+  is("two of three", [most.signed, most.owed], [2, 3]);
+  is("the deep clean is named with its room", most.unsigned, {
+    night: W[0],
+    lists: [{ role: "Deep clean", room: "Noble", phase: "mid" }],
+  });
+}
+
+// Ranked by how many nights, not by what share. A deep clean job owed one
+// night and missed once sat at 100% above restrooms missed three nights out
+// of four, on a panel called "what keeps getting left open".
+{
+  const four = ["2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30"];
+  const lists = [
+    { id: "H", venue_id: "V", house: "FOH", role: "Host", phase: "close" },
+    { id: "D", venue_id: "V", house: "FOH", role: "Deep clean", phase: "mid", room: "Hood" },
+  ];
+  const rows = [
+    { id: "rest", checklist_id: "H", title: "Restrooms" },
+    // 2026-07-27 is a Monday: owed once in these four nights.
+    { id: "dust", checklist_id: "D", title: "Dust the shelves", section: "MONDAY" },
+  ];
+  const opened = four.flatMap((n, i) => [
+    { id: `h${i}`, checklist_id: "H", night: n, certified_at: "t", certified_by: "x" },
+    { id: `d${i}`, checklist_id: "D", night: n, certified_at: "t", certified_by: "x" },
+  ]);
+  // Restrooms done once in four. The deep clean never.
+  const ranked = computeRollup({ checklists: lists, items: rows, nights: opened, ticks: [{ night_id: "h3", item_id: "rest" }] }, four, isDue);
+  is("three of four outranks one of one",
+    ranked.missed.map((m) => [m.item, m.open, m.of]),
+    [["Restrooms", 3, 4], ["Dust the shelves", 1, 1]]);
 }
 
 // A perfect window reports nothing missed rather than rows of zeroes.
