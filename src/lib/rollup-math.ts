@@ -22,12 +22,12 @@
  * at the top. Four nights on the board is a small denominator and an honest
  * one, and the nights strip is where "they are barely using it" belongs.
  *
- * A night is CERTIFIED when every checklist the venue runs has a signature on
- * it. One list signed out of three is not a certified night.
- *
- * COMPLETE means certified with nothing left open. The strip separates the two
- * because "signed with gaps" is a different conversation from "nobody signed",
- * and collapsing them loses the one a GM can act on tonight.
+ * The strip and the headline count LISTS SIGNED, not nights certified. A
+ * night used to count only when every list the venue runs was signed, which
+ * put the bar where nobody clears it: the best night the pilot venue ever had,
+ * thirteen of fifteen signed, read "0 of 4 certified", and a manager asked
+ * which two were missed. So the number is lists, the strip shows how much of
+ * each night got signed, and the two that were not are named.
  */
 
 export type MissedRow = {
@@ -45,16 +45,42 @@ export type MissedRow = {
 /** How many nights the report looks back over. */
 export const WINDOW_NIGHTS = 30;
 
+/** Every list signed · most signed · half or fewer signed. */
 export type NightState = "c" | "g" | "m";
+
+/** A list on the night it was not signed, by name. */
+export type UnsignedList = { role: string; room: string | null; phase: string };
 
 export type Rollup = {
   /** Nights the venue was running, not nights on the calendar. */
   nights: number;
+  /** Nights where every list was signed. */
   certified: number;
+  /** Lists signed, over every list on every running night. */
+  signed: number;
+  owed: number;
   /** One character per night, oldest first. */
   strip: string;
+  /**
+   * The lists nobody signed on the most recent running night. The question a
+   * manager actually asks of "13 of 15" is "which two", and a report that
+   * makes him ask is a report he stops reading.
+   */
+  unsigned: { night: string; lists: UnsignedList[] } | null;
   missed: MissedRow[];
-  byRole: { role: string; done: number; of: number }[];
+  /**
+   * Per position: items done over items owed across the running nights, and
+   * how many of those nights the position opened a list at all. The second
+   * number is what explains the first. A barback at 50% who opened the list
+   * on two nights of four and did everything on both is not half a barback.
+   */
+  byRole: {
+    role: string;
+    done: number;
+    of: number;
+    opened: number;
+    nights: number;
+  }[];
   certifiers: { who: string; nights: number }[];
 };
 
@@ -66,6 +92,8 @@ export type ChecklistRow = {
   house: "FOH" | "HOH";
   role: string;
   phase: "open" | "mid" | "close";
+  /** So three deep cleans can be told apart when one of them is unsigned. */
+  room?: string | null;
 };
 /**
  * Whether an item was owed on a night.
@@ -158,27 +186,34 @@ export function computeRollup(
   for (const night of nights)
     nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
-  // Per night, across every checklist the venue runs.
+  // Per night, across every checklist the venue runs: how many got signed.
   let certified = 0;
+  let signed = 0;
+  let unsigned: Rollup["unsigned"] = null;
   const strip = live
     .map((night) => {
-      let allCertified = true;
-      let allComplete = true;
+      const missing: UnsignedList[] = [];
       for (const list of checklists) {
         const row = nightAt.get(`${list.id}:${night}`);
-        if (!row?.certified_at) {
-          allCertified = false;
-          allComplete = false;
-          continue;
-        }
-        const owed = itemsOf.get(list.id) ?? [];
-        if (owed.some((item) => !ticked.has(`${row.id}:${item.id}`)))
-          allComplete = false;
+        if (row?.certified_at) signed += 1;
+        else
+          missing.push({
+            role: list.role,
+            room: list.room ?? null,
+            phase: list.phase,
+          });
       }
-      if (allCertified) certified += 1;
-      return (allCertified ? (allComplete ? "c" : "g") : "m") as NightState;
+      const done = checklists.length - missing.length;
+      if (missing.length === 0) certified += 1;
+      // The window is oldest first, so the last one through here is the most
+      // recent night, which is the one somebody reads in the morning.
+      unsigned = { night, lists: missing };
+      const state: NightState =
+        missing.length === 0 ? "c" : done > missing.length ? "g" : "m";
+      return state;
     })
     .join("");
+  const owed = checklists.length * live.length;
 
   // What keeps getting left open. Every night the venue was running is a
   // chance to have done it, whether or not anyone opened this list.
@@ -205,7 +240,11 @@ export function computeRollup(
       };
     })
     .filter((row) => row.of > 0 && row.open > 0)
-    .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
+    // Count first, then rate. Sorted by rate, a deep clean job owed one night
+    // and missed once sat at 100% above restrooms missed three nights of
+    // four, on a panel called "what keeps getting left open". A thing missed
+    // once has not kept doing anything.
+    .sort((a, b) => b.open - a.open || b.open / b.of - a.open / a.of);
 
   // Completion by role, over the same window and the same denominator.
   const byRole = [...new Set(checklists.map((c) => c.role))]
@@ -213,6 +252,7 @@ export function computeRollup(
       const lists = checklists.filter((c) => c.role === role);
       let done = 0;
       let of = 0;
+      const openedOn = new Set<string>();
       for (const list of lists) {
         const owed = itemsOf.get(list.id) ?? [];
         for (const night of live) {
@@ -223,12 +263,13 @@ export function computeRollup(
           of += due.length;
           const row = nightAt.get(`${list.id}:${night}`);
           if (!row) continue;
+          openedOn.add(night);
           done += due.filter((item) =>
             ticked.has(`${row.id}:${item.id}`),
           ).length;
         }
       }
-      return { role, done, of };
+      return { role, done, of, opened: openedOn.size, nights: live.length };
     })
     .filter((row) => row.of > 0)
     .sort((a, b) => b.done / b.of - a.done / a.of);
@@ -246,7 +287,10 @@ export function computeRollup(
   return {
     nights: live.length,
     certified,
+    signed,
+    owed,
     strip,
+    unsigned,
     missed,
     byRole,
     certifiers,

@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 
 import { MissedList } from "@/components/checklists/MissedList";
 import { BackLink } from "@/components/ui";
+import { formatNight } from "@/lib/night";
 import { groupRollup, venueRollup } from "@/lib/rollup";
+import { listName } from "@/lib/slug";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 
@@ -94,7 +96,7 @@ export default async function RollupPage() {
 
   const nights = real.nights;
   const strip = real.strip;
-  const certified = real.certified;
+  const unsigned = real.unsigned;
   const missed = real.missed;
   const byRole = real.byRole;
   const certifiers = real.certifiers;
@@ -123,9 +125,9 @@ export default async function RollupPage() {
           header that costs half a phone screen is not a header. */}
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Nights certified</p>
+          <p className="label">Lists signed</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {certified} of {nights}
+            {real.signed} of {real.owed}
           </p>
         </div>
         <div
@@ -142,23 +144,36 @@ export default async function RollupPage() {
         <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
           <span className="label flex items-center gap-2">
             <span className="bg-ink/20 size-3 rounded-[2px]" />
-            All complete
+            Every list
           </span>
           <span className="label flex items-center gap-2">
             <span className="bg-warn/40 size-3 rounded-[2px]" />
-            Signed with gaps
+            Most
           </span>
           <span className="label flex items-center gap-2">
             <span className="bg-warn size-3 rounded-[2px]" />
-            Never certified
+            Half or fewer
           </span>
         </div>
+        {/* The answer to "which ones", on the page, so nobody has to ask. */}
+        {unsigned && unsigned.lists.length > 0 ? (
+          <p className="note text-muted mt-3">
+            Not signed {formatNight(unsigned.night)}:{" "}
+            {unsigned.lists
+              .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
+              .join(" · ")}
+          </p>
+        ) : unsigned ? (
+          <p className="note text-muted mt-3">
+            Every list signed {formatNight(unsigned.night)}.
+          </p>
+        ) : null}
       </section>
 
       <div className="space-y-4">
         {/* The point of the whole exercise. */}
         <section className="panel border-warn/30">
-          <p className="label">What keeps getting left open</p>
+          <p className="label">Left undone most often</p>
           <div className="mt-3">
             <MissedList rows={missed.slice(0, 12)} />
           </div>
@@ -169,31 +184,39 @@ export default async function RollupPage() {
             </p>
           ) : (
             <p className="label mt-3">
-              Ranked by how many nights the item finished with no tick against
-              it.
+              Nights it was owed and nobody signed it off.
             </p>
           )}
         </section>
 
         <section className="panel">
-          <p className="label">By role · items completed</p>
+          <p className="label">Each position · items signed off</p>
           <ul className="mt-3 space-y-3">
             {byRole.map((row) => (
-              <li key={row.role} className="flex items-center gap-3">
-                <span className="label w-24 shrink-0">{row.role}</span>
-                <Bar done={row.done} of={row.of} />
+              <li key={row.role}>
+                <div className="flex items-center gap-3">
+                  <span className="label w-24 shrink-0">{row.role}</span>
+                  <Bar done={row.done} of={row.of} />
+                </div>
+                {/* The number that explains the bar. A position at 50% that
+                    opened its list two nights of four and did everything on
+                    both is not half a position; it is a list not being
+                    opened, which is a different conversation. */}
+                {row.opened < row.nights ? (
+                  <p className="label text-warn mt-1 pl-[6.75rem]">
+                    opened the list {row.opened} of {row.nights} nights
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>
         </section>
 
         <section className="panel">
-          <p className="label">Certified by</p>
+          <p className="label">Who signs</p>
           <ul className="mt-3">
             {certifiers.length === 0 ? (
-              <li className="note text-muted">
-                Nobody has signed a night in this window.
-              </li>
+              <li className="note text-muted">Nobody has signed a list yet.</li>
             ) : null}
             {certifiers.map((row) => (
               <li
@@ -201,7 +224,9 @@ export default async function RollupPage() {
                 className="border-divider flex items-baseline justify-between gap-4 border-t py-2.5 first:border-t-0"
               >
                 <span className="text-body">{row.who}</span>
-                <span className="label tabular-nums">{row.nights} nights</span>
+                <span className="label tabular-nums">
+                  {row.nights} {row.nights === 1 ? "list" : "lists"}
+                </span>
               </li>
             ))}
           </ul>

@@ -934,6 +934,20 @@ export function CloseChecklist({
       ? await enqueueProof(op, upload)
       : { stored: false, reason: "unavailable", why: whyNotQueued() };
 
+    // Kept, but only the second way. Not a failure and nobody is told; the
+    // row is how we find out the fallback is carrying a phone, and which.
+    if (held.stored && held.fellBack) {
+      note({
+        step: "store",
+        detail: `blob refused, buffer kept · ${held.fellBack}`,
+        slug,
+        itemId: item.id ?? null,
+        shotIndex,
+        bytes: upload.size,
+        recovered: true,
+      });
+    }
+
     if (!held.stored) {
       // Nowhere to keep it, so it goes now or not at all. Whether that worked
       // decides the row: a queue that would not take the bytes is a warning
