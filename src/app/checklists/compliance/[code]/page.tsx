@@ -1,14 +1,10 @@
 import Link from "next/link";
-import { Fragment } from "react";
 import { notFound, redirect } from "next/navigation";
 
-import { NightNav } from "@/components/checklists/Compliance";
+import { ListBar, NightNav } from "@/components/checklists/Compliance";
+import { Card } from "@/components/Card";
 import { BackLink } from "@/components/ui";
-import {
-  nightCompliance,
-  type ListGroup,
-  type ListVerdict,
-} from "@/lib/compliance";
+import { nightCompliance, type ListGroup } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { shortOf } from "@/lib/short";
 import { currentNight, formatNightSpan } from "@/lib/night";
@@ -62,6 +58,9 @@ export default async function VenueCompliancePage({
   const name = await venueNameOf(code);
   const pile = (group: ListGroup) =>
     venue.lists.filter((list) => list.group === group);
+  // Not signed off first, then signed with something left: the worse fail
+  // on top.
+  const fails = [...pile("unsigned"), ...pile("gaps")];
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
@@ -98,177 +97,109 @@ export default async function VenueCompliancePage({
         </p>
       </header>
 
-      <Pile
-        title="Fail · not signed off"
-        rows={pile("unsigned")}
-        warn
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Fail · not checked off"
-        rows={pile("gaps")}
-        warn
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Still going"
-        rows={pile("going")}
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="checked off and signed off"
-        rows={pile("done")}
-        folded
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Nothing written on the list yet"
-        rows={pile("empty")}
-        code={code}
-        night={night}
-      />
+      {/* One panel, every list a bar, fails first. The same bars the weekly
+          board uses: name in the row, the verdict at the right, the facts in
+          small type under. It was two solid yellow cards with a paragraph
+          per list and a page of dead space under them. */}
+      <Card
+        title="Lists"
+        hint={[
+          fails.length > 0
+            ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
+            : "no fails",
+          ...(pile("going").length > 0
+            ? [`${pile("going").length} still going`]
+            : []),
+          ...(pile("done").length > 0
+            ? [`${pile("done").length} checked off and signed off`]
+            : []),
+        ].join(" · ")}
+      >
+        {fails.length > 0 ? (
+          <>
+            <ul className="space-y-[2px]">
+              {fails.map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-      <div className="mt-3">
-        <NightNav night={night} base={`/checklists/compliance/${code}`} />
-      </div>
+        {pile("going").length > 0 ? (
+          <>
+            <p className="label mt-5">Still going · {pile("going").length}</p>
+            <ul className="mt-2 space-y-[2px]">
+              {pile("going").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-      {/* The same rows over thirty nights: what keeps getting left. Reached
-          from here, where a manager is already looking at fails, and from
-          nowhere the crew opens. A line, not a third box. */}
-      <p className="mt-6">
-        <Link
-          href={`/checklists/rollup?code=${code}`}
-          className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
-        >
-          What keeps getting missed · last 30 nights
-          <span aria-hidden>→</span>
-        </Link>
-      </p>
-    </main>
-  );
-}
+        {pile("done").length > 0 ? (
+          <details className="group mt-5">
+            <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
+              <span>Checked off and signed off · {pile("done").length}</span>
+              <span className="text-muted">
+                <span className="group-open:hidden">show</span>
+                <span className="hidden group-open:inline">hide</span>
+              </span>
+            </summary>
+            <ul className="mt-2 space-y-[2px]">
+              {pile("done").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </details>
+        ) : null}
 
-/**
- * One pile of lists. Empty piles do not appear: "Nobody signed · 0" is a
- * line about nothing, and a good night should read shorter than a bad one.
- *
- * A folded pile shows its heading and count and opens on a tap. The lists
- * with no fail are the who record and belong on the page, but twelve of
- * them under two fails made the page mostly record, and the page is for
- * the fails.
- */
-function Pile({
-  title,
-  rows,
-  warn,
-  folded,
-  code,
-  night,
-}: {
-  title: string;
-  rows: ListVerdict[];
-  warn?: boolean;
-  folded?: boolean;
-  code: string;
-  night: string;
-}) {
-  if (rows.length === 0) return null;
-  // The two failure piles are solid yellow, the way the old FAIL cards were.
-  // Toned down to a thin border they read as one more grey box on a page of
-  // grey boxes, and the whole point of the page is that these two are not.
-  const shell = warn ? "bg-warn text-on-warn border-warn" : "panel";
-  const rule = warn ? "border-on-warn/25" : "border-divider";
-  const heading = (
-    <span className={`label ${warn ? "text-on-warn" : ""}`}>
-      {title} · {rows.length}
-    </span>
-  );
-  const list = (
-    <ul className={folded ? "" : "mt-3"}>
-      {rows.map((list) => (
-        /* Keyed on the list itself. Role plus phase plus house was unique
-             until a position could run three lists that share all three. */
-        <li
-          key={list.row.checklist_id}
-          className={`${rule} border-t py-2.5 first:border-t-0 first:pt-0`}
-        >
-          <Link
-            href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
-            className="block"
-          >
-            <Facts list={list} warn={warn} />
-          </Link>
-        </li>
-      ))}
-    </ul>
-  );
-  // Folded, it is one quiet line, not a third kind of box under two yellow
-  // ones: "12 lists checked off and signed off · show". Open, it is the
-  // same panel as the rest.
-  if (folded) {
-    return (
-      <details className="group mt-4">
-        <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
-          <span>
-            {rows.length} {rows.length === 1 ? "list" : "lists"} {title}
-          </span>
-          <span className="text-muted">
-            · <span className="group-open:hidden">show</span>
-            <span className="hidden group-open:inline">hide</span>
-          </span>
-        </summary>
-        <section className={`mt-2 rounded-[8px] border px-5 py-4 ${shell}`}>
-          {list}
-        </section>
-      </details>
-    );
-  }
-  return (
-    <section className={`mt-3 rounded-[8px] border px-5 py-4 ${shell}`}>
-      <p>{heading}</p>
-      {list}
-    </section>
-  );
-}
+        {pile("empty").length > 0 ? (
+          <>
+            <p className="label mt-5">
+              Nothing written on the list yet · {pile("empty").length}
+            </p>
+            <ul className="mt-2 space-y-[2px]">
+              {pile("empty").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-/**
- * One list, as lines.
- *
- * The name heavy and on its own line, then each fact under it with a small
- * label on the left: checked off, signed off, not checked off. It was one
- * sentence with dots in it, and at thirty-four items and two names it ran to
- * two lines in one weight and the eye had nowhere to land. The value that
- * is the fail is heavy too, so the reason reads before the rest does.
- */
-function Facts({ list, warn }: { list: ListVerdict; warn?: boolean }) {
-  return (
-    <div>
-      <p className={`text-title font-medium ${warn ? "text-on-warn" : ""}`}>
-        {list.name}
-      </p>
-      {/* One label column width on every card, and baselines that meet.
-          Sized to the widest label the page uses, so "checked off" sits in
-          the same place whether or not "not checked off" is on the card. */}
-      <dl className="mt-2 grid grid-cols-[8.5rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1">
-        {list.facts.map((fact) => (
-          <Fragment key={fact.label}>
-            <dt className={`label ${warn ? "text-on-warn/70" : ""}`}>
-              {fact.label}
-            </dt>
-            <dd
-              className={`text-body min-w-0 break-words ${
-                fact.warn ? "font-medium" : warn ? "text-on-warn" : "text-muted"
-              }`}
+        {/* The foot of the same panel: the night before, the thirty-night
+            view, the night after. Three things that were three orphans
+            down the page. */}
+        <div className="border-divider mt-5 border-t pt-4">
+          <NightNav night={night} base={`/checklists/compliance/${code}`}>
+            <Link
+              href={`/checklists/rollup?code=${code}`}
+              className="label hover:text-ink inline-flex min-h-11 items-center"
             >
-              {fact.value}
-            </dd>
-          </Fragment>
-        ))}
-      </dl>
-    </div>
+              What keeps getting missed
+            </Link>
+          </NightNav>
+        </div>
+      </Card>
+    </main>
   );
 }

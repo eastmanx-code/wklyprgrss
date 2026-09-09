@@ -89,74 +89,56 @@ export default async function ListCompliancePage({
         </h1>
       </header>
 
-      {/* The same two questions every level asks, answered for one list:
-          checked off by whom, signed off by whom. Yellow the moment either
-          answer is a fail. It used to say "never signed" over "last signed
-          off 2:07 AM" and "signature undone and redone", three lines that
-          each meant something and together meant nothing. */}
-      <section
-        className={`rounded-[4px] px-4 py-3 ${
+      {/* One bar, the same bar as every other level: the verdict on the
+          right, who checked and who signed underneath. */}
+      <div
+        className={`grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 rounded-[4px] px-4 py-3 ${
           short ? "bg-warn text-on-warn" : "bg-inset"
         }`}
       >
-        <dl className="grid grid-cols-[8.5rem_minmax(0,1fr)] items-baseline gap-x-3 gap-y-1">
-          <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
-            checked off
-          </dt>
-          <dd
-            className={`text-body ${
-              open.length > 0 ? "font-medium" : short ? "" : "text-muted"
-            }`}
-          >
-            {detail.ticked} of {detail.owed}
-            {by ? ` by ${by}` : detail.ticked > 0 ? " by no initials" : ""}
-          </dd>
-          <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
-            signed off
-          </dt>
-          <dd
-            className={`text-body ${
-              !signed ? "font-medium" : short ? "" : "text-muted"
-            }`}
-          >
+        <span className="text-body font-medium">
+          {detail.ticked} of {detail.owed} checked off
+        </span>
+        <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+          {!signed
+            ? "not signed off"
+            : open.length > 0
+              ? "not checked off"
+              : "checked off and signed off"}
+        </span>
+        <span
+          className={`col-span-2 text-label tracking-[0.08em] uppercase ${
+            short ? "text-on-warn/80" : "text-muted"
+          }`}
+        >
+          checked off{" "}
+          <span className={open.length > 0 ? "text-on-warn font-medium" : ""}>
+            {by
+              ? `by ${by}`
+              : detail.ticked > 0
+                ? "by no initials"
+                : "by nobody"}
+          </span>
+          {" · "}signed off{" "}
+          <span className={!signed ? "text-on-warn font-medium" : ""}>
             {signed
               ? `${detail.certifiedBy?.trim() || "no name"}${
                   detail.certifiedAt
                     ? ` ${formatClock(detail.certifiedAt)}`
                     : ""
                 }`
-              : detail.lastTickAt
-                ? "nobody"
-                : "nobody, and nobody opened it"}
-          </dd>
-          {/* The second signature, where there was one. A shared iPad makes
-              "one phone" true for two different people, so it is shown and
-              not judged. */}
-          {detail.verifiedBy ? (
-            <>
-              <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
-                verified
-              </dt>
-              <dd className={`text-body ${short ? "" : "text-muted"}`}>
-                {detail.verifiedBy.trim()}
-                {detail.verifiedAt ? ` ${formatClock(detail.verifiedAt)}` : ""}
-                {detail.sameDevice ? " · same phone as the signature" : ""}
-              </dd>
-            </>
-          ) : null}
-          {detail.reopened > 0 ? (
-            <>
-              <dt className={`label ${short ? "text-on-warn/70" : ""}`}>
-                signature
-              </dt>
-              <dd className="text-body font-medium">
-                undone {detail.reopened}{" "}
-                {detail.reopened === 1 ? "time" : "times"}
-              </dd>
-            </>
-          ) : null}
-        </dl>
-      </section>
+              : "nobody"}
+          </span>
+          {detail.verifiedBy
+            ? ` · verified ${detail.verifiedBy.trim()}${
+                detail.verifiedAt ? ` ${formatClock(detail.verifiedAt)}` : ""
+              }${detail.sameDevice ? " · same phone" : ""}`
+            : ""}
+          {detail.reopened > 0
+            ? ` · signature undone ${detail.reopened} ${detail.reopened === 1 ? "time" : "times"}`
+            : ""}
+        </span>
+      </div>
 
       {/* The lag is a fact, never an accusation. Since the offline queue
           shipped it mostly means somebody worked a cellar with no signal. */}

@@ -4,7 +4,11 @@ import { redirect } from "next/navigation";
 import { enrolVenue } from "./actions";
 
 import { Card } from "@/components/Card";
-import { NightNav, NightStrip } from "@/components/checklists/Compliance";
+import {
+  ListBar,
+  NightNav,
+  NightStrip,
+} from "@/components/checklists/Compliance";
 import { RunCard } from "@/components/checklists/RunCard";
 import { BackLink } from "@/components/ui";
 import { T } from "@/components/Lang";
@@ -195,11 +199,8 @@ export default async function LocationsPage({
         </h1>
       </header>
 
-      {/* The month, tappable. One square per night the group ran. */}
-      <NightStrip nights={strip} current={night} base="/checklists/locations" />
-
       {lists > 0 && ran.length >= 2 ? (
-        <div className="mt-4">
+        <div>
           <RunCard
             done={done}
             total={lists}
@@ -246,6 +247,19 @@ export default async function LocationsPage({
             )
           }
         >
+          {/* The month, tappable, inside the card it belongs to. One
+              square per night the group ran; the arrows in the foot step
+              one night at a time. */}
+          {strip.length > 0 ? (
+            <div className="mb-4">
+              <NightStrip
+                nights={strip}
+                current={night}
+                base="/checklists/locations"
+              />
+            </div>
+          ) : null}
+
           {running.length === 0 && idle.length === 0 ? (
             <p className="note text-muted leading-relaxed">
               <T
@@ -261,26 +275,24 @@ export default async function LocationsPage({
             </ul>
           )}
 
-          <p className="label mt-6">
-            <T
-              en="Score is lists checked off and signed off, out of ten."
-              es="La nota es listas marcadas y firmadas, sobre diez."
-            />
-          </p>
+          {/* The foot of the same card. The strip is for jumping; this is
+              for stepping. */}
+          <div className="border-divider mt-5 border-t pt-4">
+            <NightNav night={night} base="/checklists/locations" />
+          </div>
         </Card>
       </div>
 
-      {/* Last night, next night. The strip is for jumping; this is for
-          stepping. */}
-      <div className="mt-3">
-        <NightNav night={night} base="/checklists/locations" />
-      </div>
-
-      {/* Folded away. Adding a building is a thing you do once. */}
+      {/* A line, folded. Adding a building is a thing you do once, and a
+          panel for it under the report was one more box on a page of them. */}
       {candidates.length > 0 ? (
-        <details className="panel mt-4">
-          <summary className="card-title cursor-pointer list-none">
+        <details className="group mt-4">
+          <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
             <T en="Add a location" es="Agregar un lugar" />
+            <span className="text-muted">
+              <span className="group-open:hidden">show</span>
+              <span className="hidden group-open:inline">hide</span>
+            </span>
           </summary>
           <p className="note text-muted mt-3 leading-relaxed">
             <T
@@ -378,25 +390,15 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
         )}
       </div>
       {row.fails.length > 0 ? (
-        <ul className="mt-1">
-          {row.fails.map((list) => {
-            const why = list.facts.find((f) => f.warn);
-            return (
-              <li key={list.row.checklist_id}>
-                <Link
-                  href={`/checklists/compliance/${row.code}/${list.row.checklist_id}?night=${night}`}
-                  className="text-warn hover:bg-inset grid grid-cols-[minmax(0,1fr)] gap-y-0.5 rounded-[4px] px-3 py-2"
-                >
-                  <span className="text-body font-medium">{list.name}</span>
-                  {why ? (
-                    <span className="label text-warn min-w-0 truncate">
-                      {why.label} · {why.value}
-                    </span>
-                  ) : null}
-                </Link>
-              </li>
-            );
-          })}
+        <ul className="mt-[2px] space-y-[2px] pl-4">
+          {row.fails.map((list) => (
+            <ListBar
+              key={list.row.checklist_id}
+              list={list}
+              code={row.code}
+              night={night}
+            />
+          ))}
         </ul>
       ) : null}
     </li>

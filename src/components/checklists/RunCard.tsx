@@ -46,7 +46,12 @@ export function RunCard({
   return (
     <Card
       title={<T en="The run" es="La racha" />}
-      hint={<T en={`Last ${nights} nights`} es={`Últimas ${nights} noches`} />}
+      hint={
+        <T
+          en={`Last ${nights} nights · lists checked off and signed off, out of ten`}
+          es={`Últimas ${nights} noches · listas marcadas y firmadas, sobre diez`}
+        />
+      }
     >
       <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
         <Dial

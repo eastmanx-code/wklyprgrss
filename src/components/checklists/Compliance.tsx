@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import type { ListVerdict } from "@/lib/compliance";
 import { shiftNights, currentNight, formatNight } from "@/lib/night";
 
 /**
@@ -142,20 +143,30 @@ export function VerdictRow({
  * query string is not a control. Forward stops at tonight: there is nothing
  * to report on a night that has not happened.
  */
-export function NightNav({ night, base }: { night: string; base: string }) {
+export function NightNav({
+  night,
+  base,
+  children,
+}: {
+  night: string;
+  base: string;
+  /** Something for the middle of the row, so it is not an orphan below. */
+  children?: React.ReactNode;
+}) {
   const today = currentNight();
   const prev = shiftNights(night, -1);
   const next = shiftNights(night, 1);
   const canGoForward = next <= today;
 
   return (
-    <nav className="flex items-center justify-between gap-3">
+    <nav className="flex flex-wrap items-center justify-between gap-3">
       <Link
         href={`${base}?night=${prev}`}
         className="ring-card-border text-ink inline-flex min-h-11 items-center rounded px-4 text-label tracking-[0.08em] ring-1"
       >
         ← {formatNight(prev)}
       </Link>
+      {children}
       {canGoForward ? (
         <Link
           href={`${base}?night=${next}`}
@@ -222,5 +233,82 @@ export function NightStrip({
         ))}
       </div>
     </div>
+  );
+}
+
+/**
+ * One list as a bar, in the weekly board's proportions.
+ *
+ * The name on the left and what happened on the right, in one line; the two
+ * facts underneath in small type, with the one that failed in weight. Yellow
+ * only when it failed. The same bar at every level of the report, so a row
+ * here and a row on the locations screen are visibly the same object.
+ */
+export function ListBar({
+  list,
+  code,
+  night,
+}: {
+  list: ListVerdict;
+  code: string;
+  night: string;
+}) {
+  const failed = list.state === "fail";
+  const verdict =
+    list.group === "unsigned"
+      ? "not signed off"
+      : list.group === "gaps"
+        ? "not checked off"
+        : list.group === "going"
+          ? "still going"
+          : list.group === "empty"
+            ? "nothing on it"
+            : "checked off and signed off";
+  // The long fact last, so a name and a verdict are always on the first
+  // line and the item that was left runs on its own.
+  const facts = [...list.facts].sort(
+    (a, b) =>
+      Number(!!a.warn && a.label === "not checked off") -
+      Number(!!b.warn && b.label === "not checked off"),
+  );
+  return (
+    <li>
+      <Link
+        href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
+        className={`grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 rounded-[4px] px-4 py-3 ${
+          failed
+            ? "bg-warn text-on-warn hover:bg-warn/90"
+            : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
+        }`}
+      >
+        <span className="text-body font-medium">{list.name}</span>
+        <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+          {verdict}
+        </span>
+        <span
+          className={`col-span-2 text-label tracking-[0.08em] uppercase ${
+            failed ? "text-on-warn/80" : "text-muted"
+          }`}
+        >
+          {facts.map((fact, i) => (
+            <span key={fact.label}>
+              {i > 0 ? " · " : ""}
+              {fact.label}{" "}
+              <span
+                className={
+                  fact.warn
+                    ? failed
+                      ? "text-on-warn font-medium"
+                      : "font-medium"
+                    : ""
+                }
+              >
+                {fact.value}
+              </span>
+            </span>
+          ))}
+        </span>
+      </Link>
+    </li>
   );
 }
