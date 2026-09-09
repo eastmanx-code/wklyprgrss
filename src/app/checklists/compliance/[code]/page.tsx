@@ -123,7 +123,7 @@ export default async function VenueCompliancePage({
       >
         {fails.length > 0 ? (
           <>
-            <ul className="space-y-[2px]">
+            <ul className="space-y-3">
               {fails.map((list) => (
                 <ListBar
                   key={list.row.checklist_id}
@@ -140,7 +140,7 @@ export default async function VenueCompliancePage({
         {pile("going").length > 0 ? (
           <>
             <p className="label mt-5">Still going · {pile("going").length}</p>
-            <ul className="mt-2 space-y-[2px]">
+            <ul className="mt-2 space-y-3">
               {pile("going").map((list) => (
                 <ListBar
                   key={list.row.checklist_id}
@@ -164,7 +164,7 @@ export default async function VenueCompliancePage({
                 ▸
               </span>
             </summary>
-            <ul className="mt-2 space-y-[2px]">
+            <ul className="mt-2 space-y-3">
               {pile("done").map((list) => (
                 <ListBar
                   key={list.row.checklist_id}
@@ -182,7 +182,7 @@ export default async function VenueCompliancePage({
             <p className="label mt-5">
               Nothing written on the list yet · {pile("empty").length}
             </p>
-            <ul className="mt-2 space-y-[2px]">
+            <ul className="mt-2 space-y-3">
               {pile("empty").map((list) => (
                 <ListBar
                   key={list.row.checklist_id}

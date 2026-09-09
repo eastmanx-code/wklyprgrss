@@ -264,7 +264,7 @@ export default async function LocationsPage({
               />
             </p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-6">
               {[...running, ...idle].map((row) => (
                 <VenueBar key={row.id} row={row} night={night} />
               ))}
@@ -276,7 +276,7 @@ export default async function LocationsPage({
       {/* The run, under the night. What failed is the reason to open the
           page; how the month is going is the second thing. */}
       {lists > 0 && ran.length >= 2 ? (
-        <div className="mt-4">
+        <div className="mt-6">
           <RunCard
             done={done}
             total={lists}
@@ -291,16 +291,13 @@ export default async function LocationsPage({
         </div>
       ) : null}
 
-      {/* A line, folded. Adding a building is a thing you do once, and a
-          panel for it under the report was one more box on a page of them. */}
+      {/* A small button, folded. Adding a building is a thing you do once,
+          and a panel for it under the report was one more box on a page of
+          them. */}
       {candidates.length > 0 ? (
-        <details className="group mt-4">
-          <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
+        <details className="group mt-6">
+          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center rounded px-4 text-label tracking-[0.08em] ring-1">
             <T en="Add a location" es="Agregar un lugar" />
-            <span className="text-muted">
-              <span className="group-open:hidden">show</span>
-              <span className="hidden group-open:inline">hide</span>
-            </span>
           </summary>
           <p className="note text-muted mt-3 leading-relaxed">
             <T
@@ -397,14 +394,17 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
           </span>
         )}
       </div>
+      {/* The same left edge as the venue's bar. Indented, the page had
+          three edges and nothing lined up. */}
       {row.fails.length > 0 ? (
-        <ul className="mt-[2px] space-y-[2px] pl-4">
+        <ul className="mt-3 space-y-3">
           {row.fails.map((list) => (
             <ListBar
               key={list.row.checklist_id}
               list={list}
               code={row.code}
               night={night}
+              full
             />
           ))}
         </ul>

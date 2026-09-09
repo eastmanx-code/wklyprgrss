@@ -53,8 +53,9 @@ export function RunCard({
         />
       }
     >
-      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
+      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[120px_minmax(0,1fr)_auto]">
         <Dial
+          size={120}
           percent={share}
           label={`${Math.round(share / 10)}/10`}
           caption={<T en="score · last night" es="nota · anoche" />}

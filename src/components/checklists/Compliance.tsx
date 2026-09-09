@@ -218,7 +218,7 @@ export function NightStrip({
       {/* A day number under each square. Without it the strip read as a
           row of venues to somebody seeing it cold, and a calendar that
           needs explaining is not a calendar. */}
-      <div className="grid grid-cols-10 gap-1 lg:grid-cols-15">
+      <div className="grid grid-cols-10 gap-2 lg:grid-cols-15">
         {nights.map((n) => (
           <Link
             key={n.night}
@@ -302,32 +302,36 @@ export function ListBar({
     <li>
       <Link
         href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
-        className={`grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 rounded-[4px] px-4 py-3 ${
+        className={`flex flex-col gap-y-1 rounded-[4px] px-5 py-4 ${
           failed
             ? "bg-warn text-on-warn hover:bg-warn/90"
             : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
         }`}
       >
-        <span className="text-body font-medium">{list.name}</span>
-        <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
-          {verdict}
+        {/* Name left, verdict right, and the verdict drops under the name
+            on a phone rather than squeezing it. */}
+        <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <span className="text-body font-medium">{list.name}</span>
+          <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+            {verdict}
+          </span>
         </span>
         {/* The missing items, one to a line, in full, where the page is
             for acting on them; the first clause where it is a summary. */}
         {items ? (
-          <ul className="col-span-2 text-body font-medium">
+          <ul className="text-body leading-relaxed font-medium">
             {items.map((title) => (
               <li key={title}>{title}</li>
             ))}
           </ul>
         ) : missing.length > 0 ? (
-          <span className="col-span-2 text-body font-medium">
+          <span className="text-body leading-relaxed font-medium">
             {line(missing)}
           </span>
         ) : null}
         {record.length > 0 ? (
           <span
-            className={`col-span-2 text-body ${
+            className={`text-body leading-relaxed ${
               failed ? "text-on-warn/75" : "text-muted"
             }`}
           >
