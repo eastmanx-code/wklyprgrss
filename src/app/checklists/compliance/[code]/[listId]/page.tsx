@@ -6,7 +6,7 @@ import { phaseName } from "@/lib/checklists";
 import { listDetail } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
 import { currentNight, formatClock, formatNight } from "@/lib/night";
-import { describeLag, describeSpan } from "@/lib/pace";
+import { describeLag } from "@/lib/pace";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
