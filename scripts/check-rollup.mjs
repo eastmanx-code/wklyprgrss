@@ -3,10 +3,11 @@
  *
  *   npm run check-rollup
  *
- * Every number on the rollup comes out of computeRollup, and the three
- * definitions it encodes are arguable — a night nobody opened counting against
- * every item, one list signed out of two not being a certified night. Cases
- * worked out by hand, so that changing a definition has to be deliberate.
+ * Every number on the rollup comes out of computeRollup, and the definitions
+ * it encodes are arguable: which nights count at all, a night nobody opened
+ * the list counting against every item on it, one list signed out of two not
+ * being a certified night. Cases worked out by hand, so that changing a
+ * definition has to be deliberate.
  */
 import { computeRollup, computeGroup } from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
@@ -43,20 +44,54 @@ const ticks = [
 ];
 const r = computeRollup({ checklists, items, nights, ticks }, W);
 
-is("strip", r.strip, "cgm");
+// Night 3 has no row anywhere, so the venue was not running: two nights count.
+is("strip", r.strip, "cg");
 is("certified", r.certified, 2);
-is("nights", r.nights, 3);
-// i1 open only on night 3; i2 open on nights 2 and 3.
-is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 2, 3], ["Back door", 1, 3]]);
-// 2 items x 3 nights = 6 owed; 3 ticks.
-is("byRole", r.byRole, [{ role: "MOD", done: 3, of: 6 }]);
+is("nights", r.nights, 2);
+// i1 ticked both nights and so is not on the list at all; i2 open on night 2.
+is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);
+// 2 items x 2 nights = 4 owed; 3 ticks.
+is("byRole", r.byRole, [{ role: "MOD", done: 3, of: 4 }]);
 is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
 
-// A night nobody opened must count against every item, not be skipped.
-const none = computeRollup({ checklists, items, nights: [], ticks: [] }, W);
-is("never opened: strip", none.strip, "mmm");
-is("never opened: every item fully open", none.missed.map((m) => m.open), [3, 3]);
-is("never opened: byRole", none.byRole, [{ role: "MOD", done: 0, of: 6 }]);
+// ------------------------------------------------------- which nights count
+//
+// The venue was running — another of its lists has a row — but this list was
+// never opened. Those nights still count against every item on it. That is
+// the whole point of the panel and the part that must not be softened.
+{
+  const line = { id: "L2", venue_id: "V", house: "HOH", role: "Line", phase: "close" };
+  const ranAll = W.map((n, i) => ({ id: `o${i}`, checklist_id: "L2", night: n, certified_at: "t", certified_by: "Bo" }));
+  const ignored = computeRollup({ checklists: [...checklists, line], items, nights: ranAll, ticks: [] }, W);
+  is("ignored list: the venue ran three nights", ignored.nights, 3);
+  is("ignored list: every item fully open", ignored.missed.map((m) => m.open), [3, 3]);
+  is("ignored list: byRole", ignored.byRole, [{ role: "MOD", done: 0, of: 6 }]);
+  is("ignored list: no night is certified", ignored.strip, "mmm");
+}
+
+// A venue in its first week is not thirty of thirty on every line. Nights
+// before it joined, and nights it was dark, are not nights it missed
+// anything — and a panel where everything ties at 100% ranks nothing.
+{
+  const firstWeek = computeRollup(
+    { checklists, items, nights: [nights[1]], ticks: [{ night_id: "n2", item_id: "i1" }] },
+    W,
+  );
+  is("first week: only the nights it ran", firstWeek.nights, 1);
+  is("first week: strip is one night long", firstWeek.strip, "g");
+  is("first week: one item, one night, once", firstWeek.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 1]]);
+  is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 1, of: 2 }]);
+}
+
+// Nothing recorded at all. The caller shows the one honest line instead of
+// this, but the arithmetic must not invent a window to fill.
+{
+  const silent = computeRollup({ checklists, items, nights: [], ticks: [] }, W);
+  is("nothing recorded: no nights", silent.nights, 0);
+  is("nothing recorded: nothing to rank", silent.missed, []);
+  is("nothing recorded: no strip", silent.strip, "");
+  is("nothing recorded: no roles", silent.byRole, []);
+}
 
 // A perfect window reports nothing missed rather than rows of zeroes.
 const perfect = computeRollup({
@@ -74,7 +109,7 @@ const two = computeRollup({
   nights: [{ id: "n1", checklist_id: "L", night: W[0], certified_at: "t", certified_by: "Ana" }],
   ticks: [{ night_id: "n1", item_id: "i1" }, { night_id: "n1", item_id: "i2" }],
 }, W);
-is("partial signing is not certified", two.strip, "mmm");
+is("partial signing is not certified", two.strip, "m");
 is("partial signing: certified count", two.certified, 0);
 
 // Group: two venues, ranked by share done.
@@ -93,7 +128,34 @@ const group = computeGroup({
   ],
   ticks: [{ night_id: "n1", item_id: "i1" }],
 }, W, new Map([["V1", "HAWK"], ["V2", "ISFO"]]));
-is("group", group, [{ code: "HAWK", done: 1, of: 3 }, { code: "ISFO", done: 0, of: 3 }]);
+is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, of: 1 }]);
+
+// Two venues that joined in different weeks are each scored over their own
+// nights. One set of running nights shared between them would mark the newer
+// venue down for the nights the older one was open.
+{
+  const staggered = computeGroup({
+    checklists: [
+      { id: "L", venue_id: "V1", house: "FOH", role: "MOD", phase: "close" },
+      { id: "M", venue_id: "V2", house: "FOH", role: "MOD", phase: "close" },
+    ],
+    items: [
+      { id: "i1", checklist_id: "L", title: "A" },
+      { id: "i2", checklist_id: "M", title: "A" },
+    ],
+    nights: [
+      // V1 has been running all three nights and does it every night.
+      ...W.map((n, i) => ({ id: `a${i}`, checklist_id: "L", night: n, certified_at: "t", certified_by: "x" })),
+      // V2 joined on the last night and did it.
+      { id: "b2", checklist_id: "M", night: W[2], certified_at: "t", certified_by: "y" },
+    ],
+    ticks: [
+      ...W.map((_, i) => ({ night_id: `a${i}`, item_id: "i1" })),
+      { night_id: "b2", item_id: "i2" },
+    ],
+  }, W, new Map([["V1", "HAWK"], ["V2", "ISFO"]]));
+  is("staggered joins", staggered, [{ code: "HAWK", done: 3, of: 3 }, { code: "ISFO", done: 1, of: 1 }]);
+}
 
 // ------------------------------------------------------- the deep clean rota
 //

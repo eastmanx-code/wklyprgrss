@@ -446,7 +446,9 @@ export function failuresByRole(
  */
 export async function nightTrend(
   window: string[],
-): Promise<{ night: string; ticked: number; signed: number }[]> {
+): Promise<
+  { night: string; ticked: number; signed: number; ran: boolean }[]
+> {
   if (window.length === 0) return [];
 
   const { data: checklistRows } = await db()
@@ -509,6 +511,12 @@ export async function nightTrend(
       night,
       ticked: owedPerNight === 0 ? 0 : (ticked / owedPerNight) * 100,
       signed: listsPerNight === 0 ? 0 : (signed / listsPerNight) * 100,
+      // Whether anybody opened anything at all. A night before the programme
+      // started is not a night at nought, and a line that runs flat along the
+      // floor for three weeks and then climbs is not a trend, it is the date
+      // the app was installed. The calendar strip still wants every night,
+      // which is why this is a flag rather than a shorter list.
+      ran: rows.length > 0,
     };
   });
 }
