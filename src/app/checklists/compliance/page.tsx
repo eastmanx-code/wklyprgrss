@@ -4,14 +4,23 @@ import { redirect } from "next/navigation";
 import { Card } from "@/components/Card";
 import { RunCard } from "@/components/checklists/RunCard";
 import { BackLink } from "@/components/ui";
-import { NightStrip, ScoreBar } from "@/components/checklists/Compliance";
+import {
+  NightNav,
+  NightStrip,
+  ScoreBar,
+} from "@/components/checklists/Compliance";
 import {
   nightCompliance,
   nightTrend,
   type VenueCompliance,
 } from "@/lib/compliance";
 import { closeVenueId } from "@/lib/close-venue";
-import { currentNight, formatNight, isNightOver } from "@/lib/night";
+import {
+  currentNight,
+  formatNight,
+  isNightOver,
+  shiftNights,
+} from "@/lib/night";
 import { nightWindow } from "@/lib/rollup";
 import { getSession } from "@/lib/session";
 import { shortOf } from "@/lib/short";
@@ -90,8 +99,18 @@ export default async function CompliancePage({
 
   // The shape behind the night. Drawn only for a leader's own venue or the
   // whole group, never for a single venue on the group screen.
+  // The window runs to tonight whichever night is open. Ended at the night
+  // being read, every step back shrank the strip by a square and took the
+  // later nights with it, so there was no way forward but the address bar.
+  const today = currentNight();
   const window = nightWindow(30, night);
-  const trend = await nightTrend(window);
+  const span: string[] = [...window];
+  for (let n = shiftNights(night, 1); n <= today && span.length < 90; ) {
+    span.push(n);
+    n = shiftNights(n, 1);
+  }
+  const all = await nightTrend(span);
+  const trend = all.filter((t) => t.night <= night);
   // Only the nights something ran. Charted over the whole window, the line
   // began with three flat weeks at nought that were not bad nights, they were
   // nights before the venue had the app.
@@ -108,10 +127,12 @@ export default async function CompliancePage({
   // Running nights only. Thirty calendar squares over a venue four nights
   // into the app painted twenty six of them "nothing signed" for nights the
   // app did not exist, which is the 30 of 30 mistake wearing a different hat.
-  const strip = ran.map((t) => ({
-    night: t.night,
-    state: t.done >= 100 ? ("complete" as const) : ("short" as const),
-  }));
+  const strip = all
+    .filter((t) => t.ran)
+    .map((t) => ({
+      night: t.night,
+      state: t.done >= 100 ? ("complete" as const) : ("short" as const),
+    }));
 
   // Best and worst are only a comparison when there is something to compare
   // to. With one venue running they are the same row printed twice.
@@ -200,6 +221,12 @@ export default async function CompliancePage({
             Score is lists checked off and signed off, out of ten.
           </p>
         </Card>
+      </div>
+
+      {/* Last night, next night, the same as on a venue's page. The strip
+          alone is fine for jumping and useless for stepping. */}
+      <div className="mt-3">
+        <NightNav night={night} base="/checklists/compliance" />
       </div>
     </main>
   );

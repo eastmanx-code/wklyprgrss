@@ -46,10 +46,22 @@ export type ListState = "pass" | "fail" | "open" | "empty";
  */
 export type ListGroup = "unsigned" | "gaps" | "done" | "going" | "empty";
 
+/**
+ * One fact about a list, as a label and a value: "checked off · 18 of 20 by
+ * DA", "signed off · nobody". A row used to be one sentence with dots in it,
+ * and at thirty-four items and two names the sentence ran to two lines and
+ * the eye had nowhere to land. Lines it is.
+ */
+export type Fact = { label: string; value: string; warn?: boolean };
+
 export type ListVerdict = {
   row: CloseStatusRow;
   state: ListState;
   group: ListGroup;
+  /** "YB Bartender close": the list, with its room where it has one. */
+  name: string;
+  /** The same verdict as lines, for the page that lists them. */
+  facts: Fact[];
   /** Why, in the words the row itself justifies. Shown on the list. */
   reason: string;
   /**
@@ -117,19 +129,21 @@ export function verdictOf(
   // however it was worded. The field stays so the shape does not change.
   const flag = null;
 
+  // "YB Bartender close", so the row says which list without a badge above
+  // it. The phase is already a word; it does not need translating into one.
+  const name = `${listName(row.role, row.room)} ${row.phase}`;
+
   if (row.empty) {
     return {
       row,
       flag,
       state: "empty",
       group: "empty",
+      name,
+      facts: [{ label: "items", value: "nothing written on it yet" }],
       reason: `${listName(row.role, row.room)} · nothing written on it yet`,
     };
   }
-
-  // "YB Bartender close", so the row says which list without a badge above
-  // it. The phase is already a word; it does not need translating into one.
-  const name = `${listName(row.role, row.room)} ${row.phase}`;
   const count = `${row.ticked} of ${row.items_on_list}`;
   // Who, and when. The when was missing, and a card that says "signed by
   // Ethan" on a night that ran from four in the afternoon to four in the
@@ -146,14 +160,21 @@ export function verdictOf(
 
   if (row.certified) {
     if (row.open > 0) {
+      // The things themselves, where there are few enough to read. Three
+      // names is a to-do list; nine is a count.
+      const left = leftWords(row.open_titles);
       return {
         row,
         flag,
         state: "fail",
         group: "gaps",
-        // The things themselves, where there are few enough to read. Three
-        // names is a to-do list; nine is a count.
-        reason: `${name} · ${checked} · signed off ${signature} · not checked off: ${leftWords(row.open_titles)}`,
+        name,
+        facts: [
+          { label: "checked off", value: `${count} by ${by}` },
+          { label: "signed off", value: signature },
+          { label: "not checked off", value: left, warn: true },
+        ],
+        reason: `${name} · ${checked} · signed off ${signature} · not checked off: ${left}`,
       };
     }
     return {
@@ -161,6 +182,11 @@ export function verdictOf(
       flag,
       state: "pass",
       group: "done",
+      name,
+      facts: [
+        { label: "checked off", value: `by ${by}` },
+        { label: "signed off", value: signature },
+      ],
       reason: `${name} · checked off by ${by} · signed off ${signature}`,
     };
   }
@@ -171,6 +197,13 @@ export function verdictOf(
       flag,
       state: nightOver ? "fail" : "open",
       group: nightOver ? "unsigned" : "going",
+      name,
+      facts: nightOver
+        ? [
+            { label: "checked off", value: "nothing, by nobody", warn: true },
+            { label: "signed off", value: "nobody", warn: true },
+          ]
+        : [{ label: "checked off", value: "not started" }],
       reason: nightOver
         ? `${name} · nobody checked anything off · nobody signed off`
         : `${name} · not started`,
@@ -182,6 +215,13 @@ export function verdictOf(
     flag,
     state: nightOver ? "fail" : "open",
     group: nightOver ? "unsigned" : "going",
+    name,
+    facts: [
+      { label: "checked off", value: `${count} by ${by}` },
+      nightOver
+        ? { label: "signed off", value: "nobody", warn: true }
+        : { label: "signed off", value: "not yet, still going" },
+    ],
     reason: nightOver
       ? `${name} · ${checked} · nobody signed off`
       : `${name} · ${checked} · still going`,

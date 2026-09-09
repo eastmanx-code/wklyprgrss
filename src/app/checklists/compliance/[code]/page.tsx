@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { notFound, redirect } from "next/navigation";
 
 import { NightNav } from "@/components/checklists/Compliance";
@@ -166,7 +167,7 @@ function Pile({
               href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
               className="block"
             >
-              <Sentence text={list.reason} warn={warn} />
+              <Facts list={list} warn={warn} />
             </Link>
           </li>
         ))}
@@ -176,45 +177,36 @@ function Pile({
 }
 
 /**
- * One row, with weight where the eye should land.
+ * One list, as lines.
  *
- * The list's name is the handle and the last clause is the point — "nobody
- * signed", "not done: the carts" — so both are bold. What sits between them is
- * the count and the signature, and on a quiet row those go muted so the name
- * stands off the page. On a yellow row everything is dark and the bold alone
- * carries it.
+ * The name heavy and on its own line, then each fact under it with a small
+ * label on the left: checked off, signed off, not checked off. It was one
+ * sentence with dots in it, and at thirty-four items and two names it ran to
+ * two lines in one weight and the eye had nowhere to land. The value that
+ * is the fail is heavy too, so the reason reads before the rest does.
  */
-function Sentence({ text, warn }: { text: string; warn?: boolean }) {
-  const parts = text.split(" · ").map(tight);
-  if (parts.length < 2) return <span className="text-body">{text}</span>;
-  const head = parts[0];
-  const tail = parts[parts.length - 1];
-  const middle = parts.slice(1, -1);
+function Facts({ list, warn }: { list: ListVerdict; warn?: boolean }) {
   return (
-    <span className="text-body">
-      <span className="font-medium">{head}</span>
-      {middle.length > 0 ? (
-        <span className={warn ? "" : "text-muted"}>
-          {" "}
-          · {middle.join(" · ")}
-        </span>
-      ) : null}
-      <span className={warn ? "" : "text-muted"}> · </span>
-      <span className={warn ? "font-medium" : "text-muted"}>{tail}</span>
-    </span>
+    <div>
+      <p className={`text-title font-medium ${warn ? "text-on-warn" : ""}`}>
+        {list.name}
+      </p>
+      <dl className="mt-2 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1">
+        {list.facts.map((fact) => (
+          <Fragment key={fact.label}>
+            <dt className={`label pt-0.5 ${warn ? "text-on-warn/70" : ""}`}>
+              {fact.label}
+            </dt>
+            <dd
+              className={`text-body min-w-0 break-words ${
+                fact.warn ? "font-medium" : warn ? "text-on-warn" : "text-muted"
+              }`}
+            >
+              {fact.value}
+            </dd>
+          </Fragment>
+        ))}
+      </dl>
+    </div>
   );
-}
-
-/**
- * No widows. "Signed off Nikki Milner 4:16 PM" was wrapping to leave "PM"
- * alone on the next line, and "nobody signed off" to leave "off". A short
- * clause holds together and the row breaks at the dots instead; a long one,
- * the list of what was not checked off, still wraps, but keeps its time and
- * its verb in one piece.
- */
-function tight(clause: string): string {
-  if (clause.length <= 36) return clause.replace(/ /g, "\u00A0");
-  return clause
-    .replace(/(\d) (AM|PM)\b/g, "$1\u00A0$2")
-    .replace(/(checked|signed) off/g, "$1\u00A0off");
 }
