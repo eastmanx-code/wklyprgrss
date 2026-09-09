@@ -185,7 +185,7 @@ function Pile({
  * carries it.
  */
 function Sentence({ text, warn }: { text: string; warn?: boolean }) {
-  const parts = text.split(" · ");
+  const parts = text.split(" · ").map(tight);
   if (parts.length < 2) return <span className="text-body">{text}</span>;
   const head = parts[0];
   const tail = parts[parts.length - 1];
@@ -203,4 +203,18 @@ function Sentence({ text, warn }: { text: string; warn?: boolean }) {
       <span className={warn ? "font-medium" : "text-muted"}>{tail}</span>
     </span>
   );
+}
+
+/**
+ * No widows. "Signed off Nikki Milner 4:16 PM" was wrapping to leave "PM"
+ * alone on the next line, and "nobody signed off" to leave "off". A short
+ * clause holds together and the row breaks at the dots instead; a long one,
+ * the list of what was not checked off, still wraps, but keeps its time and
+ * its verb in one piece.
+ */
+function tight(clause: string): string {
+  if (clause.length <= 36) return clause.replace(/ /g, "\u00A0");
+  return clause
+    .replace(/(\d) (AM|PM)\b/g, "$1\u00A0$2")
+    .replace(/(checked|signed) off/g, "$1\u00A0off");
 }

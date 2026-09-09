@@ -214,13 +214,13 @@ async function AdminHome() {
             ) : failedLists > 0 ? (
               <T
                 en={`${formatNight(night)} · ${failedLists} ${
-                  failedLists === 1 ? "list" : "lists"
-                } not checked off or not signed off at ${failingVenues} ${
+                  failedLists === 1 ? "fail" : "fails"
+                } at ${failingVenues} ${
                   failingVenues === 1 ? "venue" : "venues"
                 }`}
                 es={`${formatNightEs(night)} · ${failedLists} ${
-                  failedLists === 1 ? "lista" : "listas"
-                } sin marcar o sin firmar en ${failingVenues} ${
+                  failedLists === 1 ? "falla" : "fallas"
+                } en ${failingVenues} ${
                   failingVenues === 1 ? "lugar" : "lugares"
                 }`}
               />

@@ -177,11 +177,11 @@ export default async function CompliancePage({
         <Card
           title="Last night"
           hint={[
-            ...(short === 0 && lists > 0
-              ? [over ? "no fails" : "no fails yet"]
-              : []),
-            ...(notDone > 0 ? [`${notDone} not checked off`] : []),
-            ...(notSigned > 0 ? [`${notSigned} not signed off`] : []),
+            short > 0
+              ? `${short} ${short === 1 ? "fail" : "fails"}`
+              : over
+                ? "no fails"
+                : "no fails yet",
             ...(over ? [] : ["still running"]),
           ].join(" · ")}
         >
