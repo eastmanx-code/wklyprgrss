@@ -1,3 +1,4 @@
+import { listName } from "@/lib/slug";
 import { notFound, redirect } from "next/navigation";
 
 import { BackLink } from "@/components/ui";
@@ -70,7 +71,8 @@ export default async function ListCompliancePage({
           page in the flow that never said which building it was describing. */}
       <header className="mt-4 mb-5">
         <p className="label">
-          {name} · {formatNight(night)} · {detail.house} · {detail.role}
+          {name} · {formatNight(night)} · {detail.house} ·{" "}
+          {listName(detail.role, detail.room)}
         </p>
         <h1 className="text-metric mt-2 font-medium">
           {phaseName(detail.phase)} checklist

@@ -133,7 +133,10 @@ export default async function VenueCompliancePage({
 
       <ul className="mt-3 space-y-2">
         {venue.lists.map((list) => (
-          <li key={list.row.role + list.row.phase + list.row.house}>
+          /* Keyed on the list itself. Role plus phase plus house was unique
+             until a position could run three lists that share all three, and
+             three deep cleans then collided on one key. */
+          <li key={list.row.checklist_id}>
             <Link
               href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
               className="block"

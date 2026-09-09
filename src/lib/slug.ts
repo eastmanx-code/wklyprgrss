@@ -76,3 +76,19 @@ export function matchSlug<T extends Addressable>(
     ) ?? null
   );
 }
+
+/**
+ * What to call a list on screen.
+ *
+ * A position with rooms has three lists whose role, phase and house are all
+ * identical, so every place that named a list by its role started showing the
+ * same words three times: three rows reading "Deep clean" in the morning
+ * report, and a list page whose heading said "Mid shift checklist" with
+ * nothing anywhere on it saying which bar you were looking at.
+ *
+ * One helper rather than a conditional at each call site, because the ones
+ * that get missed are the ones nobody is looking at when the change is made.
+ */
+export function listName(role: string, room?: string | null): string {
+  return room?.trim() ? `${role} · ${room.trim()}` : role;
+}
