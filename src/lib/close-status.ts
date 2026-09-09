@@ -44,6 +44,12 @@ export type CloseStatusRow = {
   certified: boolean;
   certified_by: string | null;
   certified_at: string | null;
+  /**
+   * Who checked things off: the initials typed on the ticks, each once, in
+   * the order they first appeared. A fail with no name on it is a fail
+   * nobody can act on, and the names were already on every tick.
+   */
+  checked_by: string[];
   /** Signed with items still open — the state worth a conversation. */
   signed_with_gaps: boolean;
   /**
@@ -133,13 +139,15 @@ export async function closeStatus(
   let ticks: {
     night_id: string;
     item_id: string;
+    initials: string | null;
     created_at: string;
     client_at: string | null;
   }[] = [];
   if (nights.length > 0) {
     const { data: tickRows } = await db()
       .from("close_ticks")
-      .select("night_id, item_id, created_at, client_at")
+      .select("night_id, item_id, initials, created_at, client_at")
+      .order("created_at")
       .in(
         "night_id",
         nights.map((n) => n.id),
@@ -150,8 +158,15 @@ export async function closeStatus(
   const nightOf = new Map(nights.map((n) => [n.checklist_id, n]));
   const tickOf = new Set<string>();
   const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
+  const whoOn = new Map<string, string[]>();
   for (const t of ticks) {
     tickOf.add(`${t.night_id}:${t.item_id}`);
+    const who = t.initials?.trim().toUpperCase();
+    if (who) {
+      const names = whoOn.get(t.night_id) ?? [];
+      if (!names.includes(who)) names.push(who);
+      whoOn.set(t.night_id, names);
+    }
     const held = timesOn.get(t.night_id);
     const stamp = { at: t.created_at, claimedAt: t.client_at };
     if (held) held.push(stamp);
@@ -204,6 +219,7 @@ export async function closeStatus(
         certified,
         certified_by: row?.certified_by ?? null,
         certified_at: row?.certified_at ?? null,
+        checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
         open_titles: row
           ? asked

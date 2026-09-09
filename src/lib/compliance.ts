@@ -133,10 +133,16 @@ export function verdictOf(
   const count = `${row.ticked} of ${row.items_on_list}`;
   // Who, and when. The when was missing, and a card that says "signed by
   // Ethan" on a night that ran from four in the afternoon to four in the
-  // morning leaves the reader to guess which end.
+  // morning leaves the reader to guess which end. A signature with no name
+  // typed is still a signature, and says so rather than reading as nobody.
   const who = row.certified_by?.trim();
   const at = row.certified_at ? formatClock(row.certified_at) : "";
-  const signature = [who, at].filter(Boolean).join(" ");
+  const signature = [who || "no name", at].filter(Boolean).join(" ");
+  // Who checked things off, from the initials on the ticks. Every fail
+  // names a person or says plainly that nobody put their initials to it.
+  const by =
+    row.checked_by.length > 0 ? row.checked_by.join(", ") : "no initials";
+  const checked = `${count} checked off by ${by}`;
 
   if (row.certified) {
     if (row.open > 0) {
@@ -147,7 +153,7 @@ export function verdictOf(
         group: "gaps",
         // The things themselves, where there are few enough to read. Three
         // names is a to-do list; nine is a count.
-        reason: `${name} · signed off ${signature} · not checked off: ${leftWords(row.open_titles)}`,
+        reason: `${name} · ${checked} · signed off ${signature} · not checked off: ${leftWords(row.open_titles)}`,
       };
     }
     return {
@@ -155,7 +161,7 @@ export function verdictOf(
       flag,
       state: "pass",
       group: "done",
-      reason: `${name} · checked off · signed off ${signature}`,
+      reason: `${name} · checked off by ${by} · signed off ${signature}`,
     };
   }
 
@@ -166,7 +172,7 @@ export function verdictOf(
       state: nightOver ? "fail" : "open",
       group: nightOver ? "unsigned" : "going",
       reason: nightOver
-        ? `${name} · nothing checked off · not signed off`
+        ? `${name} · nobody checked anything off · nobody signed off`
         : `${name} · not started`,
     };
   }
@@ -177,8 +183,8 @@ export function verdictOf(
     state: nightOver ? "fail" : "open",
     group: nightOver ? "unsigned" : "going",
     reason: nightOver
-      ? `${name} · ${count} checked off · not signed off`
-      : `${name} · ${count} checked off · still going`,
+      ? `${name} · ${checked} · nobody signed off`
+      : `${name} · ${checked} · still going`,
   };
 }
 
