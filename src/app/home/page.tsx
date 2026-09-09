@@ -226,8 +226,8 @@ async function AdminHome() {
               />
             ) : (
               <T
-                en={`${formatNight(night)} · every list checked off and signed off`}
-                es={`${formatNightEs(night)} · todas las listas marcadas y firmadas`}
+                en={`${formatNight(night)} · no fails`}
+                es={`${formatNightEs(night)} · sin fallas`}
               />
             )
           }

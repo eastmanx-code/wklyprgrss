@@ -178,7 +178,7 @@ export default async function CompliancePage({
           title="Last night"
           hint={[
             ...(short === 0 && lists > 0
-              ? [over ? "all checked off and signed off" : "nothing short yet"]
+              ? [over ? "no fails" : "no fails yet"]
               : []),
             ...(notDone > 0 ? [`${notDone} not checked off`] : []),
             ...(notSigned > 0 ? [`${notSigned} not signed off`] : []),

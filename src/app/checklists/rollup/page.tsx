@@ -171,7 +171,7 @@ export default async function RollupPage() {
         latest.notSigned.length === 0 &&
         latest.notDone.length === 0 ? (
           <p className="note text-muted mt-3">
-            Every list checked off and signed off {formatNight(latest.night)}.
+            No fails {formatNight(latest.night)}.
           </p>
         ) : null}
       </section>
@@ -185,7 +185,7 @@ export default async function RollupPage() {
           </div>
           {missed.length === 0 ? (
             <p className="note text-muted mt-1">
-              Nothing left undone in the last {nights} nights.
+              No fails in the last {nights} nights.
             </p>
           ) : null}
         </section>
