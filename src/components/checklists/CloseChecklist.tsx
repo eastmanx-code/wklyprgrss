@@ -727,10 +727,17 @@ export function CloseChecklist({
 
     // Nowhere to keep it, so it goes now or not at all.
     setSaving(true);
+    let sent = false;
+    let why = "";
     try {
       const result = await tickItem({ error: null }, sendable(op));
-      if (result.error) setShortfall(result.error);
-    } catch {
+      sent = !result.error;
+      if (result.error) {
+        why = result.error;
+        setShortfall(result.error);
+      }
+    } catch (problem) {
+      why = words(problem);
       setShortfall(
         t(
           "Could not save that. Check your signal and tap it again.",
@@ -740,6 +747,19 @@ export function CloseChecklist({
     } finally {
       setSaving(false);
     }
+
+    // The same blind spot as the photograph, one door over. A tick that could
+    // not be queued goes straight to the network with nothing underneath it,
+    // and until now that left no trace at all: the person was told on screen
+    // and nobody could tell afterwards whether they had tapped and lost it,
+    // or never tapped. A tick is the whole product. It gets a row too.
+    note({
+      step: "store",
+      detail: ["tick", whyNotQueued(), why].filter(Boolean).join(" · "),
+      slug,
+      itemId: item.id ?? null,
+      recovered: sent,
+    });
   }
 
   /** Marks the moment, so the next poll defers to this device. */
