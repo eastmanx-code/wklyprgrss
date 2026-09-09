@@ -52,8 +52,8 @@ export function RunCard({
           percent={share}
           caption={
             <T
-              en={`${ticked} of ${owed} items ticked`}
-              es={`${ticked} de ${owed} puntos marcados`}
+              en={`${ticked} of ${owed} items signed off`}
+              es={`${ticked} de ${owed} puntos firmados`}
             />
           }
           tone={failed ? "var(--warn)" : "var(--ink)"}
@@ -64,6 +64,8 @@ export function RunCard({
             points={points}
             labelLeft={labelLeft}
             labelRight={labelRight}
+            solidLabel="lists signed"
+            dashedLabel="items signed off"
             target={80}
           />
         ) : (

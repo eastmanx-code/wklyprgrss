@@ -184,13 +184,13 @@ export default async function RollupPage() {
             </p>
           ) : (
             <p className="label mt-3">
-              Nights it was owed and nobody ticked it.
+              Nights it was owed and nobody signed it off.
             </p>
           )}
         </section>
 
         <section className="panel">
-          <p className="label">Each position · items done</p>
+          <p className="label">Each position · items signed off</p>
           <ul className="mt-3 space-y-3">
             {byRole.map((row) => (
               <li key={row.role}>

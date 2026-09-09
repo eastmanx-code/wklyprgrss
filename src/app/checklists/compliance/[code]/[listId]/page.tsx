@@ -106,11 +106,11 @@ export default async function ListCompliancePage({
           {signed && detail.certifiedAt
             ? `${formatClock(detail.certifiedAt)}${
                 detail.lastTickAt
-                  ? ` · last tick ${formatClock(detail.lastTickAt)}`
+                  ? ` · last signed off ${formatClock(detail.lastTickAt)}`
                   : ""
-              }${open.length > 0 ? ` · ${open.length} left open` : " · all clear"}`
+              }${open.length > 0 ? ` · ${open.length} not done` : " · all done"}`
             : detail.lastTickAt
-              ? `Last tick ${formatClock(detail.lastTickAt)} · ${open.length} left open`
+              ? `Last signed off ${formatClock(detail.lastTickAt)} · ${open.length} not done`
               : "Nobody opened this list"}
         </p>
         {/* The second signature, or its absence.
@@ -129,7 +129,9 @@ export default async function ListCompliancePage({
           >
             {detail.verifiedBy
               ? `Checked by ${detail.verifiedBy.trim()}${
-                  detail.verifiedAt ? ` · ${formatClock(detail.verifiedAt)}` : ""
+                  detail.verifiedAt
+                    ? ` · ${formatClock(detail.verifiedAt)}`
+                    : ""
                 }${detail.sameDevice ? " · both signatures off one phone" : ""}`
               : "Nobody checked this"}
           </p>
@@ -146,50 +148,32 @@ export default async function ListCompliancePage({
         ) : null}
       </section>
 
-      {/* How the ticks arrived, which no count on this page can say.
-          A list can be ten out of ten, signed, and thumbed through at the
-          bar; that is the case this section exists for and the only one it
-          can see. Deliberately worded as evidence rather than a verdict:
-          somebody who walked with paper and entered it after produces the
-          same shape, and a report that called that cheating would be wrong
-          often enough to stop being read. */}
-      {detail.pace.burst ? (
-        <section className="bg-warn text-on-warn mt-2 rounded-[4px] px-4 py-3">
-          <p className="text-body">Ticked too fast to have been walked</p>
-          <p className="text-on-warn mt-1 text-label tracking-[0.08em]">
-            {detail.pace.note}
-          </p>
-          <p className="text-on-warn mt-2 text-label leading-relaxed">
-            There is no route through a building at that pace. Worth asking
-            about: working off paper and entering it after looks the same from
-            here.
-          </p>
-        </section>
-      ) : detail.pace.ticks >= 2 ? (
+      {/* How long it took, as a fact and nothing more. We do not fail on
+          time, only on what was not done and what was not signed, so there
+          is no panel here saying a list went too fast. The span is on the
+          page because it is true; what to make of it is a conversation. */}
+      {detail.pace.ticks >= 2 ? (
         <p className="label mt-2">
-          Walked over {describeSpan(detail.pace.spanSeconds)} ·{" "}
+          Done over {describeSpan(detail.pace.spanSeconds)} ·{" "}
           {detail.pace.secondsPerItem >= 60
             ? `about ${Math.round(detail.pace.secondsPerItem / 60)} minutes an item`
             : `${detail.pace.secondsPerItem} seconds an item`}
         </p>
       ) : null}
 
-      {/* The lag is a fact, never an accusation. It used to mean somebody was
-          backfilling; since the offline queue shipped it also means somebody
-          walked a cellar with no signal, and the two cannot be told apart by
-          arrival time. What separates them is the pace above. */}
+      {/* The lag is a fact, never an accusation. Since the offline queue
+          shipped it mostly means somebody worked a cellar with no signal. */}
       {detail.pace.late ? (
         <p className="note text-muted mt-2 leading-relaxed">
-          These ticks reached the server {describeLag(detail.pace.lagMinutes)}{" "}
-          after the phone says they were taken. That is what a list walked
-          without signal looks like, and it is also what backfilling looks like.
-          The pace above is what tells them apart.
+          These reached the server {describeLag(detail.pace.lagMinutes)} after
+          the phone says they were signed off. That is what a list done without
+          signal looks like.
         </p>
       ) : null}
 
       {detail.pace.impossible ? (
         <p className="note text-warn mt-2 leading-relaxed">
-          A tick claims a time this night never contained, so that phone{"'"}s
+          One item claims a time this night never contained, so that phone{"'"}s
           clock is wrong or was set by hand. Read the times on this page as the
           server{"'"}s, not the device{"'"}s.
         </p>
@@ -245,8 +229,8 @@ export default async function ListCompliancePage({
       )}
 
       <p className="label mt-5">
-        Every tick carries the initials typed on it and the moment it was taken,
-        so a shared iPad still says who did what.
+        Every item signed off carries the initials typed on it and the moment it
+        was signed, so a shared iPad still says who did what.
       </p>
     </main>
   );

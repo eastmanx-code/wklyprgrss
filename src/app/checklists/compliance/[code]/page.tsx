@@ -79,7 +79,7 @@ export default async function VenueCompliancePage({
             that are not attached to a list. */}
         <p className="note text-muted mt-2">
           {venue.listsSigned} of {venue.listsTotal} lists signed ·{" "}
-          {venue.ticked} of {venue.owed} items done
+          {venue.ticked} of {venue.owed} items signed off
         </p>
       </header>
 
@@ -91,7 +91,7 @@ export default async function VenueCompliancePage({
         night={night}
       />
       <Pile
-        title="Signed with things left"
+        title="Not done"
         rows={pile("gaps")}
         warn
         code={code}
@@ -116,7 +116,11 @@ export default async function VenueCompliancePage({
         night={night}
       />
 
-      <NightNav night={night} base={`/checklists/compliance/${code}`} />
+      <div className="mt-3">
+
+        <NightNav night={night} base={`/checklists/compliance/${code}`} />
+
+      </div>
     </main>
   );
 }
@@ -157,12 +161,6 @@ function Pile({
               className="block"
             >
               <span className="text-body">{list.reason}</span>
-              {/* The pace, where it is worth saying. A number, not a
-                  verdict: somebody who worked off paper and entered it after
-                  looks the same from here. */}
-              {list.flag ? (
-                <span className="label text-warn mt-1 block">{list.flag}</span>
-              ) : null}
             </Link>
           </li>
         ))}

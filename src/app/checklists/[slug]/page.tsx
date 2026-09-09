@@ -196,7 +196,7 @@ export default async function ChecklistPage({
       {rows.length === 0 ? (
         <section className="panel">
           <p className="note text-muted leading-relaxed">
-            This list has no items yet. Nothing can be walked or signed until it
+            This list has no items yet. Nothing can be done or signed until it
             does — an empty list that could be certified would report a venue as
             covered for doing nothing.
           </p>

@@ -23,12 +23,17 @@ export function Trend({
   points,
   labelLeft,
   labelRight,
+  solidLabel = "signed off",
+  dashedLabel = "filed",
   target,
   showApproved = true,
 }: {
   points: { weekStart: string; percent: number; approvedPercent: number }[];
   labelLeft: string;
   labelRight: string;
+  /** What the two lines are, in the words of the page drawing them. */
+  solidLabel?: string;
+  dashedLabel?: string;
   /**
    * The win line, drawn across the plot. A chart with no target says how the
    * number moved but not whether it is where it should be, and the reader
@@ -153,11 +158,13 @@ export function Trend({
       <div className="mt-3 flex items-baseline justify-between gap-x-4">
         <span className="label shrink-0">{labelLeft}</span>
         <span className="label shrink-0">
-          {labelRight} · {lead}%
+          {labelRight} · {Math.round(lead)}%
         </span>
       </div>
       {showApproved ? (
-        <p className="label mt-1">solid signed off · dashed filed</p>
+        <p className="label mt-1">
+          solid {solidLabel} · dashed {dashedLabel}
+        </p>
       ) : null}
     </div>
   );

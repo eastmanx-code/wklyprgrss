@@ -99,14 +99,10 @@ export function verdictOf(
   row: CloseStatusRow,
   nightOver: boolean,
 ): ListVerdict {
-  // Said once, carried on every branch. A list can be done and signed and
-  // still have been thumbed through in two minutes, which is exactly the case
-  // a pass alone cannot express. Short: the count and the span, not a
-  // sentence. The panel that explained pace as a concept is gone; the number
-  // explains itself.
-  const flag = row.pace.burst
-    ? `ticked in ${spanWords(row.pace.spanSeconds)}`
-    : null;
+  // Never set. We do not fail on time, only on what was not done and what
+  // was not signed, and a pace on the row read as a third kind of failure
+  // however it was worded. The field stays so the shape does not change.
+  const flag = null;
 
   if (row.empty) {
     return {
@@ -138,7 +134,7 @@ export function verdictOf(
         group: "gaps",
         // The things themselves, where there are few enough to read. Three
         // names is a to-do list; nine is a count.
-        reason: `${name} · ${signature} · left ${leftWords(row.open_titles)}`,
+        reason: `${name} · ${signature} · not done: ${leftWords(row.open_titles)}`,
       };
     }
     return {
@@ -146,7 +142,7 @@ export function verdictOf(
       flag,
       state: "pass",
       group: "done",
-      reason: `${name} · ${count} · ${signature}`,
+      reason: `${name} · ${count} signed off · ${signature}`,
     };
   }
 
@@ -166,15 +162,9 @@ export function verdictOf(
     state: nightOver ? "fail" : "open",
     group: nightOver ? "unsigned" : "going",
     reason: nightOver
-      ? `${name} · ${count} done · nobody signed`
-      : `${name} · ${count} · still going`,
+      ? `${name} · ${count} signed off · nobody signed`
+      : `${name} · ${count} signed off · still going`,
   };
-}
-
-/** "98 seconds", "4 minutes": a span somebody can picture. */
-function spanWords(seconds: number): string {
-  if (seconds < 120) return `${Math.round(seconds)} seconds`;
-  return `${Math.round(seconds / 60)} minutes`;
 }
 
 /**

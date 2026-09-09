@@ -127,7 +127,7 @@ export function VerdictRow({
             failed ? "text-on-warn" : "text-warn"
           }`}
         >
-          Not walked · {flag}
+          {flag}
         </span>
       ) : null}
     </div>
@@ -202,19 +202,20 @@ export function NightStrip({
 
   return (
     <div>
-      {/* Ten across, so three rows of thirty-two pixel squares rather than one
-          row of eleven. A tap target has to survive a thumb at 2am. */}
-      <div className="grid max-w-[22rem] grid-cols-10 gap-1">
+      {/* Ten across on a phone, fifteen on a laptop, and never capped: capped
+          at a phone's width it sat tucked in the corner of a screen three
+          times wider. A tap target still has to survive a thumb at 2am. */}
+      <div className="grid grid-cols-10 gap-1 lg:grid-cols-15">
         {nights.map((n) => (
           <Link
             key={n.night}
             href={`${base}?night=${n.night}`}
             aria-label={`${formatNight(n.night)} · ${
               n.state === "complete"
-                ? "all complete"
+                ? "all done and signed"
                 : n.state === "gaps"
-                  ? "signed with gaps"
-                  : "never certified"
+                  ? "something not done or not signed"
+                  : "nothing signed"
             }`}
             aria-current={n.night === current ? "date" : undefined}
             className={`aspect-square rounded-[2px] ${fill[n.state]} ${
@@ -227,15 +228,15 @@ export function NightStrip({
       <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
         <span className="label flex items-center gap-2">
           <span className="bg-ink/20 size-3 rounded-[2px]" />
-          All complete
+          All done and signed
         </span>
         <span className="label flex items-center gap-2">
           <span className="bg-warn/40 size-3 rounded-[2px]" />
-          Signed with gaps
+          Something not done or not signed
         </span>
         <span className="label flex items-center gap-2">
           <span className="bg-warn size-3 rounded-[2px]" />
-          Never certified
+          Nothing signed
         </span>
       </div>
     </div>

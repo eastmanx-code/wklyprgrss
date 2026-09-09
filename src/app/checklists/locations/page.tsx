@@ -118,7 +118,6 @@ export default async function LocationsPage() {
                 : []),
             // The sharper of the two signals, so it survives to the screen an
             // admin lands on rather than waiting two taps in.
-            ...(row.bursted > 0 ? [`${row.bursted} not walked`] : []),
           ].join(" · ")
         : "No lists yet",
       noteEs: row
