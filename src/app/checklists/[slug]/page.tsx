@@ -171,16 +171,25 @@ export default async function ChecklistPage({
         <T en={list.role} es={list.role_es ?? list.role} />
       </BackLink>
 
+      {/* The room is the headline where there is one.
+          Three deep cleans share a role, a house and a phase, so this page
+          said "Mid shift checklist" three times with nothing on it naming the
+          bar you were standing in. The room is what somebody chose on the
+          screen before this, so it is what this one has to confirm. */}
       <header className="mt-4 mb-5">
         <p className="label">
           {list.house} · <T en={list.role} es={list.role_es ?? list.role} /> ·{" "}
           <T en={formatNight(night)} es={formatNightEs(night)} />
         </p>
         <h1 className="text-metric mt-2 font-medium">
-          <T
-            en={`${phaseName(list.phase)} checklist`}
-            es={`Lista de ${PHASE_ES[list.phase].toLowerCase()}`}
-          />
+          {list.room?.trim() ? (
+            list.room
+          ) : (
+            <T
+              en={`${phaseName(list.phase)} checklist`}
+              es={`Lista de ${PHASE_ES[list.phase].toLowerCase()}`}
+            />
+          )}
         </h1>
       </header>
 

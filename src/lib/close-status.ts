@@ -22,6 +22,12 @@ export type CloseStatusRow = {
   venue_code: string;
   house: "FOH" | "HOH";
   role: string;
+  /**
+   * The room, where the position runs one list per room. Carried so a report
+   * can tell three deep cleans apart; without it they arrive as three rows
+   * reading the same words.
+   */
+  room: string | null;
   phase: "open" | "mid" | "close";
   items_on_list: number;
   ticked: number;
@@ -57,7 +63,7 @@ export async function closeStatus(
 ): Promise<CloseStatusRow[]> {
   const { data: checklistRows, error: checklistError } = await db()
     .from("close_checklists")
-    .select("id, venue_id, house, role, phase")
+    .select("id, venue_id, house, role, phase, room")
     .eq("active", true);
   if (checklistError) throw new Error(checklistError.message);
   const checklists = (checklistRows ?? []) as {
@@ -65,6 +71,7 @@ export async function closeStatus(
     venue_id: string;
     house: "FOH" | "HOH";
     role: string;
+    room: string | null;
     phase: "open" | "mid" | "close";
   }[];
   if (checklists.length === 0) return [];
@@ -160,6 +167,7 @@ export async function closeStatus(
         venue_code: code.get(list.venue_id) ?? "—",
         house: list.house,
         role: list.role,
+        room: list.room ?? null,
         phase: list.phase,
         items_on_list: owed,
         ticked,

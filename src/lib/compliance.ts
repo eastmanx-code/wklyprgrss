@@ -3,6 +3,7 @@ import "server-only";
 import { closeStatus, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
 import { dueOnNight } from "./due";
+import { listName } from "./slug";
 import { currentNight, isNightOver, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 import { tierOf } from "./status";
@@ -92,7 +93,7 @@ export function verdictOf(
       row,
       flag,
       state: "empty",
-      reason: `${row.role} · nothing written on it yet`,
+      reason: `${listName(row.role, row.room)} · nothing written on it yet`,
     };
   }
 
@@ -105,14 +106,14 @@ export function verdictOf(
         row,
         flag,
         state: "fail",
-        reason: `${row.role} · signed${signed} with ${row.open} still open`,
+        reason: `${listName(row.role, row.room)} · signed${signed} with ${row.open} still open`,
       };
     }
     return {
       row,
       flag,
       state: "pass",
-      reason: `${row.role} · ${row.ticked} of ${row.items_on_list} · signed${signed}`,
+      reason: `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · signed${signed}`,
     };
   }
 
@@ -122,8 +123,8 @@ export function verdictOf(
       flag,
       state: nightOver ? "fail" : "open",
       reason: nightOver
-        ? `${row.role} · never opened · 0 of ${row.items_on_list}`
-        : `${row.role} · not started · 0 of ${row.items_on_list}`,
+        ? `${listName(row.role, row.room)} · never opened · 0 of ${row.items_on_list}`
+        : `${listName(row.role, row.room)} · not started · 0 of ${row.items_on_list}`,
     };
   }
 
@@ -132,8 +133,8 @@ export function verdictOf(
     flag,
     state: nightOver ? "fail" : "open",
     reason: nightOver
-      ? `${row.role} · ${row.ticked} of ${row.items_on_list} · nobody signed`
-      : `${row.role} · ${row.ticked} of ${row.items_on_list} · in progress`,
+      ? `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · nobody signed`
+      : `${listName(row.role, row.room)} · ${row.ticked} of ${row.items_on_list} · in progress`,
   };
 }
 
@@ -222,6 +223,8 @@ export type ItemOutcome = {
 
 export type ListDetail = {
   role: string;
+  /** The room, where the position runs one list per room. */
+  room: string | null;
   house: "FOH" | "HOH";
   phase: "open" | "mid" | "close";
   items: ItemOutcome[];
@@ -263,13 +266,14 @@ export async function listDetail(
 ): Promise<ListDetail | null> {
   const { data: listRow } = await db()
     .from("close_checklists")
-    .select("id, house, role, phase")
+    .select("id, house, role, room, phase")
     .eq("id", checklistId)
     .maybeSingle();
   const list = listRow as {
     id: string;
     house: "FOH" | "HOH";
     role: string;
+    room: string | null;
     phase: "open" | "mid" | "close";
   } | null;
   if (!list) return null;
@@ -369,6 +373,7 @@ export async function listDetail(
 
   return {
     role: list.role,
+    room: list.room,
     house: list.house,
     phase: list.phase,
     // Open first. The four things nobody did are the reason this screen is
@@ -413,10 +418,13 @@ export function failuresByRole(
   const roles = new Map<string, { failed: number; of: number }>();
   for (const list of lists) {
     if (list.state === "empty") continue;
-    const held = roles.get(list.row.role) ?? { failed: 0, of: 0 };
+    // Named with the room, or three deep cleans collapse into one row and
+    // "Deep clean failed 3 of 3" hides which bar nobody did.
+    const named = listName(list.row.role, list.row.room);
+    const held = roles.get(named) ?? { failed: 0, of: 0 };
     held.of += 1;
     if (list.state === "fail") held.failed += 1;
-    roles.set(list.row.role, held);
+    roles.set(named, held);
   }
   return [...roles.entries()]
     .map(([role, counts]) => ({ role, ...counts }))

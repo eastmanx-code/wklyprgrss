@@ -16,6 +16,7 @@
  * Every role and room here is real.
  */
 import {
+  listName,
   matchSlug,
   roleSlug,
   slugFor,
@@ -149,6 +150,23 @@ is("case does not matter", roleSlug("bar deep clean"), "bar-deep-clean");
       row.id,
   );
   is("every list is reachable by its own address", unreachable, []);
+}
+
+// -------------------------------------------------------- naming one on screen
+//
+// Three lists under one position share a role, a phase and a house, so naming
+// them by role alone printed the same words three times: in the morning report
+// and on the list itself, where nothing said which bar you were in.
+
+is("a room is named", listName("Deep clean", "Hood"), "Deep clean · Hood");
+is("no room is just the role", listName("Hood Bartender", null), "Hood Bartender");
+is("an empty room is just the role", listName("Host", "  "), "Host");
+is("a missing room is just the role", listName("Prep"), "Prep");
+is("spacing is trimmed", listName("Deep clean", " Noble "), "Deep clean · Noble");
+// The three deep cleans must not read the same.
+{
+  const named = ["Hood", "Noble", "Youngblood"].map((r) => listName("Deep clean", r));
+  is("three rooms, three names", new Set(named).size, 3);
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed`);
