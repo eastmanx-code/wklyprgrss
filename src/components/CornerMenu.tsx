@@ -4,7 +4,7 @@ import { DeadlineCountdown } from "./DeadlineCountdown";
 import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
 import { LangSwitch, T } from "@/components/Lang";
-import { logout } from "@/app/actions";
+import { SignOut } from "@/components/SignOut";
 import { getSession } from "@/lib/session";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
 
@@ -106,11 +106,9 @@ export async function CornerMenu() {
           <span className="bg-card-border h-6 w-px" aria-hidden />
 
           {session ? (
-            <form action={logout}>
-              <button type="submit" className="btn-ghost">
-                <T en="Out" es="Salir" />
-              </button>
-            </form>
+            <SignOut className="btn-ghost">
+              <T en="Out" es="Salir" />
+            </SignOut>
           ) : null}
 
           <ThemeToggle />

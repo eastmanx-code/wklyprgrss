@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { logout } from "@/app/actions";
+import { SignOut } from "@/components/SignOut";
 
 /**
  * The bar at the bottom of every close screen.
@@ -37,14 +37,12 @@ export function CloseBar({ back }: { back: string }) {
         >
           Back
         </Link>
-        <form action={logout} className="flex-1 sm:flex-none">
-          <button
-            type="submit"
-            className="btn-ghost min-h-11 w-full sm:min-h-0 sm:w-auto"
-          >
-            Out
-          </button>
-        </form>
+        <SignOut
+          formClassName="flex-1 sm:flex-none"
+          className="btn-ghost min-h-11 w-full sm:min-h-0 sm:w-auto"
+        >
+          Out
+        </SignOut>
       </nav>
     </>
   );
