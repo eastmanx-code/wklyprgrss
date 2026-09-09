@@ -291,22 +291,21 @@ export default async function LocationsPage({
         </div>
       ) : null}
 
-      {/* A small button, folded. Adding a building is a thing you do once,
-          and a panel for it under the report was one more box on a page of
-          them. */}
+      {/* Closed, one small button. Open, the same line is the heading with
+          its own button to close it, and each venue's Add is a button with
+          a boundary of its own. Every action gets a shape and space around
+          it; "ADD A LOCATION HIDE" read as one sentence. */}
       {candidates.length > 0 ? (
         <details className="group mt-6">
-          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1">
-            <T en="Add a location" es="Agregar un lugar" />
-            <span
-              className="text-muted transition-transform group-open:rotate-90"
-              aria-hidden
-            >
-              ▸
+          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1 group-open:flex group-open:w-full group-open:justify-between group-open:px-0 group-open:text-title group-open:tracking-normal group-open:ring-0">
+            <span>
+              <span className="group-open:hidden">+ </span>
+              <T en="Add a location" es="Agregar un lugar" />
+            </span>
+            <span className="ring-card-border hidden min-h-11 items-center rounded px-4 text-label tracking-[0.08em] ring-1 group-open:inline-flex">
+              <T en="Hide" es="Ocultar" /> ↑
             </span>
           </summary>
-          {/* Open, the list sits in a panel of its own. Spilled onto the
-              page, twenty bars ran off the bottom with nothing holding them. */}
           <div className="panel mt-3">
             <p className="note text-muted leading-relaxed">
               <T
@@ -314,22 +313,27 @@ export default async function LocationsPage({
                 es="Agregar un lugar lo pone en las listas y lo abre, listo para su primera lista. No afecta el recorrido semanal."
               />
             </p>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-4 space-y-3">
               {candidates.map((venue) => (
-                <li key={venue.id}>
+                <li
+                  key={venue.id}
+                  className="bg-inset flex items-center justify-between gap-4 rounded-[4px] px-4 py-2"
+                >
+                  <span className="flex min-w-0 flex-wrap items-baseline gap-x-3">
+                    <span className="text-body w-16 shrink-0 tracking-[0.08em]">
+                      {venue.code}
+                    </span>
+                    {venue.name && venue.name !== venue.code ? (
+                      <span className="label">{venue.name}</span>
+                    ) : null}
+                  </span>
                   <form action={enrolVenue}>
                     <input type="hidden" name="venueId" value={venue.id} />
                     <button
                       type="submit"
-                      className="bg-inset hover:ring-muted/30 flex min-h-11 w-full flex-wrap items-baseline gap-x-3 rounded-[4px] px-3 py-2 text-left hover:ring-1 hover:ring-inset"
+                      className="ring-card-border text-ink hover:bg-hover inline-flex min-h-11 items-center rounded px-3 text-label tracking-[0.08em] ring-1"
                     >
-                      <span className="text-body w-16 shrink-0 tracking-[0.08em]">
-                        {venue.code}
-                      </span>
-                      {venue.name && venue.name !== venue.code ? (
-                        <span className="label">{venue.name}</span>
-                      ) : null}
-                      <span className="label ml-auto shrink-0">Add</span>
+                      + <T en="Add" es="Agregar" />
                     </button>
                   </form>
                 </li>
