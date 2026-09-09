@@ -2,13 +2,14 @@
 
 import { redirect } from "next/navigation";
 
-import { isAdminPin } from "@/lib/admin-pin";
+import { pinHolder, type PinHolder } from "@/lib/admin-pin";
 import { safeNext } from "@/lib/app";
 import {
   endSession,
   pinMatches,
   startAdminSession,
   startLeaderSession,
+  startManagerSession,
 } from "@/lib/session";
 import { getVenue } from "@/lib/status";
 
@@ -54,8 +55,9 @@ export async function leaderLogin(
      * Not a new way in. Anyone who could do this could already do it at the
      * admin screen, which is linked at the foot of this one.
      */
-    if (await isAdminPin(pin)) {
-      await startAdminSession();
+    const holder = await pinHolder(pin);
+    if (holder) {
+      await openFor(holder);
       redirect(safeNext(String(formData.get("next") ?? "") || undefined));
     }
     return { error: GENERIC_ERROR, code: "pin" };
@@ -72,10 +74,24 @@ export async function adminLogin(
   formData: FormData,
 ): Promise<FormState> {
   const pin = String(formData.get("pin") ?? "");
-  if (!(await isAdminPin(pin))) return { error: GENERIC_ERROR };
+  const holder = await pinHolder(pin);
+  if (!holder) return { error: GENERIC_ERROR };
 
-  await startAdminSession();
+  await openFor(holder);
   redirect("/home");
+}
+
+/**
+ * The session a code opens.
+ *
+ * One helper for both doors. A manager code used to start an admin session,
+ * which is how four bar managers ended up holding every venue in the group
+ * and the screen that mints admin codes, and a second copy of this rule is a
+ * second place for that to happen again.
+ */
+async function openFor(holder: PinHolder): Promise<void> {
+  if (holder.kind === "manager") await startManagerSession(holder.venueId);
+  else await startAdminSession();
 }
 
 export async function logout() {

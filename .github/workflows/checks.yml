@@ -71,6 +71,9 @@ jobs:
       - name: Trouble fixtures
         run: npm run check-trouble
 
+      - name: Role fixtures
+        run: npm run check-role
+
       # Last, because it is the slowest and the least specific. Built without
       # credentials on purpose: every route is force-dynamic, so a build that
       # needs a database to succeed would be a build hiding a data fetch that

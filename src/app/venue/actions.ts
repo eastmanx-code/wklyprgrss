@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { photoPath } from "@/lib/photos";
-import { getSession } from "@/lib/session";
+import { getSession, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import { HOUSES, type House, type Item } from "@/lib/types";
@@ -45,9 +45,10 @@ async function ownedItem(itemId: string) {
 
   const item = (data as Item | null) ?? null;
   if (!item) return null;
-  if (session.role === "leader" && session.venueId !== item.venue_id) {
-    return null;
-  }
+  // Written as `role === "leader"`, this let a manager — who is not a leader
+  // and not an admin — through to every venue's board, which is the whole
+  // thing the manager level exists to stop.
+  if (!mayReachVenue(session, item.venue_id)) return null;
   return item;
 }
 
@@ -327,9 +328,7 @@ export async function editSubmission(
  */
 async function ownedVenue(venueId: string): Promise<string | null> {
   const session = await getSession();
-  if (!session) return null;
-  if (session.role === "admin") return venueId || null;
-  return session.venueId === venueId ? venueId : null;
+  return mayReachVenue(session, venueId) ? venueId : null;
 }
 
 /**

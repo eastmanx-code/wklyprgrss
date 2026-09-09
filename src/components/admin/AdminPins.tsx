@@ -10,16 +10,37 @@ import {
 
 const initialState: AdminState = { error: null };
 
-export type AdminPin = { id: string; pin: string; label: string };
+export type AdminPin = {
+  id: string;
+  pin: string;
+  label: string;
+  /** The venue this code is a manager for, or null for a full admin code. */
+  venueId: string | null;
+};
+
+export type CodeVenue = { id: string; code: string };
 
 /**
- * Admin codes, managed in the app rather than in an environment variable.
+ * Admin and manager codes, managed in the app rather than in an environment
+ * variable.
  *
  * The master key from the environment is deliberately absent from this list:
  * it can't be revoked here, so there's no sequence of clicks that locks you
  * out of your own tool.
+ *
+ * The venue picker is what makes a manager code a manager code. Without it the
+ * only way to scope one was a hand written update against the table, which is
+ * how four bar managers ended up holding every venue in the group: the level
+ * existed in nobody's head as a thing you could make.
  */
-export function AdminPins({ pins }: { pins: AdminPin[] }) {
+export function AdminPins({
+  pins,
+  venues,
+}: {
+  pins: AdminPin[];
+  venues: CodeVenue[];
+}) {
+  const codeOf = new Map(venues.map((venue) => [venue.id, venue.code]));
   const [state, formAction, pending] = useActionState(
     addAdminPin,
     initialState,
@@ -48,6 +69,22 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
             autoComplete="off"
             disabled={pending}
           />
+          {/* Defaults to one venue, not to all of them. The dangerous option
+              is the one that should take a deliberate choice, and almost every
+              code handed out is a bar manager's. */}
+          <select
+            name="venueId"
+            className="field w-40"
+            defaultValue={venues[0]?.id ?? ""}
+            disabled={pending}
+          >
+            {venues.map((venue) => (
+              <option key={venue.id} value={venue.id}>
+                {venue.code} · manager
+              </option>
+            ))}
+            <option value="">Every venue · admin</option>
+          </select>
           <button type="submit" className="btn shrink-0" disabled={pending}>
             {pending ? "Adding…" : "Add"}
           </button>
@@ -58,7 +95,9 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
           </p>
         ) : (
           <p className="label">
-            6 digits. Anyone with it gets full admin, so hand it out narrowly.
+            6 digits. A manager code edits and reopens one venue&apos;s lists.
+            An admin code is every venue, the grading board and this screen, so
+            hand that one out narrowly.
           </p>
         )}
       </form>
@@ -72,6 +111,15 @@ export function AdminPins({ pins }: { pins: AdminPin[] }) {
             >
               <span className="caps flex-1 text-body font-medium">
                 {entry.label}
+              </span>
+              {/* What the code actually opens, on the row, because a list of
+                  six codes that all look alike is a list nobody audits. */}
+              <span
+                className={`label shrink-0 ${entry.venueId ? "" : "text-warn"}`}
+              >
+                {entry.venueId
+                  ? (codeOf.get(entry.venueId) ?? "one venue")
+                  : "Every venue"}
               </span>
               <span className="font-mono text-body tracking-[0.3em] tabular-nums">
                 {revealed === entry.id ? entry.pin : "••••••"}

@@ -11,7 +11,7 @@ import {
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
-import { getSession } from "@/lib/session";
+import { getSession, venueOfSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
   countUnapproved,
@@ -34,9 +34,12 @@ export const dynamic = "force-dynamic";
 
 export default async function VenuePage() {
   const session = await getSession();
-  if (session?.role !== "leader") redirect("/");
+  // A venue's own board, for whoever is confined to a venue. An admin has no
+  // one venue and reads these through /admin instead.
+  const own = venueOfSession(session);
+  if (!own) redirect("/");
 
-  const venue = await getVenue(session.venueId);
+  const venue = await getVenue(own);
   if (!venue) redirect("/");
 
   // Only the halves this venue runs. A bar gets one section, not a kitchen

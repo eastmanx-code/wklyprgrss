@@ -5,7 +5,7 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { WeekStats } from "@/components/WeekStats";
-import { getSession } from "@/lib/session";
+import { getSession, venueOfSession } from "@/lib/session";
 import { getDashboard, gradersByHouse } from "@/lib/status";
 import {
   deadlineFor,
@@ -21,7 +21,7 @@ export default async function BoardPage() {
   if (!session) redirect("/");
 
   const { weekStart, rows, byHouse } = await getDashboard();
-  const ownVenueId = session.role === "leader" ? session.venueId : null;
+  const ownVenueId = venueOfSession(session);
   // Leaders see the grade too — it is the thing that gates their reset, so
   // "has mine been closed out yet" should be answerable from the board.
   // Per house, because the grade is per house — one set for both would have

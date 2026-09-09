@@ -49,7 +49,8 @@ export default async function ListCompliancePage({
   } | null;
   if (!owner || owner.venues?.code?.toUpperCase() !== code) notFound();
 
-  if (session.role === "leader") {
+  // Anybody but an admin: their own venue and no other.
+  if (session.role !== "admin") {
     const mine = await closeVenueId(session);
     if (mine !== owner.venue_id) notFound();
   }

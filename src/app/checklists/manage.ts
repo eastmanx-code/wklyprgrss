@@ -12,7 +12,7 @@ import {
 } from "@/lib/checklists";
 import type { ProofKind, Reference, Shot } from "@/lib/close-checklist";
 import { closeVenueId } from "@/lib/close-venue";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
 /**
@@ -64,10 +64,11 @@ async function venueId(): Promise<string | null> {
  * "belongs to this venue" resolved to "anybody at all". A barback could retire
  * the close list on the way past it.
  *
- * The two levels this app has are the venue PIN and the admin PIN, and there
- * is no third that separates a leader from the crew holding the same code. So
- * the line is drawn where it can actually be drawn: everything that writes a
- * list needs the admin session.
+ * There were two levels, the venue PIN and the admin PIN, with no third to
+ * separate a leader from the crew holding the same code, so the line was drawn
+ * where it could be drawn: everything that writes a list needed the admin
+ * session, and four bar managers were handed all twenty one venues to get it.
+ * There is a manager level now. It reaches this and nothing else.
  *
  * Reference shots were left open below this line at first, on the grounds that
  * taking them is a job a venue lead is given rather than one they have to ask
@@ -77,8 +78,7 @@ async function venueId(): Promise<string | null> {
  * in with a manager PIN anyway, which he had all along and nobody had told him.
  */
 async function mayEdit(): Promise<boolean> {
-  const session = await getSession();
-  return session?.role === "admin";
+  return mayManage(await getSession());
 }
 
 /**

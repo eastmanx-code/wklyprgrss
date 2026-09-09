@@ -2,18 +2,18 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { getSession, type Session } from "./session";
+import { getSession, venueOfSession, type Session } from "./session";
 import { db } from "./supabase";
 
 /**
  * Which venue an admin is currently working in.
  *
- * A leader has one venue and it is stamped in their session. An admin has
- * none, and used to be pinned to a single code in this file — the venue the
- * lists were first written against while the shape of the thing was being
- * decided. That was right for one pilot and wrong the moment a second venue
- * wrote a list: every checklist screen showed an admin one building's lists
- * with nothing on the page to say which.
+ * A leader has one venue and it is stamped in their session, and so does a
+ * manager. An admin has none, and used to be pinned to a single code in this
+ * file — the venue the lists were first written against while the shape of the
+ * thing was being decided. That was right for one pilot and wrong the moment a
+ * second venue wrote a list: every checklist screen showed an admin one
+ * building's lists with nothing on the page to say which.
  *
  * A cookie rather than a path segment because the alternative was threading a
  * venue through six screens and two action modules, and one of them missing it
@@ -50,7 +50,9 @@ export async function closeVenueId(
 ): Promise<string | null> {
   const active = session === undefined ? await getSession() : session;
   if (!active) return null;
-  if (active.role === "leader") return active.venueId;
+  // A leader or a manager carries their venue. Only an admin has to pick.
+  const own = venueOfSession(active);
+  if (own) return own;
 
   const picked = (await cookies()).get(VENUE_COOKIE)?.value;
   if (!picked) return null;

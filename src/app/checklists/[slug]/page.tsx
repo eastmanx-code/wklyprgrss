@@ -17,7 +17,7 @@ import { activeNight } from "@/lib/active-night";
 import { formatNight, formatNightEs } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
 import { closeVenueId } from "@/lib/close-venue";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -200,7 +200,7 @@ export default async function ChecklistPage({
             does — an empty list that could be certified would report a venue as
             covered for doing nothing.
           </p>
-          {session.role === "admin" ? (
+          {mayManage(session) ? (
             <Link
               href={`/checklists/${slug}/edit`}
               className="btn mt-4 inline-flex"
@@ -267,7 +267,7 @@ export default async function ChecklistPage({
           behind it — which is how a venue lead spent an afternoon finding out
           by text that a manager sign in exists. A door that is not for you
           should not be in front of you. */}
-      {rows.length > 0 && session.role === "admin" ? (
+      {rows.length > 0 && mayManage(session) ? (
         <Link
           href={`/checklists/${slug}/edit`}
           className="btn-ghost mt-6 inline-flex min-h-11"

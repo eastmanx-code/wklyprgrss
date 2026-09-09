@@ -54,7 +54,9 @@ export default async function CompliancePage({
    * hand a bartender.
    */
   let mineName: string | null = null;
-  if (session.role === "leader") {
+  // Everyone but an admin. Written as "leader", a manager fell through to the
+  // group view and read who signed what at all twenty one venues.
+  if (session.role !== "admin") {
     const mine = await closeVenueId(session);
     const { data } = mine
       ? await db()

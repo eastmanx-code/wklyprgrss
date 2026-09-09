@@ -19,7 +19,7 @@ import {
   ReviewPill,
 } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
-import { getSession } from "@/lib/session";
+import { getSession, mayReachVenue } from "@/lib/session";
 import { awaitingReview, getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
 import type { Item, Submission } from "@/lib/types";
@@ -51,9 +51,8 @@ export default async function ItemPage({
   if (error) throw new Error(error.message);
   const item = data as Item | null;
   if (!item || !item.active) notFound();
-  if (session.role === "leader" && session.venueId !== item.venue_id) {
-    notFound();
-  }
+  // Their own venue and no other, whatever they type into the address bar.
+  if (!mayReachVenue(session, item.venue_id)) notFound();
 
   const submissions = await getSubmissionsForItems([item.id]);
   const photos = await signedUrls(livePhotoPaths(submissions));

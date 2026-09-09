@@ -58,7 +58,7 @@ export default async function HomePage({
 
       <div className="mt-6 flex items-center justify-center gap-4">
         <Link href="/admin/login" className="label hover:text-ink">
-          Admin sign in
+          Manager sign in
         </Link>
         <span className="label" aria-hidden>
           ·

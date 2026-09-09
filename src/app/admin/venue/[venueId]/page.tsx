@@ -28,6 +28,7 @@ import {
   emptySlots,
 } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
+import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
@@ -57,7 +58,8 @@ export default async function AdminVenuePage({
   params: Promise<{ venueId: string }>;
 }) {
   const { venueId } = await params;
-  if ((await getSession())?.role !== "admin") redirect("/admin/login");
+  const session = await getSession();
+  if (session?.role !== "admin") redirect(notAdminGoesTo(Boolean(session)));
 
   const venue = await getVenue(venueId);
   if (!venue) notFound();
