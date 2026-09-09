@@ -52,12 +52,7 @@ export function RunCard({
         <Dial
           percent={share}
           label={`${Math.round(share / 10)}/10`}
-          caption={
-            <T
-              en="lists checked off and signed off"
-              es="listas marcadas y firmadas"
-            />
-          }
+          caption={<T en="score · last night" es="nota · anoche" />}
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />
 
