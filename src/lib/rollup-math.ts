@@ -8,11 +8,19 @@
  *
  * Three definitions carry the whole thing, and they are the arguable part.
  *
- * An item is OPEN on a night when there is no tick for it, and every night in
- * the window counts. Not only the nights somebody opened the list: a venue
- * that never opens its close checklist has not scored zero misses, it has
- * missed everything, and a denominator that quietly skipped those nights would
- * report the venue with the worst habits as the cleanest.
+ * An item is OPEN on a night when there is no tick for it, and the nights that
+ * count are the nights the venue was RUNNING — nights it opened at least one
+ * list. Not only the nights somebody opened that particular list: a venue that
+ * never touches its close checklist has not scored zero misses, it has missed
+ * everything, and a denominator that skipped those nights would report the
+ * venue with the worst habits as the cleanest.
+ *
+ * But a night before a venue joined, or a night it was dark, is not a night it
+ * missed anything. Counting all thirty made a venue in its first week read
+ * "30 of 30" on every single line: nothing ranked, nothing moved, and the one
+ * panel whose whole job is putting the worst thing at the top put everything
+ * at the top. Four nights on the board is a small denominator and an honest
+ * one, and the nights strip is where "they are barely using it" belongs.
  *
  * A night is CERTIFIED when every checklist the venue runs has a signature on
  * it. One list signed out of three is not a certified night.
@@ -40,6 +48,7 @@ export const WINDOW_NIGHTS = 30;
 export type NightState = "c" | "g" | "m";
 
 export type Rollup = {
+  /** Nights the venue was running, not nights on the calendar. */
   nights: number;
   certified: number;
   /** One character per night, oldest first. */
@@ -73,6 +82,22 @@ export type ChecklistRow = {
 export type IsDue = (item: ItemRow, night: string) => boolean;
 
 const ALWAYS: IsDue = () => true;
+
+/**
+ * The nights of the window this venue was actually running.
+ *
+ * A night with no row on any of its lists is a night the app was not in use
+ * there — before the venue joined, or a Monday it was shut. Neither is a night
+ * it left something open.
+ *
+ * Read off the rows rather than from a start date on the venue, because a
+ * start date is a thing somebody has to remember to set and this is a thing
+ * that cannot be wrong.
+ */
+function runningNights(nights: NightRow[], window: string[]): string[] {
+  const had = new Set(nights.map((n) => n.night));
+  return window.filter((night) => had.has(night));
+}
 
 export type ItemRow = {
   id: string;
@@ -118,6 +143,10 @@ export function computeRollup(
 ): Rollup {
   const { checklists, items, nights, ticks } = data;
 
+  // One venue's rows. Every caller passes one; the running nights of two
+  // venues merged together would credit each with the other's nights.
+  const live = runningNights(nights, window);
+
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
   const itemsOf = new Map<string, ItemRow[]>();
   for (const item of items) {
@@ -131,7 +160,7 @@ export function computeRollup(
 
   // Per night, across every checklist the venue runs.
   let certified = 0;
-  const strip = window
+  const strip = live
     .map((night) => {
       let allCertified = true;
       let allComplete = true;
@@ -151,14 +180,14 @@ export function computeRollup(
     })
     .join("");
 
-  // What keeps getting left open. Every night in the window is a chance to
-  // have done it, whether or not anyone opened the list.
+  // What keeps getting left open. Every night the venue was running is a
+  // chance to have done it, whether or not anyone opened this list.
   const missed: MissedRow[] = items
     .map((item) => {
       const list = checklists.find((c) => c.id === item.checklist_id)!;
       let open = 0;
       let asked = 0;
-      for (const night of window) {
+      for (const night of live) {
         // A night this item was not owed on is not a night it was missed on.
         if (!isDue(item, night)) continue;
         asked += 1;
@@ -186,7 +215,7 @@ export function computeRollup(
       let of = 0;
       for (const list of lists) {
         const owed = itemsOf.get(list.id) ?? [];
-        for (const night of window) {
+        for (const night of live) {
           // Only the items this night actually asked for, on both sides of
           // the fraction. A rota item counted in the denominator every night
           // and achievable on one is a score nobody can move.
@@ -215,7 +244,7 @@ export function computeRollup(
     .sort((a, b) => b.nights - a.nights);
 
   return {
-    nights: window.length,
+    nights: live.length,
     certified,
     strip,
     missed,
@@ -237,12 +266,27 @@ export function computeGroup(
   for (const night of nights)
     nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
+  // Running nights per venue, not one set shared. Venues join in different
+  // weeks and close on different days, and a shared set would score a venue
+  // against nights its neighbour was open.
+  const venueOf = new Map(checklists.map((c) => [c.id, c.venue_id]));
+  const liveAt = new Map<string, Set<string>>();
+  for (const night of nights) {
+    const venue = venueOf.get(night.checklist_id);
+    if (!venue) continue;
+    const held = liveAt.get(venue);
+    if (held) held.add(night.night);
+    else liveAt.set(venue, new Set([night.night]));
+  }
+
   const totals = new Map<string, { done: number; of: number }>();
   for (const list of checklists) {
     const owed = items.filter((item) => item.checklist_id === list.id);
     const code = codeOf.get(list.venue_id) ?? "—";
     const running = totals.get(code) ?? { done: 0, of: 0 };
+    const live = liveAt.get(list.venue_id);
     for (const night of window) {
+      if (!live?.has(night)) continue;
       // Same rule as the per role figure: a rota item counts on the nights it
       // is owed and on no others, or a venue is marked down for running the
       // deep clean the way it is written.

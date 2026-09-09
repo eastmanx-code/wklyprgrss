@@ -108,7 +108,8 @@ export default async function RollupPage() {
         {/* Named from the row, not typed in. It read "Night Hawk" on every
             venue's report, including the ones that are not Night Hawk. */}
         <p className="label">
-          {venueName ? `${venueName} · ` : ""}last {nights} nights
+          {venueName ? `${venueName} · ` : ""}
+          {nights} nights so far
         </p>
         <h1 className="mt-2 text-metric font-medium">
           What&apos;s getting missed

@@ -24,8 +24,10 @@
     "check-due": "tsc src/lib/due.ts --outDir .due-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-due.mjs",
     "check-name": "tsc src/lib/name.ts --outDir .name-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-name.mjs",
     "check-slug": "tsc src/lib/slug.ts --outDir .slug-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-slug.mjs",
+    "check-trouble": "tsc src/lib/trouble.ts --outDir .trouble-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-trouble.mjs",
     "test-venue": "node --env-file=.env.local scripts/test-venue.mjs",
-    "cleared": "node --env-file=.env.local scripts/cleared.mjs"
+    "cleared": "node --env-file=.env.local scripts/cleared.mjs",
+    "orphans": "node --env-file=.env.local scripts/orphans.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.111.0",

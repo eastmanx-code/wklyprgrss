@@ -293,24 +293,44 @@ export async function pending(): Promise<Pending> {
  * cannot drain is a queue that grows until the browser evicts the lot. The
  * refusal is handed back so the screen can say what happened rather than
  * quietly losing the work.
+ *
+ * So is a capture whose bytes are no longer there, which used to be dropped
+ * in silence. That is the worst outcome the queue can produce — the person
+ * saw the picture, the thumbnail is on their screen, and nothing anywhere
+ * says it went. Handed back now, so it can be said out loud and written down.
  */
 export async function flush(
   send: (op: Op, blob?: Blob) => Promise<{ error: string | null }>,
-): Promise<{ sent: number; refused: string[]; left: Pending }> {
+): Promise<{
+  sent: number;
+  refused: string[];
+  /** Captures the queue described and could no longer produce. */
+  lost: ProofOp[];
+  left: Pending;
+}> {
   if (!canQueue()) {
-    return { sent: 0, refused: [], left: { ticks: 0, proof: 0, total: 0 } };
+    return {
+      sent: 0,
+      refused: [],
+      lost: [],
+      left: { ticks: 0, proof: 0, total: 0 },
+    };
   }
 
   let sent = 0;
   const refused: string[] = [];
+  const lost: ProofOp[] = [];
 
   for (const op of await queued()) {
     let result: { error: string | null };
     try {
       const blob = op.kind === "proof" ? await blobFor(op.key) : undefined;
       // The bytes are gone but the queue still describes them. Nothing can be
-      // done with that but forget it, and leaving it would block the queue.
+      // done with that but forget it, and leaving it would block the queue —
+      // but it does not go quietly. The shot needs taking again and only the
+      // person standing there can do it.
       if (op.kind === "proof" && !blob) {
+        lost.push(op);
         await drop(op.key);
         continue;
       }
@@ -324,5 +344,5 @@ export async function flush(
     else sent += 1;
   }
 
-  return { sent, refused, left: await pending() };
+  return { sent, refused, lost, left: await pending() };
 }

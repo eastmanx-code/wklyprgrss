@@ -21,6 +21,7 @@ import {
   type ProofOp,
   type TickOp,
 } from "@/lib/outbox";
+import { noteTrouble, flushTrouble, words, type Trouble } from "@/lib/trouble";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import { dayOfSection, dueOnNight } from "@/lib/due";
@@ -30,10 +31,20 @@ import {
   certifyNight,
   recordCapture,
   reopenNight,
+  reportTrouble,
   saveNote,
   verifyNight,
   tickItem,
 } from "@/app/checklists/actions";
+
+/**
+ * Write down why a capture did not make it.
+ *
+ * Never awaited, never thrown from, never shown to anybody on this screen.
+ * Every call site is already handling something that matters more, and the
+ * person holding the phone can do nothing about the report either way.
+ */
+const note = (trouble: Trouble) => noteTrouble(trouble, reportTrouble);
 
 export type SavedNight = {
   /** item id -> initials */
@@ -296,8 +307,14 @@ export function CloseChecklist({
       void drain();
     });
 
+    // Outside the drain on purpose. A phone whose store will not open never
+    // reaches the drain, and that phone is exactly the one whose refusals are
+    // waiting to be told about.
+    void flushTrouble(reportTrouble);
+
     const back = () => {
       mark();
+      void flushTrouble(reportTrouble);
       void drain();
     };
     const id = window.setInterval(() => void drain(), 30_000);
@@ -551,6 +568,14 @@ export function CloseChecklist({
     if (target.error || !target.signedUrl || !target.path) {
       // The server had an opinion — a certified night, a list that moved.
       // Repeating the call will not change it.
+      note({
+        step: "send",
+        detail: target.error ?? "no signed url came back",
+        slug: op.slug,
+        itemId: op.itemId,
+        shotIndex: op.shotIndex,
+        bytes: blob.size,
+      });
       return {
         error:
           target.error ??
@@ -569,7 +594,20 @@ export function CloseChecklist({
       },
       body: blob,
     });
-    if (!response.ok) throw new Error(`upload ${response.status}`);
+    if (!response.ok) {
+      // Storage said no. Not the network — the network answered — so this is
+      // the one worth a row: a signed URL that expired while the phone was in
+      // a cellar, or bytes storage would not take.
+      note({
+        step: "send",
+        detail: `storage ${response.status}`,
+        slug: op.slug,
+        itemId: op.itemId,
+        shotIndex: op.shotIndex,
+        bytes: blob.size,
+      });
+      throw new Error(`upload ${response.status}`);
+    }
 
     const data = new FormData();
     data.set("slug", op.slug);
@@ -578,7 +616,20 @@ export function CloseChecklist({
     data.set("kind", op.shot);
     data.set("path", target.path);
     data.set("initials", op.initials);
-    return recordCapture({ error: null }, data);
+    const recorded = await recordCapture({ error: null }, data);
+    // The bytes are up and nothing points at them. The one failure that
+    // leaves litter in storage, so it is worth being able to find later.
+    if (recorded.error) {
+      note({
+        step: "record",
+        detail: recorded.error,
+        slug: op.slug,
+        itemId: op.itemId,
+        shotIndex: op.shotIndex,
+        bytes: blob.size,
+      });
+    }
+    return recorded;
   }
 
   /**
@@ -593,16 +644,47 @@ export function CloseChecklist({
     if (draining.current || !canQueue()) return;
     draining.current = true;
     try {
-      const { refused, left } = await flush((op: Op, blob?: Blob) =>
+      const { refused, lost, left } = await flush((op: Op, blob?: Blob) =>
         op.kind === "tick"
           ? tickItem({ error: null }, sendable(op))
           : sendProof(op, blob!),
       );
       setOutstanding(left.total);
       setHeldProof(left.proof);
+      // The queue described a photograph it could no longer produce. This
+      // used to happen in silence, which is the worst way for it to happen:
+      // the thumbnail is on the screen, the person believes the job is
+      // evidenced, and nothing anywhere says otherwise until the morning.
+      for (const gone of lost) {
+        note({
+          step: "vanished",
+          detail: "the queue no longer had the bytes",
+          slug: gone.slug,
+          itemId: gone.itemId,
+          shotIndex: gone.shotIndex,
+          bytes: gone.bytes,
+        });
+      }
       // A refusal is the one thing worth interrupting for. The work is gone
       // and the person who did it is the only one who can decide what now.
       if (refused.length > 0) setShortfall(refused[0]);
+      else if (lost.length > 0) {
+        setShortfall(
+          lost.length === 1
+            ? t(
+                "One photo did not save and has to be taken again. Find it on the list and retake it.",
+                "Una foto no se guardó y hay que tomarla otra vez. Búscala en la lista y vuelve a tomarla.",
+              )
+            : t(
+                `${lost.length} photos did not save and have to be taken again. Find them on the list and retake them.`,
+                `${lost.length} fotos no se guardaron y hay que tomarlas otra vez. Búscalas en la lista y vuelve a tomarlas.`,
+              ),
+        );
+      }
+      // Whatever is waiting goes up on the back of a drain that worked. The
+      // report needs signal and so does everything else here, so the moment
+      // one write lands is the moment to try.
+      void flushTrouble(reportTrouble);
     } finally {
       draining.current = false;
     }
@@ -792,13 +874,25 @@ export function CloseChecklist({
     if (kind === "photo") {
       try {
         upload = await compressToJpeg(file);
-      } catch {
+      } catch (problem) {
         // A photograph that will not shrink still counts. Sending the whole
         // original costs bytes; refusing it costs a list nobody can sign.
         // It goes up under its own name, because a HEIC filed as a .jpg is a
         // picture nobody can open later, which is its own kind of losing it.
         upload = file;
         extension = file.name.split(".").pop() ?? "";
+        // Recovered, so nobody is told. Worth a row anyway: this is the
+        // branch that sends a four megabyte original up a bar's wifi, and if
+        // one model of phone is always in it that is the thing to know.
+        note({
+          step: "read",
+          detail: `${words(problem)} · ${file.type || "no type"}`,
+          slug,
+          itemId: item.id ?? null,
+          shotIndex,
+          bytes: file.size,
+          recovered: true,
+        });
       }
     }
 
@@ -820,11 +914,17 @@ export function CloseChecklist({
       : { stored: false, reason: "unavailable" };
 
     if (!held.stored) {
-      // Nowhere to keep it, so it goes now or not at all.
+      // Nowhere to keep it, so it goes now or not at all. Whether that worked
+      // decides the row: a queue that would not take the bytes is a warning
+      // when the send covered for it and an outage when it did not.
       let wrong: string | null = null;
+      let sent = false;
+      let why = "";
       try {
         wrong = (await sendProof(op, upload)).error;
-      } catch {
+        sent = !wrong;
+      } catch (problem) {
+        why = words(problem);
         wrong =
           held.reason === "full"
             ? t(
@@ -836,6 +936,20 @@ export function CloseChecklist({
                 "No se pudo subir. Revisa tu señal e inténtalo otra vez.",
               );
       }
+      note({
+        step: "store",
+        detail: [
+          held.reason === "full" ? "queue full" : "queue unavailable",
+          why,
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        slug,
+        itemId: item.id ?? null,
+        shotIndex,
+        bytes: upload.size,
+        recovered: sent,
+      });
       if (wrong) {
         setSaving(false);
         setShortfall(wrong);

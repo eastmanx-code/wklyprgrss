@@ -88,7 +88,11 @@ export default async function CompliancePage({
   // whole group, never for a single venue on the group screen.
   const window = nightWindow(30, night);
   const trend = await nightTrend(window);
-  const points = trend.map((t) => ({
+  // Only the nights something ran. Charted over the whole window, the line
+  // began with three flat weeks at nought that were not bad nights, they were
+  // nights before the venue had the app.
+  const ran = trend.filter((t) => t.ran);
+  const points = ran.map((t) => ({
     weekStart: t.night,
     percent: t.ticked,
     approvedPercent: t.signed,
@@ -163,15 +167,15 @@ export default async function CompliancePage({
         base="/checklists/compliance"
       />
 
-      {venues.length > 0 ? (
+      {venues.length > 0 && ran.length > 0 ? (
         <div className="mt-4">
           <RunCard
             ticked={ticked}
             owed={owed}
-            nights={window.length}
+            nights={points.length}
             points={points}
             failed={listsFailed > 0}
-            labelLeft={formatNight(window[0])}
+            labelLeft={formatNight(ran[0].night)}
             labelRight={formatNight(night)}
             best={best}
             worst={worst}

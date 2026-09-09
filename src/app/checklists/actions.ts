@@ -289,7 +289,20 @@ export async function recordCapture(
     return { error: "Something went wrong. Try again." };
   }
 
-  await db()
+  // What this slot pointed at before, so the picture it replaces does not
+  // stay in storage for ever. Somebody retaking a shot three times left three
+  // files and one row, and only the newest was reachable from anywhere.
+  const { data: before } = await db()
+    .from("close_proof")
+    .select("storage_path")
+    .eq("night_id", night)
+    .eq("item_id", itemId)
+    .eq("shot_index", shotIndex)
+    .maybeSingle();
+  const replaced =
+    (before as { storage_path: string | null } | null)?.storage_path ?? null;
+
+  const { error } = await db()
     .from("close_proof")
     .upsert(
       {
@@ -303,6 +316,19 @@ export async function recordCapture(
       },
       { onConflict: "night_id,item_id,shot_index" },
     );
+  if (error) return { error: "Could not save that. Try again." };
+
+  // Only after the row is safely pointing somewhere else, and only if nothing
+  // else points at it. The adoption sweep can re-point another row at a file
+  // this one was using, and a tidy-up that deletes evidence is worse than the
+  // litter it was cleaning.
+  if (replaced && replaced !== path) {
+    const { count } = await db()
+      .from("close_proof")
+      .select("id", { count: "exact", head: true })
+      .eq("storage_path", replaced);
+    if (!count) await db().storage.from(PHOTO_BUCKET).remove([replaced]);
+  }
 
   revalidatePath(`/checklists/${slug}`);
   return { error: null };
@@ -589,5 +615,95 @@ export async function reopenNight(
   if (error) return { error: "Could not reopen that. Try again." };
 
   revalidatePath(`/checklists/${slug}`);
+  return { error: null };
+}
+
+/**
+ * Why a capture did not make it, as the phone saw it.
+ *
+ * The app could not answer that on the first live night. Three photographs
+ * failed and the only witness was a device that wrote nothing down, so the
+ * investigation ran on a text message and two wrong guesses.
+ *
+ * Deliberately forgiving. Every one of these arrives from a phone already
+ * having a bad time, and a report that argues with its own input is a report
+ * that goes missing exactly when it matters. Anything unparseable is dropped
+ * quietly and the caller is told it went fine, because there is nothing the
+ * person holding the phone could do about it either way.
+ *
+ * It names a step and a device and never a person. No screen reads it.
+ */
+export async function reportTrouble(rows: unknown): Promise<CloseState> {
+  const venue = await venueId();
+  if (!venue) return { error: null };
+
+  const all = Array.isArray(rows) ? rows.slice(0, 40) : [];
+  if (all.length === 0) return { error: null };
+
+  const STEPS = new Set(["read", "store", "send", "record", "vanished"]);
+  const text = (value: unknown, cap: number) =>
+    typeof value === "string" && value.trim() ? value.slice(0, cap) : null;
+  const number = (value: unknown) =>
+    typeof value === "number" && Number.isFinite(value) ? value : null;
+  // The id columns are uuids with foreign keys on them, and the timestamp is
+  // a timestamptz. One malformed value from one phone would fail the insert
+  // for every row in the batch, including the good ones, so the shapes are
+  // checked here rather than left to Postgres to refuse.
+  const UUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const uuid = (value: unknown) => {
+    const held = text(value, 40);
+    return held && UUID.test(held) ? held : null;
+  };
+  const stamp = (value: unknown) => {
+    const held = text(value, 40);
+    return held && !Number.isNaN(Date.parse(held)) ? held : null;
+  };
+
+  // One lookup per list rather than per row. A phone that lost signal for ten
+  // minutes reports ten refusals against the same list.
+  const nightOf = new Map<string, string | null>();
+  async function nightFor(slug: string | null): Promise<string | null> {
+    if (!slug) return null;
+    if (nightOf.has(slug)) return nightOf.get(slug) ?? null;
+    let found: string | null = null;
+    const list = await checklistFor(slug);
+    if (list) {
+      // Read, never create. The night row is a record of work; a failed
+      // upload must not be the thing that opens one.
+      const { data } = await db()
+        .from("close_nights")
+        .select("id")
+        .eq("checklist_id", list.id)
+        .eq("night", await activeNight(list.id))
+        .maybeSingle();
+      found = (data as { id: string } | null)?.id ?? null;
+    }
+    nightOf.set(slug, found);
+    return found;
+  }
+
+  const write: Record<string, unknown>[] = [];
+  for (const raw of all) {
+    if (!raw || typeof raw !== "object") continue;
+    const row = raw as Record<string, unknown>;
+    const step = text(row.step, 20);
+    if (!step || !STEPS.has(step)) continue;
+    const slug = text(row.slug, 120);
+    write.push({
+      night_id: await nightFor(slug),
+      slug,
+      item_id: uuid(row.itemId),
+      shot_index: number(row.shotIndex),
+      step,
+      detail: text(row.detail, 500),
+      bytes: number(row.bytes),
+      recovered: row.recovered === true,
+      user_agent: text(row.userAgent, 400),
+      client_at: stamp(row.clientAt),
+    });
+  }
+
+  if (write.length > 0) await db().from("close_trouble").insert(write);
   return { error: null };
 }

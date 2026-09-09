@@ -119,7 +119,11 @@ async function ownedChecklist(checklistId: string) {
 async function ownedItem(itemId: string) {
   const { data } = await db()
     .from("close_items")
-    .select("id, checklist_id, position, title, title_es, detail, proof")
+    // reference too: replacing an example shot has to know which file it is
+    // replacing, or the old one stays in storage with nothing pointing at it.
+    .select(
+      "id, checklist_id, position, title, title_es, detail, proof, reference",
+    )
     .eq("id", itemId)
     .maybeSingle();
   const item = data as {
@@ -129,6 +133,7 @@ async function ownedItem(itemId: string) {
     title: string;
     detail: string[];
     proof: Shot[];
+    reference: { path: string | null }[] | null;
   } | null;
   if (!item) return null;
   const list = await ownedChecklist(item.checklist_id);
@@ -557,6 +562,18 @@ export async function setReference(
     .update({ reference: next })
     .eq("id", owned.item.id);
   if (error) return { error: "Could not save that. Try again." };
+
+  // The picture this replaced. A manager retaking the example shot until it
+  // looks right left one file per attempt and a row pointing at the last of
+  // them; the rest sat in storage unreachable from anywhere in the app.
+  const kept = new Set(
+    next.map((ref) => ref.path).filter((path): path is string => Boolean(path)),
+  );
+  const gone = (owned.item.reference ?? [])
+    .map((ref) => ref.path)
+    .filter((path): path is string => Boolean(path))
+    .filter((path) => !kept.has(path));
+  if (gone.length > 0) await db().storage.from(PHOTO_BUCKET).remove(gone);
 
   revalidateFor(owned.list);
   return { error: null, ok: true };

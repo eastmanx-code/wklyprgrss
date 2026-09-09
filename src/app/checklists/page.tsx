@@ -176,9 +176,12 @@ export default async function ChecklistsPage() {
               />
             </h2>
             <p className="label">
+              {/* The nights this venue actually ran, not thirty off the
+                  calendar. A venue in its first week read "Last 30 nights"
+                  over a panel where every line said 30 of 30. */}
               <T
-                en={`Last ${real.nights} nights`}
-                es={`Últimas ${real.nights} noches`}
+                en={`${real.nights} nights so far`}
+                es={`${real.nights} noches hasta ahora`}
               />
             </p>
           </div>

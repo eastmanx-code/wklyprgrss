@@ -145,7 +145,11 @@ export default async function LocationsPage() {
   // The same run the full report draws, on the screen a manager lands on.
   const window = nightWindow(30, night);
   const trend = await nightTrend(window);
-  const points = trend.map((t) => ({
+  // Only the nights something ran. Charted over the whole window, the line
+  // began with three flat weeks at nought that were not bad nights, they were
+  // nights before the venue had the app.
+  const ran = trend.filter((t) => t.ran);
+  const points = ran.map((t) => ({
     weekStart: t.night,
     percent: t.ticked,
     approvedPercent: t.signed,
@@ -176,15 +180,15 @@ export default async function LocationsPage() {
         </h1>
       </header>
 
-      {lists > 0 ? (
+      {lists > 0 && ran.length > 0 ? (
         <div className="mb-4">
           <RunCard
             ticked={ticked}
             owed={owed}
-            nights={window.length}
+            nights={points.length}
             points={points}
             failed={failedLists > 0}
-            labelLeft={formatNight(window[0])}
+            labelLeft={formatNight(ran[0].night)}
             labelRight={formatNight(night)}
             best={best}
             worst={worst}
