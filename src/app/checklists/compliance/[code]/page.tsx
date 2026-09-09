@@ -63,7 +63,7 @@ export default async function VenueCompliancePage({
   const fails = [...pile("unsigned"), ...pile("gaps")];
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
+    <main className="close-flow mx-auto max-w-[960px] pb-4">
       <BackLink
         href={
           session.role === "admin"
@@ -76,7 +76,7 @@ export default async function VenueCompliancePage({
 
       {/* The night, the venue, the score, and the way to the nights either
           side, all in the header. */}
-      <header className="mt-4 mb-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+      <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div>
           <p className="label">
             {formatNightSpan(night)}
@@ -89,7 +89,7 @@ export default async function VenueCompliancePage({
               verdict before the bars do. The counts that make the score
               sit beside it. */}
           <p
-            className={`note mt-2 ${
+            className={`note mt-3 ${
               venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
             }`}
           >
@@ -155,7 +155,7 @@ export default async function VenueCompliancePage({
 
         {pile("done").length > 0 ? (
           <details className="group mt-5">
-            <summary className="label hover:text-ink flex min-h-11 cursor-pointer list-none items-center gap-2">
+            <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1">
               <span>Checked off and signed off · {pile("done").length}</span>
               <span
                 className="text-muted transition-transform group-open:rotate-90"
@@ -196,7 +196,7 @@ export default async function VenueCompliancePage({
         ) : null}
 
         {/* The thirty-night view, in the foot of the same card. */}
-        <p className="border-divider mt-5 border-t pt-4">
+        <p className="border-divider mt-4 border-t pt-4">
           <Link
             href={`/checklists/rollup?code=${code}`}
             className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
