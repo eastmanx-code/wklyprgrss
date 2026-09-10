@@ -214,6 +214,7 @@ export function VenueRows({
         missed(house) ? "missed 4pm" : null,
         !house.hasBoard ? "no board" : null,
         house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
+        house.rollingCount > 0 ? `${house.rollingCount} one more cycle` : null,
         house.hasBoard && !graded ? "not graded" : null,
         house.hasBoard && house.doneCount === 0
           ? "nothing filed"
