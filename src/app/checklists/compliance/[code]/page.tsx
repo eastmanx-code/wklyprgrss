@@ -60,7 +60,7 @@ export default async function VenueCompliancePage({
     venue.lists.filter((list) => list.group === group);
   // Not signed off first, then signed with something left: the worse fail
   // on top.
-  const fails = [...pile("unsigned"), ...pile("gaps")];
+  const fails = venue.lists.filter((list) => list.state === "fail");
 
   return (
     <main className="close-flow mx-auto max-w-[960px] pb-4">
@@ -198,7 +198,7 @@ export default async function VenueCompliancePage({
         {/* The thirty-night view, in the foot of the same card. */}
         <p className="border-divider mt-4 border-t pt-4">
           <Link
-            href={`/checklists/rollup?code=${code}`}
+            href={`/checklists/rollup?code=${code}&night=${night}`}
             className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
           >
             What keeps getting missed · last 30 nights

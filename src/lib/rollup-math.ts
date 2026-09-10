@@ -279,15 +279,21 @@ export function computeRollup(
     .filter((row) => row.of > 0)
     .sort((a, b) => b.done / b.of - a.done / a.of);
 
-  const counts = new Map<string, number>();
+  // Keyed on the name as typed with case and spacing folded, so "Nikki
+  // Milner" and "nikki milner" are one person, and shown the way it was
+  // first typed. A signature with no name, or the word null a phone once
+  // sent, is nobody and is not a signer.
+  const counts = new Map<string, { who: string; nights: number }>();
   for (const night of nights) {
     if (!night.certified_at || !night.certified_by) continue;
-    const who = night.certified_by.trim();
-    counts.set(who, (counts.get(who) ?? 0) + 1);
+    const who = night.certified_by.trim().replace(/\s+/g, " ");
+    if (!who || who.toLowerCase() === "null") continue;
+    const key = who.toLowerCase();
+    const held = counts.get(key) ?? { who, nights: 0 };
+    held.nights += 1;
+    counts.set(key, held);
   }
-  const certifiers = [...counts.entries()]
-    .map(([who, count]) => ({ who, nights: count }))
-    .sort((a, b) => b.nights - a.nights);
+  const certifiers = [...counts.values()].sort((a, b) => b.nights - a.nights);
 
   return {
     nights: live.length,

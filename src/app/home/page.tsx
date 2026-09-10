@@ -182,7 +182,11 @@ async function AdminHome() {
   const night = isNightOver(tonight) ? tonight : previousNight(tonight);
 
   const venues = await nightCompliance(night);
-  const failingVenues = venues.filter((v) => v.tier === "fail").length;
+  // Venues with any fail on them. Counted by tier, a venue at eight in ten
+  // with three fails read as "3 fails at 0 venues".
+  const failingVenues = venues.filter(
+    (v) => v.notSigned + v.notDone > 0,
+  ).length;
   // Not signed and not done, which are the two ways a list is short of done
   // and signed. The same ruler as every report page.
   const failedLists = venues.reduce((n, v) => n + v.notSigned + v.notDone, 0);

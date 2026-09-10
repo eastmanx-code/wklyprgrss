@@ -22,6 +22,7 @@ import {
   currentNight,
   formatNight,
   formatNightEs,
+  formatNightSpan,
   isNightOver,
   shiftNights,
 } from "@/lib/night";
@@ -72,13 +73,9 @@ export default async function LocationsPage({
   // The night with a verdict on it, unless one was asked for. Before the
   // roll at 4am that is still last night; after it, the one that just ended.
   const tonight = currentNight();
+  const lastClosed = isNightOver(tonight) ? tonight : previousNight(tonight);
   const asked = (await searchParams).night;
-  const night =
-    asked && NIGHT.test(asked)
-      ? asked
-      : isNightOver(tonight)
-        ? tonight
-        : previousNight(tonight);
+  const night = asked && NIGHT.test(asked) ? asked : lastClosed;
   const over = isNightOver(night);
 
   const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
@@ -172,7 +169,12 @@ export default async function LocationsPage({
     .filter((t) => t.ran)
     .map((t) => ({
       night: t.night,
-      state: t.done >= 100 ? ("complete" as const) : ("short" as const),
+      state:
+        t.night > lastClosed
+          ? ("open" as const)
+          : t.done >= 100
+            ? ("complete" as const)
+            : ("short" as const),
     }));
   // Best and worst only when there is something to compare against.
   const ranked = [...scored].sort((a, b) => b.score - a.score);
@@ -190,11 +192,12 @@ export default async function LocationsPage({
       <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div>
           <p className="label">
-            <T en={formatNight(night)} es={formatNightEs(night)} /> ·{" "}
-            {over ? (
-              <T en="night closed" es="noche cerrada" />
-            ) : (
-              <T en="still running" es="en curso" />
+            <T en={formatNightSpan(night)} es={formatNightEs(night)} />
+            {over ? null : (
+              <>
+                {" · "}
+                <T en="still running" es="en curso" />
+              </>
             )}
           </p>
           <h1 className="text-metric mt-2 tracking-normal">
@@ -206,11 +209,15 @@ export default async function LocationsPage({
 
       <div>
         <Card
+          /* "Last night" only when it is; browsing back, the card is
+             named for the night it shows. */
           title={
-            over ? (
+            !over ? (
+              <T en="Tonight" es="Esta noche" />
+            ) : night === lastClosed ? (
               <T en="Last night" es="Anoche" />
             ) : (
-              <T en="Tonight" es="Esta noche" />
+              <T en={formatNight(night)} es={formatNightEs(night)} />
             )
           }
           hint={

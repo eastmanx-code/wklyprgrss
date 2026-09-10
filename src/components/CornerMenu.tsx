@@ -42,10 +42,8 @@ export async function CornerMenu() {
             read on a phone, curved type needed a disc half again as big. The
             accent is the button itself, not the lettering on it. */}
         <summary className="bg-warn text-on-warn grid size-16 shrink-0 place-items-center rounded-full leading-none">
-          <span className="text-center text-[15px] leading-[1.05] font-medium tracking-[0.06em]">
-            ME
-            <br />
-            NU
+          <span className="text-center text-[11px] leading-none font-medium tracking-[0.08em] whitespace-nowrap">
+            Menu
           </span>
           <span className="sr-only">Menu</span>
         </summary>

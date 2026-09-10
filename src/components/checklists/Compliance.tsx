@@ -199,26 +199,29 @@ export function NightStrip({
   current,
   base,
 }: {
-  nights: { night: string; state: "complete" | "short" }[];
+  nights: { night: string; state: "complete" | "short" | "open" }[];
   current: string;
   base: string;
 }) {
   if (nights.length === 0) return null;
 
   const fill = {
-    complete: "bg-ink/20 hover:bg-ink/30",
-    short: "bg-warn hover:bg-warn/80",
+    complete: "bg-ink/20 hover:bg-ink/30 text-ink",
+    short: "bg-warn hover:bg-warn/80 text-on-warn",
+    open: "ring-card-border text-muted ring-1 ring-inset hover:bg-hover",
   } as const;
+  const day = (night: string) =>
+    new Date(`${night}T12:00:00Z`)
+      .toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" })
+      .toUpperCase();
 
   return (
     <div>
-      {/* Ten across on a phone, fifteen on a laptop, and never capped: capped
-          at a phone's width it sat tucked in the corner of a screen three
-          times wider. A tap target still has to survive a thumb at 2am. */}
-      {/* A day number under each square. Without it the strip read as a
-          row of venues to somebody seeing it cold, and a calendar that
-          needs explaining is not a calendar. */}
-      <div className="grid grid-cols-10 gap-2 lg:grid-cols-15">
+      {/* Dated tabs, one per night the checklists ran. Blank squares read
+          as venues, or scores, to anyone seeing them cold. A night still
+          running is outlined, not coloured: it has not failed anything yet. */}
+      <p className="label mb-2">Nights on the checklists</p>
+      <div className="flex flex-wrap gap-2">
         {nights.map((n) => (
           <Link
             key={n.night}
@@ -226,23 +229,16 @@ export function NightStrip({
             aria-label={`${formatNight(n.night)} · ${
               n.state === "complete"
                 ? "every list checked off and signed off"
-                : "something not checked off or not signed off"
+                : n.state === "short"
+                  ? "something not checked off or not signed off"
+                  : "still running"
             }`}
             aria-current={n.night === current ? "date" : undefined}
-            className="flex flex-col items-center gap-1"
+            className={`inline-flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-label tracking-[0.08em] tabular-nums ${fill[n.state]} ${
+              n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
+            }`}
           >
-            <span
-              className={`block aspect-square w-full rounded-[2px] ${fill[n.state]} ${
-                n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
-              }`}
-            />
-            <span
-              className={`label tabular-nums ${
-                n.night === current ? "text-ink" : ""
-              }`}
-            >
-              {Number(n.night.slice(8, 10))}
-            </span>
+            {day(n.night)} {Number(n.night.slice(8, 10))}
           </Link>
         ))}
       </div>
@@ -285,7 +281,7 @@ export function ListBar({
           ? "still going"
           : list.group === "empty"
             ? "nothing on it"
-            : "checked off and signed off";
+            : "";
   // What is missing outranks who did the rest: the fail first and in
   // weight, then the record of who checked and who signed, muted.
   const missing = list.facts.filter((f) => f.warn);
@@ -312,9 +308,11 @@ export function ListBar({
             on a phone rather than squeezing it. */}
         <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <span className="text-body font-medium">{list.name}</span>
-          <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
-            {verdict}
-          </span>
+          {verdict ? (
+            <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+              {verdict}
+            </span>
+          ) : null}
         </span>
         {/* The missing items, one to a line, in full, where the page is
             for acting on them; the first clause where it is a summary. */}

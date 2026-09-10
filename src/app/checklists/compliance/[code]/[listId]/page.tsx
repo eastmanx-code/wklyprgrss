@@ -82,11 +82,10 @@ export default async function ListCompliancePage({
           page in the flow that never said which building it was describing. */}
       <header className="mt-4 mb-6">
         <p className="label">
-          {name} · {formatNight(night)} · {detail.house} ·{" "}
-          {listName(detail.role, detail.room)}
+          {name} · {formatNight(night)} · {detail.house}
         </p>
         <h1 className="text-metric mt-2 font-medium">
-          {phaseName(detail.phase)} checklist
+          {listName(detail.role, detail.room)} · {phaseName(detail.phase)}
         </h1>
       </header>
 

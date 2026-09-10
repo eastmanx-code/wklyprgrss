@@ -66,7 +66,7 @@ function Bar({ done, of }: { done: number; of: number }) {
 export default async function RollupPage({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string }>;
+  searchParams: Promise<{ code?: string; night?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/");
@@ -74,7 +74,12 @@ export default async function RollupPage({
   // An admin arrives from a venue's night carrying its code. Anyone else
   // has one venue and the app knows which; a code in their address bar is
   // ignored, because a URL is not a permission.
-  const askedCode = (await searchParams).code?.toUpperCase();
+  const { code: rawCode, night: askedNight } = await searchParams;
+  const askedCode = rawCode?.toUpperCase();
+  const nightQuery =
+    askedNight && /^\d{4}-\d{2}-\d{2}$/.test(askedNight)
+      ? `?night=${askedNight}`
+      : "";
   let venue: string | null = null;
   if (session.role === "admin" && askedCode) {
     const { data } = await db()
@@ -88,7 +93,7 @@ export default async function RollupPage({
   const venueName = venue ? await closeVenueName(venue) : null;
   const back =
     session.role === "admin" && askedCode
-      ? `/checklists/compliance/${askedCode}`
+      ? `/checklists/compliance/${askedCode}${nightQuery}`
       : "/checklists";
 
   const real = venue ? await venueRollup(venue) : null;
@@ -141,7 +146,7 @@ export default async function RollupPage({
             venue's report, including the ones that are not Night Hawk. */}
         <p className="label">
           {venueName ? `${venueName} · ` : ""}
-          {nights} nights so far
+          last 30 nights · {nights} recorded
         </p>
         <h1 className="mt-2 text-metric font-medium">
           What&apos;s getting missed
@@ -172,22 +177,32 @@ export default async function RollupPage({
           ))}
         </div>
         {/* The answer to "which ones", on the page, so nobody has to ask.
-            Two lines, because they are two different conversations. */}
-        {latest && latest.notSigned.length > 0 ? (
-          <p className="note text-warn mt-3">
-            Not signed off {formatNight(latest.night)}:{" "}
-            {latest.notSigned
-              .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
-              .join(" · ")}
-          </p>
-        ) : null}
-        {latest && latest.notDone.length > 0 ? (
-          <p className="note text-warn mt-1">
-            Not checked off {formatNight(latest.night)}:{" "}
-            {latest.notDone
-              .map((l) => `${listName(l.role, l.room)} ${l.phase}`)
-              .join(" · ")}
-          </p>
+            One row per list, the same as every other level. */}
+        {latest && latest.notSigned.length + latest.notDone.length > 0 ? (
+          <div className="mt-3">
+            <p className="label">
+              {formatNight(latest.night)} ·{" "}
+              {latest.notSigned.length + latest.notDone.length} fails
+            </p>
+            <ul className="mt-2 space-y-[2px]">
+              {[
+                ...latest.notDone.map((l) => ({ l, why: "not checked off" })),
+                ...latest.notSigned.map((l) => ({ l, why: "not signed off" })),
+              ].map(({ l, why }) => (
+                <li
+                  key={`${l.role}-${l.room}-${l.phase}`}
+                  className="bg-warn text-on-warn flex flex-wrap items-baseline justify-between gap-x-4 rounded-[4px] px-3 py-2"
+                >
+                  <span className="text-body font-medium">
+                    {listName(l.role, l.room)} {l.phase}
+                  </span>
+                  <span className="text-label tracking-[0.08em] uppercase">
+                    {why}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : null}
         {latest &&
         latest.notSigned.length === 0 &&
