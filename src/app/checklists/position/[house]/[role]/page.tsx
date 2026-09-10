@@ -14,7 +14,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import { closeVenueId } from "@/lib/close-venue";
-import { activeNightsFor } from "@/lib/active-night";
+import { boardNight } from "@/lib/active-night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
@@ -89,13 +89,22 @@ export default async function PositionPage({
 
   // Signed for tonight. Same rule as the screen before this one: the accent
   // is work still open, and it drains as the night gets closed out.
-  // Each list on the night it is actually on: after the 4am roll, a list
-  // still being walked stays on the night it started.
-  const nightOf = await activeNightsFor(lists.map((l) => l.id));
+  // The night the building's board is on: after the 4am roll, while any
+  // list in the building is still being walked, this night is the one it
+  // started on. Decided over the whole building, not this position, so this
+  // screen and the one before it never disagree about the date.
+  const { data: venueLists } = await db()
+    .from("close_checklists")
+    .select("id")
+    .eq("venue_id", venue)
+    .eq("active", true);
+  const night = await boardNight(
+    ((venueLists ?? []) as { id: string }[]).map((l) => l.id),
+  );
   const { data: nightRows } = await db()
     .from("close_nights")
-    .select("checklist_id, night, certified_at, certified_by")
-    .in("night", [...new Set(nightOf.values())])
+    .select("checklist_id, certified_at, certified_by")
+    .eq("night", night)
     .in(
       "checklist_id",
       lists.map((l) => l.id),
@@ -105,15 +114,11 @@ export default async function PositionPage({
     (
       (nightRows ?? []) as {
         checklist_id: string;
-        night: string;
         certified_at: string | null;
         certified_by: string | null;
       }[]
     )
-      .filter(
-        (row) =>
-          row.certified_at && nightOf.get(row.checklist_id) === row.night,
-      )
+      .filter((row) => row.certified_at)
       .map((row) => [row.checklist_id, row.certified_by]),
   );
 

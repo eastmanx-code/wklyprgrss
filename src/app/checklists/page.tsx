@@ -10,8 +10,8 @@ import {
   type House,
   type Phase,
 } from "@/lib/checklists";
-import { activeNightsFor } from "@/lib/active-night";
-import { currentNight, formatNight, formatNightEs } from "@/lib/night";
+import { boardNight } from "@/lib/active-night";
+import { formatNight, formatNightEs } from "@/lib/night";
 import {
   closeVenueCode,
   closeVenueId,
@@ -85,32 +85,26 @@ export default async function ChecklistsPage() {
    * work in it, and the same accent means the same thing it means on the
    * walkthrough board: this wants something from you.
    */
-  // Which night each list is on. After the 4am roll a list still being
-  // walked stays on the night it started, the same as the list itself does;
-  // this page used to ask the calendar and blank the whole board at 4:00.
-  const nightOf = await activeNightsFor(lists.map((l) => l.id));
-  const tonight = currentNight();
-  const carried = [...nightOf.values()].find((n) => n !== tonight);
-  // The night the board is on: the one still running, if any list is.
-  const night = carried ?? tonight;
+  // The night the board is on. After the 4am roll, while any list in the
+  // building is still being walked, the board stays on the night it
+  // started; this page used to ask the calendar and blank itself at 4:00.
+  const night = await boardNight(lists.map((l) => l.id));
 
   const signed = new Set<string>();
   if (lists.length > 0) {
     const { data: nightRows } = await db()
       .from("close_nights")
-      .select("checklist_id, night, certified_at")
-      .in("night", [...new Set(nightOf.values())])
+      .select("checklist_id, certified_at")
+      .eq("night", night)
       .in(
         "checklist_id",
         lists.map((l) => l.id),
       );
     for (const row of (nightRows ?? []) as {
       checklist_id: string;
-      night: string;
       certified_at: string | null;
     }[]) {
-      if (row.certified_at && nightOf.get(row.checklist_id) === row.night)
-        signed.add(row.checklist_id);
+      if (row.certified_at) signed.add(row.checklist_id);
     }
   }
 
