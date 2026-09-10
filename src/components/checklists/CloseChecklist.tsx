@@ -242,6 +242,13 @@ export function CloseChecklist({
    * completely allowed; it now takes a deliberate tap to reach.
    */
   const [signingOpen, setSigningOpen] = useState(false);
+  const signDialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const dialog = signDialog.current;
+    if (!dialog) return;
+    if (signingOpen && !dialog.open) dialog.showModal();
+    if (!signingOpen && dialog.open) dialog.close();
+  }, [signingOpen]);
   const [reopenPin, setReopenPin] = useState("");
   const [reopenReason, setReopenReason] = useState("");
   const [reopenError, setReopenError] = useState<string | null>(null);
@@ -1245,6 +1252,187 @@ export function CloseChecklist({
             CLOSE_TOTAL - certified.done
           } ${t("not done", "sin hacer")}`;
 
+  /** The signature itself: the statement, the name, the pad, the button. */
+  const signBlock = (
+    <>
+      <div className="border-ink mt-2.5 border-l-2 pl-4">
+        <p className="attest">{attestationText}</p>
+        {openItems.length > 0 ? (
+          <ul className="mt-3 space-y-1.5">
+            {openItems.map((item) => (
+              /* Hanging indent: a wrapped title lines up under the title,
+                   not under the number. */
+              <li
+                key={item.number}
+                className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
+              >
+                {item.number} · {titleOf(item)}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
+
+      <div className="mt-5 space-y-4">
+        <div className="space-y-2">
+          <label className="label" htmlFor="certifier">
+            {t(
+              "Who did this work (required)",
+              "Quién hizo el trabajo (requerido)",
+            )}
+          </label>
+          <input
+            id="certifier"
+            className="field"
+            placeholder={t("Your name", "Tu nombre")}
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck={false}
+            value={certifier}
+            disabled={locked}
+            onChange={(event) => setCertifier(event.target.value)}
+          />
+        </div>
+
+        <SignaturePad
+          signed={signed}
+          onSignedChange={setSigned}
+          locked={locked}
+          onInk={(dataUrl) => {
+            signatureRef.current = dataUrl;
+          }}
+        />
+
+        {shortfall ? (
+          <p role="alert" className="text-body text-warn">
+            {shortfall}
+          </p>
+        ) : null}
+
+        {confirmingEmpty ? (
+          <div className="border-warn/40 rounded-[8px] border p-4">
+            <p className="note text-warn">
+              {t(
+                "Nothing on this list was checked. Sign anyway?",
+                "No se marcó nada en esta lista. ¿Firmar de todos modos?",
+              )}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="btn btn-sm"
+                onClick={() => void certify()}
+              >
+                {t("Yes, sign it", "Sí, firmar")}
+              </button>
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={() => setConfirmingEmpty(false)}
+              >
+                {t("Go back", "Regresar")}
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        <button
+          type="button"
+          className="btn w-full"
+          onClick={() => void certify()}
+          disabled={locked || saving}
+        >
+          {saving
+            ? t("Saving…", "Guardando…")
+            : (certifiedLabel ??
+              (doneCount === CLOSE_TOTAL
+                ? t("Sign this list", "Firmar esta lista")
+                : `${t("Sign with", "Firmar con")} ${
+                    CLOSE_TOTAL - doneCount
+                  } ${t("not done", "sin hacer")}`))}
+        </button>
+
+        {/* The second signature.
+                  Only after the first, because checking work nobody has signed
+                  for is checking a claim that has not been made yet. Its own
+                  name box and its own pad: sharing either would let one
+                  person's finger stand for both, which is the thing this is
+                  here to stop. */}
+        {locked ? (
+          <div className="border-divider border-t pt-4">
+            {verified ? (
+              <p className="label">
+                {t("Checked by", "Revisada por")} · {verified.by ?? "—"}
+              </p>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <p className="label text-warn">
+                    {t(
+                      "Waiting on a second signature",
+                      "Falta una segunda firma",
+                    )}
+                  </p>
+                  <p className="note text-muted mt-1.5 leading-relaxed">
+                    {t(
+                      "Somebody else who worked tonight checks this and signs. Not the person who did it. A lead if one is in the space, the other closer if not.",
+                      "Otra persona que trabajó esta noche lo revisa y firma. No quien lo hizo. Un líder si hay uno, y si no, el otro que cierra.",
+                    )}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="label" htmlFor="verifier">
+                    {t(
+                      "Who checked it (required)",
+                      "Quién lo revisó (requerido)",
+                    )}
+                  </label>
+                  <input
+                    id="verifier"
+                    className="field"
+                    placeholder={t("Your name", "Tu nombre")}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    value={verifier}
+                    onChange={(event) => setVerifier(event.target.value)}
+                  />
+                </div>
+
+                <SignaturePad
+                  signed={verifierSigned}
+                  onSignedChange={setVerifierSigned}
+                  locked={false}
+                  onInk={(dataUrl) => {
+                    verifierSignatureRef.current = dataUrl;
+                  }}
+                />
+
+                {checkError ? (
+                  <p role="alert" className="text-body text-warn">
+                    {checkError}
+                  </p>
+                ) : null}
+
+                <button
+                  type="button"
+                  className="btn w-full"
+                  onClick={() => void check()}
+                  disabled={checking}
+                >
+                  {checking
+                    ? t("Saving…", "Guardando…")
+                    : t("I checked this work", "Yo revisé este trabajo")}
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+
   return (
     <div className="space-y-3">
       {/* Compact and pinned: it is on screen the whole way down, and the
@@ -1858,193 +2046,69 @@ export function CloseChecklist({
         {/* Everything below is the signature. Held back until the work is
             done, the night is already a record, or somebody deliberately asks
             for it. */}
-        {openItems.length === 0 || locked || signingOpen ? (
+        {openItems.length === 0 || locked ? (
+          signBlock
+        ) : (
           <>
-            <div className="border-ink mt-2.5 border-l-2 pl-4">
-              <p className="attest">{attestationText}</p>
-              {openItems.length > 0 ? (
-                <ul className="mt-3 space-y-1.5">
+            <button
+              type="button"
+              className="btn mt-4 w-full"
+              onClick={() => setSigningOpen(true)}
+            >
+              {t("Sign with", "Firmar con")} {openItems.length}{" "}
+              {t("not done", "sin hacer")}
+            </button>
+
+            {/* Signing with work not done is a full-screen stop, not a
+                paragraph that unfolds under a small button. The items left
+                are the page; the signature comes after them. A tap outside
+                or the back key goes back to the list, never past it. */}
+            <dialog
+              ref={signDialog}
+              className="ww-dialog"
+              onCancel={(event) => {
+                event.preventDefault();
+                setSigningOpen(false);
+              }}
+              onClose={() => setSigningOpen(false)}
+            >
+              <div className="ww-dialog-body">
+                <p className="label text-warn">{t("Stop", "Alto")}</p>
+                <h2 className="text-metric mt-2 leading-tight font-medium">
+                  {openItems.length}{" "}
+                  {openItems.length === 1
+                    ? t("item not done", "punto sin hacer")
+                    : t("items not done", "puntos sin hacer")}
+                </h2>
+                <p className="note mt-3 leading-relaxed">
+                  {t(
+                    "You are about to sign this list with work not done. Your name goes on it, and the manager will see exactly what was left. Go back and finish, or sign and own it.",
+                    "Estás a punto de firmar esta lista con trabajo sin hacer. Tu nombre va en ella, y el gerente verá exactamente qué quedó. Regresa y termina, o firma y hazte responsable.",
+                  )}
+                </p>
+                <ul className="mt-4 space-y-2">
                   {openItems.map((item) => (
-                    /* Hanging indent: a wrapped title lines up under the title,
-                   not under the number. */
                     <li
                       key={item.number}
-                      className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
+                      className="bg-warn text-on-warn rounded-[4px] px-4 py-3 text-body leading-snug font-medium break-words"
                     >
                       {item.number} · {titleOf(item)}
                     </li>
                   ))}
                 </ul>
-              ) : null}
-            </div>
-
-            <div className="mt-5 space-y-4">
-              <div className="space-y-2">
-                <label className="label" htmlFor="certifier">
-                  {t(
-                    "Who did this work (required)",
-                    "Quién hizo el trabajo (requerido)",
-                  )}
-                </label>
-                <input
-                  id="certifier"
-                  className="field"
-                  placeholder={t("Your name", "Tu nombre")}
-                  autoComplete="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  value={certifier}
-                  disabled={locked}
-                  onChange={(event) => setCertifier(event.target.value)}
-                />
+                <button
+                  type="button"
+                  className="btn mt-5 w-full"
+                  onClick={() => setSigningOpen(false)}
+                >
+                  {t("Go back and finish", "Regresar y terminar")}
+                </button>
+                <div className="border-divider mt-6 border-t pt-6">
+                  {signBlock}
+                </div>
               </div>
-
-              <SignaturePad
-                signed={signed}
-                onSignedChange={setSigned}
-                locked={locked}
-                onInk={(dataUrl) => {
-                  signatureRef.current = dataUrl;
-                }}
-              />
-
-              {shortfall ? (
-                <p role="alert" className="text-body text-warn">
-                  {shortfall}
-                </p>
-              ) : null}
-
-              {confirmingEmpty ? (
-                <div className="border-warn/40 rounded-[8px] border p-4">
-                  <p className="note text-warn">
-                    {t(
-                      "Nothing on this list was checked. Sign anyway?",
-                      "No se marcó nada en esta lista. ¿Firmar de todos modos?",
-                    )}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      onClick={() => void certify()}
-                    >
-                      {t("Yes, sign it", "Sí, firmar")}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-ghost"
-                      onClick={() => setConfirmingEmpty(false)}
-                    >
-                      {t("Go back", "Regresar")}
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-
-              <button
-                type="button"
-                className="btn w-full"
-                onClick={() => void certify()}
-                disabled={locked || saving}
-              >
-                {saving
-                  ? t("Saving…", "Guardando…")
-                  : (certifiedLabel ??
-                    (doneCount === CLOSE_TOTAL
-                      ? t("Sign this list", "Firmar esta lista")
-                      : `${t("Sign with", "Firmar con")} ${
-                          CLOSE_TOTAL - doneCount
-                        } ${t("not done", "sin hacer")}`))}
-              </button>
-
-              {/* The second signature.
-                  Only after the first, because checking work nobody has signed
-                  for is checking a claim that has not been made yet. Its own
-                  name box and its own pad: sharing either would let one
-                  person's finger stand for both, which is the thing this is
-                  here to stop. */}
-              {locked ? (
-                <div className="border-divider border-t pt-4">
-                  {verified ? (
-                    <p className="label">
-                      {t("Checked by", "Revisada por")} · {verified.by ?? "—"}
-                    </p>
-                  ) : (
-                    <div className="space-y-4">
-                      <div>
-                        <p className="label text-warn">
-                          {t(
-                            "Waiting on a second signature",
-                            "Falta una segunda firma",
-                          )}
-                        </p>
-                        <p className="note text-muted mt-1.5 leading-relaxed">
-                          {t(
-                            "Somebody else who worked tonight checks this and signs. Not the person who did it. A lead if one is in the space, the other closer if not.",
-                            "Otra persona que trabajó esta noche lo revisa y firma. No quien lo hizo. Un líder si hay uno, y si no, el otro que cierra.",
-                          )}
-                        </p>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="label" htmlFor="verifier">
-                          {t(
-                            "Who checked it (required)",
-                            "Quién lo revisó (requerido)",
-                          )}
-                        </label>
-                        <input
-                          id="verifier"
-                          className="field"
-                          placeholder={t("Your name", "Tu nombre")}
-                          autoComplete="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          value={verifier}
-                          onChange={(event) => setVerifier(event.target.value)}
-                        />
-                      </div>
-
-                      <SignaturePad
-                        signed={verifierSigned}
-                        onSignedChange={setVerifierSigned}
-                        locked={false}
-                        onInk={(dataUrl) => {
-                          verifierSignatureRef.current = dataUrl;
-                        }}
-                      />
-
-                      {checkError ? (
-                        <p role="alert" className="text-body text-warn">
-                          {checkError}
-                        </p>
-                      ) : null}
-
-                      <button
-                        type="button"
-                        className="btn w-full"
-                        onClick={() => void check()}
-                        disabled={checking}
-                      >
-                        {checking
-                          ? t("Saving…", "Guardando…")
-                          : t("I checked this work", "Yo revisé este trabajo")}
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : null}
-            </div>
+            </dialog>
           </>
-        ) : (
-          <button
-            type="button"
-            className="btn-ghost mt-4"
-            onClick={() => setSigningOpen(true)}
-          >
-            {t("Sign with", "Firmar con")} {openItems.length}{" "}
-            {t("not done", "sin hacer")}
-          </button>
         )}
       </section>
     </div>
