@@ -170,10 +170,10 @@ export function verdictOf(
     row.proof_missing > 0
       ? [
           {
-            label: "proof",
+            label: "missing photo or video",
             value: `${row.proof_missing} ${
               row.proof_missing === 1 ? "item" : "items"
-            } asked for a photo or video and got none`,
+            }`,
           },
         ]
       : [];
