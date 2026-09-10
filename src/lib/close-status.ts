@@ -68,6 +68,12 @@ export type CloseStatusRow = {
   /** How many times a signature on this night has been undone and redone. */
   reopened: number;
   /**
+   * The last thing that happened on the night: the latest tick or the
+   * signature, whichever is later. After the 4am roll this is what says
+   * whether the list is still being walked or has gone quiet.
+   */
+  last_activity: string | null;
+  /**
    * How the ticks arrived, rather than how many.
    *
    * Every other column here answers "did it get done" and none of them can
@@ -180,8 +186,11 @@ export async function closeStatus(
   const tickOf = new Set<string>();
   const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
   const whoOn = new Map<string, string[]>();
+  // Ticks arrive oldest first, so the last one written per night wins.
+  const lastTickOn = new Map<string, string>();
   for (const t of ticks) {
     tickOf.add(`${t.night_id}:${t.item_id}`);
+    lastTickOn.set(t.night_id, t.created_at);
     const who = t.initials?.trim().toUpperCase();
     if (who) {
       const names = whoOn.get(t.night_id) ?? [];
@@ -256,6 +265,12 @@ export async function closeStatus(
               .map((i) => i.title)
           : asked.map((i) => i.title),
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
+        last_activity: row
+          ? ([lastTickOn.get(row.id), row.certified_at]
+              .filter((at): at is string => Boolean(at))
+              .sort()
+              .pop() ?? null)
+          : null,
         pace: row ? paceOf(timesOn.get(row.id) ?? [], window) : NO_TICKS,
       };
     })

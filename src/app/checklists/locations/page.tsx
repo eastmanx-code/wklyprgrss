@@ -76,7 +76,6 @@ export default async function LocationsPage({
   const lastClosed = isNightOver(tonight) ? tonight : previousNight(tonight);
   const asked = (await searchParams).night;
   const night = asked && NIGHT.test(asked) ? asked : lastClosed;
-  const over = isNightOver(night);
 
   const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
     db()
@@ -94,6 +93,10 @@ export default async function LocationsPage({
     active: boolean;
     close_active: boolean;
   }[];
+
+  // Over at 4am, unless a list is still being walked past it. Then the
+  // night is still "so far", the same as it was at midnight.
+  const over = isNightOver(night) && scored.every((v) => v.going === 0);
 
   // In the programme, and the ones that could be. Membership is its own flag:
   // `active` governs the weekly walkthrough and a venue can run one without

@@ -6,7 +6,13 @@ import { BackLink } from "@/components/ui";
 import { phaseName } from "@/lib/checklists";
 import { listDetail, type ItemOutcome } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
-import { currentNight, formatClock, formatNight } from "@/lib/night";
+import {
+  carriesForward,
+  currentNight,
+  formatClock,
+  formatNight,
+  isNightOver,
+} from "@/lib/night";
 import { describeLag } from "@/lib/pace";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -62,7 +68,18 @@ export default async function ListCompliancePage({
   const name = await venueNameOf(code);
   const open = detail.items.filter((i) => !i.ticked);
   const signed = Boolean(detail.certifiedAt);
-  const short = open.length > 0 || !signed;
+  // Still being walked: the night is not over, or it rolled at 4am with this
+  // list touched in the last hour and a half. Not a fail yet either way.
+  const running =
+    !signed &&
+    (!isNightOver(night) ||
+      carriesForward(
+        [detail.lastTickAt, detail.certifiedAt]
+          .filter((at): at is string => Boolean(at))
+          .sort()
+          .pop() ?? null,
+      ));
+  const short = !running && (open.length > 0 || !signed);
   // Who checked things off: the initials on the ticks, each once.
   const by = [
     ...new Set(
@@ -101,11 +118,13 @@ export default async function ListCompliancePage({
           {open.length > 0 ? ` · ${open.length} not checked off` : ""}
         </span>
         <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
-          {!signed
-            ? "not signed off"
-            : open.length > 0
-              ? `signed off with ${open.length} not checked off`
-              : "checked off and signed off"}
+          {running
+            ? "in progress"
+            : !signed
+              ? "not signed off"
+              : open.length > 0
+                ? `signed off with ${open.length} not checked off`
+                : "checked off and signed off"}
         </span>
       </div>
 

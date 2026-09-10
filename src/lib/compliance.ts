@@ -5,6 +5,7 @@ import { db } from "./supabase";
 import { dueOnNight } from "./due";
 import { listName } from "./slug";
 import {
+  carriesForward,
   currentNight,
   formatClock,
   isNightOver,
@@ -293,7 +294,13 @@ export async function nightCompliance(
   now: Date = new Date(),
 ): Promise<VenueCompliance[]> {
   const rows = await closeStatus(night);
-  const over = isNightOver(night, now);
+  // The night is over at 4am, unless this list is still being walked. A
+  // close that ran past four was touched minutes ago; calling it a fail at
+  // 4:08 while the barback is still ticking is what had a manager reading
+  // the roll as a cutoff. The same rule the tick screen files work under.
+  const nightOver = isNightOver(night, now);
+  const overFor = (row: CloseStatusRow) =>
+    nightOver && !carriesForward(row.last_activity, now);
 
   const byVenue = new Map<string, CloseStatusRow[]>();
   for (const row of rows) {
@@ -305,7 +312,7 @@ export async function nightCompliance(
   const venues: VenueCompliance[] = [];
   for (const [code, venueRows] of byVenue) {
     const lists = venueRows
-      .map((row) => verdictOf(row, over))
+      .map((row) => verdictOf(row, overFor(row)))
       .sort(
         (a, b) =>
           STATE_ORDER[a.state] - STATE_ORDER[b.state] ||
