@@ -2,7 +2,13 @@ import Link from "next/link";
 
 import { Card } from "./Card";
 import { tierOf } from "@/lib/status";
-import type { House, HouseWeek, VenueWeekSummary } from "@/lib/types";
+import {
+  HOUSES,
+  houseName,
+  type House,
+  type HouseWeek,
+  type VenueWeekSummary,
+} from "@/lib/types";
 
 /**
  * What this half scored, once every card in it has been ruled on.
@@ -269,7 +275,17 @@ export function VenueRows({
         {headline}
       </p>
 
-      <Tier title="Still to grade" lines={waiting} hrefPrefix={hrefPrefix} />
+      {/* Two people grade, one half each. One pile had the dining room
+          grader ruling on kitchens and the other way round, so the queue is
+          split by half before anything else. */}
+      {HOUSES.map((house) => (
+        <Tier
+          key={house}
+          title={`Still to grade · ${houseName(house)}`}
+          lines={waiting.filter((line) => line.house === house)}
+          hrefPrefix={hrefPrefix}
+        />
+      ))}
       <Tier title="Fail" lines={fails} hrefPrefix={hrefPrefix} />
       <Tier title="Neutral" lines={neutrals} hrefPrefix={hrefPrefix} />
       <Tier title="Good" lines={goods} hrefPrefix={hrefPrefix} />
