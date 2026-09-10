@@ -165,6 +165,18 @@ export function verdictOf(
   const by =
     row.checked_by.length > 0 ? row.checked_by.join(", ") : "no initials";
   const checked = `${count} checked off by ${by}`;
+  // Ticked with nothing behind it. Shown beside the fails, not among them.
+  const proof: Fact[] =
+    row.proof_missing > 0
+      ? [
+          {
+            label: "proof",
+            value: `${row.proof_missing} ${
+              row.proof_missing === 1 ? "item" : "items"
+            } asked for a photo or video and got none`,
+          },
+        ]
+      : [];
 
   if (row.certified) {
     if (row.open > 0) {
@@ -181,6 +193,7 @@ export function verdictOf(
           { label: "checked off", value: `${count} by ${by}` },
           { label: "signed off", value: signature },
           { label: "not checked off", value: left, warn: true },
+          ...proof,
         ],
         reason: `${name} · ${checked} · signed off ${signature} · not checked off: ${left}`,
       };
@@ -194,6 +207,7 @@ export function verdictOf(
       facts: [
         { label: "checked off", value: `by ${by}` },
         { label: "signed off", value: signature },
+        ...proof,
       ],
       reason: `${name} · checked off by ${by} · signed off ${signature}`,
     };
@@ -229,6 +243,7 @@ export function verdictOf(
       nightOver
         ? { label: "signed off", value: "nobody", warn: true }
         : { label: "signed off", value: "not yet, still going" },
+      ...proof,
     ],
     reason: nightOver
       ? `${name} · ${checked} · nobody signed off`
