@@ -10,7 +10,7 @@ import type { Who } from "./role";
 // fixtures. Re-exported from here because this is where every caller already
 // looks for them, and a second import path for the same rule is a second place
 // to write the rule out by hand instead.
-export { mayManage, mayReachVenue, venueOfSession } from "./role";
+export { mayGrade, mayManage, mayReachVenue, venueOfSession } from "./role";
 
 const COOKIE_NAME = "ww_session";
 /** A day: leaders sign in each shift rather than staying logged in for a month. */
@@ -34,7 +34,7 @@ export type Session = Who;
 type Payload =
   | { r: "l"; v: string; e: number }
   | { r: "m"; v: string; e: number }
-  | { r: "a"; e: number };
+  | { r: "a"; e: number; h?: "FOH" | "HOH" };
 
 /**
  * Derived from the service-role key so the app needs no extra secret beyond the
@@ -102,7 +102,7 @@ export async function getSession(): Promise<Session | null> {
   if (!payload) return null;
   if (payload.r === "l") return { role: "leader", venueId: payload.v };
   if (payload.r === "m") return { role: "manager", venueId: payload.v };
-  return { role: "admin" };
+  return payload.h ? { role: "admin", house: payload.h } : { role: "admin" };
 }
 
 async function setSessionCookie(payload: Payload, maxAgeMs: number) {
@@ -133,9 +133,11 @@ export async function startManagerSession(venueId: string) {
   );
 }
 
-export async function startAdminSession() {
+export async function startAdminSession(house: "FOH" | "HOH" | null = null) {
   await setSessionCookie(
-    { r: "a", e: Date.now() + ADMIN_TTL_MS },
+    house
+      ? { r: "a", e: Date.now() + ADMIN_TTL_MS, h: house }
+      : { r: "a", e: Date.now() + ADMIN_TTL_MS },
     ADMIN_TTL_MS,
   );
 }

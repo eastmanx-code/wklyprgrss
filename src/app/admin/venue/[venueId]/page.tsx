@@ -178,6 +178,7 @@ export default async function AdminVenuePage({
         venueId={venue.id}
         weekStart={gradedWeek}
         weekLabel={formatWeekStart(gradedWeek)}
+        mine={session.house ?? null}
         houses={HOUSES.filter((house) => venue.houses.includes(house)).map(
           (house) => ({
             house,

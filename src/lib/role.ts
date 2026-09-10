@@ -21,7 +21,18 @@
 export type Who =
   | { role: "leader"; venueId: string }
   | { role: "manager"; venueId: string }
-  | { role: "admin" };
+  /**
+   * An admin may be tied to one half. Two people grade, one the dining
+   * room and one the kitchen, and each PIN says which; an admin with no
+   * half is the master key and grades either.
+   */
+  | { role: "admin"; house?: "FOH" | "HOH" };
+
+/** May this admin rule on this half? Nobody else rules on anything. */
+export function mayGrade(who: Who | null, house: "FOH" | "HOH"): boolean {
+  if (!who || who.role !== "admin") return false;
+  return !who.house || who.house === house;
+}
 
 /**
  * The venue this session is confined to, or null for an admin, who is

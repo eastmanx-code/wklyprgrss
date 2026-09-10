@@ -37,12 +37,16 @@ export function GradeWeek({
   weekStart,
   weekLabel,
   houses,
+  mine = null,
 }: {
   venueId: string;
   weekStart: string;
   weekLabel: string;
   houses: HouseGrade[];
+  /** The half this admin grades. Null is the master key, which grades both. */
+  mine?: House | null;
 }) {
+  const own = (house: House) => !mine || mine === house;
   const [by, setBy] = useState("");
   /**
    * The name box lives outside these forms, because one name covers whichever
@@ -74,7 +78,9 @@ export function GradeWeek({
    * have counted anyway.
    */
   const scored = houses.filter((house) => house.scored);
-  const outstanding = houses.filter((house) => !house.gradedBy);
+  const outstanding = houses.filter(
+    (house) => !house.gradedBy && own(house.house),
+  );
   const done = outstanding.length === 0 && houses.length > 0;
 
   return (
@@ -144,7 +150,9 @@ export function GradeWeek({
               ) : null}
             </p>
 
-            {house.gradedBy ? (
+            {!own(house.house) ? (
+              <span className="label shrink-0">Not yours to grade</span>
+            ) : house.gradedBy ? (
               <form action={ungradeWeek} className="shrink-0">
                 <input type="hidden" name="venueId" value={venueId} />
                 <input type="hidden" name="weekStart" value={weekStart} />

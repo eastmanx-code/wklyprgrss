@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { findOrphans, removeOrphans } from "@/lib/orphans";
 import { forgetSignedUrl } from "@/lib/photos";
-import { getSession, mayReachVenue } from "@/lib/session";
+import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, awaitingReview } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -19,6 +19,32 @@ const MAX_NOTE_LENGTH = 500;
 
 async function isAdmin(): Promise<boolean> {
   return (await getSession())?.role === "admin";
+}
+
+/**
+ * May the signed-in admin rule on this half? Two people grade, one half
+ * each, and a verdict or a grade on the other half is refused here, not
+ * just hidden. The half of a submission is the half of its item.
+ */
+async function ownsHouse(house: House): Promise<boolean> {
+  return mayGrade(await getSession(), house);
+}
+
+async function houseOfSubmission(submissionId: string): Promise<House | null> {
+  const { data } = await db()
+    .from("submissions")
+    .select("item_id")
+    .eq("id", submissionId)
+    .maybeSingle();
+  const itemId = (data as { item_id: string } | null)?.item_id;
+  if (!itemId) return null;
+  const { data: item } = await db()
+    .from("items")
+    .select("house")
+    .eq("id", itemId)
+    .maybeSingle();
+  const house = (item as { house: string } | null)?.house;
+  return house === "FOH" || house === "HOH" ? house : null;
 }
 
 /**
@@ -219,6 +245,9 @@ export async function reviewSubmission(formData: FormData) {
   const review = String(formData.get("review") ?? "");
   if (!["pending", "approved", "sent_back"].includes(review)) return;
 
+  const ownHouse = await houseOfSubmission(submissionId);
+  if (!ownHouse || !(await ownsHouse(ownHouse))) return;
+
   // Enforced on the server too, not just by hiding the button: the leader has
   // to declare the work done before it can be approved.
   if (review === "approved") {
@@ -300,6 +329,7 @@ export async function approveAllForVenue(formData: FormData) {
   // venue would have signed off the kitchen in the dining room's name — which
   // is precisely the conflation the split board exists to prevent.
   const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
+  if (!(await ownsHouse(house))) return;
   const items = await itemsFor(venueId, house);
   const itemIds = items.map((item) => item.id);
   if (itemIds.length === 0) return;
@@ -582,6 +612,7 @@ export async function gradeWeek(formData: FormData) {
   // silently lost the other.
   const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!venueId || !weekStart) return;
+  if (!(await ownsHouse(house))) return;
 
   // Not before the week is over. Grading a week still being worked closes it
   // on people who have until Thursday 4pm to file — and the reset it unlocks
@@ -618,36 +649,11 @@ export async function gradeWeek(formData: FormData) {
 
   refresh(venueId);
 
-  // The last grade a venue owes is the end of that venue, so it hands back the
-  // board rather than leaving the reviewer on a page with nothing left on it.
-  // Grading the first of two halves stays put: the other half is on the same
-  // screen and bouncing out would only mean navigating back in.
-  if (await venueSettled(venueId, weekStart)) redirect("/admin");
-}
-
-/** Every house this venue is scored on has been graded for the week. */
-async function venueSettled(
-  venueId: string,
-  weekStart: string,
-): Promise<boolean> {
-  const { data: venue } = await db()
-    .from("venues")
-    .select("houses")
-    .eq("id", venueId)
-    .maybeSingle();
-  const houses = (venue as { houses: House[] } | null)?.houses ?? [];
-  if (houses.length === 0) return false;
-
-  const { data } = await db()
-    .from("graded_weeks")
-    .select("house")
-    .eq("venue_id", venueId)
-    .eq("week_start", weekStart);
-
-  const graded = new Set(
-    ((data ?? []) as { house: House }[]).map((row) => row.house),
-  );
-  return houses.every((house) => graded.has(house));
+  // A grade is the end of that half for the person who gave it, so it hands
+  // back the main board. It used to stay put until both halves were graded,
+  // on the reasoning that the other half was on the same screen; but two
+  // people grade now, one half each, and the other half is not theirs.
+  redirect("/admin");
 }
 
 /** Takes a grade back, if it went on the wrong week. */
@@ -658,6 +664,7 @@ export async function ungradeWeek(formData: FormData) {
   const weekStart = String(formData.get("weekStart") ?? "");
   const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!venueId || !weekStart) return;
+  if (!(await ownsHouse(house))) return;
 
   await db()
     .from("graded_weeks")
@@ -691,6 +698,7 @@ export async function gradeAllVenues(formData: FormData) {
   // exists to carry.
   const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
   if (!weekStart) return;
+  if (!(await ownsHouse(house))) return;
   if (!isDeadlinePassed(weekStart)) return;
 
   // Only the venues that owe this house. Grading all of them would put a

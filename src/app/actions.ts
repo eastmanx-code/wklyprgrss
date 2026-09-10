@@ -101,7 +101,7 @@ export async function adminLogin(
  */
 async function openFor(holder: PinHolder): Promise<void> {
   if (holder.kind === "manager") await startManagerSession(holder.venueId);
-  else await startAdminSession();
+  else await startAdminSession(holder.house);
 }
 
 export async function logout() {

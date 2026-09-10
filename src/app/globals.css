@@ -282,6 +282,19 @@ button {
   font-family: inherit;
 }
 
+/* The browser paints a filled-in field its own blue. Ours, the same as an
+   empty one: the fill is the browser's business, the look is not. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-inset) inset;
+  -webkit-text-fill-color: var(--color-ink);
+  caret-color: var(--color-ink);
+  transition: background-color 9999s ease-out;
+}
+
 /* Form controls don't inherit text-transform reliably — <option> in
    particular ignores it from an ancestor — so state it on them directly.
    Display only: values are stored exactly as typed. */
