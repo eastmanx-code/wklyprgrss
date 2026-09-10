@@ -19,7 +19,7 @@ import {
   ReviewPill,
 } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
-import { getSession, mayReachVenue } from "@/lib/session";
+import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
 import { awaitingReview, getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
 import type { Item, Submission } from "@/lib/types";
@@ -95,6 +95,7 @@ export default async function ItemPage({
     return (
       <GradeItem
         item={item}
+        mine={mayGrade(session, item.house)}
         venueCode={(venue as { code: string } | null)?.code ?? null}
         waiting={queue.length}
         current={current}
@@ -419,6 +420,7 @@ export default async function ItemPage({
  */
 function GradeItem({
   item,
+  mine,
   venueCode,
   waiting,
   current,
@@ -426,6 +428,8 @@ function GradeItem({
   previous,
 }: {
   item: Item;
+  /** Whether this half is the signed-in admin's to rule on. */
+  mine: boolean;
   venueCode: string | null;
   /** How many tasks in this half are still waiting on a verdict, this one included. */
   waiting: number;
@@ -552,7 +556,11 @@ function GradeItem({
           <section className="panel mt-3">
             <p className="card-title">Your call</p>
             <div className="mt-3 flex flex-col gap-2">
-              {current.review === "pending" ? (
+              {!mine ? (
+                <p className="label">
+                  Not yours to grade. This half belongs to the other grader.
+                </p>
+              ) : current.review === "pending" ? (
                 <>
                   {current.progress === "done" ? (
                     <form action={reviewSubmission}>

@@ -20,21 +20,49 @@ import { db } from "./supabase";
  * a second place to forget the database codes exist.
  */
 export type PinHolder =
-  | { kind: "admin" }
+  | { kind: "admin"; house: "FOH" | "HOH" | null }
   | { kind: "manager"; venueId: string };
+
+/**
+ * The half the master key grades. The env key belongs to the person who
+ * walks the dining rooms; the kitchen grader's code is in the table with its
+ * own half on it. Overridable, never blank: a master key with no half could
+ * grade both, which is the thing the split exists to stop.
+ */
+const MASTER_HOUSE = (): "FOH" | "HOH" =>
+  process.env.ADMIN_PIN_HOUSE === "HOH" ? "HOH" : "FOH";
 
 export async function pinHolder(pin: string): Promise<PinHolder | null> {
   if (!pin.trim()) return null;
 
   const { data: stored } = await db()
     .from("admin_pins")
-    .select("pin, venue_id");
+    .select("pin, venue_id, house");
 
-  const candidates: { pin: string; venueId: string | null }[] = [
-    ...ADMIN_PINS().map((value) => ({ pin: value, venueId: null })),
-    ...((stored ?? []) as { pin: string; venue_id: string | null }[]).map(
-      (row) => ({ pin: row.pin, venueId: row.venue_id }),
-    ),
+  const candidates: {
+    pin: string;
+    venueId: string | null;
+    house: "FOH" | "HOH" | null;
+  }[] = [
+    ...ADMIN_PINS().map((value) => ({
+      pin: value,
+      venueId: null,
+      house: MASTER_HOUSE(),
+    })),
+    ...(
+      (stored ?? []) as {
+        pin: string;
+        venue_id: string | null;
+        house: string | null;
+      }[]
+    ).map((row) => ({
+      pin: row.pin,
+      venueId: row.venue_id,
+      house: (row.house === "FOH" || row.house === "HOH" ? row.house : null) as
+        | "FOH"
+        | "HOH"
+        | null,
+    })),
   ];
 
   return candidates.reduce<PinHolder | null>((found, candidate) => {
@@ -43,7 +71,7 @@ export async function pinHolder(pin: string): Promise<PinHolder | null> {
     if (!hit) return null;
     return candidate.venueId
       ? { kind: "manager", venueId: candidate.venueId }
-      : { kind: "admin" };
+      : { kind: "admin", house: candidate.house };
   }, null);
 }
 
