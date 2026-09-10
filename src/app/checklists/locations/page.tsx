@@ -211,7 +211,7 @@ export default async function LocationsPage({
             {over ? null : (
               <>
                 {" · "}
-                <T en="still running" es="en curso" />
+                <T en="in progress" es="en curso" />
               </>
             )}
           </p>
@@ -249,7 +249,8 @@ export default async function LocationsPage({
                     ? `${short} ${short === 1 ? "fail" : "fails"}`
                     : over
                       ? "no fails"
-                      : "no fails yet",
+                      : "no fails so far",
+                  ...(over ? [] : ["in progress"]),
                 ].join(" · ")}
                 es={[
                   `${done} de ${lists} listas marcadas y firmadas`,
@@ -257,7 +258,8 @@ export default async function LocationsPage({
                     ? `${short} ${short === 1 ? "falla" : "fallas"}`
                     : over
                       ? "sin fallas"
-                      : "sin fallas todavía",
+                      : "sin fallas hasta ahora",
+                  ...(over ? [] : ["en curso"]),
                 ].join(" · ")}
               />
             )
@@ -304,7 +306,8 @@ export default async function LocationsPage({
             points={points}
             failed={short > 0}
             labelLeft={formatNight(ran[0].night)}
-            labelRight={formatNight(night)}
+            labelRight={`${formatNight(night)}${over ? "" : " · so far"}`}
+            over={over}
             best={best}
             worst={worst}
           />

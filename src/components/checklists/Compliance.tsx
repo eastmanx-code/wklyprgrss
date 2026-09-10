@@ -210,16 +210,15 @@ export function NightStrip({
     short: "bg-warn hover:bg-warn/80 text-on-warn",
     open: "ring-card-border text-muted ring-1 ring-inset hover:bg-hover",
   } as const;
-  // "9/8", the way the date is said out loud, not "TUE 8".
-  const day = (night: string) =>
-    `${Number(night.slice(5, 7))}/${Number(night.slice(8, 10))}`;
+  // "09/08", zero padded so every tab is the same width and they line up.
+  const day = (night: string) => `${night.slice(5, 7)}/${night.slice(8, 10)}`;
 
   return (
     <div>
       {/* Dated tabs, one per night the checklists ran. Blank squares read
           as venues, or scores, to anyone seeing them cold. A night still
           running is outlined, not coloured: it has not failed anything yet. */}
-      <p className="label mb-2">Nights on the checklists</p>
+      <p className="label mb-2">Service nights</p>
       <div className="flex flex-wrap gap-2">
         {nights.map((n) => (
           <Link
@@ -230,7 +229,7 @@ export function NightStrip({
                 ? "every list checked off and signed off"
                 : n.state === "short"
                   ? "something not checked off or not signed off"
-                  : "still running"
+                  : "in progress"
             }`}
             aria-current={n.night === current ? "date" : undefined}
             className={`inline-flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-label tracking-[0.08em] tabular-nums ${fill[n.state]} ${
@@ -275,9 +274,9 @@ export function ListBar({
     list.group === "unsigned"
       ? "not signed off"
       : list.group === "gaps"
-        ? `${open} not checked off`
+        ? `${open} ${open === 1 ? "item" : "items"} not checked off`
         : list.group === "going"
-          ? "still going"
+          ? "in progress"
           : list.group === "empty"
             ? "nothing on it"
             : "";
@@ -326,15 +325,16 @@ export function ListBar({
             {line(missing)}
           </span>
         ) : null}
-        {record.length > 0 ? (
+        {record.map((fact) => (
           <span
+            key={fact.label}
             className={`text-body leading-relaxed ${
               failed ? "text-on-warn/75" : "text-muted"
             }`}
           >
-            {line(record)}
+            {fact.label}: {fact.value}
           </span>
-        ) : null}
+        ))}
       </Link>
     </li>
   );

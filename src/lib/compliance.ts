@@ -152,19 +152,19 @@ export function verdictOf(
       reason: `${listName(row.role, row.room)} · nothing written on it yet`,
     };
   }
-  const count = `${row.ticked} of ${row.items_on_list}`;
+  const count = `${row.ticked}/${row.items_on_list}`;
   // Who, and when. The when was missing, and a card that says "signed by
   // Ethan" on a night that ran from four in the afternoon to four in the
   // morning leaves the reader to guess which end. A signature with no name
   // typed is still a signature, and says so rather than reading as nobody.
   const who = row.certified_by?.trim();
   const at = row.certified_at ? formatClock(row.certified_at) : "";
-  const signature = [who || "no name", at].filter(Boolean).join(" ");
+  const signature = [who || "no name", at].filter(Boolean).join(" · ");
   // Who checked things off, from the initials on the ticks. Every fail
   // names a person or says plainly that nobody put their initials to it.
   const by =
     row.checked_by.length > 0 ? row.checked_by.join(", ") : "no initials";
-  const checked = `${count} checked off by ${by}`;
+  const checked = `${count} checked off · ${by}`;
   // Ticked with nothing behind it. Shown beside the fails, not among them.
   const proof: Fact[] =
     row.proof_missing > 0
@@ -190,7 +190,7 @@ export function verdictOf(
         group: "gaps",
         name,
         facts: [
-          { label: "checked off", value: `${count} by ${by}` },
+          { label: "checked off", value: `${count} · ${by}` },
           { label: "signed off", value: signature },
           { label: "not checked off", value: left, warn: true },
           ...proof,
@@ -205,7 +205,7 @@ export function verdictOf(
       group: "done",
       name,
       facts: [
-        { label: "checked off", value: `by ${by}` },
+        { label: "checked off", value: `${count} · ${by}` },
         { label: "signed off", value: signature },
         ...proof,
       ],
@@ -239,15 +239,15 @@ export function verdictOf(
     group: nightOver ? "unsigned" : "going",
     name,
     facts: [
-      { label: "checked off", value: `${count} by ${by}` },
+      { label: "checked off", value: `${count} · ${by}` },
       nightOver
         ? { label: "signed off", value: "nobody", warn: true }
-        : { label: "signed off", value: "not yet, still going" },
+        : { label: "signed off", value: "not yet · in progress" },
       ...proof,
     ],
     reason: nightOver
       ? `${name} · ${checked} · nobody signed off`
-      : `${name} · ${checked} · still going`,
+      : `${name} · ${checked} · in progress`,
   };
 }
 

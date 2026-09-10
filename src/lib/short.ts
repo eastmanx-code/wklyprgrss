@@ -18,7 +18,7 @@ export function shortOf(venue: VenueCompliance): string {
   // reconcile at a glance; "12 of 15" beside both does.
   const parts = [
     ...(fails > 0 ? [`${fails} ${fails === 1 ? "fail" : "fails"}`] : []),
-    ...(venue.going > 0 ? [`${venue.going} still going`] : []),
+    ...(venue.going > 0 ? [`${venue.going} in progress`] : []),
   ];
   return parts.length > 0 ? parts.join(" · ") : "no fails";
 }

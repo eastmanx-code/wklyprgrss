@@ -154,7 +154,7 @@ export default async function VenueCompliancePage({
             ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
             : "no fails",
           ...(pile("going").length > 0
-            ? [`${pile("going").length} still going`]
+            ? [`${pile("going").length} in progress`]
             : []),
           ...(pile("done").length > 0
             ? [`${pile("done").length} checked off and signed off`]
@@ -179,7 +179,7 @@ export default async function VenueCompliancePage({
 
         {pile("going").length > 0 ? (
           <>
-            <p className="label mt-5">Still going · {pile("going").length}</p>
+            <p className="label mt-5">In progress · {pile("going").length}</p>
             <ul className="mt-2 space-y-3">
               {pile("going").map((list) => (
                 <ListBar

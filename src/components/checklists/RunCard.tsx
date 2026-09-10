@@ -26,6 +26,7 @@ export function RunCard({
   failed,
   labelLeft,
   labelRight,
+  over = true,
   best,
   worst,
 }: {
@@ -38,6 +39,8 @@ export function RunCard({
   failed: boolean;
   labelLeft: string;
   labelRight: string;
+  /** Whether the latest night has closed. Open, its numbers say "so far". */
+  over?: boolean;
   best: { code: string; done: number; total: number } | null;
   worst: { code: string; done: number; total: number } | null;
 }) {
@@ -45,11 +48,11 @@ export function RunCard({
 
   return (
     <Card
-      title={<T en="The run" es="La racha" />}
+      title={<T en="Nightly scores" es="Notas por noche" />}
       hint={
         <T
-          en={`Last ${nights} nights · share of lists checked off and signed off`}
-          es={`Últimas ${nights} noches · parte de las listas marcadas y firmadas`}
+          en={`Last ${nights} nights · lists checked off and signed off`}
+          es={`Últimas ${nights} noches · listas marcadas y firmadas`}
         />
       }
     >
@@ -59,8 +62,8 @@ export function RunCard({
           percent={share}
           caption={
             <T
-              en={`${done} of ${total} lists · last night`}
-              es={`${done} de ${total} listas · anoche`}
+              en={`${done} of ${total} lists · ${over ? "last night" : "tonight so far"}`}
+              es={`${done} de ${total} listas · ${over ? "anoche" : "esta noche hasta ahora"}`}
             />
           }
           tone={failed ? "var(--warn)" : "var(--ink)"}
