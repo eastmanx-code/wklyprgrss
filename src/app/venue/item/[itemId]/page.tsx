@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { PhotoView } from "@/components/PhotoView";
+import { PhotoView, type PhotoFrame } from "@/components/PhotoView";
 
 import { reviewSubmission, setItemActive } from "@/app/admin/actions";
 import { DeleteEntry } from "@/components/DeleteEntry";
@@ -330,6 +330,10 @@ export default async function ItemPage({
                             <PhotoView
                               src={beforeUrl}
                               className="h-full w-full"
+                              set={[
+                                { src: beforeUrl, label: "Before" },
+                                ...(url ? [{ src: url, label: "After" }] : []),
+                              ]}
                             />
                           ) : (
                             <PurgedPhoto aspect="wide" />
@@ -344,6 +348,12 @@ export default async function ItemPage({
                         <PhotoView
                           src={url}
                           className="aspect-[4/3] rounded-[8px]"
+                          set={[
+                            ...(beforeUrl
+                              ? [{ src: beforeUrl, label: "Before" }]
+                              : []),
+                            { src: url, label: "After" },
+                          ]}
                         />
                       ) : (
                         <PurgedPhoto aspect="wide" />
@@ -433,6 +443,18 @@ function GradeItem({
   // filed; without one, the last photo of any earlier week is the comparison.
   const paired = Boolean(current?.before_photo_url);
   const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
+  // What the overlay pages through: the same-week before and after, or last
+  // time beside this week. Either way the reviewer moves side to side
+  // without closing one shot to open the other.
+  const pair: PhotoFrame[] = paired
+    ? [
+        ...(beforeUrl ? [{ src: beforeUrl, label: "Before" }] : []),
+        ...(url ? [{ src: url, label: "After" }] : []),
+      ]
+    : [
+        ...(previousUrl ? [{ src: previousUrl, label: "Last time" }] : []),
+        ...(url ? [{ src: url, label: "This week" }] : []),
+      ];
 
   return (
     <main className="mx-auto max-w-2xl">
@@ -475,6 +497,7 @@ function GradeItem({
                     <PhotoView
                       src={beforeUrl}
                       className="aspect-[4/3] rounded-[8px]"
+                      set={pair}
                     />
                   ) : (
                     <PurgedPhoto aspect="wide" />
@@ -485,7 +508,11 @@ function GradeItem({
 
               <figure>
                 {url ? (
-                  <PhotoView src={url} className="aspect-[4/3] rounded-[8px]" />
+                  <PhotoView
+                    src={url}
+                    className="aspect-[4/3] rounded-[8px]"
+                    set={pair}
+                  />
                 ) : (
                   <PurgedPhoto aspect="wide" />
                 )}
@@ -579,6 +606,7 @@ function GradeItem({
                     src={previousUrl}
                     className="aspect-[4/3] rounded-[6px]"
                     hint={false}
+                    set={pair}
                   />
                 ) : (
                   <PurgedPhoto aspect="wide" />
