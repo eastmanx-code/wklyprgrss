@@ -323,8 +323,9 @@ export function ListBar({
       >
         {lead ? (
           <>
-            <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <span className="text-body font-medium">{lead}</span>
+            <span className="text-body font-medium">
+              {lead}
+              {"\u00A0"}
               <span aria-hidden>→</span>
             </span>
             <span className="text-body">{list.name}</span>
