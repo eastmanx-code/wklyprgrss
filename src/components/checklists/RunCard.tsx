@@ -19,8 +19,8 @@ import { Trend } from "@/components/Trend";
  * is the truth and looks like it.
  */
 export function RunCard({
-  ticked,
-  owed,
+  done,
+  total,
   nights,
   points,
   failed,
@@ -29,8 +29,9 @@ export function RunCard({
   best,
   worst,
 }: {
-  ticked: number;
-  owed: number;
+  /** Lists checked off and signed off, out of lists on the night. */
+  done: number;
+  total: number;
   nights: number;
   points: { weekStart: string; percent: number; approvedPercent: number }[];
   /** Whether anything failed, which decides whether the ring is lit. */
@@ -40,22 +41,24 @@ export function RunCard({
   best: { code: string; score: number } | null;
   worst: { code: string; score: number } | null;
 }) {
-  const share = owed === 0 ? 0 : Math.round((ticked / owed) * 100);
+  const share = total === 0 ? 0 : Math.round((done / total) * 100);
 
   return (
     <Card
       title={<T en="The run" es="La racha" />}
-      hint={<T en={`Last ${nights} nights`} es={`Últimas ${nights} noches`} />}
+      hint={
+        <T
+          en={`Last ${nights} nights · lists checked off and signed off, out of ten`}
+          es={`Últimas ${nights} noches · listas marcadas y firmadas, sobre diez`}
+        />
+      }
     >
-      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[176px_minmax(0,1fr)_auto]">
+      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[120px_minmax(0,1fr)_auto]">
         <Dial
+          size={120}
           percent={share}
-          caption={
-            <T
-              en={`${ticked} of ${owed} items signed off`}
-              es={`${ticked} de ${owed} puntos firmados`}
-            />
-          }
+          label={`${Math.round(share / 10)}/10`}
+          caption={<T en="score · last night" es="nota · anoche" />}
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />
 
@@ -64,9 +67,9 @@ export function RunCard({
             points={points}
             labelLeft={labelLeft}
             labelRight={labelRight}
-            solidLabel="lists signed"
-            dashedLabel="items signed off"
             target={80}
+            showApproved={false}
+            tenScale
           />
         ) : (
           <p className="note text-muted self-center leading-relaxed">

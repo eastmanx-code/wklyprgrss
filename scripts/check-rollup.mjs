@@ -30,9 +30,9 @@ const items = [
   { id: "i2", checklist_id: "L", title: "Stanchions" },
 ];
 
-// Night 1: certified, both ticked  -> c
-// Night 2: certified, only i1      -> g
-// Night 3: no row at all           -> m
+// Night 1: certified, both ticked  -> done and signed        -> c
+// Night 2: certified, only i1      -> signed, not done       -> m
+// Night 3: no row at all           -> the venue was not running
 const nights = [
   { id: "n1", checklist_id: "L", night: W[0], certified_at: "t", certified_by: "Ana" },
   { id: "n2", checklist_id: "L", night: W[1], certified_at: "t", certified_by: "Ana" },
@@ -45,16 +45,22 @@ const ticks = [
 const r = computeRollup({ checklists, items, nights, ticks }, W);
 
 // Night 3 has no row anywhere, so the venue was not running: two nights count.
-// The strip is about signing: every list was signed on both, gaps or not.
-is("strip", r.strip, "cc");
-is("certified", r.certified, 2);
+// One ruler: a list is done and signed or it is not. Night 2 was signed with
+// a thing left on it, so it is not.
+is("strip", r.strip, "cm");
+is("certified", r.certified, 1);
 is("nights", r.nights, 2);
-is("lists signed over the running nights", [r.signed, r.owed], [2, 2]);
-is("nothing unsigned on the latest night", r.unsigned, { night: W[1], lists: [] });
+is("lists done and signed over the running nights", [r.done, r.of], [1, 2]);
+// Which one, and which way it fell short: signed, not done.
+is("latest night: not done is named", r.latest, {
+  night: W[1],
+  notSigned: [],
+  notDone: [{ role: "MOD", room: null, phase: "close" }],
+});
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
 is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);
-// 2 items x 2 nights = 4 owed; 3 ticks.
-is("byRole", r.byRole, [{ role: "MOD", done: 3, of: 4, opened: 2, nights: 2 }]);
+// The same ruler per position: one list, two nights, done and signed once.
+is("byRole", r.byRole, [{ role: "MOD", done: 1, of: 2 }]);
 is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
 
 // ------------------------------------------------------- which nights count
@@ -68,15 +74,20 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   const ignored = computeRollup({ checklists: [...checklists, line], items, nights: ranAll, ticks: [] }, W);
   is("ignored list: the venue ran three nights", ignored.nights, 3);
   is("ignored list: every item fully open", ignored.missed.map((m) => m.open), [3, 3]);
-  // The number that explains a bad bar: the list was never opened.
-  is("ignored list: byRole says the list was not opened", ignored.byRole, [{ role: "MOD", done: 0, of: 6, opened: 0, nights: 3 }]);
-  is("ignored list: half the lists signed reads as half or fewer", ignored.strip, "mmm");
-  is("ignored list: three of six signed", [ignored.signed, ignored.owed], [3, 6]);
+  // Ranked worst first: the list nobody opened is nought of three, the one
+  // that was done every night is three of three.
+  is("ignored list: byRole", ignored.byRole, [
+    { role: "Line", done: 3, of: 3 },
+    { role: "MOD", done: 0, of: 3 },
+  ]);
+  is("ignored list: one list short is a short night", ignored.strip, "mmm");
+  is("ignored list: three of six done and signed", [ignored.done, ignored.of], [3, 6]);
   // The question a manager asks of "3 of 6" is which ones. Named, with the
   // room where there is one, so three deep cleans do not read as one word.
-  is("ignored list: the unsigned one is named", ignored.unsigned, {
+  is("ignored list: the unsigned one is named", ignored.latest, {
     night: W[2],
-    lists: [{ role: "MOD", room: null, phase: "close" }],
+    notSigned: [{ role: "MOD", room: null, phase: "close" }],
+    notDone: [],
   });
 }
 
@@ -89,9 +100,9 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
     W,
   );
   is("first week: only the nights it ran", firstWeek.nights, 1);
-  is("first week: strip is one night long", firstWeek.strip, "c");
+  is("first week: strip is one night long", firstWeek.strip, "m");
   is("first week: one item, one night, once", firstWeek.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 1]]);
-  is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 1, of: 2, opened: 1, nights: 1 }]);
+  is("first week: byRole", firstWeek.byRole, [{ role: "MOD", done: 0, of: 1 }]);
 }
 
 // Nothing recorded at all. The caller shows the one honest line instead of
@@ -104,8 +115,8 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   is("nothing recorded: no roles", silent.byRole, []);
 }
 
-// Most of the lists signed is its own state: not every one, not half or
-// fewer. Three lists, two signed.
+// Two buckets, no third. Three lists, two done and signed and one nobody
+// signed, is a short night, the same as none.
 {
   const three = [
     ...checklists,
@@ -119,13 +130,15 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
       { id: "n2", checklist_id: "L2", night: W[0], certified_at: "t", certified_by: "Bo" },
       { id: "n3", checklist_id: "L3", night: W[0], certified_at: null, certified_by: null },
     ],
-    ticks: [],
+    // MOD's two items both ticked; the other two lists have no items.
+    ticks: [{ night_id: "n1", item_id: "i1" }, { night_id: "n1", item_id: "i2" }],
   }, W);
-  is("most signed", most.strip, "g");
-  is("two of three", [most.signed, most.owed], [2, 3]);
-  is("the deep clean is named with its room", most.unsigned, {
+  is("most done and signed is still short", most.strip, "m");
+  is("two of three", [most.done, most.of], [2, 3]);
+  is("the deep clean is named with its room", most.latest, {
     night: W[0],
-    lists: [{ role: "Deep clean", room: "Noble", phase: "mid" }],
+    notSigned: [{ role: "Deep clean", room: "Noble", phase: "mid" }],
+    notDone: [],
   });
 }
 
@@ -238,12 +251,13 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   const nothing = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [] }, week, isDue);
   is("rota: each item owed one night in seven", [...new Set(nothing.missed.map((m) => m.of))], [1]);
   is("rota: seven items each missed once", nothing.missed.length, 7);
-  is("rota: the week is seven owed not forty nine", nothing.byRole, [{ role: "Bar deep clean", done: 0, of: 7, opened: 7, nights: 7 }]);
+  is("rota: the week is seven owed not forty nine", nothing.byRole, [{ role: "Bar deep clean", done: 0, of: 7 }]);
 
   // The week done exactly as written: one item a night, on its own day.
   const asWritten = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, isDue);
   is("rota: doing it right reports nothing missed", asWritten.missed, []);
-  is("rota: and reads as complete", asWritten.byRole, [{ role: "Bar deep clean", done: 7, of: 7, opened: 7, nights: 7 }]);
+  is("rota: and reads as complete", asWritten.byRole, [{ role: "Bar deep clean", done: 7, of: 7 }]);
+  is("rota: and the strip is a clean week", asWritten.strip, "ccccccc");
   is("rota: the venue is not marked down for it",
     computeGroup({ checklists: deep, items: rota, nights: opened, ticks: allTicks }, week, new Map([["V", "HOOD"]]), isDue),
     [{ code: "HOOD", done: 7, of: 7 }]);
@@ -252,7 +266,7 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   const mondayOnly = computeRollup({ checklists: deep, items: rota, nights: opened, ticks: [{ night_id: "w0", item_id: "d0" }] }, week, isDue);
   is("rota: Monday done leaves six owed", mondayOnly.missed.length, 6);
   is("rota: and Monday is not among them", mondayOnly.missed.some((m) => m.item === "MONDAY"), false);
-  is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7, opened: 7, nights: 7 }]);
+  is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7 }]);
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);

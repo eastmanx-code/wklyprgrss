@@ -27,6 +27,7 @@ export function Trend({
   dashedLabel = "filed",
   target,
   showApproved = true,
+  tenScale = false,
 }: {
   points: { weekStart: string; percent: number; approvedPercent: number }[];
   labelLeft: string;
@@ -42,6 +43,12 @@ export function Trend({
   target?: number;
   /** Off for a house that is not being scored yet — it has nothing signed off. */
   showApproved?: boolean;
+  /**
+   * Label the axis and the latest point out of ten rather than a hundred.
+   * The plot is the same; only the words on it change, so the line reads in
+   * the unit every other number on the page is in.
+   */
+  tenScale?: boolean;
 }) {
   if (points.length < 2) return null;
 
@@ -130,26 +137,44 @@ export function Trend({
             />
           </svg>
 
-          {/* Positioned in percentages rather than user units so the dot stays
-              round under the stretched viewBox. */}
-          <span
-            className="bg-ink absolute h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{ left: "100%", top: `${y(lead)}%` }}
-            aria-hidden
-          />
+          {/* One dot per night, positioned in percentages rather than user
+              units so they stay round under the stretched viewBox. A line
+              alone read as a slope; the dots say it is four readings. */}
+          {points.map((p, i) => (
+            <span
+              key={p.weekStart}
+              className={`bg-ink absolute -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                i === points.length - 1 ? "h-2 w-2" : "h-1.5 w-1.5"
+              }`}
+              style={{
+                left: `${x(i)}%`,
+                top: `${y(showApproved ? p.approvedPercent : p.percent)}%`,
+              }}
+              aria-hidden
+            />
+          ))}
         </div>
 
         {/* Axis labels outside the plot: inside, they sit on the data. */}
         <div className="relative w-8 shrink-0">
-          {GRIDLINES.map((g) => (
+          {GRIDLINES.filter((g) => !tenScale || g % 50 === 0).map((g) => (
             <span
               key={g}
               className="label absolute right-0 -translate-y-1/2"
               style={{ top: `${y(g)}%` }}
             >
-              {g}
+              {tenScale ? g / 10 : g}
             </span>
           ))}
+          {/* The target, named where the dashed line meets the axis. */}
+          {target !== undefined ? (
+            <span
+              className="label text-warn absolute right-0 -translate-y-1/2"
+              style={{ top: `${y(target)}%` }}
+            >
+              {tenScale ? target / 10 : target}
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -158,7 +183,8 @@ export function Trend({
       <div className="mt-3 flex items-baseline justify-between gap-x-4">
         <span className="label shrink-0">{labelLeft}</span>
         <span className="label shrink-0">
-          {labelRight} · {Math.round(lead)}%
+          {labelRight} ·{" "}
+          {tenScale ? `${Math.round(lead / 10)}/10` : `${Math.round(lead)}%`}
         </span>
       </div>
       {showApproved ? (

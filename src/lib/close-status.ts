@@ -44,8 +44,21 @@ export type CloseStatusRow = {
   certified: boolean;
   certified_by: string | null;
   certified_at: string | null;
+  /**
+   * Who checked things off: the initials typed on the ticks, each once, in
+   * the order they first appeared. A fail with no name on it is a fail
+   * nobody can act on, and the names were already on every tick.
+   */
+  checked_by: string[];
   /** Signed with items still open — the state worth a conversation. */
   signed_with_gaps: boolean;
+  /**
+   * Items ticked that asked for a photo, video or note and got none. Not a
+   * fail, and not folded into the score: a tick with nothing behind it is
+   * a different problem from a tick that never happened, and the report
+   * says so beside the fails rather than by pretending it is one.
+   */
+  proof_missing: number;
   /**
    * What was left open, by name. "3 still open" is a count somebody has to
    * go and look up; "the Sysco order, the carts" is a thing they can act on
@@ -97,7 +110,7 @@ export async function closeStatus(
       db().from("venues").select("id, code").eq("close_active", true),
       db()
         .from("close_items")
-        .select("id, checklist_id, section, title")
+        .select("id, checklist_id, section, title, proof")
         .in("checklist_id", ids)
         .eq("active", true),
       db()
@@ -118,6 +131,7 @@ export async function closeStatus(
     checklist_id: string;
     section: string | null;
     title: string;
+    proof: { kind: string }[] | null;
   }[];
   const nights = (nightRows ?? []) as {
     id: string;
@@ -133,25 +147,47 @@ export async function closeStatus(
   let ticks: {
     night_id: string;
     item_id: string;
+    initials: string | null;
     created_at: string;
     client_at: string | null;
   }[] = [];
   if (nights.length > 0) {
     const { data: tickRows } = await db()
       .from("close_ticks")
-      .select("night_id, item_id, created_at, client_at")
+      .select("night_id, item_id, initials, created_at, client_at")
+      .order("created_at")
       .in(
         "night_id",
         nights.map((n) => n.id),
       );
     ticks = (tickRows ?? []) as typeof ticks;
   }
+  // What arrived against what was asked for, on the same nights.
+  let proofRows: { night_id: string; item_id: string }[] = [];
+  if (nights.length > 0) {
+    const { data } = await db()
+      .from("close_proof")
+      .select("night_id, item_id")
+      .in(
+        "night_id",
+        nights.map((n) => n.id),
+      );
+    proofRows = (data ?? []) as typeof proofRows;
+  }
+  const proofOf = new Set(proofRows.map((p) => `${p.night_id}:${p.item_id}`));
 
   const nightOf = new Map(nights.map((n) => [n.checklist_id, n]));
   const tickOf = new Set<string>();
   const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
+  const whoOn = new Map<string, string[]>();
   for (const t of ticks) {
     tickOf.add(`${t.night_id}:${t.item_id}`);
+    const who = t.initials?.trim().toUpperCase();
+    if (who) {
+      const names = whoOn.get(t.night_id) ?? [];
+      if (!names.includes(who)) names.push(who);
+      whoOn.set(t.night_id, names);
+    }
     const held = timesOn.get(t.night_id);
     const stamp = { at: t.created_at, claimedAt: t.client_at };
     if (held) held.push(stamp);
@@ -204,7 +240,16 @@ export async function closeStatus(
         certified,
         certified_by: row?.certified_by ?? null,
         certified_at: row?.certified_at ?? null,
+        checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
+        proof_missing: row
+          ? asked.filter(
+              (i) =>
+                (i.proof?.length ?? 0) > 0 &&
+                tickOf.has(`${row.id}:${i.id}`) &&
+                !proofOf.has(`${row.id}:${i.id}`),
+            ).length
+          : 0,
         open_titles: row
           ? asked
               .filter((i) => !tickOf.has(`${row.id}:${i.id}`))

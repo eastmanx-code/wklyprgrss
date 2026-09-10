@@ -181,9 +181,17 @@ async function AdminHome() {
   const tonight = currentNight();
   const night = isNightOver(tonight) ? tonight : previousNight(tonight);
 
-  const venues = await nightCompliance(night);
-  const failingVenues = venues.filter((v) => v.tier === "fail").length;
-  const failedLists = venues.reduce((n, v) => n + v.failed, 0);
+  // Venues that recorded anything. A venue dark on the night is not on
+  // the report, the same as a night the rollup does not count.
+  const venues = (await nightCompliance(night)).filter((v) => v.ran);
+  // Venues with any fail on them. Counted by tier, a venue at eight in ten
+  // with three fails read as "3 fails at 0 venues".
+  const failingVenues = venues.filter(
+    (v) => v.notSigned + v.notDone > 0,
+  ).length;
+  // Not signed and not done, which are the two ways a list is short of done
+  // and signed. The same ruler as every report page.
+  const failedLists = venues.reduce((n, v) => n + v.notSigned + v.notDone, 0);
 
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
@@ -212,20 +220,20 @@ async function AdminHome() {
             ) : failedLists > 0 ? (
               <T
                 en={`${formatNight(night)} · ${failedLists} ${
-                  failedLists === 1 ? "list" : "lists"
-                } failed across ${failingVenues} ${
+                  failedLists === 1 ? "fail" : "fails"
+                } at ${failingVenues} ${
                   failingVenues === 1 ? "venue" : "venues"
                 }`}
                 es={`${formatNightEs(night)} · ${failedLists} ${
-                  failedLists === 1 ? "lista falló" : "listas fallaron"
+                  failedLists === 1 ? "falla" : "fallas"
                 } en ${failingVenues} ${
                   failingVenues === 1 ? "lugar" : "lugares"
                 }`}
               />
             ) : (
               <T
-                en={`${formatNight(night)} · nothing failed`}
-                es={`${formatNightEs(night)} · nada falló`}
+                en={`${formatNight(night)} · no fails`}
+                es={`${formatNightEs(night)} · sin fallas`}
               />
             )
           }

@@ -1,14 +1,12 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { NightNav } from "@/components/checklists/Compliance";
+import { ListBar, NightNav } from "@/components/checklists/Compliance";
+import { Card } from "@/components/Card";
 import { BackLink } from "@/components/ui";
-import {
-  nightCompliance,
-  type ListGroup,
-  type ListVerdict,
-} from "@/lib/compliance";
+import { nightCompliance, type ListGroup } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
+import { shortOf } from "@/lib/short";
 import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -58,113 +56,193 @@ export default async function VenueCompliancePage({
   if (!venue) notFound();
 
   const name = await venueNameOf(code);
+
+  // Nothing recorded. Not fifteen fails: a night the venue was dark, or a
+  // night before it had the app, and the page says which it is not
+  // guessing at.
+  if (!venue.ran) {
+    return (
+      <main className="close-flow mx-auto max-w-[960px] pb-4">
+        <BackLink
+          href={
+            session.role === "admin"
+              ? `/checklists/locations?night=${night}`
+              : "/checklists"
+          }
+        >
+          {session.role === "admin" ? "All locations" : "Checklists"}
+        </BackLink>
+        <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <div>
+            <p className="label">
+              {formatNightSpan(night)}
+              {name === code ? "" : ` · ${code}`}
+            </p>
+            <h1 className="text-metric mt-2 leading-tight font-medium break-words">
+              {name}
+            </h1>
+          </div>
+          <NightNav night={night} base={`/checklists/compliance/${code}`} />
+        </header>
+        <Card title="Lists" hint="nothing recorded">
+          <p className="note text-muted leading-relaxed">
+            Nobody checked anything off or signed anything on this night. It
+            does not count as a night the venue ran, so it is not scored.
+          </p>
+        </Card>
+      </main>
+    );
+  }
   const pile = (group: ListGroup) =>
     venue.lists.filter((list) => list.group === group);
+  // Not signed off first, then signed with something left: the worse fail
+  // on top.
+  const fails = venue.lists.filter((list) => list.state === "fail");
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href={`/checklists/compliance?night=${night}`}>
-        All venues
+    <main className="close-flow mx-auto max-w-[960px] pb-4">
+      <BackLink
+        href={
+          session.role === "admin"
+            ? `/checklists/locations?night=${night}`
+            : "/checklists"
+        }
+      >
+        {session.role === "admin" ? "All locations" : "Checklists"}
       </BackLink>
 
-      <header className="mt-4 mb-5">
-        <p className="label">
-          {formatNightSpan(night)}
-          {name === code ? "" : ` · ${code}`}
-        </p>
-        <h1 className="text-metric mt-2 leading-tight font-medium break-words">
-          {name}
-        </h1>
-        {/* The whole night in one line, and the only numbers on the page
-            that are not attached to a list. */}
-        <p className="note text-muted mt-2">
-          {venue.listsSigned} of {venue.listsTotal} lists signed ·{" "}
-          {venue.ticked} of {venue.owed} items signed off
-        </p>
+      {/* The night, the venue, the score, and the way to the nights either
+          side, all in the header. */}
+      <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div>
+          <p className="label">
+            {formatNightSpan(night)}
+            {name === code ? "" : ` · ${code}`}
+          </p>
+          <h1 className="text-metric mt-2 leading-tight font-medium break-words">
+            {name}
+          </h1>
+          {/* Yellow the moment anything is short, so the line reads as a
+              verdict before the bars do. The counts that make the score
+              sit beside it. */}
+          <p
+            className={`note mt-3 ${
+              venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
+            }`}
+          >
+            <span className="text-title tabular-nums">{venue.score}/10</span>
+            {" · "}
+            {venue.done} of {venue.total} checked off and signed off
+            {" · "}
+            {shortOf(venue)}
+          </p>
+        </div>
+        <NightNav night={night} base={`/checklists/compliance/${code}`} />
       </header>
 
-      <Pile
-        title="Nobody signed"
-        rows={pile("unsigned")}
-        warn
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Not done"
-        rows={pile("gaps")}
-        warn
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Still going"
-        rows={pile("going")}
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Done and signed"
-        rows={pile("done")}
-        code={code}
-        night={night}
-      />
-      <Pile
-        title="Nothing written on the list yet"
-        rows={pile("empty")}
-        code={code}
-        night={night}
-      />
+      {/* One panel, every list a bar, fails first. The same bars the weekly
+          board uses: name in the row, the verdict at the right, the facts in
+          small type under. It was two solid yellow cards with a paragraph
+          per list and a page of dead space under them. */}
+      <Card
+        title="Lists"
+        hint={[
+          fails.length > 0
+            ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
+            : "no fails",
+          ...(pile("going").length > 0
+            ? [`${pile("going").length} still going`]
+            : []),
+          ...(pile("done").length > 0
+            ? [`${pile("done").length} checked off and signed off`]
+            : []),
+        ].join(" · ")}
+      >
+        {fails.length > 0 ? (
+          <>
+            <ul className="space-y-3">
+              {fails.map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                  full
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-      <div className="mt-3">
+        {pile("going").length > 0 ? (
+          <>
+            <p className="label mt-5">Still going · {pile("going").length}</p>
+            <ul className="mt-2 space-y-3">
+              {pile("going").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-        <NightNav night={night} base={`/checklists/compliance/${code}`} />
+        {pile("done").length > 0 ? (
+          <details className="group mt-5">
+            <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1">
+              <span>Checked off and signed off · {pile("done").length}</span>
+              <span
+                className="text-muted transition-transform group-open:rotate-90"
+                aria-hidden
+              >
+                ▸
+              </span>
+            </summary>
+            <ul className="mt-2 space-y-3">
+              {pile("done").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </details>
+        ) : null}
 
-      </div>
-    </main>
-  );
-}
+        {pile("empty").length > 0 ? (
+          <>
+            <p className="label mt-5">
+              Nothing written on the list yet · {pile("empty").length}
+            </p>
+            <ul className="mt-2 space-y-3">
+              {pile("empty").map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
 
-/**
- * One pile of lists. Empty piles do not appear: "Nobody signed · 0" is a
- * line about nothing, and a good night should read shorter than a bad one.
- */
-function Pile({
-  title,
-  rows,
-  warn,
-  code,
-  night,
-}: {
-  title: string;
-  rows: ListVerdict[];
-  warn?: boolean;
-  code: string;
-  night: string;
-}) {
-  if (rows.length === 0) return null;
-  return (
-    <section className={`panel mt-3 ${warn ? "border-warn/30" : ""}`}>
-      <p className="label">
-        {title} · {rows.length}
-      </p>
-      <ul className="mt-3">
-        {rows.map((list) => (
-          /* Keyed on the list itself. Role plus phase plus house was unique
-             until a position could run three lists that share all three. */
-          <li
-            key={list.row.checklist_id}
-            className="border-divider border-t py-2.5 first:border-t-0 first:pt-0"
+        {/* The thirty-night view, in the foot of the same card. */}
+        <p className="border-divider mt-4 border-t pt-4">
+          <Link
+            href={`/checklists/rollup?code=${code}&night=${night}`}
+            className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
           >
-            <Link
-              href={`/checklists/compliance/${code}/${list.row.checklist_id}?night=${night}`}
-              className="block"
-            >
-              <span className="text-body">{list.reason}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
+            What keeps getting missed · last 30 nights
+            <span aria-hidden>→</span>
+          </Link>
+        </p>
+      </Card>
+    </main>
   );
 }

@@ -46,10 +46,22 @@ export type ListState = "pass" | "fail" | "open" | "empty";
  */
 export type ListGroup = "unsigned" | "gaps" | "done" | "going" | "empty";
 
+/**
+ * One fact about a list, as a label and a value: "checked off · 18 of 20 by
+ * DA", "signed off · nobody". A row used to be one sentence with dots in it,
+ * and at thirty-four items and two names the sentence ran to two lines and
+ * the eye had nowhere to land. Lines it is.
+ */
+export type Fact = { label: string; value: string; warn?: boolean };
+
 export type ListVerdict = {
   row: CloseStatusRow;
   state: ListState;
   group: ListGroup;
+  /** "YB Bartender close": the list, with its room where it has one. */
+  name: string;
+  /** The same verdict as lines, for the page that lists them. */
+  facts: Fact[];
   /** Why, in the words the row itself justifies. Shown on the list. */
   reason: string;
   /**
@@ -65,25 +77,46 @@ export type ListVerdict = {
   flag: string | null;
 };
 
+/**
+ * One venue's night, counted in lists.
+ *
+ * One ruler. A list is done and signed, or it is not signed, or it was
+ * signed with something not done; while the night is still running it can
+ * also be still going. Those add up to `total`, always, and the score is
+ * done and signed over total. Items are not counted here at all: they
+ * belong to a list's own row, and a page that scored items and counted
+ * lists read as two reports that disagreed.
+ */
 export type VenueCompliance = {
   code: string;
-  /** Items ticked out of items owed, scaled to ten. */
+  /** Lists checked off and signed off, out of lists on the night, in tenths. */
   score: number;
   tier: "good" | "neutral" | "fail";
-  owed: number;
-  ticked: number;
   lists: ListVerdict[];
-  listsSigned: number;
-  listsTotal: number;
-  failed: number;
-  /** Lists whose ticks arrived too fast to have been a walk. */
-  bursted: number;
+  /** Every list that has something written on it. */
+  total: number;
+  /** Checked off and signed off: every item owed that night, and a name. */
+  done: number;
+  /** Signed, with something left on it. */
+  notDone: number;
+  /** Not signed off, and the night is over. */
+  notSigned: number;
+  /** Still being worked, because the night is not over yet. */
+  going: number;
+  /**
+   * Whether anything was recorded on the night at all: a tick or a signature
+   * on any list. A venue that was dark on a Monday has fifteen lists with
+   * nothing on them, and that is not fifteen fails, it is a night off. The
+   * rollup already skips such nights; the night page and the venue row read
+   * this to do the same.
+   */
+  ran: boolean;
 };
 
 /** The ten-point scale the weekly board already uses. */
-export function scoreOf(ticked: number, owed: number): number {
-  if (owed === 0) return 0;
-  return Math.round((ticked / owed) * 10);
+export function scoreOf(done: number, total: number): number {
+  if (total === 0) return 0;
+  return Math.round((done / total) * 10);
 }
 
 /**
@@ -104,37 +137,65 @@ export function verdictOf(
   // however it was worded. The field stays so the shape does not change.
   const flag = null;
 
+  // "YB Bartender close", so the row says which list without a badge above
+  // it. The phase is already a word; it does not need translating into one.
+  const name = `${listName(row.role, row.room)} ${row.phase}`;
+
   if (row.empty) {
     return {
       row,
       flag,
       state: "empty",
       group: "empty",
+      name,
+      facts: [{ label: "items", value: "nothing written on it yet" }],
       reason: `${listName(row.role, row.room)} · nothing written on it yet`,
     };
   }
-
-  // "YB Bartender close", so the row says which list without a badge above
-  // it. The phase is already a word; it does not need translating into one.
-  const name = `${listName(row.role, row.room)} ${row.phase}`;
   const count = `${row.ticked} of ${row.items_on_list}`;
   // Who, and when. The when was missing, and a card that says "signed by
   // Ethan" on a night that ran from four in the afternoon to four in the
-  // morning leaves the reader to guess which end.
+  // morning leaves the reader to guess which end. A signature with no name
+  // typed is still a signature, and says so rather than reading as nobody.
   const who = row.certified_by?.trim();
   const at = row.certified_at ? formatClock(row.certified_at) : "";
-  const signature = [who, at].filter(Boolean).join(" ");
+  const signature = [who || "no name", at].filter(Boolean).join(" ");
+  // Who checked things off, from the initials on the ticks. Every fail
+  // names a person or says plainly that nobody put their initials to it.
+  const by =
+    row.checked_by.length > 0 ? row.checked_by.join(", ") : "no initials";
+  const checked = `${count} checked off by ${by}`;
+  // Ticked with nothing behind it. Shown beside the fails, not among them.
+  const proof: Fact[] =
+    row.proof_missing > 0
+      ? [
+          {
+            label: "missing photo or video",
+            value: `${row.proof_missing} ${
+              row.proof_missing === 1 ? "item" : "items"
+            }`,
+          },
+        ]
+      : [];
 
   if (row.certified) {
     if (row.open > 0) {
+      // The things themselves, where there are few enough to read. Three
+      // names is a to-do list; nine is a count.
+      const left = leftWords(row.open_titles);
       return {
         row,
         flag,
         state: "fail",
         group: "gaps",
-        // The things themselves, where there are few enough to read. Three
-        // names is a to-do list; nine is a count.
-        reason: `${name} · ${signature} · not done: ${leftWords(row.open_titles)}`,
+        name,
+        facts: [
+          { label: "checked off", value: `${count} by ${by}` },
+          { label: "signed off", value: signature },
+          { label: "not checked off", value: left, warn: true },
+          ...proof,
+        ],
+        reason: `${name} · ${checked} · signed off ${signature} · not checked off: ${left}`,
       };
     }
     return {
@@ -142,7 +203,13 @@ export function verdictOf(
       flag,
       state: "pass",
       group: "done",
-      reason: `${name} · ${count} signed off · ${signature}`,
+      name,
+      facts: [
+        { label: "checked off", value: `by ${by}` },
+        { label: "signed off", value: signature },
+        ...proof,
+      ],
+      reason: `${name} · checked off by ${by} · signed off ${signature}`,
     };
   }
 
@@ -152,7 +219,16 @@ export function verdictOf(
       flag,
       state: nightOver ? "fail" : "open",
       group: nightOver ? "unsigned" : "going",
-      reason: nightOver ? `${name} · never opened` : `${name} · not started`,
+      name,
+      facts: nightOver
+        ? [
+            { label: "checked off", value: "nothing, by nobody", warn: true },
+            { label: "signed off", value: "nobody", warn: true },
+          ]
+        : [{ label: "checked off", value: "not started" }],
+      reason: nightOver
+        ? `${name} · nobody checked anything off · nobody signed off`
+        : `${name} · not started`,
     };
   }
 
@@ -161,24 +237,34 @@ export function verdictOf(
     flag,
     state: nightOver ? "fail" : "open",
     group: nightOver ? "unsigned" : "going",
+    name,
+    facts: [
+      { label: "checked off", value: `${count} by ${by}` },
+      nightOver
+        ? { label: "signed off", value: "nobody", warn: true }
+        : { label: "signed off", value: "not yet, still going" },
+      ...proof,
+    ],
     reason: nightOver
-      ? `${name} · ${count} signed off · nobody signed`
-      : `${name} · ${count} signed off · still going`,
+      ? `${name} · ${checked} · nobody signed off`
+      : `${name} · ${checked} · still going`,
   };
 }
 
 /**
  * What was left, said as things rather than as a number where that is short
  * enough to read. Titles on these lists run to a paragraph, so each is cut
- * to its first clause.
+ * to its first clause: up to the first full stop, colon or comma, and no
+ * more than a few words. "Detail both carts" is the thing; the rest of the
+ * sentence is on the list's own page.
  */
 function leftWords(titles: string[]): string {
   if (titles.length === 0) return "nothing";
   if (titles.length > 3) return `${titles.length} things`;
   return titles
     .map((t) => {
-      const first = t.split(/[.:]/)[0].trim();
-      return first.length > 48 ? `${first.slice(0, 46).trim()}…` : first;
+      const first = t.split(/[.:,(]/)[0].trim();
+      return first.length > 32 ? `${first.slice(0, 30).trim()}…` : first;
     })
     .join(", ")
     .toLowerCase();
@@ -233,21 +319,22 @@ export async function nightCompliance(
     // Empty lists are out of both halves of the ratio. Nobody can tick an item
     // that was never written, and counting the zero against the venue would
     // report a setup mistake as a crew failure.
-    const counted = venueRows.filter((r) => !r.empty);
-    const owed = counted.reduce((n, r) => n + r.items_on_list, 0);
-    const ticked = counted.reduce((n, r) => n + r.ticked, 0);
+    const count = (group: ListGroup) =>
+      lists.filter((l) => l.group === group).length;
+    const done = count("done");
+    const total = lists.length - count("empty");
 
     venues.push({
       code,
-      score: scoreOf(ticked, owed),
-      tier: tierOf(ticked, owed),
-      owed,
-      ticked,
+      score: scoreOf(done, total),
+      tier: tierOf(done, total),
       lists,
-      listsSigned: counted.filter((r) => r.certified).length,
-      listsTotal: counted.length,
-      failed: lists.filter((l) => l.state === "fail").length,
-      bursted: counted.filter((r) => r.pace.burst).length,
+      total,
+      done,
+      notDone: count("gaps"),
+      notSigned: count("unsigned"),
+      going: count("going"),
+      ran: venueRows.some((r) => r.ticked > 0 || r.certified),
     });
   }
 
@@ -489,18 +576,17 @@ export function failuresByRole(
 /**
  * The shape of the last few weeks, one point per night.
  *
- * Two measures, because one of them is easy. Items ticked mostly climbs on
- * its own; lists signed is the one that says a manager stood at the end of a
- * shift and put their name to it, and the gap between them is the nights that
- * got walked but never closed out. A chart of ticks alone would draw that as
- * progress.
+ * Two measures, in lists, the same ruler as every other number. Signed is
+ * the easier one: a name on the list. Done and signed is the one the report
+ * is scored on, and the gap between the two lines is the lists somebody
+ * signed with things still left on them.
  *
  * Four queries for the whole window rather than one per night. Thirty nights
  * at four queries each is a hundred and twenty round trips for a sparkline.
  */
 export async function nightTrend(
   window: string[],
-): Promise<{ night: string; ticked: number; signed: number; ran: boolean }[]> {
+): Promise<{ night: string; done: number; signed: number; ran: boolean }[]> {
   if (window.length === 0) return [];
 
   const { data: checklistRows } = await db()
@@ -513,7 +599,7 @@ export async function nightTrend(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id")
+      .select("id, checklist_id, section")
       .in("checklist_id", ids)
       .eq("active", true),
     db()
@@ -524,7 +610,11 @@ export async function nightTrend(
       .lte("night", window[window.length - 1]),
   ]);
 
-  const items = (itemRows ?? []) as { id: string; checklist_id: string }[];
+  const items = (itemRows ?? []) as {
+    id: string;
+    checklist_id: string;
+    section: string | null;
+  }[];
   const nights = (nightRows ?? []) as {
     id: string;
     checklist_id: string;
@@ -532,36 +622,47 @@ export async function nightTrend(
     certified_at: string | null;
   }[];
 
-  let ticks: { night_id: string }[] = [];
+  let ticks: { night_id: string; item_id: string }[] = [];
   if (nights.length > 0) {
     const { data } = await db()
       .from("close_ticks")
-      .select("night_id")
+      .select("night_id, item_id")
       .in(
         "night_id",
         nights.map((n) => n.id),
       );
-    ticks = (data ?? []) as { night_id: string }[];
+    ticks = (data ?? []) as { night_id: string; item_id: string }[];
   }
 
-  const tickedOn = new Map<string, number>();
-  for (const t of ticks) {
-    tickedOn.set(t.night_id, (tickedOn.get(t.night_id) ?? 0) + 1);
+  const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
+  const itemsOf = new Map<string, typeof items>();
+  for (const item of items) {
+    const held = itemsOf.get(item.checklist_id) ?? [];
+    held.push(item);
+    itemsOf.set(item.checklist_id, held);
   }
+
+  // Done and signed: a name on it, and every item owed that night ticked.
+  // The same rule the rollup and the night page use, or the line and the
+  // ring disagree about the same night.
+  const complete = (row: { id: string; checklist_id: string; night: string }) =>
+    (itemsOf.get(row.checklist_id) ?? [])
+      .filter((item) => dueOnNight(item.section, row.night))
+      .every((item) => ticked.has(`${row.id}:${item.id}`));
 
   // Every list that exists is owed every night in the window. A night nobody
   // opened has to count against the total or the quietest night reads as the
   // cleanest, which is the same trap the status feed was built to avoid.
-  const owedPerNight = items.length;
   const listsPerNight = ids.length;
 
   return window.map((night) => {
     const rows = nights.filter((n) => n.night === night);
-    const ticked = rows.reduce((n, r) => n + (tickedOn.get(r.id) ?? 0), 0);
-    const signed = rows.filter((r) => r.certified_at).length;
+    const signedRows = rows.filter((r) => r.certified_at);
+    const signed = signedRows.length;
+    const done = signedRows.filter(complete).length;
     return {
       night,
-      ticked: owedPerNight === 0 ? 0 : (ticked / owedPerNight) * 100,
+      done: listsPerNight === 0 ? 0 : (done / listsPerNight) * 100,
       signed: listsPerNight === 0 ? 0 : (signed / listsPerNight) * 100,
       // Whether anybody opened anything at all. A night before the programme
       // started is not a night at nought, and a line that runs flat along the

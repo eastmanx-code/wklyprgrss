@@ -1,7 +1,7 @@
 import { dueOnNight } from "./due";
 import "server-only";
 
-import { currentNight, shiftNights } from "./night";
+import { currentNight, isNightOver, shiftNights } from "./night";
 import {
   computeGroup,
   computeRollup,
@@ -25,10 +25,25 @@ import { db } from "./supabase";
 export type { GroupRow, Rollup };
 export { WINDOW_NIGHTS };
 
-/** The window, oldest first, ending with the night in progress. */
+/**
+ * The last closed night. Before the 4am roll that is last night; after it,
+ * the one that just ended. A night still running is not a night that
+ * missed anything yet.
+ */
+export function lastClosedNight(): string {
+  const tonight = currentNight();
+  return isNightOver(tonight) ? tonight : shiftNights(tonight, -1);
+}
+
+/**
+ * The window, oldest first, ending with the last closed night. Ended with
+ * the night in progress, every item nobody had reached yet at nine in the
+ * evening counted as missed, and tonight sat in the report as its worst
+ * night every night.
+ */
 export function nightWindow(
   count = WINDOW_NIGHTS,
-  from = currentNight(),
+  from = lastClosedNight(),
 ): string[] {
   return Array.from({ length: count }, (_, i) =>
     shiftNights(from, i - (count - 1)),

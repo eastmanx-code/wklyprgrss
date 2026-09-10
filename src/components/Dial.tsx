@@ -14,11 +14,18 @@ const C = 2 * Math.PI * R;
 export function Dial({
   percent,
   caption,
+  label,
   tone = "var(--ink)",
   size = 176,
 }: {
   percent: number;
   caption: React.ReactNode;
+  /**
+   * What to print inside the ring, when it is not the percentage. The
+   * checklists score out of ten everywhere else, and a ring that says 73%
+   * beside a row that says 7/10 is one number in two units.
+   */
+  label?: string;
   tone?: string;
   /**
    * How wide the ring is allowed to get. It shrinks to fit a narrower column
@@ -63,11 +70,15 @@ export function Dial({
             sitting on, so the stroke cut through both ends of it. Widening the
             ring only moves where it clips. */}
         <div className="absolute inset-0 flex items-center justify-center">
+          {/* Sized to what is printed. "8/10" is a character wider than
+              "80%" and at the same size it touched the stroke. */}
           <span
             className="text-ink leading-none tracking-normal tabular-nums"
-            style={{ fontSize: `${Math.round(size * 0.3)}px` }}
+            style={{
+              fontSize: `${Math.round(size * ((label ?? `${percent}%`).length > 3 ? 0.22 : 0.3))}px`,
+            }}
           >
-            {percent}%
+            {label ?? `${percent}%`}
           </span>
         </div>
       </div>

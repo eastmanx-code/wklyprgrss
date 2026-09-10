@@ -22,12 +22,14 @@
  * at the top. Four nights on the board is a small denominator and an honest
  * one, and the nights strip is where "they are barely using it" belongs.
  *
- * The strip and the headline count LISTS SIGNED, not nights certified. A
- * night used to count only when every list the venue runs was signed, which
- * put the bar where nobody clears it: the best night the pilot venue ever had,
- * thirteen of fifteen signed, read "0 of 4 certified", and a manager asked
- * which two were missed. So the number is lists, the strip shows how much of
- * each night got signed, and the two that were not are named.
+ * One ruler. A list is DONE AND SIGNED, or it is not: either nobody signed
+ * it, or it was signed with something not done. Every number here is lists
+ * counted that way, and the three states add up to the total. Items appear
+ * only in the ranked list of what keeps getting left, which is a list of
+ * items and reads as one. A night used to count only when every list was
+ * signed, which put the bar where nobody clears it, and the strip and the
+ * score and the ring each used a different ruler, so one night read as 99%
+ * and 80% and 0 of 4 at once.
  */
 
 export type MissedRow = {
@@ -45,28 +47,36 @@ export type MissedRow = {
 /** How many nights the report looks back over. */
 export const WINDOW_NIGHTS = 30;
 
-/** Every list signed · most signed · half or fewer signed. */
-export type NightState = "c" | "g" | "m";
+/**
+ * Two buckets, no legend. A night where every list was done and signed, or a
+ * night where something was not. Three shades needed a key to read, and a
+ * strip that needs a key is a strip nobody reads.
+ */
+export type NightState = "c" | "m";
 
-/** A list on the night it was not signed, by name. */
-export type UnsignedList = { role: string; room: string | null; phase: string };
+/** A list, by name, for the lines that say which ones. */
+export type NamedList = { role: string; room: string | null; phase: string };
 
 export type Rollup = {
   /** Nights the venue was running, not nights on the calendar. */
   nights: number;
-  /** Nights where every list was signed. */
+  /** Nights where every list was done and signed. */
   certified: number;
-  /** Lists signed, over every list on every running night. */
-  signed: number;
-  owed: number;
+  /** Lists done and signed, over every list on every running night. */
+  done: number;
+  of: number;
   /** One character per night, oldest first. */
   strip: string;
   /**
-   * The lists nobody signed on the most recent running night. The question a
-   * manager actually asks of "13 of 15" is "which two", and a report that
-   * makes him ask is a report he stops reading.
+   * Which lists, on the most recent running night. The question a manager
+   * actually asks of "12 of 15" is "which three", and a report that makes
+   * him ask is a report he stops reading.
    */
-  unsigned: { night: string; lists: UnsignedList[] } | null;
+  latest: {
+    night: string;
+    notSigned: NamedList[];
+    notDone: NamedList[];
+  } | null;
   missed: MissedRow[];
   /**
    * Per position: items done over items owed across the running nights, and
@@ -74,13 +84,8 @@ export type Rollup = {
    * number is what explains the first. A barback at 50% who opened the list
    * on two nights of four and did everything on both is not half a barback.
    */
-  byRole: {
-    role: string;
-    done: number;
-    of: number;
-    opened: number;
-    nights: number;
-  }[];
+  /** Per position, lists done and signed over lists owed, same ruler. */
+  byRole: { role: string; done: number; of: number }[];
   certifiers: { who: string; nights: number }[];
 };
 
@@ -186,34 +191,43 @@ export function computeRollup(
   for (const night of nights)
     nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
-  // Per night, across every checklist the venue runs: how many got signed.
+  // Done and signed: a signature, and every item owed that night signed off.
+  const complete = (list: ChecklistRow, night: string, row?: NightRow) =>
+    Boolean(row?.certified_at) &&
+    (itemsOf.get(list.id) ?? [])
+      .filter((item) => isDue(item, night))
+      .every((item) => ticked.has(`${row!.id}:${item.id}`));
+  const named = (list: ChecklistRow): NamedList => ({
+    role: list.role,
+    room: list.room ?? null,
+    phase: list.phase,
+  });
+
+  // Per night, across every checklist the venue runs: how many were done and
+  // signed, and which were not, sorted into the two ways of not being.
   let certified = 0;
-  let signed = 0;
-  let unsigned: Rollup["unsigned"] = null;
+  let done = 0;
+  let latest: Rollup["latest"] = null;
   const strip = live
     .map((night) => {
-      const missing: UnsignedList[] = [];
+      const notSigned: NamedList[] = [];
+      const notDone: NamedList[] = [];
       for (const list of checklists) {
         const row = nightAt.get(`${list.id}:${night}`);
-        if (row?.certified_at) signed += 1;
-        else
-          missing.push({
-            role: list.role,
-            room: list.room ?? null,
-            phase: list.phase,
-          });
+        if (complete(list, night, row)) done += 1;
+        else if (row?.certified_at) notDone.push(named(list));
+        else notSigned.push(named(list));
       }
-      const done = checklists.length - missing.length;
-      if (missing.length === 0) certified += 1;
+      const short = notSigned.length + notDone.length;
+      if (short === 0) certified += 1;
       // The window is oldest first, so the last one through here is the most
       // recent night, which is the one somebody reads in the morning.
-      unsigned = { night, lists: missing };
-      const state: NightState =
-        missing.length === 0 ? "c" : done > missing.length ? "g" : "m";
+      latest = { night, notSigned, notDone };
+      const state: NightState = short === 0 ? "c" : "m";
       return state;
     })
     .join("");
-  const owed = checklists.length * live.length;
+  const of = checklists.length * live.length;
 
   // What keeps getting left open. Every night the venue was running is a
   // chance to have done it, whether or not anyone opened this list.
@@ -246,51 +260,48 @@ export function computeRollup(
     // once has not kept doing anything.
     .sort((a, b) => b.open - a.open || b.open / b.of - a.open / a.of);
 
-  // Completion by role, over the same window and the same denominator.
+  // Per position, the same ruler: its lists, done and signed, over every
+  // running night.
   const byRole = [...new Set(checklists.map((c) => c.role))]
     .map((role) => {
       const lists = checklists.filter((c) => c.role === role);
       let done = 0;
       let of = 0;
-      const openedOn = new Set<string>();
       for (const list of lists) {
-        const owed = itemsOf.get(list.id) ?? [];
         for (const night of live) {
-          // Only the items this night actually asked for, on both sides of
-          // the fraction. A rota item counted in the denominator every night
-          // and achievable on one is a score nobody can move.
-          const due = owed.filter((item) => isDue(item, night));
-          of += due.length;
-          const row = nightAt.get(`${list.id}:${night}`);
-          if (!row) continue;
-          openedOn.add(night);
-          done += due.filter((item) =>
-            ticked.has(`${row.id}:${item.id}`),
-          ).length;
+          of += 1;
+          if (complete(list, night, nightAt.get(`${list.id}:${night}`)))
+            done += 1;
         }
       }
-      return { role, done, of, opened: openedOn.size, nights: live.length };
+      return { role, done, of };
     })
     .filter((row) => row.of > 0)
     .sort((a, b) => b.done / b.of - a.done / a.of);
 
-  const counts = new Map<string, number>();
+  // Keyed on the name as typed with case and spacing folded, so "Nikki
+  // Milner" and "nikki milner" are one person, and shown the way it was
+  // first typed. A signature with no name, or the word null a phone once
+  // sent, is nobody and is not a signer.
+  const counts = new Map<string, { who: string; nights: number }>();
   for (const night of nights) {
     if (!night.certified_at || !night.certified_by) continue;
-    const who = night.certified_by.trim();
-    counts.set(who, (counts.get(who) ?? 0) + 1);
+    const who = night.certified_by.trim().replace(/\s+/g, " ");
+    if (!who || who.toLowerCase() === "null") continue;
+    const key = who.toLowerCase();
+    const held = counts.get(key) ?? { who, nights: 0 };
+    held.nights += 1;
+    counts.set(key, held);
   }
-  const certifiers = [...counts.entries()]
-    .map(([who, count]) => ({ who, nights: count }))
-    .sort((a, b) => b.nights - a.nights);
+  const certifiers = [...counts.values()].sort((a, b) => b.nights - a.nights);
 
   return {
     nights: live.length,
     certified,
-    signed,
-    owed,
+    done,
+    of,
     strip,
-    unsigned,
+    latest,
     missed,
     byRole,
     certifiers,
@@ -331,16 +342,17 @@ export function computeGroup(
     const live = liveAt.get(list.venue_id);
     for (const night of window) {
       if (!live?.has(night)) continue;
-      // Same rule as the per role figure: a rota item counts on the nights it
-      // is owed and on no others, or a venue is marked down for running the
-      // deep clean the way it is written.
-      const due = owed.filter((item) => isDue(item, night));
-      running.of += due.length;
+      // Lists, the same ruler as everywhere else: done and signed means a
+      // signature and every item owed that night signed off.
+      running.of += 1;
       const row = nightAt.get(`${list.id}:${night}`);
-      if (!row) continue;
-      running.done += due.filter((item) =>
-        ticked.has(`${row.id}:${item.id}`),
-      ).length;
+      if (
+        row?.certified_at &&
+        owed
+          .filter((item) => isDue(item, night))
+          .every((item) => ticked.has(`${row.id}:${item.id}`))
+      )
+        running.done += 1;
     }
     totals.set(code, running);
   }
