@@ -813,6 +813,9 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
         const pendingCount = filed.filter(
           (id) => reviewOf(id) === "pending" && progressOf(id) === "done",
         ).length;
+        const rollingCount = filed.filter(
+          (id) => progressOf(id) === "another_cycle",
+        ).length;
         /**
          * Sent back and never replaced.
          *
@@ -857,6 +860,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           approvedCount,
           winStreak,
           pendingCount,
+          rollingCount,
           redoCount,
           hasBoard: (activeCountByKey.get(key) ?? 0) > 0,
           activeCount,

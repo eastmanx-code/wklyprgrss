@@ -154,6 +154,12 @@ export type HouseWeek = {
    */
   redoCount: number;
   /**
+   * Filed and marked "one more cycle" by the leader. Counts as filed for
+   * the week, cannot be approved, so it is the gap between "to review" and
+   * the ten; without it 0/10 beside "2 to review" read as a broken sum.
+   */
+  rollingCount: number;
+  /**
    * Whether this house has any board at all.
    *
    * A venue with no kitchen list cannot file, so its nought means "there is
