@@ -116,7 +116,11 @@ export default async function ListCompliancePage({
       <div className="mt-4">
         <Card
           title="Signed off"
-          hint={signed ? undefined : "nobody signed this list"}
+          hint={
+            signed
+              ? "who checked, who signed, who verified"
+              : "nobody signed this list"
+          }
         >
           <dl className="grid grid-cols-[8rem_minmax(0,1fr)_auto] items-baseline gap-x-4 gap-y-3">
             <dt className="label">checked off by</dt>

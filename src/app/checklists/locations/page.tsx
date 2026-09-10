@@ -381,10 +381,12 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
     : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset";
   return (
     <li>
-      <div className="flex gap-[2px]">
+      {/* Two doors. On a phone "do checklists" wrapped into two lines beside
+          a squeezed fails door; the fails door takes the next line there. */}
+      <div className="flex flex-wrap gap-[2px]">
         <Link
           href={`/checklists/enter/${row.id}`}
-          className={`flex min-w-0 flex-1 items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
+          className={`flex min-w-0 flex-1 basis-[14rem] items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
         >
           <span
             className={`text-title w-16 shrink-0 tracking-[0.08em] ${
@@ -406,14 +408,16 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
           >
             {row.score}
           </span>
-          <span className={`label ml-auto ${failed ? "text-on-warn" : ""}`}>
+          <span
+            className={`label ml-auto whitespace-nowrap ${failed ? "text-on-warn" : ""}`}
+          >
             <T en="do checklists" es="hacer listas" />
           </span>
         </Link>
         {row.tier ? (
           <Link
             href={`/checklists/compliance/${row.code}?night=${night}`}
-            className={`flex shrink-0 items-baseline gap-x-2 rounded-[4px] px-3 py-3 whitespace-nowrap ${shell}`}
+            className={`flex shrink-0 basis-full items-baseline justify-between gap-x-2 rounded-[4px] px-3 py-3 whitespace-nowrap sm:basis-auto ${shell}`}
           >
             <span className={`label ${failed ? "text-on-warn" : ""}`}>
               <T en={row.note} es={row.noteEs} />
