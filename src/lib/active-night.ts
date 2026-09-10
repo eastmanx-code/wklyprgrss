@@ -35,36 +35,69 @@ export async function activeNight(
   checklistId: string,
   now: Date = new Date(),
 ): Promise<string> {
+  const nights = await activeNightsFor([checklistId], now);
+  return nights.get(checklistId) ?? currentNight(now);
+}
+
+/**
+ * The same answer for several lists at once, in two queries rather than two
+ * per list.
+ *
+ * The screens that show a building's lists together (the crew's front page,
+ * a position's open, mid and close) asked the calendar instead, so at 4:08
+ * they flipped to the new night and showed every list blank while the close
+ * was still being walked one tap away. A manager read that as a cutoff. Each
+ * list is decided on its own activity, exactly as the list itself is.
+ */
+export async function activeNightsFor(
+  checklistIds: string[],
+  now: Date = new Date(),
+): Promise<Map<string, string>> {
   const tonight = currentNight(now);
-  if (!inCarryWindow(now)) return tonight;
+  const nights = new Map(checklistIds.map((id) => [id, tonight]));
+  if (checklistIds.length === 0 || !inCarryWindow(now)) return nights;
 
   const previous = shiftNights(tonight, -1);
   const { data } = await db()
     .from("close_nights")
-    .select("id, certified_at")
-    .eq("checklist_id", checklistId)
-    .eq("night", previous)
-    .maybeSingle();
-  const row = data as { id: string; certified_at: string | null } | null;
-  if (!row) return tonight;
+    .select("id, checklist_id, certified_at")
+    .in("checklist_id", checklistIds)
+    .eq("night", previous);
+  const rows = (data ?? []) as {
+    id: string;
+    checklist_id: string;
+    certified_at: string | null;
+  }[];
+  if (rows.length === 0) return nights;
 
-  // The last thing that happened on it, whichever it was. A signature is
-  // activity: reopening a night you signed ten minutes ago is the case this
-  // has to keep reachable.
-  const { data: ticks } = await db()
+  // The last tick on each of those nights. One query for all of them; the
+  // rows are few (one per list) and the ticks are indexed by night.
+  const { data: tickRows } = await db()
     .from("close_ticks")
-    .select("created_at")
-    .eq("night_id", row.id)
-    .order("created_at", { ascending: false })
-    .limit(1);
-  const lastTick =
-    ((ticks ?? []) as { created_at: string }[])[0]?.created_at ?? null;
+    .select("night_id, created_at")
+    .in(
+      "night_id",
+      rows.map((r) => r.id),
+    )
+    .order("created_at", { ascending: false });
+  const lastTick = new Map<string, string>();
+  for (const t of (tickRows ?? []) as {
+    night_id: string;
+    created_at: string;
+  }[]) {
+    if (!lastTick.has(t.night_id)) lastTick.set(t.night_id, t.created_at);
+  }
 
-  const latest =
-    [lastTick, row.certified_at]
-      .filter((at): at is string => Boolean(at))
-      .sort()
-      .pop() ?? null;
-
-  return carriesForward(latest, now) ? previous : tonight;
+  for (const row of rows) {
+    // The last thing that happened on it, whichever it was. A signature is
+    // activity: reopening a night you signed ten minutes ago is the case
+    // this has to keep reachable.
+    const latest =
+      [lastTick.get(row.id), row.certified_at]
+        .filter((at): at is string => Boolean(at))
+        .sort()
+        .pop() ?? null;
+    if (carriesForward(latest, now)) nights.set(row.checklist_id, previous);
+  }
+  return nights;
 }
