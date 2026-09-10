@@ -41,7 +41,7 @@ export async function CornerMenu() {
         {/* Two lines rather than a word bent round the rim: at a size you can
             read on a phone, curved type needed a disc half again as big. The
             accent is the button itself, not the lettering on it. */}
-        <summary className="bg-warn text-on-warn grid size-16 shrink-0 place-items-center rounded-full leading-none">
+        <summary className="bg-warn text-on-warn grid size-16 shrink-0 place-items-center rounded-full leading-none shadow-[0_0_0_4px_var(--color-paper)]">
           <span className="text-center text-[11px] leading-none font-medium tracking-[0.08em] whitespace-nowrap">
             Menu
           </span>
