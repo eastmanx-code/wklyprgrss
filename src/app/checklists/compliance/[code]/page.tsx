@@ -6,7 +6,6 @@ import { Card } from "@/components/Card";
 import { BackLink } from "@/components/ui";
 import { nightCompliance, type ListGroup } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
-import { shortOf } from "@/lib/short";
 import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -132,9 +131,12 @@ export default async function VenueCompliancePage({
           >
             <span className="text-title tabular-nums">{venue.score}/10</span>
             {" · "}
-            {venue.done} of {venue.total} checked off and signed off
-            {" · "}
-            {shortOf(venue)}
+            {venue.done} of {venue.total} lists checked off and signed off
+            {venue.notDone + venue.notSigned > 0
+              ? ` · ${venue.notDone + venue.notSigned} ${
+                  venue.notDone + venue.notSigned === 1 ? "fail" : "fails"
+                }`
+              : " · no fails"}
           </p>
         </div>
         <NightNav night={night} base={`/checklists/compliance/${code}`} />
