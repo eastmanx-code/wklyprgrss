@@ -11,6 +11,7 @@ import {
   deadlineFor,
   formatDeadline,
   formatWeekStart,
+  isDeadlinePassed,
   mostRecentCompletedWeek,
 } from "@/lib/week";
 
@@ -75,6 +76,7 @@ export default async function AdminDashboardPage() {
           hrefPrefix="/admin/venue/"
           gradedByHouse={gradedIds}
           audience="admin"
+          deadlinePassed={isDeadlinePassed(weekStart)}
         />
       </div>
     </main>

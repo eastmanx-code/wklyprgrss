@@ -11,6 +11,7 @@ import {
   deadlineFor,
   formatDeadline,
   formatWeekStart,
+  isDeadlinePassed,
   mostRecentCompletedWeek,
 } from "@/lib/week";
 
@@ -62,6 +63,7 @@ export default async function BoardPage() {
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
           gradedByHouse={gradedIds}
+          deadlinePassed={isDeadlinePassed(weekStart)}
         />
       </div>
     </main>
