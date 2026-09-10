@@ -156,10 +156,19 @@ export function VenueRows({
   ownVenueId = null,
   gradedByHouse,
   audience = "leader",
+  deadlinePassed = false,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
   ownVenueId?: string | null;
+  /**
+   * Four on Thursday has gone. A half short of ten is a fail from that
+   * moment, without anybody grading it: the week cannot be completed any
+   * more, and whatever is filed from now on counts toward the next one.
+   * Before the deadline the same half is still to grade, because it can
+   * still be finished.
+   */
+  deadlinePassed?: boolean;
   /** Whether the reader is the one who has to act. */
   audience?: "admin" | "leader";
   /**
@@ -183,18 +192,26 @@ export function VenueRows({
   const lines: Line[] = rows.flatMap((row) => {
     // Judged on every half it is scored on, and short on all of them. The
     // whole venue, not one side of it.
+    // Short of ten when the deadline went. Nothing anyone grades can change
+    // that, so it is a fail now, not a thing waiting on a verdict.
+    const missed = (house: HouseWeek) =>
+      deadlinePassed &&
+      (!house.hasBoard || house.doneCount < house.activeCount);
+
     const fullFail =
       row.scored.length > 0 &&
       row.scored.every(
         (house) =>
-          Boolean(gradedBy(row.venue.id, house.house)) &&
-          tierFor(house) === "fail",
+          missed(house) ||
+          (Boolean(gradedBy(row.venue.id, house.house)) &&
+            tierFor(house) === "fail"),
       );
 
     return row.scored.map((house) => {
       const graded = Boolean(gradedBy(row.venue.id, house.house));
       const ruled = house.hasBoard && house.scored && house.pendingCount === 0;
       const note = [
+        missed(house) ? "missed 4pm" : null,
         !house.hasBoard ? "no board" : null,
         house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
         house.hasBoard && !graded ? "not graded" : null,
@@ -216,7 +233,7 @@ export function VenueRows({
           house.hasBoard && house.scored
             ? `${house.approvedCount}/${house.activeCount}`
             : "—",
-        tier: graded ? tierFor(house) : null,
+        tier: missed(house) ? "fail" : graded ? tierFor(house) : null,
         ratio:
           ruled && house.activeCount > 0
             ? house.approvedCount / house.activeCount
