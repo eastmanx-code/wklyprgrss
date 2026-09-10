@@ -9,6 +9,10 @@ import { APP_NAME } from "@/lib/app";
  * The instructions as a full-screen dialog on the sign-in screen, with an
  * acknowledgement.
  *
+ * Two products share the sign-in, so the dialog covers both and the button is
+ * a plain "got it". "I understand the weekly rule" was the wrong sentence to
+ * put in front of a barback signing in for a close.
+ *
  * Opens on every visit to sign-in rather than once per device. A device
  * acknowledgement was the wrong unit: the PIN is shared, so "this phone has
  * seen it" says nothing about the person holding it, and the rule it states —
@@ -61,18 +65,12 @@ export function HowToDialog({ children }: { children: React.ReactNode }) {
 
           {children}
 
-          {/* Name the consequence, so "I understand" refers to something
-              specific rather than being a polite dismiss button. */}
-          <p className="note mt-5 leading-relaxed">
-            Missing a photo or a comment fails that item for the week.
-          </p>
-
           <button
             type="button"
-            className="btn mt-4 w-full"
+            className="btn mt-6 w-full"
             onClick={acknowledge}
           >
-            I understand the weekly rule
+            <T en="Got it" es="Entendido" />
           </button>
         </div>
       </dialog>

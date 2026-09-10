@@ -70,7 +70,7 @@ export function useSpanish(): boolean {
  * A client leaf inside server pages, so the screens it sits on stay on the
  * server. Only the words are shipped to the browser.
  */
-export function T({ en, es }: { en: string; es: string }) {
+export function T({ en, es }: { en: React.ReactNode; es: React.ReactNode }) {
   return <>{useSpanish() ? es : en}</>;
 }
 

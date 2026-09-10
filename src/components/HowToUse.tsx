@@ -43,6 +43,11 @@ function Term({
  * The short version, for the sign-in dialog. Deliberately fits on a phone
  * without scrolling — anything that needs scrolling belongs on /help, not in a
  * modal someone has to get past to start work.
+ *
+ * Two products share this door, and the crew signing in at one in the morning
+ * are here for the checklists. So the checklists come first and in both
+ * languages, and the weekly rule is one line under them rather than the whole
+ * screen.
  */
 export function HowToSummary({
   target,
@@ -56,21 +61,59 @@ export function HowToSummary({
 }) {
   return (
     <>
-      <p className="note leading-relaxed">
-        By {deadlineLabel}, all {target} items
-        {houses > 1 ? " in each half" : ""} need a <strong>new photo</strong>{" "}
-        and a <strong>new comment</strong>. Nothing carries forward.
+      <p className="label">
+        <T en="Checklists" es="Listas" />
       </p>
-
-      <ol className="mt-4 space-y-2">
-        <Step n={1}>Tap a card and take the photo.</Step>
-        <Step n={2}>Say if it&apos;s done or needs one more cycle.</Step>
-        <Step n={3}>Your name, and whoever helped.</Step>
-        <Step n={4}>Write what changed. Never blank.</Step>
+      <ol className="mt-3 space-y-2">
+        <Step n={1}>
+          <T
+            en="Pick your position, then the list you are on."
+            es="Escoge tu puesto y luego la lista que te toca."
+          />
+        </Step>
+        <Step n={2}>
+          <T
+            en="Initials on every item as you go. A photo where it asks for one."
+            es="Iniciales en cada punto. Foto donde la pide."
+          />
+        </Step>
+        <Step n={3}>
+          <T
+            en="The MOD signs at the end. Anything not done goes on the record with the name."
+            es="El MOD firma al final. Lo que quedó sin hacer queda en el registro con el nombre."
+          />
+        </Step>
       </ol>
 
-      <p className="label mt-4 leading-relaxed">
-        Full instructions any time under &ldquo;How to&rdquo;.
+      <p className="label mt-5">
+        <T en="Weekly progress" es="Progreso semanal" />
+      </p>
+      <p className="note mt-3 leading-relaxed">
+        <T
+          en={
+            <>
+              By {deadlineLabel}, all {target} items
+              {houses > 1 ? " in each half" : ""} need a{" "}
+              <strong>new photo</strong> and a <strong>new comment</strong>.
+              Nothing carries forward.
+            </>
+          }
+          es={
+            <>
+              Para el {deadlineLabel}, los {target} puntos
+              {houses > 1 ? " de cada mitad" : ""} necesitan{" "}
+              <strong>foto nueva</strong> y <strong>comentario nuevo</strong>.
+              Nada se arrastra.
+            </>
+          }
+        />
+      </p>
+
+      <p className="label mt-5 leading-relaxed">
+        <T
+          en="Full instructions any time under “How to”."
+          es="Las instrucciones completas están siempre en “Cómo usar”."
+        />
       </p>
     </>
   );
