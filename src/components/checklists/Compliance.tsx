@@ -210,10 +210,9 @@ export function NightStrip({
     short: "bg-warn hover:bg-warn/80 text-on-warn",
     open: "ring-card-border text-muted ring-1 ring-inset hover:bg-hover",
   } as const;
+  // "9/8", the way the date is said out loud, not "TUE 8".
   const day = (night: string) =>
-    new Date(`${night}T12:00:00Z`)
-      .toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" })
-      .toUpperCase();
+    `${Number(night.slice(5, 7))}/${Number(night.slice(8, 10))}`;
 
   return (
     <div>
@@ -238,7 +237,7 @@ export function NightStrip({
               n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
             }`}
           >
-            {day(n.night)} {Number(n.night.slice(8, 10))}
+            {day(n.night)}
           </Link>
         ))}
       </div>
