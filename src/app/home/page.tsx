@@ -181,7 +181,9 @@ async function AdminHome() {
   const tonight = currentNight();
   const night = isNightOver(tonight) ? tonight : previousNight(tonight);
 
-  const venues = await nightCompliance(night);
+  // Venues that recorded anything. A venue dark on the night is not on
+  // the report, the same as a night the rollup does not count.
+  const venues = (await nightCompliance(night)).filter((v) => v.ran);
   // Venues with any fail on them. Counted by tier, a venue at eight in ten
   // with three fails read as "3 fails at 0 venues".
   const failingVenues = venues.filter(

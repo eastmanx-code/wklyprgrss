@@ -308,11 +308,11 @@ export function ListBar({
             on a phone rather than squeezing it. */}
         <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <span className="text-body font-medium">{list.name}</span>
-          {verdict ? (
-            <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
-              {verdict}
-            </span>
-          ) : null}
+          <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+            {verdict}
+            {verdict ? " " : ""}
+            <span aria-hidden>→</span>
+          </span>
         </span>
         {/* The missing items, one to a line, in full, where the page is
             for acting on them; the first clause where it is a summary. */}

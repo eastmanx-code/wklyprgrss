@@ -112,22 +112,35 @@ export default async function LocationsPage({
 
   // One ruler, summed: lists checked off and signed off, over lists on the
   // night. The fails are the rest, and they are named below.
-  const lists = scored.reduce((n, v) => n + v.total, 0);
-  const done = scored.reduce((n, v) => n + v.done, 0);
-  const short = scored.reduce((n, v) => n + v.notSigned + v.notDone, 0);
+  const ranVenues = scored.filter((v) => v.ran);
+  const lists = ranVenues.reduce((n, v) => n + v.total, 0);
+  const done = ranVenues.reduce((n, v) => n + v.done, 0);
+  const short = ranVenues.reduce((n, v) => n + v.notSigned + v.notDone, 0);
 
   const lineFor = (venue: (typeof venues)[number]): Row => {
     const row = scoreOf.get(venue.code);
     return {
       id: venue.id,
       code: venue.code,
-      score: row ? `${row.score}/10` : "—",
-      tier: row?.tier ?? null,
+      score: row && row.ran ? `${row.score}/10` : "—",
+      tier: row && row.ran ? row.tier : null,
       // Said twice, because the row is built on the server and the language
       // is on the device. The same words the venue's night opens with.
-      note: row ? shortOf(row) : "No lists yet",
-      noteEs: row ? shortOfEs(row) : "Todavía sin listas",
-      fails: row ? row.lists.filter((l) => l.state === "fail") : [],
+      note: !row
+        ? "No lists yet"
+        : !row.ran
+          ? over
+            ? "nothing recorded"
+            : "nothing yet"
+          : shortOf(row),
+      noteEs: !row
+        ? "Todavía sin listas"
+        : !row.ran
+          ? over
+            ? "sin registro"
+            : "todavía nada"
+          : shortOfEs(row),
+      fails: row && row.ran ? row.lists.filter((l) => l.state === "fail") : [],
     };
   };
 
@@ -177,7 +190,7 @@ export default async function LocationsPage({
             : ("short" as const),
     }));
   // Best and worst only when there is something to compare against.
-  const ranked = [...scored].sort((a, b) => b.score - a.score);
+  const ranked = [...ranVenues].sort((a, b) => b.score - a.score);
   const best = ranked.length > 1 ? ranked[0] : null;
   const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
 
@@ -394,7 +407,7 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
             {row.score}
           </span>
           <span className={`label ml-auto ${failed ? "text-on-warn" : ""}`}>
-            <T en="open lists" es="abrir listas" />
+            <T en="do checklists" es="hacer listas" />
           </span>
         </Link>
         {row.tier ? (

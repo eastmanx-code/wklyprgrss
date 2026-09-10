@@ -56,6 +56,43 @@ export default async function VenueCompliancePage({
   if (!venue) notFound();
 
   const name = await venueNameOf(code);
+
+  // Nothing recorded. Not fifteen fails: a night the venue was dark, or a
+  // night before it had the app, and the page says which it is not
+  // guessing at.
+  if (!venue.ran) {
+    return (
+      <main className="close-flow mx-auto max-w-[960px] pb-4">
+        <BackLink
+          href={
+            session.role === "admin"
+              ? `/checklists/locations?night=${night}`
+              : "/checklists"
+          }
+        >
+          {session.role === "admin" ? "All locations" : "Checklists"}
+        </BackLink>
+        <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <div>
+            <p className="label">
+              {formatNightSpan(night)}
+              {name === code ? "" : ` · ${code}`}
+            </p>
+            <h1 className="text-metric mt-2 leading-tight font-medium break-words">
+              {name}
+            </h1>
+          </div>
+          <NightNav night={night} base={`/checklists/compliance/${code}`} />
+        </header>
+        <Card title="Lists" hint="nothing recorded">
+          <p className="note text-muted leading-relaxed">
+            Nobody checked anything off or signed anything on this night. It
+            does not count as a night the venue ran, so it is not scored.
+          </p>
+        </Card>
+      </main>
+    );
+  }
   const pile = (group: ListGroup) =>
     venue.lists.filter((list) => list.group === group);
   // Not signed off first, then signed with something left: the worse fail

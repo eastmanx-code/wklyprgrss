@@ -103,6 +103,14 @@ export type VenueCompliance = {
   notSigned: number;
   /** Still being worked, because the night is not over yet. */
   going: number;
+  /**
+   * Whether anything was recorded on the night at all: a tick or a signature
+   * on any list. A venue that was dark on a Monday has fifteen lists with
+   * nothing on them, and that is not fifteen fails, it is a night off. The
+   * rollup already skips such nights; the night page and the venue row read
+   * this to do the same.
+   */
+  ran: boolean;
 };
 
 /** The ten-point scale the weekly board already uses. */
@@ -311,6 +319,7 @@ export async function nightCompliance(
       notDone: count("gaps"),
       notSigned: count("unsigned"),
       going: count("going"),
+      ran: venueRows.some((r) => r.ticked > 0 || r.certified),
     });
   }
 
