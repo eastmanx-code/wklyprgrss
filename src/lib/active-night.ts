@@ -101,3 +101,23 @@ export async function activeNightsFor(
   }
   return nights;
 }
+
+/**
+ * The night a building's board is on.
+ *
+ * The lists file per list, above. The board that shows them all cannot: at
+ * 4:08 with the barback still ticking, a per-list board said "Wed Sep 9" and
+ * then showed the host close as unsigned, because the host had gone quiet
+ * at 12:40 and rolled. Every signed list read as missing again, under
+ * yesterday's date. So while any list in the building is still being
+ * walked, the whole board shows that night. Once the last one goes quiet,
+ * the board is tonight's.
+ */
+export async function boardNight(
+  checklistIds: string[],
+  now: Date = new Date(),
+): Promise<string> {
+  const tonight = currentNight(now);
+  const nights = await activeNightsFor(checklistIds, now);
+  return [...nights.values()].find((n) => n !== tonight) ?? tonight;
+}
