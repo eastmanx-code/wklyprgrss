@@ -210,17 +210,15 @@ export function NightStrip({
     short: "bg-warn hover:bg-warn/80 text-on-warn",
     open: "ring-card-border text-muted ring-1 ring-inset hover:bg-hover",
   } as const;
-  const day = (night: string) =>
-    new Date(`${night}T12:00:00Z`)
-      .toLocaleDateString("en-US", { weekday: "short", timeZone: "UTC" })
-      .toUpperCase();
+  // "09/08", zero padded so every tab is the same width and they line up.
+  const day = (night: string) => `${night.slice(5, 7)}/${night.slice(8, 10)}`;
 
   return (
     <div>
       {/* Dated tabs, one per night the checklists ran. Blank squares read
           as venues, or scores, to anyone seeing them cold. A night still
           running is outlined, not coloured: it has not failed anything yet. */}
-      <p className="label mb-2">Nights on the checklists</p>
+      <p className="label mb-2">Service nights</p>
       <div className="flex flex-wrap gap-2">
         {nights.map((n) => (
           <Link
@@ -231,14 +229,14 @@ export function NightStrip({
                 ? "every list checked off and signed off"
                 : n.state === "short"
                   ? "something not checked off or not signed off"
-                  : "still running"
+                  : "in progress"
             }`}
             aria-current={n.night === current ? "date" : undefined}
             className={`inline-flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-label tracking-[0.08em] tabular-nums ${fill[n.state]} ${
               n.night === current ? "ring-ink ring-2 ring-offset-0" : ""
             }`}
           >
-            {day(n.night)} {Number(n.night.slice(8, 10))}
+            {day(n.night)}
           </Link>
         ))}
       </div>
@@ -276,16 +274,22 @@ export function ListBar({
     list.group === "unsigned"
       ? "not signed off"
       : list.group === "gaps"
-        ? `${open} not checked off`
+        ? `${open} ${open === 1 ? "item" : "items"} not checked off`
         : list.group === "going"
-          ? "still going"
+          ? "in progress"
           : list.group === "empty"
             ? "nothing on it"
             : "";
   // What is missing outranks who did the rest: the fail first and in
   // weight, then the record of who checked and who signed, muted.
-  const missing = list.facts.filter((f) => f.warn);
-  const record = list.facts.filter((f) => !f.warn);
+  // The heading says what failed, so the facts under it are the rest: the
+  // items left, and who checked and who signed.
+  const missing = list.facts.filter(
+    (f) => f.warn && f.label === "not checked off",
+  );
+  const record = list.facts.filter(
+    (f) => !f.warn && !(list.group === "gaps" && f.label === "signed off"),
+  );
   const line = (facts: typeof list.facts) =>
     facts.map((fact, i) => (
       <span key={fact.label}>
@@ -294,6 +298,19 @@ export function ListBar({
       </span>
     ));
   const items = full && list.group === "gaps" ? list.row.open_titles : null;
+  // A fail leads with the person. A list signed off with items unchecked
+  // is headed by whoever signed it, because that is the documented action;
+  // a list nobody signed is headed "nobody signed off", because the people
+  // who ticked items are not who owes the signature. The list's name goes
+  // under. It used to lead with the list, and the question a manager asks
+  // of a fail is who.
+  const signer = list.row.certified_by?.trim() || "no name";
+  const lead =
+    list.group === "gaps"
+      ? `${signer} · signed off with ${open} ${open === 1 ? "item" : "items"} not checked off`
+      : list.group === "unsigned"
+        ? "Nobody signed off"
+        : null;
   return (
     <li>
       <Link
@@ -304,22 +321,31 @@ export function ListBar({
             : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset"
         }`}
       >
-        {/* Name left, verdict right, and the verdict drops under the name
-            on a phone rather than squeezing it. */}
-        <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <span className="text-body font-medium">{list.name}</span>
-          <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
-            {verdict}
-            {verdict ? " " : ""}
-            <span aria-hidden>→</span>
+        {lead ? (
+          <>
+            <span className="text-body font-medium">
+              {lead}
+              {"\u00A0"}
+              <span aria-hidden>→</span>
+            </span>
+            <span className="text-body">{list.name}</span>
+          </>
+        ) : (
+          <span className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <span className="text-body font-medium">{list.name}</span>
+            <span className="text-label font-medium tracking-[0.08em] whitespace-nowrap uppercase">
+              {verdict}
+              {verdict ? " " : ""}
+              <span aria-hidden>→</span>
+            </span>
           </span>
-        </span>
+        )}
         {/* The missing items, one to a line, in full, where the page is
             for acting on them; the first clause where it is a summary. */}
         {items ? (
           <ul className="text-body leading-relaxed font-medium">
             {items.map((title) => (
-              <li key={title}>{title}</li>
+              <li key={title}>missed: {title}</li>
             ))}
           </ul>
         ) : missing.length > 0 ? (
@@ -327,15 +353,16 @@ export function ListBar({
             {line(missing)}
           </span>
         ) : null}
-        {record.length > 0 ? (
+        {record.map((fact) => (
           <span
+            key={fact.label}
             className={`text-body leading-relaxed ${
               failed ? "text-on-warn/75" : "text-muted"
             }`}
           >
-            {line(record)}
+            {fact.label}: {fact.value}
           </span>
-        ) : null}
+        ))}
       </Link>
     </li>
   );

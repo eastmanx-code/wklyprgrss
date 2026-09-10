@@ -6,7 +6,6 @@ import { Card } from "@/components/Card";
 import { BackLink } from "@/components/ui";
 import { nightCompliance, type ListGroup } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
-import { shortOf } from "@/lib/short";
 import { currentNight, formatNightSpan } from "@/lib/night";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -130,11 +129,15 @@ export default async function VenueCompliancePage({
               venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
             }`}
           >
-            <span className="text-title tabular-nums">{venue.score}/10</span>
-            {" · "}
-            {venue.done} of {venue.total} checked off and signed off
-            {" · "}
-            {shortOf(venue)}
+            <span className="text-title tabular-nums">
+              {venue.done}/{venue.total}
+            </span>
+            {" lists checked off and signed off · "}
+            {venue.notDone + venue.notSigned > 0
+              ? `${venue.notDone + venue.notSigned} ${
+                  venue.notDone + venue.notSigned === 1 ? "fail" : "fails"
+                }`
+              : "no fails"}
           </p>
         </div>
         <NightNav night={night} base={`/checklists/compliance/${code}`} />
@@ -151,7 +154,7 @@ export default async function VenueCompliancePage({
             ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
             : "no fails",
           ...(pile("going").length > 0
-            ? [`${pile("going").length} still going`]
+            ? [`${pile("going").length} in progress`]
             : []),
           ...(pile("done").length > 0
             ? [`${pile("done").length} checked off and signed off`]
@@ -176,7 +179,7 @@ export default async function VenueCompliancePage({
 
         {pile("going").length > 0 ? (
           <>
-            <p className="label mt-5">Still going · {pile("going").length}</p>
+            <p className="label mt-5">In progress · {pile("going").length}</p>
             <ul className="mt-2 space-y-3">
               {pile("going").map((list) => (
                 <ListBar

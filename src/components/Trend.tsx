@@ -157,7 +157,13 @@ export function Trend({
 
         {/* Axis labels outside the plot: inside, they sit on the data. */}
         <div className="relative w-8 shrink-0">
-          {GRIDLINES.filter((g) => !tenScale || g % 50 === 0).map((g) => (
+          {/* A gridline label that would sit on the target's label yields
+              to it: "75" under "80" read as "7580". */}
+          {GRIDLINES.filter(
+            (g) =>
+              (!tenScale || g % 50 === 0) &&
+              (target === undefined || Math.abs(g - target) >= 10),
+          ).map((g) => (
             <span
               key={g}
               className="label absolute right-0 -translate-y-1/2"

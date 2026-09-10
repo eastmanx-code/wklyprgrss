@@ -122,7 +122,9 @@ export default async function LocationsPage({
     return {
       id: venue.id,
       code: venue.code,
-      score: row && row.ran ? `${row.score}/10` : "—",
+      // The count, not a conversion. "8/10" beside "3 fails" on fifteen
+      // lists made no sense; "12/15 · 3 fails" is the same fact, readable.
+      score: row && row.ran ? `${row.done}/${row.total}` : "—",
       tier: row && row.ran ? row.tier : null,
       // Said twice, because the row is built on the server and the language
       // is on the device. The same words the venue's night opens with.
@@ -209,7 +211,7 @@ export default async function LocationsPage({
             {over ? null : (
               <>
                 {" · "}
-                <T en="still running" es="en curso" />
+                <T en="in progress" es="en curso" />
               </>
             )}
           </p>
@@ -247,8 +249,8 @@ export default async function LocationsPage({
                     ? `${short} ${short === 1 ? "fail" : "fails"}`
                     : over
                       ? "no fails"
-                      : "no fails yet",
-                  `${Math.round((done / lists) * 10)}/10`,
+                      : "no fails so far",
+                  ...(over ? [] : ["in progress"]),
                 ].join(" · ")}
                 es={[
                   `${done} de ${lists} listas marcadas y firmadas`,
@@ -256,8 +258,8 @@ export default async function LocationsPage({
                     ? `${short} ${short === 1 ? "falla" : "fallas"}`
                     : over
                       ? "sin fallas"
-                      : "sin fallas todavía",
-                  `${Math.round((done / lists) * 10)}/10`,
+                      : "sin fallas hasta ahora",
+                  ...(over ? [] : ["en curso"]),
                 ].join(" · ")}
               />
             )
@@ -304,7 +306,8 @@ export default async function LocationsPage({
             points={points}
             failed={short > 0}
             labelLeft={formatNight(ran[0].night)}
-            labelRight={formatNight(night)}
+            labelRight={`${formatNight(night)}${over ? "" : " · so far"}`}
+            over={over}
             best={best}
             worst={worst}
           />
@@ -368,11 +371,12 @@ export default async function LocationsPage({
 
 /**
  * One venue's night as a bar, in the weekly board's proportions, with the
- * lists that failed named under it.
+ * lists that failed under it.
  *
- * Two doors on the bar. The code and score open the venue's lists; the fails
- * open its night. Each failed list under it opens that list's own night, so
- * the item somebody skipped is one tap from here.
+ * One bar, one door: it opens the venue's night, because that is what this
+ * page is for. Two doors on one bar, "do checklists" beside "3 fails", was
+ * two boxes with a seam between them and a reader could not tell which was
+ * the bar. Doing the checklists is a quiet line under the venue instead.
  */
 function VenueBar({ row, night }: { row: Row; night: string }) {
   const failed = row.tier === "fail";
@@ -381,59 +385,44 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
     : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset";
   return (
     <li>
-      {/* Two doors. On a phone "do checklists" wrapped into two lines beside
-          a squeezed fails door; the fails door takes the next line there. */}
-      <div className="flex flex-wrap gap-[2px]">
-        <Link
-          href={`/checklists/enter/${row.id}`}
-          className={`flex min-w-0 flex-1 basis-[14rem] items-baseline gap-x-3 rounded-[4px] px-3 py-3 ${shell}`}
+      <Link
+        href={
+          row.tier
+            ? `/checklists/compliance/${row.code}?night=${night}`
+            : `/checklists/enter/${row.id}`
+        }
+        className={`flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-4 py-3 ${shell}`}
+      >
+        <span
+          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
+            failed ? "text-on-warn" : "text-ink"
+          }`}
         >
-          <span
-            className={`text-title w-16 shrink-0 tracking-[0.08em] ${
-              failed ? "text-on-warn" : "text-ink"
-            }`}
-          >
-            {row.code}
-          </span>
-          <span
-            className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
-              failed
-                ? "text-on-warn"
-                : row.tier === "neutral"
-                  ? "text-warn"
-                  : row.tier === "good"
-                    ? "text-ink"
-                    : "text-muted"
-            }`}
-          >
-            {row.score}
-          </span>
-          <span
-            className={`label ml-auto whitespace-nowrap ${failed ? "text-on-warn" : ""}`}
-          >
-            <T en="do checklists" es="hacer listas" />
-          </span>
-        </Link>
-        {row.tier ? (
-          <Link
-            href={`/checklists/compliance/${row.code}?night=${night}`}
-            className={`flex shrink-0 basis-full items-baseline justify-between gap-x-2 rounded-[4px] px-3 py-3 whitespace-nowrap sm:basis-auto ${shell}`}
-          >
-            <span className={`label ${failed ? "text-on-warn" : ""}`}>
-              <T en={row.note} es={row.noteEs} />
-            </span>
-            <span aria-hidden>→</span>
-          </Link>
-        ) : (
-          <span
-            className={`label flex shrink-0 items-center rounded-[4px] px-3 whitespace-nowrap ${shell}`}
-          >
-            <T en={row.note} es={row.noteEs} />
-          </span>
-        )}
-      </div>
-      {/* The same left edge as the venue's bar. Indented, the page had
-          three edges and nothing lined up. */}
+          {row.code}
+        </span>
+        <span
+          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
+            failed
+              ? "text-on-warn"
+              : row.tier === "neutral"
+                ? "text-warn"
+                : row.tier === "good"
+                  ? "text-ink"
+                  : "text-muted"
+          }`}
+        >
+          {row.score}
+        </span>
+        <span
+          className={`label ml-auto flex items-center gap-2 whitespace-nowrap ${
+            failed ? "text-on-warn" : ""
+          }`}
+        >
+          <T en={row.note} es={row.noteEs} />
+          <span aria-hidden>→</span>
+        </span>
+      </Link>
+      {/* The same left edge as the venue's bar. */}
       {row.fails.length > 0 ? (
         <ul className="mt-3 space-y-3">
           {row.fails.map((list) => (
@@ -447,6 +436,15 @@ function VenueBar({ row, night }: { row: Row; night: string }) {
           ))}
         </ul>
       ) : null}
+      <p className="mt-2">
+        <Link
+          href={`/checklists/enter/${row.id}`}
+          className="label hover:text-ink inline-flex min-h-11 items-center gap-2 px-4"
+        >
+          <T en="Do the checklists" es="Hacer las listas" />
+          <span aria-hidden>→</span>
+        </Link>
+      </p>
     </li>
   );
 }

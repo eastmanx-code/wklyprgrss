@@ -14,9 +14,11 @@ import type { VenueCompliance } from "./compliance";
  */
 export function shortOf(venue: VenueCompliance): string {
   const fails = venue.notDone + venue.notSigned;
+  // The count that makes the score, first. "8/10" beside "3 fails" did not
+  // reconcile at a glance; "12 of 15" beside both does.
   const parts = [
     ...(fails > 0 ? [`${fails} ${fails === 1 ? "fail" : "fails"}`] : []),
-    ...(venue.going > 0 ? [`${venue.going} still going`] : []),
+    ...(venue.going > 0 ? [`${venue.going} in progress`] : []),
   ];
   return parts.length > 0 ? parts.join(" · ") : "no fails";
 }

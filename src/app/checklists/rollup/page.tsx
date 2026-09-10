@@ -22,9 +22,9 @@ const NIGHT_STATE: Record<string, string> = {
   m: "bg-warn",
 };
 
-/** Lists checked off and signed off, out of ten. The same score everywhere. */
-function scoreOf(done: number, of: number): number {
-  return of === 0 ? 0 : Math.round((done / of) * 10);
+/** Share of lists checked off and signed off, over the nights recorded. */
+function rateOf(done: number, of: number): number {
+  return of === 0 ? 0 : Math.round((done / of) * 100);
 }
 
 /**
@@ -33,20 +33,19 @@ function scoreOf(done: number, of: number): number {
  * here and a row on the group screen agree about what yellow means.
  */
 function Bar({ done, of }: { done: number; of: number }) {
-  const pct = of === 0 ? 0 : Math.round((done / of) * 100);
-  const score = scoreOf(done, of);
+  const pct = rateOf(done, of);
   return (
     <span className="flex min-w-0 flex-1 items-center gap-3">
       <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
         <span
           className={`block h-full rounded-[1px] ${
-            score <= 5 ? "bg-warn" : score <= 7 ? "bg-warn/40" : "bg-ink/30"
+            pct < 60 ? "bg-warn" : pct < 80 ? "bg-warn/40" : "bg-ink/30"
           }`}
           style={{ width: `${pct}%` }}
         />
       </span>
-      <span className="label w-8 shrink-0 text-right tabular-nums">
-        {score}/10
+      <span className="label w-10 shrink-0 text-right tabular-nums">
+        {pct}%
       </span>
     </span>
   );
@@ -160,9 +159,9 @@ export default async function RollupPage({
           header that costs half a phone screen is not a header. */}
       <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Score · checked off and signed off</p>
+          <p className="label">Lists checked off and signed off</p>
           <p className="text-title tabular-nums tracking-[0.08em]">
-            {scoreOf(real.done, real.of)}/10
+            {real.done} of {real.of} · {rateOf(real.done, real.of)}%
           </p>
         </div>
         <div
