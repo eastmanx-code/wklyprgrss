@@ -129,14 +129,15 @@ export default async function VenueCompliancePage({
               venue.notSigned + venue.notDone > 0 ? "text-warn" : "text-muted"
             }`}
           >
-            <span className="text-title tabular-nums">{venue.score}/10</span>
-            {" · "}
-            {venue.done} of {venue.total} lists checked off and signed off
+            <span className="text-title tabular-nums">
+              {venue.done}/{venue.total}
+            </span>
+            {" lists checked off and signed off · "}
             {venue.notDone + venue.notSigned > 0
-              ? ` · ${venue.notDone + venue.notSigned} ${
+              ? `${venue.notDone + venue.notSigned} ${
                   venue.notDone + venue.notSigned === 1 ? "fail" : "fails"
                 }`
-              : " · no fails"}
+              : "no fails"}
           </p>
         </div>
         <NightNav night={night} base={`/checklists/compliance/${code}`} />

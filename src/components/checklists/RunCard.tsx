@@ -38,8 +38,8 @@ export function RunCard({
   failed: boolean;
   labelLeft: string;
   labelRight: string;
-  best: { code: string; score: number } | null;
-  worst: { code: string; score: number } | null;
+  best: { code: string; done: number; total: number } | null;
+  worst: { code: string; done: number; total: number } | null;
 }) {
   const share = total === 0 ? 0 : Math.round((done / total) * 100);
 
@@ -48,8 +48,8 @@ export function RunCard({
       title={<T en="The run" es="La racha" />}
       hint={
         <T
-          en={`Last ${nights} nights · lists checked off and signed off, out of ten`}
-          es={`Últimas ${nights} noches · listas marcadas y firmadas, sobre diez`}
+          en={`Last ${nights} nights · share of lists checked off and signed off`}
+          es={`Últimas ${nights} noches · parte de las listas marcadas y firmadas`}
         />
       }
     >
@@ -57,8 +57,12 @@ export function RunCard({
         <Dial
           size={120}
           percent={share}
-          label={`${Math.round(share / 10)}/10`}
-          caption={<T en="score · last night" es="nota · anoche" />}
+          caption={
+            <T
+              en={`${done} of ${total} lists · last night`}
+              es={`${done} de ${total} listas · anoche`}
+            />
+          }
           tone={failed ? "var(--warn)" : "var(--ink)"}
         />
 
@@ -69,7 +73,6 @@ export function RunCard({
             labelRight={labelRight}
             target={80}
             showApproved={false}
-            tenScale
           />
         ) : (
           <p className="note text-muted self-center leading-relaxed">
@@ -87,7 +90,9 @@ export function RunCard({
                 <T en="Best" es="Mejor" />
               </p>
               <p className="text-title mt-1 tracking-[0.08em]">{best.code}</p>
-              <p className="label mt-1 tabular-nums">{best.score}/10</p>
+              <p className="label mt-1 tabular-nums">
+                {best.done}/{best.total}
+              </p>
             </div>
             <div>
               <p className="label">
@@ -96,7 +101,9 @@ export function RunCard({
               <p className="text-title text-warn mt-1 tracking-[0.08em]">
                 {worst.code}
               </p>
-              <p className="label mt-1 tabular-nums">{worst.score}/10</p>
+              <p className="label mt-1 tabular-nums">
+                {worst.done}/{worst.total}
+              </p>
             </div>
           </div>
         ) : null}

@@ -122,7 +122,9 @@ export default async function LocationsPage({
     return {
       id: venue.id,
       code: venue.code,
-      score: row && row.ran ? `${row.score}/10` : "—",
+      // The count, not a conversion. "8/10" beside "3 fails" on fifteen
+      // lists made no sense; "12/15 · 3 fails" is the same fact, readable.
+      score: row && row.ran ? `${row.done}/${row.total}` : "—",
       tier: row && row.ran ? row.tier : null,
       // Said twice, because the row is built on the server and the language
       // is on the device. The same words the venue's night opens with.
@@ -248,7 +250,6 @@ export default async function LocationsPage({
                     : over
                       ? "no fails"
                       : "no fails yet",
-                  `${Math.round((done / lists) * 10)}/10`,
                 ].join(" · ")}
                 es={[
                   `${done} de ${lists} listas marcadas y firmadas`,
@@ -257,7 +258,6 @@ export default async function LocationsPage({
                     : over
                       ? "sin fallas"
                       : "sin fallas todavía",
-                  `${Math.round((done / lists) * 10)}/10`,
                 ].join(" · ")}
               />
             )
