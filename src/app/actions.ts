@@ -31,8 +31,18 @@ export async function leaderLogin(
   const venueId = String(formData.get("venueId") ?? "");
   const pin = String(formData.get("pin") ?? "");
 
-  if (!venueId) return { error: "Choose a venue first.", code: "venue" };
   if (!pin) return { error: GENERIC_ERROR, code: "pin" };
+  // A manager PIN with no venue picked. The venue is the crew's half of the
+  // form, and a manager at this door has nothing to pick: their PIN already
+  // says who they are. Asking for a venue first read as being locked out.
+  if (!venueId) {
+    const holder = await pinHolder(pin);
+    if (holder) {
+      await openFor(holder);
+      redirect(safeNext(String(formData.get("next") ?? "") || undefined));
+    }
+    return { error: "Choose a venue first.", code: "venue" };
+  }
 
   const venue = await getVenue(venueId);
   if (!venue) return { error: GENERIC_ERROR, code: "pin" };
