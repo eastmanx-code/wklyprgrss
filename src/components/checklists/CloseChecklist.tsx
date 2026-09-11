@@ -200,6 +200,56 @@ export function CloseChecklist({
   );
   const [saving, setSaving] = useState(false);
   const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
+
+  /**
+   * Initials typed but not yet ticked survive a reload.
+   *
+   * A reload is not rare on a shift: a phone that slept, a tab the browser
+   * threw away, a site update landing while a list is open. The ticks were
+   * always safe on the server. The letters carried down the rows below the
+   * last tick were not, and after a reload those rows came back blank, which
+   * read as the work being erased. Kept on this phone for this list and this
+   * night, and read back once after mount so the server's copy and the
+   * phone's never disagree about the first paint.
+   */
+  const initialsKey = `ww_initials:${slug}:${night}`;
+  useEffect(() => {
+    let raw: string | null = null;
+    try {
+      raw = window.sessionStorage.getItem(initialsKey);
+    } catch {
+      // No storage, or a private window. The carry works within the page.
+    }
+    if (!raw) return;
+    let kept: Record<string, string>;
+    try {
+      kept = JSON.parse(raw) as Record<string, string>;
+    } catch {
+      return;
+    }
+    // Applied after the first paint, the same way the queue's replay is,
+    // so the phone's copy lands on top of the server's rather than racing it.
+    const apply = window.setTimeout(() => {
+      setRowInitials((current) => {
+        const merged = { ...current };
+        for (const [number, said] of Object.entries(kept)) {
+          if (merged[Number(number)] === undefined && said.trim())
+            merged[Number(number)] = said;
+        }
+        return merged;
+      });
+    }, 0);
+    return () => window.clearTimeout(apply);
+    // Once, on mount: the key never changes for a mounted list.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(initialsKey, JSON.stringify(rowInitials));
+    } catch {
+      // Same as above. Nothing to do about it and nothing lost that was saved.
+    }
+  }, [initialsKey, rowInitials]);
   /** Tapped, and waiting on its initials before it does anything. */
   const [pending, setPending] = useState<number | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
