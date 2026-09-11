@@ -1,14 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { HowToDialog } from "@/components/HowToDialog";
 import { LangFromLink } from "@/components/Lang";
-import { HowToSummary } from "@/components/HowToUse";
 import { LeaderLoginForm } from "@/components/LeaderLoginForm";
 import { APP_NAME, safeNext } from "@/lib/app";
 import { getSession } from "@/lib/session";
-import { WEEKLY_ITEM_TARGET, getVenues, scoredHouses } from "@/lib/status";
-import { currentWeekStart, formatDeadline } from "@/lib/week";
+import { getVenues } from "@/lib/status";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +35,6 @@ export default async function HomePage({
   const wanted = wantedCode
     ? venues.find((v) => v.code.toLowerCase() === wantedCode.toLowerCase())
     : undefined;
-  const deadlineLabel = formatDeadline(currentWeekStart());
 
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
@@ -63,13 +59,14 @@ export default async function HomePage({
         <span className="label" aria-hidden>
           ·
         </span>
-        <HowToDialog>
-          <HowToSummary
-            target={WEEKLY_ITEM_TARGET}
-            houses={scoredHouses(currentWeekStart()).length}
-            deadlineLabel={deadlineLabel}
-          />
-        </HowToDialog>
+        {/* A link, not a popup. The instructions used to open over the
+            sign in on every visit and had to be acknowledged before the PIN
+            box could be reached, which is a gate in front of a barback at
+            one in the morning. The help is one tap away for anyone who
+            wants it. */}
+        <Link href="/help" className="label hover:text-ink">
+          How to use this
+        </Link>
       </div>
     </main>
   );
