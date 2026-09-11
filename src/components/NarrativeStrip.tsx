@@ -29,7 +29,12 @@ export function NarrativeStrip({
   byHouse: { house: House; itemsDone: number; itemsTarget: number }[];
   activeVenues: number;
 }) {
-  const [remaining, setRemaining] = useState<number | null>(null);
+  // Filled in on the server too, so the line never opens with a dash. The
+  // phone's clock and the server's differ by seconds, so the first paint
+  // can be a minute off the hydrated value; that is not worth a warning.
+  const [remaining, setRemaining] = useState<number>(
+    () => deadlineMs - Date.now(),
+  );
 
   useEffect(() => {
     const tick = () => setRemaining(deadlineMs - Date.now());
@@ -38,20 +43,18 @@ export function NarrativeStrip({
     return () => clearInterval(id);
   }, [deadlineMs]);
 
-  let lead: React.ReactNode = <span className="text-muted">—</span>;
-  if (remaining !== null) {
-    if (remaining <= 0) {
-      lead = <span className="text-warn">Past due</span>;
-    } else {
-      const minutes = Math.floor(remaining / 60_000);
-      const days = Math.floor(minutes / 1440);
-      const hours = Math.floor((minutes % 1440) / 60);
-      lead = (
-        <span className="text-ink">
-          {days > 0 ? `${days}d ${hours}h left` : `${hours}h left`}
-        </span>
-      );
-    }
+  let lead: React.ReactNode;
+  if (remaining <= 0) {
+    lead = <span className="text-warn">Past due</span>;
+  } else {
+    const minutes = Math.floor(remaining / 60_000);
+    const days = Math.floor(minutes / 1440);
+    const hours = Math.floor((minutes % 1440) / 60);
+    lead = (
+      <span className="text-ink" suppressHydrationWarning>
+        {days > 0 ? `${days}d ${hours}h left` : `${hours}h left`}
+      </span>
+    );
   }
 
   return (
