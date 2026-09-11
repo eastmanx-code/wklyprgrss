@@ -1996,7 +1996,17 @@ export function CloseChecklist({
                           }}
                           type="file"
                           accept={shot.kind === "video" ? "video/*" : "image/*"}
-                          capture="environment"
+                          // Photos force the rear camera, so the proof is a
+                          // live shot and not a picture from the roll. Video
+                          // does not: on iOS the forced camera opens straight
+                          // into the recorder, and on some versions that
+                          // recorder flashes open and dismisses without ever
+                          // returning a file — the "weird flashing thing" a
+                          // closer hit at 3am with two walkthroughs he could
+                          // not film. Without it, iOS shows its sheet, which
+                          // records reliably and also lets a video already
+                          // taken be attached instead of lost.
+                          capture={shot.kind === "video" ? undefined : "environment"}
                           className="sr-only"
                           onChange={(event) =>
                             onCapture(item, index, event.target.files?.[0])
