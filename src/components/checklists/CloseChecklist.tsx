@@ -57,6 +57,8 @@ export type SavedNight = {
   >;
   certifiedBy: string | null;
   certifiedAt: string | null;
+  /** Why it was signed with items open, when it was. */
+  openReason: string | null;
   /**
    * The second signature. Somebody else on the crew saying the work is done.
    *
@@ -200,9 +202,69 @@ export function CloseChecklist({
   );
   const [saving, setSaving] = useState(false);
   const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
+
+  /**
+   * Initials typed but not yet ticked survive a reload.
+   *
+   * A reload is not rare on a shift: a phone that slept, a tab the browser
+   * threw away, a site update landing while a list is open. The ticks were
+   * always safe on the server. The letters carried down the rows below the
+   * last tick were not, and after a reload those rows came back blank, which
+   * read as the work being erased. Kept on this phone for this list and this
+   * night, and read back once after mount so the server's copy and the
+   * phone's never disagree about the first paint.
+   */
+  const initialsKey = `ww_initials:${slug}:${night}`;
+  useEffect(() => {
+    let raw: string | null = null;
+    try {
+      raw = window.sessionStorage.getItem(initialsKey);
+    } catch {
+      // No storage, or a private window. The carry works within the page.
+    }
+    if (!raw) return;
+    let kept: Record<string, string>;
+    try {
+      kept = JSON.parse(raw) as Record<string, string>;
+    } catch {
+      return;
+    }
+    // Applied after the first paint, the same way the queue's replay is,
+    // so the phone's copy lands on top of the server's rather than racing it.
+    const apply = window.setTimeout(() => {
+      setRowInitials((current) => {
+        const merged = { ...current };
+        for (const [number, said] of Object.entries(kept)) {
+          if (merged[Number(number)] === undefined && said.trim())
+            merged[Number(number)] = said;
+        }
+        return merged;
+      });
+    }, 0);
+    return () => window.clearTimeout(apply);
+    // Once, on mount: the key never changes for a mounted list.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(initialsKey, JSON.stringify(rowInitials));
+    } catch {
+      // Same as above. Nothing to do about it and nothing lost that was saved.
+    }
+  }, [initialsKey, rowInitials]);
   /** Tapped, and waiting on its initials before it does anything. */
   const [pending, setPending] = useState<number | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
+  /**
+   * Why the work is not done, in the signer's words.
+   *
+   * Required the moment anything is open. The stop screen made a person
+   * read what they were leaving; it did not make them account for it, and
+   * a deep clean got signed at 6:18pm over an untouched fridge with nothing
+   * said. Now the sentence they are certifying is a failure, and a failure
+   * has a reason or it has no signature.
+   */
+  const [openReason, setOpenReason] = useState(saved.openReason ?? "");
   const [signed, setSigned] = useState(Boolean(saved.certifiedAt));
   /**
    * Signed, as facts rather than a sentence.
@@ -1040,6 +1102,8 @@ export function CloseChecklist({
     if (!certifier.trim()) missing.push(t("your name", "tu nombre"));
     if (!signed || !signatureRef.current)
       missing.push(t("your signature", "tu firma"));
+    if (openItems.length > 0 && openReason.trim().length < 3)
+      missing.push(t("why it is not done", "por qué no está hecho"));
     if (missing.length > 0) {
       setShortfall(
         `${t("Still needed", "Todavía falta")}: ${missing.join(t(" and ", " y "))}.`,
@@ -1109,6 +1173,7 @@ export function CloseChecklist({
       data.set("certifiedBy", certifier.trim());
       data.set("attestation", attestationText);
       data.set("signature", signatureRef.current ?? "");
+      data.set("openReason", openItems.length > 0 ? openReason.trim() : "");
       data.set("device", deviceId());
       data.set(
         "openAtSigning",
@@ -1230,10 +1295,10 @@ export function CloseChecklist({
   const attestationText = spanish
     ? doneCount === CLOSE_TOTAL
       ? `${name ? `Yo, ${name},` : "Yo"} completé todos los puntos de ${shift.shiftEs}. ${shift.readyEs} Me hago responsable del trabajo de mi equipo ${shift.whenEs}.`
-      : `${name ? `Yo, ${name},` : "Yo"} completé ${doneCount} de los ${CLOSE_TOTAL} puntos de ${shift.shiftEs}, y estoy firmando con los siguientes sin hacer. Me hago responsable del trabajo de mi equipo ${shift.whenEs}, incluyendo lo que estoy dejando sin terminar.`
+      : `${name ? `Yo, ${name},` : "Yo"} completé ${doneCount} de los ${CLOSE_TOTAL} puntos de ${shift.shiftEs}, y estoy certificando ${shift.shiftEs} como REPROBADO, con los siguientes sin hacer.${openReason.trim() ? ` Mi razón: ${openReason.trim()}.` : ""} Me hago responsable del trabajo de mi equipo ${shift.whenEs}, incluyendo lo que estoy dejando sin terminar.`
     : doneCount === CLOSE_TOTAL
       ? `${name ? `I, ${name},` : "I"} have completed every item on ${shift.shift}. ${shift.ready} I hold myself accountable for this team's work ${shift.when}.`
-      : `${name ? `I, ${name},` : "I"} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am signing with the following not done. I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
+      : `${name ? `I, ${name},` : "I"} have completed ${doneCount} of the ${CLOSE_TOTAL} items on ${shift.shift}, and I am certifying ${shift.shift} as FAILED, with the following not done.${openReason.trim() ? ` My reason: ${openReason.trim()}.` : ""} I hold myself accountable for this team's work ${shift.when}, including what I am leaving unfinished.`;
   /** Signed is finished. Nothing about the night moves after it is certified. */
   const locked = certified !== null;
 
@@ -1248,7 +1313,7 @@ export function CloseChecklist({
       ? `${t("Signed by", "Firmada por")} ${certified.by ?? "—"}`
       : certified.done === CLOSE_TOTAL
         ? `${t("Signed", "Firmada")} · ${t("all", "las")} ${CLOSE_TOTAL}`
-        : `${t("Signed", "Firmada")} · ${certified.done} ${t("of", "de")} ${CLOSE_TOTAL}, ${
+        : `${t("Signed as failed", "Firmada como reprobada")} · ${certified.done} ${t("of", "de")} ${CLOSE_TOTAL}, ${
             CLOSE_TOTAL - certified.done
           } ${t("not done", "sin hacer")}`;
 
@@ -1274,6 +1339,35 @@ export function CloseChecklist({
       </div>
 
       <div className="mt-5 space-y-4">
+        {openItems.length > 0 || (locked && saved.openReason) ? (
+          <div className="space-y-2">
+            <label className="label text-warn" htmlFor="open-reason">
+              {t(
+                "Why is this not done? (required)",
+                "¿Por qué no está hecho? (requerido)",
+              )}
+            </label>
+            <textarea
+              id="open-reason"
+              className="field min-h-[5.5rem]"
+              placeholder={t(
+                "Out of time, out of product, something broken, nobody on that station…",
+                "Sin tiempo, sin producto, algo roto, nadie en esa estación…",
+              )}
+              autoCorrect="on"
+              value={openReason}
+              disabled={locked}
+              onChange={(event) => setOpenReason(event.target.value)}
+            />
+            <p className="note text-muted">
+              {t(
+                "This goes on the record next to the items, and the manager reads it in the morning.",
+                "Esto queda en el registro junto a los puntos, y el gerente lo lee en la mañana.",
+              )}
+            </p>
+          </div>
+        ) : null}
+
         <div className="space-y-2">
           <label className="label" htmlFor="certifier">
             {t(
@@ -1347,7 +1441,7 @@ export function CloseChecklist({
             : (certifiedLabel ??
               (doneCount === CLOSE_TOTAL
                 ? t("Sign this list", "Firmar esta lista")
-                : `${t("Sign with", "Firmar con")} ${
+                : `${t("Sign as failed", "Firmar como reprobada")} · ${
                     CLOSE_TOTAL - doneCount
                   } ${t("not done", "sin hacer")}`))}
         </button>
@@ -2099,7 +2193,7 @@ export function CloseChecklist({
               className="btn mt-4 w-full"
               onClick={() => setSigningOpen(true)}
             >
-              {t("Sign with", "Firmar con")} {openItems.length}{" "}
+              {t("Sign as failed", "Firmar como reprobada")} · {openItems.length}{" "}
               {t("not done", "sin hacer")}
             </button>
 
@@ -2117,7 +2211,9 @@ export function CloseChecklist({
               onClose={() => setSigningOpen(false)}
             >
               <div className="ww-dialog-body">
-                <p className="label text-warn">{t("Stop", "Alto")}</p>
+                <p className="label text-warn">
+                  {t("Stop · this list fails", "Alto · esta lista reprueba")}
+                </p>
                 <h2 className="text-metric mt-2 leading-tight font-medium">
                   {openItems.length}{" "}
                   {openItems.length === 1
@@ -2126,8 +2222,8 @@ export function CloseChecklist({
                 </h2>
                 <p className="note mt-3 leading-relaxed">
                   {t(
-                    "You are about to sign this list with work not done. Your name goes on it, and the manager will see exactly what was left. Go back and finish, or sign and own it.",
-                    "Estás a punto de firmar esta lista con trabajo sin hacer. Tu nombre va en ella, y el gerente verá exactamente qué quedó. Regresa y termina, o firma y hazte responsable.",
+                    "Signing now certifies a failed list. Your name goes on the failure, the manager sees exactly what was left, and you have to say why before it will take your signature. Go back and finish, or say why and own it.",
+                    "Firmar ahora certifica una lista reprobada. Tu nombre va en la falla, el gerente ve exactamente qué quedó, y tienes que decir por qué antes de que acepte tu firma. Regresa y termina, o di por qué y hazte responsable.",
                   )}
                 </p>
                 <ul className="mt-4 space-y-2">

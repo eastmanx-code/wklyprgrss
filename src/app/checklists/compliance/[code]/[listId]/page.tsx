@@ -173,6 +173,12 @@ export default async function ListCompliancePage({
               {detail.verifiedAt ? formatClock(detail.verifiedAt) : ""}
             </dd>
           </dl>
+          {detail.openReason ? (
+            <p className="note text-warn mt-4 leading-relaxed">
+              Why it was signed with work not done, in their words:{" "}
+              <span className="font-medium">{detail.openReason}</span>
+            </p>
+          ) : null}
           {detail.reopened > 0 ? (
             <p className="label text-warn mt-4">
               Signature undone {detail.reopened}{" "}

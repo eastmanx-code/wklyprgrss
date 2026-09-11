@@ -109,7 +109,9 @@ export default async function ChecklistPage({
   const night = await activeNight(list.id);
   const { data: nightRow } = await db()
     .from("close_nights")
-    .select("id, certified_at, certified_by, history, verified_at, verified_by")
+    .select(
+      "id, certified_at, certified_by, open_reason, history, verified_at, verified_by",
+    )
     .eq("checklist_id", list.id)
     .eq("night", night)
     .maybeSingle();
@@ -117,6 +119,7 @@ export default async function ChecklistPage({
     id: string;
     certified_at: string | null;
     certified_by: string | null;
+    open_reason: string | null;
     verified_at: string | null;
     verified_by: string | null;
     history:
@@ -241,6 +244,7 @@ export default async function ChecklistPage({
             ),
             certifiedBy: tonight?.certified_by ?? null,
             certifiedAt: tonight?.certified_at ?? null,
+            openReason: tonight?.open_reason ?? null,
             verifiedBy: tonight?.verified_by ?? null,
             verifiedAt: tonight?.verified_at ?? null,
             // Every certification this night has already had. Usually empty; a

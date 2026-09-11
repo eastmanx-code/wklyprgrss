@@ -401,6 +401,9 @@ export async function certifyNight(
   const attestation = String(formData.get("attestation") ?? "").trim();
   const signature = String(formData.get("signature") ?? "");
   const openAtSigning = String(formData.get("openAtSigning") ?? "[]");
+  const openReason = String(formData.get("openReason") ?? "")
+    .trim()
+    .slice(0, 500);
   const device = String(formData.get("device") ?? "").slice(0, 40);
 
   // "NULL" and "no MOD ON DUTY" both came through this box on the first night.
@@ -409,6 +412,16 @@ export async function certifyNight(
   const problem = nameProblem(who);
   if (problem) return { error: problem };
   if (!signature) return { error: "A signature is required." };
+
+  // A list signed with work not done is a failed list, and the person
+  // signing it says why or does not sign. The screen asks first; this is
+  // the rule itself, so a phone with an old page cannot sign past it. The
+  // 6:18pm deep clean signed over an untouched fridge with no word about
+  // it is the night this was written.
+  const leftOpen = safeJson(openAtSigning);
+  const anyOpen = Array.isArray(leftOpen) && leftOpen.length > 0;
+  if (anyOpen && openReason.length < 3)
+    return { error: "Say why this is not done before you sign." };
 
   const list = await checklistFor(slug);
   if (!list) return { error: "That checklist is not available." };
@@ -436,7 +449,9 @@ export async function certifyNight(
       // this person put their name to.
       attestation,
       signature,
-      open_at_signing: safeJson(openAtSigning),
+      open_at_signing: leftOpen,
+      // Next to the list of what was open, for the manager reading it.
+      open_reason: anyOpen ? openReason : null,
     })
     .eq("id", night);
 
