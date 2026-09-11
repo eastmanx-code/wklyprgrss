@@ -1,8 +1,5 @@
-/**
- * The product name. Kept as a constant because `>` is not valid bare text in
- * JSX — inlining it means escaping it everywhere it appears.
- */
-export const APP_NAME = "WKLY > PRGRSS";
+/** The product name, shown in the masthead and the browser title. */
+export const APP_NAME = "WEEKLY PROGRESS";
 
 /**
  * Where a sign-in should land, when the link asked for somewhere.

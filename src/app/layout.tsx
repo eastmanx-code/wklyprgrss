@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.URL ?? process.env.DEPLOY_PRIME_URL ?? "https://wklyprgrss.com",
   ),
-  title: "WKLY > PRGRSS",
+  title: "WEEKLY PROGRESS",
   description: "Defining the standards.",
 };
 
