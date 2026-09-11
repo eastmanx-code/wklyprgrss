@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { MAINTENANCE_MESSAGE_MAX, setMaintenance } from "@/lib/maintenance";
 import { findOrphans, removeOrphans } from "@/lib/orphans";
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
@@ -724,4 +725,51 @@ export async function gradeAllVenues(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/venue");
   revalidatePath("/board");
+}
+
+export type MaintenanceState = {
+  error: string | null;
+  locked?: boolean;
+  message?: string | null;
+};
+
+/**
+ * Throw or clear the site-wide maintenance hold.
+ *
+ * Admin only, and re-checked here rather than trusted from the page: this is
+ * the one control that can put a stop screen in front of every crew at once, so
+ * a manager code, which cannot reach this screen, must not be able to reach the
+ * action behind it either. A refusal reports the current state unchanged so the
+ * toggle re-renders honestly instead of flipping on a request that did nothing.
+ *
+ * The message rides along so an admin can say what the wait is for; blank falls
+ * back to the hold's own words. `on` is read from the button pressed, so On and
+ * Off are two submits of one form and there is no third "current" state to get
+ * out of step with the switch.
+ */
+export async function setMaintenanceLock(
+  _prev: MaintenanceState,
+  formData: FormData,
+): Promise<MaintenanceState> {
+  const locked = formData.get("on") === "yes";
+  const message = String(formData.get("message") ?? "").slice(
+    0,
+    MAINTENANCE_MESSAGE_MAX,
+  );
+
+  const session = await getSession();
+  if (session?.role !== "admin") {
+    return { error: "Admins only." };
+  }
+
+  const by = session.house ? `admin (${session.house})` : "admin";
+  try {
+    await setMaintenance(locked, message, by);
+  } catch {
+    return { error: "That didn't save. Try again." };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/codes");
+  return { error: null, locked, message: message.trim() || null };
 }

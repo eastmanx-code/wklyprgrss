@@ -2,9 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AdminPins, type CodeVenue } from "@/components/admin/AdminPins";
+import { MaintenanceToggle } from "@/components/admin/MaintenanceToggle";
 import { OrphanSweep } from "@/components/admin/OrphanSweep";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
 import { notAdminGoesTo } from "@/lib/app";
+import { getMaintenance } from "@/lib/maintenance";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -35,6 +37,8 @@ export default async function AdminCodesPage() {
     .select("id, code, pin")
     .order("code");
 
+  const maintenance = await getMaintenance();
+
   return (
     <main className="mx-auto max-w-2xl">
       <header className="mb-6">
@@ -61,6 +65,17 @@ export default async function AdminCodesPage() {
           code: venue.code,
         }))}
       />
+
+      <section className="mt-12">
+        <h2 className="card-title">Maintenance</h2>
+        <p className="label text-muted mt-1.5">
+          A hold screen for every crew · use it right before a deploy
+        </p>
+        <hr className="border-divider my-4 border-0 border-t" />
+        <MaintenanceToggle
+          current={{ locked: maintenance.locked, message: maintenance.message }}
+        />
+      </section>
 
       <section className="mt-12">
         <h2 className="card-title">Venue codes</h2>
