@@ -7,6 +7,7 @@ import { pinHolder } from "@/lib/admin-pin";
 import { nameProblem, samePerson } from "@/lib/name";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
+import { dueOnNight } from "@/lib/due";
 import { matchSlug } from "@/lib/slug";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
@@ -349,7 +350,7 @@ export async function recordCapture(
 async function listAtSigning(checklistId: string, nightRow: string) {
   const { data: items } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof")
+    .select("id, position, title, detail, proof, section")
     .eq("checklist_id", checklistId)
     .eq("active", true)
     .order("position");
@@ -376,6 +377,7 @@ async function listAtSigning(checklistId: string, nightRow: string) {
       title: string;
       detail: string[];
       proof: unknown;
+      section: string | null;
     }[]
   ).map((item) => {
     const t = tick.get(item.id);
@@ -385,6 +387,7 @@ async function listAtSigning(checklistId: string, nightRow: string) {
       title: item.title,
       detail: item.detail,
       proof: item.proof,
+      section: item.section,
       ticked: Boolean(t),
       initials: t?.initials ?? null,
       ticked_at: t?.created_at ?? null,
@@ -436,6 +439,39 @@ export async function certifyNight(
   await sweepCaptures(list.id, night);
 
   const frozen = await listAtSigning(list.id, night);
+
+  // The signature is a claim about a list. A blank list is not a finished
+  // one, and on the first Thursday a deep clean was signed at 6:18pm as
+  // "every item complete" while its one due item sat untouched — because the
+  // phone had rendered the list with nothing on it and offered a clean bill.
+  // The server holds the real list, so it decides here, and a stale or
+  // half-loaded page cannot sign past it.
+  //
+  // Judged on what is actually due tonight, not the whole list: a weekday
+  // deep clean owes one day's item, and the rest are not failures.
+  const nightDate = await activeNight(list.id);
+  const dueFrozen = frozen.filter((i) => dueOnNight(i.section, nightDate));
+  const tickedDue = dueFrozen.filter((i) => i.ticked).length;
+  const leftOpenCount = Array.isArray(leftOpen) ? leftOpen.length : 0;
+  if (dueFrozen.length === 0) {
+    // Nothing was scheduled on this list tonight. There is nothing to attest
+    // to, and a page that shows an empty list is far likelier to have failed
+    // to load than to be a real empty night.
+    return {
+      error:
+        "Nothing is due on this list tonight, so there is nothing to sign. If that looks wrong, reload the page.",
+    };
+  }
+  if (tickedDue === 0 && leftOpenCount === 0) {
+    // The server has due items, the phone reported none ticked and none open.
+    // That is a list that came up blank on the device — the one state a
+    // truthful screen never produces, because an untouched real list carries
+    // its open items. Refuse and send them back to a fresh page.
+    return {
+      error:
+        "This list came up with nothing on it, which means it did not load fully. Reload the page and sign from the list itself.",
+    };
+  }
 
   const { error } = await db()
     .from("close_nights")

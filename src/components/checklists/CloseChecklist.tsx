@@ -156,6 +156,11 @@ export function CloseChecklist({
   const isDue = (item: CloseItem) => dueOnNight(item.section, night);
   const dueItems = items.filter(isDue);
   const CLOSE_TOTAL = dueItems.length;
+  // The list arrived with no rows on it. On a phone that means the page did
+  // not load, not that the shift is done — the 6:18pm deep clean signed as
+  // "complete" over an untouched fridge was exactly this, a blank render
+  // offered a clean bill. Nothing here can be signed; it can only be reloaded.
+  const blankLoad = items.length === 0;
   const shotsOfKind = (kind: ProofKind) =>
     dueItems.flatMap((item) => item.proof ?? []).filter((s) => s.kind === kind)
       .length;
@@ -2142,10 +2147,16 @@ export function CloseChecklist({
       </ul>
 
       <section id="sign-off" className="panel mt-5 scroll-mt-28">
-        <p className={openItems.length > 0 ? "label text-warn" : "label"}>
-          {openItems.length > 0
-            ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
-            : `${t("All", "Las")} ${CLOSE_TOTAL} ${t("complete", "completas")}`}
+        <p
+          className={
+            openItems.length > 0 || blankLoad ? "label text-warn" : "label"
+          }
+        >
+          {blankLoad
+            ? t("This list did not load", "Esta lista no cargó")
+            : openItems.length > 0
+              ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
+              : `${t("All", "Las")} ${CLOSE_TOTAL} ${t("complete", "completas")}`}
         </p>
 
         {/* A reopened night says so, on its face. The record is only worth
@@ -2183,8 +2194,25 @@ export function CloseChecklist({
 
         {/* Everything below is the signature. Held back until the work is
             done, the night is already a record, or somebody deliberately asks
-            for it. */}
-        {openItems.length === 0 || locked ? (
+            for it. A blank load is none of those: it gets a reload, because
+            signing an empty screen is how a finished shift became a lie. */}
+        {blankLoad && !locked ? (
+          <div className="border-warn/40 mt-4 rounded-[8px] border p-4">
+            <p className="note text-warn leading-relaxed">
+              {t(
+                "This list came up empty, so it did not load right. Reload the page and the items will come back. Do not sign an empty list.",
+                "Esta lista salió vacía, así que no cargó bien. Recarga la página y los puntos volverán. No firmes una lista vacía.",
+              )}
+            </p>
+            <button
+              type="button"
+              className="btn mt-4 w-full"
+              onClick={() => window.location.reload()}
+            >
+              {t("Reload the list", "Recargar la lista")}
+            </button>
+          </div>
+        ) : openItems.length === 0 || locked ? (
           signBlock
         ) : (
           <>
