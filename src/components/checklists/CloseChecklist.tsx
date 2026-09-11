@@ -1256,10 +1256,14 @@ export function CloseChecklist({
    * how you teach a crew to sign first and check later.
    */
   async function reopen() {
+    if (reopenReason.trim().length < 3) {
+      setReopenError("Say why you are reopening this. It goes on the record.");
+      return;
+    }
     const data = new FormData();
     data.set("slug", slug);
     data.set("pin", reopenPin);
-    data.set("reason", reopenReason);
+    data.set("reason", reopenReason.trim());
     setSaving(true);
     const result = await reopenNight({ error: null }, data);
     setSaving(false);
@@ -1571,7 +1575,7 @@ export function CloseChecklist({
               <input
                 className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
                 autoComplete="off"
-                placeholder="Why (optional, kept with the record)"
+                placeholder="Why you are reopening this (required)"
                 value={reopenReason}
                 onChange={(event) => setReopenReason(event.target.value)}
               />
