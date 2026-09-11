@@ -607,6 +607,14 @@ export async function reopenNight(
   const pin = String(formData.get("pin") ?? "");
   const reason = String(formData.get("reason") ?? "").trim();
 
+  // Reopening wipes a signature. That is never a quiet act, so it does not
+  // happen without a reason on the record — the same rule as signing a
+  // failed list. A blank reopen is how a signed, complete list vanished
+  // mid service with nobody able to say why.
+  if (reason.length < 3) {
+    return { error: "Say why you are reopening this. It goes on the record." };
+  }
+
   const holder = await pinHolder(pin);
   if (!holder) return { error: "That PIN doesn't match. Try again." };
 
@@ -659,7 +667,7 @@ export async function reopenNight(
           signature: row.signature,
           open_at_signing: row.open_at_signing,
           reopened_at: new Date().toISOString(),
-          reason: reason || null,
+          reason,
         },
       ],
       certified_at: null,
