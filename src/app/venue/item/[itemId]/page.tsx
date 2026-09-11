@@ -23,7 +23,13 @@ import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
 import { awaitingReview, getSubmissionsForItems } from "@/lib/status";
 import { db } from "@/lib/supabase";
 import type { Item, Submission } from "@/lib/types";
-import { currentWeekStart, formatTimestamp, formatWeekStart } from "@/lib/week";
+import {
+  currentWeekStart,
+  filingClosedUntil,
+  formatReopen,
+  formatTimestamp,
+  formatWeekStart,
+} from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +65,9 @@ export default async function ItemPage({
 
   const weekStart = currentWeekStart();
   const thisWeek = submissions.filter((s) => s.week_start === weekStart);
+  // Between the deadline and midnight there is no form. The week is with the
+  // graders and the next one has not opened.
+  const reopens = filingClosedUntil();
   // Newest submission decides the state — same rule as the grid, so the two
   // screens can never disagree.
   const current = thisWeek[0];
@@ -218,7 +227,14 @@ export default async function ItemPage({
           photos, and leaving two entries under one week — which reads in the
           history as two weeks of work. Correcting what you just wrote is not a
           second week. */}
-      {amending ? (
+      {reopens ? (
+        <div className="panel bg-warn text-on-warn mb-5">
+          <p className="note">
+            Filing is closed until {formatReopen(reopens)}. This week is with
+            the graders. Anything not graded needs a new photo next week.
+          </p>
+        </div>
+      ) : amending ? (
         <>
           <div className="panel-quiet mb-3 flex flex-wrap items-center justify-between gap-3">
             <p className="note">Editing this week&apos;s entry.</p>

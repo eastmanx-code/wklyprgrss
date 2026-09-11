@@ -97,16 +97,49 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
 }
 
 /**
+ * When filing opens again, if it is closed right now. Null when it is open.
+ *
+ * Between the deadline and midnight that night nothing can be filed. A week
+ * that has gone to the graders is over, and the one after it has not begun:
+ * a photo taken at 4:08 on a Thursday is the closed week's walk, filed late,
+ * and it is not next week's walk either. It used to count toward next week,
+ * which put five kitchen items on a board four days before anyone walked it,
+ * for a half that had just failed on the count for the same five.
+ *
+ * Whoever was not graded needs new photos next week. All ten of them.
+ */
+export function filingClosedUntil(now: Date = new Date()): Date | null {
+  const deadline = deadlineFor(currentWeekStart(now));
+  if (now.getTime() < deadline.getTime()) return null;
+  // Midnight, where the venues are, at the end of the deadline day.
+  const p = partsInTz(deadline);
+  const nextDay = new Date(Date.UTC(p.year, p.month - 1, p.day + 1));
+  const reopens = zonedToUtc(
+    nextDay.getUTCFullYear(),
+    nextDay.getUTCMonth() + 1,
+    nextDay.getUTCDate(),
+  );
+  return now.getTime() < reopens.getTime() ? reopens : null;
+}
+
+export function isFilingClosed(now: Date = new Date()): boolean {
+  return filingClosedUntil(now) !== null;
+}
+
+/**
  * The week a photograph filed right now should count toward.
  *
  * The same as the calendar week until the deadline passes, and the next week
- * after that. A calendar week runs to midnight on Sunday but the deadline is
- * Thursday at four, which left eighty hours of every one hundred and sixty
- * eight where work filed against an already-judged week counted for nothing.
- * Eighty seven entries across thirteen venues landed in that window in the
- * programme's first four weeks — one filing in ten, thrown away by the
+ * from the morning after. A calendar week runs to midnight on Sunday but the
+ * deadline is Thursday at four, which left eighty hours of every one hundred
+ * and sixty eight where work filed against an already-judged week counted for
+ * nothing. Eighty seven entries across thirteen venues landed in that window
+ * in the programme's first four weeks — one filing in ten, thrown away by the
  * calendar, with nothing on screen to say so. A cook who walked the whole
  * kitchen on a Sunday afternoon had to walk it again on the Monday.
+ *
+ * The rest of the deadline day is the exception: filing is closed, and the
+ * board stays on the week that just closed so it reads as what it is.
  *
  * Only the leader's own board and the writing of an entry use this. Grading,
  * the company dashboard and the export stay on the calendar week, because
@@ -115,7 +148,8 @@ export function shiftWeeks(weekStart: string, weeks: number): string {
  */
 export function filingWeekStart(now: Date = new Date()): string {
   const calendar = currentWeekStart(now);
-  return isDeadlinePassed(calendar, now) ? shiftWeeks(calendar, 1) : calendar;
+  if (!isDeadlinePassed(calendar, now)) return calendar;
+  return isFilingClosed(now) ? calendar : shiftWeeks(calendar, 1);
 }
 
 /**
@@ -220,6 +254,11 @@ const deadlineLabelFormatter = new Intl.DateTimeFormat("en-US", {
   hour: "numeric",
   minute: "2-digit",
 });
+
+/** "Friday 12:00 AM PT" — when filing opens again. */
+export function formatReopen(at: Date): string {
+  return `${deadlineLabelFormatter.format(at)} PT`;
+}
 
 export function formatDeadline(weekStart: string): string {
   return `${deadlineLabelFormatter.format(deadlineFor(weekStart))} PT`;

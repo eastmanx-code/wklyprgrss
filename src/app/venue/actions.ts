@@ -7,7 +7,11 @@ import { getSession, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import { HOUSES, type House, type Item } from "@/lib/types";
-import { filingWeekStart, mostRecentCompletedWeek } from "@/lib/week";
+import {
+  filingClosedUntil,
+  filingWeekStart,
+  mostRecentCompletedWeek,
+} from "@/lib/week";
 
 export type SubmitState = { error: string | null; ok?: boolean };
 
@@ -21,6 +25,14 @@ export type UploadTargets = {
 
 const MAX_COMMENT_LENGTH = 2000;
 const MAX_NAME_LENGTH = 120;
+
+
+/**
+ * The refusal every filing action gives between the deadline and midnight.
+ * Said once here so the three of them cannot drift apart.
+ */
+const FILING_CLOSED =
+  "Filing is closed until Friday. This week is with the graders, and anything not graded needs new photos next week.";
 
 /**
  * The item, if this session may work on it and it is still active.
@@ -78,6 +90,8 @@ export async function createUploadTargets(
   itemId: string,
   includeBefore: boolean,
 ): Promise<UploadTargets> {
+  if (filingClosedUntil()) return { error: FILING_CLOSED };
+
   const item = await ownedItem(itemId);
   if (!item) return { error: "That item is no longer available." };
 
@@ -136,6 +150,7 @@ export async function submitItem(
     return { error: "That comment is too long." };
   }
   if (!photoUrl) return { error: "A photo is required." };
+  if (filingClosedUntil()) return { error: FILING_CLOSED };
 
   const item = await ownedItem(itemId);
   if (!item) return { error: "That item is no longer available." };
@@ -228,6 +243,7 @@ export async function editSubmission(
   if (comment.length > MAX_COMMENT_LENGTH) {
     return { error: "That comment is too long." };
   }
+  if (filingClosedUntil()) return { error: FILING_CLOSED };
 
   const { data: row } = await db()
     .from("submissions")
