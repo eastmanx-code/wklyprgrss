@@ -80,8 +80,15 @@ export async function CornerMenu() {
               days when one venue was piloting them; the lists are a leader's
               own venue now, so the venue in the label was wrong for twenty of
               the twenty-one reading it. */}
+          {/* An admin lands on every location, not on whichever building
+              they last stepped into. Tapping "Checklists" and arriving inside
+              one venue's clipboard, with no sign of the other twenty, read as
+              the wrong page. */}
           {session ? (
-            <Link href="/checklists" className="btn-ghost">
+            <Link
+              href={isAdmin ? "/checklists/locations" : "/checklists"}
+              className="btn-ghost"
+            >
               <T en="Checklists" es="Listas" />
             </Link>
           ) : null}

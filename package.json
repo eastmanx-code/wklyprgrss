@@ -15,6 +15,7 @@
     "reset-close": "node --env-file=.env.local scripts/reset-close.mjs",
     "report": "node --env-file=.env.local scripts/report.mjs",
     "set-items": "node --env-file=.env.local scripts/set-items.mjs",
+    "load-close-lists": "node --env-file=.env.local scripts/load-close-lists.mjs",
     "predev": "node --env-file=.env.local scripts/preflight.mjs || true",
     "prebuild": "node --env-file=.env.local scripts/preflight.mjs 2>/dev/null || true",
     "check-pace": "tsc src/lib/pace.ts --outDir .pace-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-pace.mjs",
