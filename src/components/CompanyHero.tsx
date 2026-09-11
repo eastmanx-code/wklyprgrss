@@ -30,7 +30,7 @@ function Stat({
       >
         {value}
       </p>
-      {sub ? <p className="label mt-1 truncate">{sub}</p> : null}
+      {sub ? <p className="label mt-1 leading-snug">{sub}</p> : null}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { DeadlineCountdown } from "./DeadlineCountdown";
+import { SectionNav } from "./SectionNav";
 import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
 import { LangSwitch, T } from "@/components/Lang";
@@ -23,9 +23,8 @@ export async function CornerMenu() {
   const session = await getSession();
   const deadlineMs = deadlineFor(currentWeekStart()).getTime();
 
-  // Home is the same door for both roles now: the screen that asks which
-  // product you are here for. What differs is the second link. An admin's
-  // "all venues" is the grading board; a leader's is everybody's scores.
+  // Home is the same door for both roles: the screen that asks which section
+  // you are here for. The sections themselves are in SectionNav.
   const isAdmin = session?.role === "admin";
   const canEdit = mayManage(session);
   const home = session ? "/home" : null;
@@ -52,38 +51,21 @@ export async function CornerMenu() {
             only control that could close it again — which is why the menu
             opened and then never shut. */}
         <div className="border-card-border bg-surface/90 ww-menu-items h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md lg:gap-3 lg:px-3">
-          <span className="hidden lg:contents">
-            <DeadlineCountdown deadlineMs={deadlineMs} />
-            <span className="bg-card-border h-6 w-px" aria-hidden />
-          </span>
-
           {home ? (
             <Link href={home} className="btn-ghost">
               <T en="Home" es="Inicio" />
             </Link>
           ) : null}
 
+          {/* The two sections, and only the controls of the one you are in.
+              The weekly deadline used to sit here on every screen, which is
+              the site telling a closer at one in the morning about Thursday
+              at four. */}
           {session ? (
-            <Link
-              href={isAdmin ? "/admin" : "/board"}
-              className="btn-ghost whitespace-nowrap"
-            >
-              {isAdmin ? (
-                <T en="All venues" es="Todos los lugares" />
-              ) : (
-                <T en="All" es="Todos" />
-              )}
-            </Link>
-          ) : null}
-
-          {/* Named for what it is. It read "Hood checklists 1.0" from the
-              days when one venue was piloting them; the lists are a leader's
-              own venue now, so the venue in the label was wrong for twenty of
-              the twenty-one reading it. */}
-          {session ? (
-            <Link href="/checklists" className="btn-ghost">
-              <T en="Checklists" es="Listas" />
-            </Link>
+            <>
+              <span className="bg-card-border h-6 w-px" aria-hidden />
+              <SectionNav isAdmin={isAdmin} deadlineMs={deadlineMs} />
+            </>
           ) : null}
 
           {/* Only while standing on a checklist, and it renders nothing

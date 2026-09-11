@@ -6,12 +6,18 @@ import { useEffect, useState } from "react";
  * The bits that only mean anything live. Each is a bare inline value with no
  * chrome of its own, so the page using them decides how they look.
  *
- * All render an em dash until mounted so server and client markup agree. None
+ * The clock and weather render an em dash until mounted, because only the
+ * phone knows them. The countdown is filled in on the server as well. None
  * of them decide anything — pass and fail are computed from server time.
  */
 
 export function Countdown({ deadlineMs }: { deadlineMs: number }) {
-  const [remaining, setRemaining] = useState<number | null>(null);
+  // Filled in on the server too, so the page never arrives reading "—".
+  // The phone's clock is seconds off the server's, so the first paint and
+  // the hydrated value can differ by a minute; that is not worth a warning.
+  const [remaining, setRemaining] = useState<number>(
+    () => deadlineMs - Date.now(),
+  );
 
   useEffect(() => {
     const tick = () => setRemaining(deadlineMs - Date.now());
@@ -20,7 +26,6 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
     return () => clearInterval(id);
   }, [deadlineMs]);
 
-  if (remaining === null) return <>—</>;
   if (remaining <= 0) return <span className="text-warn">Past due</span>;
 
   const minutes = Math.floor(remaining / 60_000);
@@ -29,7 +34,7 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
   const mins = minutes % 60;
 
   return (
-    <>
+    <span suppressHydrationWarning>
       {days > 0 ? (
         <>
           {days}
@@ -45,7 +50,7 @@ export function Countdown({ deadlineMs }: { deadlineMs: number }) {
           <span className="text-body">m</span>
         </>
       )}
-    </>
+    </span>
   );
 }
 

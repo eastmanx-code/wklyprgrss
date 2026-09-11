@@ -15,6 +15,7 @@ import {
 } from "@/lib/checklists";
 import { closeVenueId } from "@/lib/close-venue";
 import { boardNight } from "@/lib/active-night";
+import { closeStatus } from "@/lib/close-status";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
@@ -122,6 +123,25 @@ export default async function PositionPage({
       .map((row) => [row.checklist_id, row.certified_by]),
   );
 
+  // Where each list is tonight. Lit alone said "not signed", which is the
+  // same colour for untouched and for every item ticked with no signature,
+  // and the second is the one that needs a name on it before 4am.
+  const progress = new Map(
+    (await closeStatus(night))
+      .filter((row) => lists.some((l) => l.id === row.checklist_id))
+      .map((row) => [row.checklist_id, row]),
+  );
+  const listNote = (id: string): { en: string; es: string } | null => {
+    const row = progress.get(id);
+    if (!row || row.items_on_list === 0 || row.ticked === 0) return null;
+    if (row.open === 0)
+      return { en: "Done · sign it", es: "Hecho · fírmala" };
+    return {
+      en: `${row.ticked}/${row.items_on_list} done`,
+      es: `${row.ticked}/${row.items_on_list} hechos`,
+    };
+  };
+
   // Several lists share one position; the first that carries a translation
   // names it, so a position reads the same whichever list was edited.
   const roleEs =
@@ -190,6 +210,11 @@ export default async function PositionPage({
                 <span className="label">
                   <T en="Signed" es="Firmada" />
                   {signedBy.get(list.id) ? ` · ${signedBy.get(list.id)}` : ""}
+                </span>
+              ) : listNote(list.id) ? (
+                <span className="label">
+                  <T en={listNote(list.id)!.en} es={listNote(list.id)!.es} />
+                  <span aria-hidden> →</span>
                 </span>
               ) : (
                 <span aria-hidden>→</span>

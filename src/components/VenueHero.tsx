@@ -48,7 +48,9 @@ export function HouseHeading({ progress }: { progress: HouseProgress }) {
         <span className="text-ink">
           {done}/{total}
         </span>
-        <span className="text-muted"> done</span>
+        {/* Filed, not done. Ten filed with four sent back is not ten done,
+            and the bar under it is full either way. */}
+        <span className="text-muted"> filed</span>
         {left > 0 ? (
           <>
             <span className="text-muted"> · </span>
