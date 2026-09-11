@@ -19,7 +19,7 @@ export default function Error({
 }) {
   function reportBug() {
     const lines = [
-      "Something went wrong in WKLY > PRGRSS.",
+      "Something went wrong in WEEKLY PROGRESS.",
       "",
       `Page: ${window.location.href}`,
       `Reference: ${error.digest ?? "none"}`,
@@ -29,7 +29,7 @@ export default function Error({
       "What I was doing:",
       "",
     ];
-    const subject = encodeURIComponent("WKLY > PRGRSS bug report");
+    const subject = encodeURIComponent("WEEKLY PROGRESS bug report");
     const body = encodeURIComponent(lines.join("\n"));
     window.location.href = `mailto:${BUG_EMAIL}?subject=${subject}&body=${body}`;
   }
