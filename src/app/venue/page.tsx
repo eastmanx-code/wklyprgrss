@@ -24,8 +24,10 @@ import {
 import {
   currentWeekStart,
   deadlineFor,
+  filingClosedUntil,
   formatDeadline,
   formatLastUpload,
+  formatReopen,
   formatWeekStart,
   mostRecentCompletedWeek,
 } from "@/lib/week";
@@ -89,6 +91,9 @@ export default async function VenuePage() {
    */
   const closedWeek = currentWeekStart();
   const rolled = board.weekStart !== closedWeek;
+  // Between the deadline and midnight nothing files. The board stays on the
+  // week that just closed, and says so.
+  const reopens = filingClosedUntil();
 
   return (
     <main>
@@ -101,7 +106,13 @@ export default async function VenuePage() {
             this morning with no explanation. The roll happens at the deadline
             and not at midnight on Sunday, which is the part nobody would guess.
             Only shown in the days between the two, when it is true. */}
-        {rolled ? (
+        {reopens ? (
+          <p className="note bg-warn text-on-warn mt-3 max-w-prose rounded-[8px] px-3 py-2 leading-relaxed">
+            This week closed {formatDeadline(closedWeek)} and is with the
+            graders. Filing opens again {formatReopen(reopens)}. Anything not
+            graded needs new photos next week, all of it.
+          </p>
+        ) : rolled ? (
           <p className="note text-muted mt-3 max-w-prose leading-relaxed">
             The week of {formatWeekStart(closedWeek)} closed{" "}
             {formatDeadline(closedWeek)} and is with the graders. This board is
