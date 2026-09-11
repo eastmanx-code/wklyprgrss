@@ -122,13 +122,18 @@ export default async function VenuePage() {
         ) : null}
       </header>
 
-      <VenueHero
-        missed={board.houses.some(
-          (house) => house.scored && house.status === "FAIL",
-        )}
-        deadlineMs={deadlineFor(board.weekStart).getTime()}
-        deadlineLabel={formatDeadline(board.weekStart)}
-      />
+      {/* No countdown while filing is closed. The strip above has just
+          said the week is over, and "0h left · due Thursday" under it was
+          the page arguing with itself. */}
+      {reopens ? null : (
+        <VenueHero
+          missed={board.houses.some(
+            (house) => house.scored && house.status === "FAIL",
+          )}
+          deadlineMs={deadlineFor(board.weekStart).getTime()}
+          deadlineLabel={formatDeadline(board.weekStart)}
+        />
+      )}
 
       {/* One section per house, front of house first.
       

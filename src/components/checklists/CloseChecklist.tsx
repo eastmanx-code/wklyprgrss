@@ -1530,7 +1530,11 @@ export function CloseChecklist({
           </p>
           <p className="label">
             {[
-              PHOTO_SHOTS ? `${PHOTO_SHOTS} ${t("photos", "fotos")}` : null,
+              PHOTO_SHOTS
+                ? `${PHOTO_SHOTS} ${
+                    PHOTO_SHOTS === 1 ? t("photo", "foto") : t("photos", "fotos")
+                  }`
+                : null,
               VIDEO_SHOTS ? `${VIDEO_SHOTS} ${t("video", "video")}` : null,
               NOTE_SHOTS ? `${NOTE_SHOTS} ${t("written", "escritas")}` : null,
             ]

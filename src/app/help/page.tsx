@@ -29,7 +29,10 @@ export default async function HelpPage({
   const session = await getSession();
   const asked = (await searchParams).for;
   // "close" still works: it is in links printed before this was renamed.
-  const listsFirst = asked === "checklists" || asked === "close";
+  // Checklists first unless the weekly board sent you. Home leads with the
+  // lists, so the help does too; the other way round the help read as the
+  // weekly product's manual with an appendix.
+  const listsFirst = asked !== "weekly";
 
   const deadlineLabel = formatDeadline(currentWeekStart());
   // One guide each, for the people doing the work. There is a single admin and
