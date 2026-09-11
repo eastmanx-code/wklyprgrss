@@ -355,6 +355,14 @@ export function ListBar({
             {line(missing)}
           </span>
         ) : null}
+        {/* The signer's own words on why, on the bar itself. A manager
+            reading a fail wants the reason before the name, and making
+            them tap for it is the same as not showing it. */}
+        {list.group === "gaps" && list.row.open_reason ? (
+          <span className="text-body leading-relaxed font-medium">
+            why: {list.row.open_reason}
+          </span>
+        ) : null}
         {record.map((fact) => (
           <span
             key={fact.label}

@@ -52,6 +52,8 @@ export type CloseStatusRow = {
   checked_by: string[];
   /** Signed with items still open — the state worth a conversation. */
   signed_with_gaps: boolean;
+  /** What the signer said about leaving them. On the bar, not behind a tap. */
+  open_reason: string | null;
   /**
    * Items ticked that asked for a photo, video or note and got none. Not a
    * fail, and not folded into the score: a tick with nothing behind it is
@@ -121,7 +123,9 @@ export async function closeStatus(
         .eq("active", true),
       db()
         .from("close_nights")
-        .select("id, checklist_id, certified_at, certified_by, history")
+        .select(
+          "id, checklist_id, certified_at, certified_by, open_reason, history",
+        )
         .in("checklist_id", ids)
         .eq("night", night),
     ]);
@@ -144,6 +148,7 @@ export async function closeStatus(
     checklist_id: string;
     certified_at: string | null;
     certified_by: string | null;
+    open_reason: string | null;
     history: unknown[] | null;
   }[];
 
@@ -251,6 +256,7 @@ export async function closeStatus(
         certified_at: row?.certified_at ?? null,
         checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
+        open_reason: row?.open_reason?.trim() || null,
         proof_missing: row
           ? asked.filter(
               (i) =>

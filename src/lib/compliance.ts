@@ -392,6 +392,8 @@ export type ListDetail = {
   certifiedAt: string | null;
   /** What was still open at the moment somebody signed, as stored then. */
   openAtSigning: number | null;
+  /** Why, in the signer's words. Required whenever anything was open. */
+  openReason: string | null;
   /** The last tick of the night, which is when work actually stopped. */
   lastTickAt: string | null;
   reopened: number;
@@ -434,7 +436,7 @@ export async function listDetail(
     db()
       .from("close_nights")
       .select(
-        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, history",
+        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, open_reason, history",
       )
       .eq("checklist_id", checklistId)
       .eq("night", night)
@@ -458,6 +460,7 @@ export async function listDetail(
     certified_device: string | null;
     verified_device: string | null;
     open_at_signing: unknown;
+    open_reason: string | null;
     history: unknown[] | null;
   } | null;
 
@@ -544,6 +547,7 @@ export async function listDetail(
     openAtSigning: Array.isArray(stored?.open_at_signing)
       ? stored.open_at_signing.length
       : null,
+    openReason: stored?.open_reason?.trim() || null,
     lastTickAt: times.length > 0 ? times[times.length - 1] : null,
     reopened: Array.isArray(stored?.history) ? stored.history.length : 0,
     pace: paceOf(
