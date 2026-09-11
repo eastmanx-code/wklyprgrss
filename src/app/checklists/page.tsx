@@ -11,6 +11,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import { boardNight } from "@/lib/active-night";
+import { closeStatus } from "@/lib/close-status";
 import { formatNight, formatNightEs } from "@/lib/night";
 import {
   closeVenueCode,
@@ -115,6 +116,37 @@ export default async function ChecklistsPage() {
       .every((l) => signed.has(l.id));
 
   /**
+   * Where each position is tonight, in one phrase on its row.
+   *
+   * Lit used to be all this screen said, and lit covers everything from
+   * "nobody has started" to "every item ticked and nobody signed". Those
+   * are different nights. The second one is the closer who did the work
+   * and left no record, and it is the one this screen most needs to say.
+   */
+  const status = new Map(
+    (await closeStatus(night)).map((row) => [row.checklist_id, row]),
+  );
+  const positionNote = (
+    house: House,
+    role: string,
+  ): { en: string; es: string; urgent: boolean } | null => {
+    const open = lists.filter(
+      (l) => l.house === house && l.role === role && !signed.has(l.id),
+    );
+    const rows = open.map((l) => status.get(l.id)).filter(Boolean);
+    const ticked = rows.reduce((n, r) => n + (r?.ticked ?? 0), 0);
+    const total = rows.reduce((n, r) => n + (r?.items_on_list ?? 0), 0);
+    if (rows.length === 0 || total === 0 || ticked === 0) return null;
+    if (ticked >= total)
+      return { en: "Done · not signed", es: "Hecho · sin firmar", urgent: true };
+    return {
+      en: `${ticked}/${total} done`,
+      es: `${ticked}/${total} hechos`,
+      urgent: false,
+    };
+  };
+
+  /**
    * The positions a house runs, each once.
    *
    * Not the lists. A position owns up to three of them and printing all three
@@ -215,6 +247,20 @@ export default async function ChecklistsPage() {
                         {positionDone(house, role) ? (
                           <span className="label">
                             <T en="Signed" es="Firmada" />
+                          </span>
+                        ) : positionNote(house, role) ? (
+                          <span
+                            className={`label ${
+                              positionNote(house, role)!.urgent
+                                ? "font-medium"
+                                : ""
+                            }`}
+                          >
+                            <T
+                              en={positionNote(house, role)!.en}
+                              es={positionNote(house, role)!.es}
+                            />
+                            <span aria-hidden> →</span>
                           </span>
                         ) : (
                           <span aria-hidden>→</span>

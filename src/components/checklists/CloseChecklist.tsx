@@ -1553,6 +1553,46 @@ export function CloseChecklist({
           ))}
         </div>
 
+        {/* What to do next, in one line that stays on screen. A list of
+            thirty items puts the signature a long scroll below the last
+            tick, and a closer who ticked everything and walked away had
+            done the work and left no record of it. The line names the
+            next open item while there is one, and says sign when there
+            is not, with the button to get there. */}
+        {!locked ? (
+          <div className="mt-2.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+            <p
+              className={`label ${openItems.length === 0 ? "text-warn" : ""}`}
+              role="status"
+            >
+              {openItems.length === 0
+                ? t("All done. Sign to finish.", "Todo hecho. Firma para terminar.")
+                : `${t("Next", "Sigue")} · ${openItems[0].number}${
+                    openItems.length > 1
+                      ? ` · ${openItems.length} ${t("left", "faltan")}`
+                      : ""
+                  }`}
+            </p>
+            <button
+              type="button"
+              className={
+                openItems.length === 0
+                  ? "btn min-h-9 px-3 py-1"
+                  : "btn-ghost min-h-9 px-3 py-1"
+              }
+              onClick={() =>
+                document
+                  .getElementById("sign-off")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+            >
+              {openItems.length === 0
+                ? t("Sign", "Firmar")
+                : t("Sign off", "Firma")}
+            </button>
+          </div>
+        ) : null}
+
         {/* The list of numbers that used to sit here is gone.
             "Still open 1 · 2 · 3 … 26" was three problems at once. It said
             "open" a hand's width under a heading reading "Open checklist",
@@ -2003,7 +2043,7 @@ export function CloseChecklist({
         })}
       </ul>
 
-      <section className="panel mt-5">
+      <section id="sign-off" className="panel mt-5 scroll-mt-28">
         <p className={openItems.length > 0 ? "label text-warn" : "label"}>
           {openItems.length > 0
             ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
