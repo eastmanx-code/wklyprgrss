@@ -79,6 +79,9 @@ export default async function RollupPage({
     askedNight && /^\d{4}-\d{2}-\d{2}$/.test(askedNight)
       ? `?night=${askedNight}`
       : "";
+  // An admin with no venue named has nothing to read here. Every location
+  // is the page that names one.
+  if (session.role === "admin" && !askedCode) redirect("/checklists/locations");
   let venue: string | null = null;
   if (session.role === "admin" && askedCode) {
     const { data } = await db()

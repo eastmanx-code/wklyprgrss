@@ -40,7 +40,7 @@ function Tile({
       >
         {value}
       </p>
-      {sub ? <p className="label mt-1.5 truncate">{sub}</p> : null}
+      {sub ? <p className="label mt-1.5 leading-snug">{sub}</p> : null}
     </div>
   );
 }
@@ -124,19 +124,20 @@ export function WeekStats({
           }
           tone={toReview > 0 ? "warn" : "ink"}
         />
+        {/* The number alone at metric size. "21 of 34" and "6 weeks" broke
+            across two lines in a half-width card on a phone; the rest of
+            the sentence fits in the line under it. */}
         <Tile
           label="Boards passed"
-          value={`${wins.length} of ${judged.length}`}
-          sub={
-            perfect > 0 ? `${perfect} got all ten` : "8 of 10 signed off passes"
-          }
+          value={wins.length}
+          sub={`of ${judged.length}${perfect > 0 ? ` · ${perfect} got all ten` : " · 8 of 10 signed off passes"}`}
         />
         <Tile
           label="Best run"
-          value={best && best.streak > 0 ? `${best.streak} weeks` : "—"}
+          value={best && best.streak > 0 ? best.streak : "—"}
           sub={
             best && best.streak > 0
-              ? `${best.code}${onARun > 1 ? ` · ${onARun} venues going` : ""}`
+              ? `${best.streak === 1 ? "week" : "weeks"} · ${best.code}${onARun > 1 ? ` · ${onARun} venues going` : ""}`
               : "nobody on a run yet"
           }
         />

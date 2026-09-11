@@ -94,6 +94,8 @@ export default async function VenueCompliancePage({
   }
   const pile = (group: ListGroup) =>
     venue.lists.filter((list) => list.group === group);
+  const going = pile("going").filter((list) => !list.row.untouched);
+  const notStarted = pile("going").filter((list) => list.row.untouched);
   // Not signed off first, then signed with something left: the worse fail
   // on top.
   const fails = venue.lists.filter((list) => list.state === "fail");
@@ -153,8 +155,9 @@ export default async function VenueCompliancePage({
           fails.length > 0
             ? `${fails.length} ${fails.length === 1 ? "fail" : "fails"}`
             : "no fails",
-          ...(pile("going").length > 0
-            ? [`${pile("going").length} in progress`]
+          ...(going.length > 0 ? [`${going.length} in progress`] : []),
+          ...(notStarted.length > 0
+            ? [`${notStarted.length} not started`]
             : []),
           ...(pile("done").length > 0
             ? [`${pile("done").length} checked off and signed off`]
@@ -177,11 +180,30 @@ export default async function VenueCompliancePage({
           </>
         ) : null}
 
-        {pile("going").length > 0 ? (
+        {going.length > 0 ? (
           <>
-            <p className="label mt-5">In progress · {pile("going").length}</p>
+            <p className="label mt-5">In progress · {going.length}</p>
             <ul className="mt-2 space-y-3">
-              {pile("going").map((list) => (
+              {going.map((list) => (
+                <ListBar
+                  key={list.row.checklist_id}
+                  list={list}
+                  code={code}
+                  night={night}
+                />
+              ))}
+            </ul>
+          </>
+        ) : null}
+
+        {/* Untouched is not in progress. Thirteen lists reading "in
+            progress" at half past five, every one of them "not started"
+            underneath, was the page contradicting itself. */}
+        {notStarted.length > 0 ? (
+          <>
+            <p className="label mt-5">Not started · {notStarted.length}</p>
+            <ul className="mt-2 space-y-3">
+              {notStarted.map((list) => (
                 <ListBar
                   key={list.row.checklist_id}
                   list={list}

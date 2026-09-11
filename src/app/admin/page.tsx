@@ -55,9 +55,6 @@ export default async function AdminDashboardPage() {
           <Link href="/admin/codes" className="btn-ghost">
             Codes
           </Link>
-          <Link href="/board" className="btn-ghost">
-            Board
-          </Link>
         </div>
       </header>
 

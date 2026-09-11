@@ -119,9 +119,11 @@ export default async function Home() {
                 es={`Las ${lists.length} firmadas para hoy`}
               />
             ) : (
+              /* Signed so far, not "not done": at five in the afternoon
+                 nothing is done yet and that is not a failing. */
               <T
-                en={`${lists.length - signed} of ${lists.length} not done tonight`}
-                es={`${lists.length - signed} de ${lists.length} sin hacer hoy`}
+                en={`${signed} of ${lists.length} signed tonight`}
+                es={`${signed} de ${lists.length} firmadas hoy`}
               />
             )
           }

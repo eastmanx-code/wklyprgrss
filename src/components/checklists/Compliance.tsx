@@ -276,7 +276,9 @@ export function ListBar({
       : list.group === "gaps"
         ? `${open} ${open === 1 ? "item" : "items"} not checked off`
         : list.group === "going"
-          ? "in progress"
+          ? list.row.untouched
+            ? "not started"
+            : "in progress"
           : list.group === "empty"
             ? "nothing on it"
             : "";
