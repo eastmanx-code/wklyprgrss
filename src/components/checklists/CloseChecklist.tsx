@@ -120,11 +120,20 @@ export function CloseChecklist({
   night,
   referenceUrls,
   saved,
+  carry = true,
 }: {
   slug: string;
   /** Open, mid or close. The words a person signs their name to come from it. */
   phase: Phase;
   items: CloseItem[];
+  /**
+   * Whether a blank row inherits the initials of the row above it.
+   *
+   * On for almost every list: one person walks it top to bottom and types their
+   * initials once. Off for a list two people work at the same time, where the
+   * carry would put the first person's letters on the second person's work.
+   */
+  carry?: boolean;
   /**
    * The night this list is on, as currentNight sees it.
    *
@@ -568,6 +577,10 @@ export function CloseChecklist({
   const initialsFor = (number: number) => {
     const own = rowInitials[number];
     if (own !== undefined) return own;
+    // A shared list carries nothing: every row is blank until the person who
+    // did it signs it, so two bartenders working it at once do not stamp each
+    // other's work. Only the row's own initials count, never a neighbour's.
+    if (!carry) return "";
     const index = CLOSE_CHECKLIST.findIndex((it) => it.number === number);
     const mine = dayOfSection(CLOSE_CHECKLIST[index]?.section);
     // The nearest row above that somebody has signed for. Above rather than

@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
+import { CarryInitials } from "@/components/checklists/CarryInitials";
 import {
   AddItemForm,
   ItemRow,
@@ -59,7 +60,7 @@ export default async function EditChecklistPage({
   // before the redirect did.
   const { data: rows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, room, active")
+    .select("id, house, role, role_es, phase, room, active, carry_initials")
     .eq("venue_id", venue);
 
   // Compared against each list's own address rather than taken apart, the
@@ -73,6 +74,7 @@ export default async function EditChecklistPage({
       phase: Phase;
       room: string | null;
       active: boolean;
+      carry_initials: boolean;
     }[],
     slug,
   );
@@ -148,6 +150,8 @@ export default async function EditChecklistPage({
       </header>
 
       <RoleSpanish house={list.house} role={list.role} current={list.role_es} />
+
+      <CarryInitials checklistId={list.id} current={list.carry_initials} />
 
       {list.active ? null : (
         <section className="panel border-warn/30 mb-3">

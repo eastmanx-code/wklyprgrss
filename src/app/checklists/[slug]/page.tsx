@@ -54,7 +54,7 @@ export default async function ChecklistPage({
   // back first. A venue has a handful of lists.
   const { data: listRows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, room")
+    .select("id, house, role, role_es, phase, room, carry_initials")
     .eq("venue_id", venue)
     .eq("active", true);
 
@@ -69,6 +69,7 @@ export default async function ChecklistPage({
       role_es: string | null;
       phase: Phase;
       room: string | null;
+      carry_initials: boolean;
     }[],
     slug,
   );
@@ -218,6 +219,7 @@ export default async function ChecklistPage({
           phase={list.phase}
           items={items}
           night={night}
+          carry={list.carry_initials}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>
               (row.reference ?? []).flatMap((ref) => {
