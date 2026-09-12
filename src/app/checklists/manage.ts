@@ -346,6 +346,35 @@ export async function createChecklist(
   return { error: null, ok: true };
 }
 
+/**
+ * Turn the initials carry-down on or off for one list.
+ *
+ * On (the default, and every list until somebody says otherwise) a row fills
+ * its initials from the row above, so a solo walk is typed once. Off, every row
+ * is blank until the person who did it puts their own initials on it — which is
+ * what a list two people work at the same time needs, so the first pair of
+ * hands does not stamp the whole list.
+ */
+export async function setCarryInitials(
+  _prev: ManageState,
+  formData: FormData,
+): Promise<ManageState> {
+  if (!(await mayEdit())) return { error: NOT_YOURS };
+
+  const list = await ownedChecklist(String(formData.get("checklistId") ?? ""));
+  if (!list) return { error: "That list is not available." };
+
+  const carry = String(formData.get("carry") ?? "") === "true";
+  const { error } = await db()
+    .from("close_checklists")
+    .update({ carry_initials: carry })
+    .eq("id", list.id);
+  if (error) return { error: "Could not save that. Try again." };
+
+  revalidateFor(list);
+  return { error: null, ok: true };
+}
+
 /** Hides a list from tonight. Every night it was part of stays intact. */
 export async function retireChecklist(
   _prev: ManageState,
