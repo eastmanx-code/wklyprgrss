@@ -193,8 +193,8 @@ export default async function Home() {
 
       <p className="label mt-6 text-center">
         <T
-          en="Lit means something is not done."
-          es="Lo iluminado quiere decir que algo falta."
+          en="Yellow means something is not done."
+          es="Amarillo quiere decir que algo falta."
         />
       </p>
     </main>
