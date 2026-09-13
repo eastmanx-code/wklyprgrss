@@ -64,7 +64,11 @@ export async function CornerMenu() {
           {session ? (
             <>
               <span className="bg-card-border h-6 w-px" aria-hidden />
-              <SectionNav isAdmin={isAdmin} deadlineMs={deadlineMs} />
+              <SectionNav
+                isAdmin={isAdmin}
+                canWalkthroughs={canEdit}
+                deadlineMs={deadlineMs}
+              />
             </>
           ) : null}
 

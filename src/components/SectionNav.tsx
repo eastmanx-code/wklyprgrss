@@ -22,13 +22,17 @@ import { T } from "@/components/Lang";
  */
 export function SectionNav({
   isAdmin,
+  canWalkthroughs = false,
   deadlineMs,
 }: {
   isAdmin: boolean;
+  /** Manager or admin: the two who reach the walkthroughs section. */
+  canWalkthroughs?: boolean;
   deadlineMs: number;
 }) {
   const pathname = usePathname();
   const inChecklists = pathname.startsWith("/checklists");
+  const inWalkthroughs = pathname.startsWith("/walkthroughs");
   const inWeekly = ["/venue", "/board", "/admin"].some(
     (root) => pathname === root || pathname.startsWith(`${root}/`),
   );
@@ -52,6 +56,13 @@ export function SectionNav({
       <Link href={weeklyHref} className={tab(inWeekly)}>
         <T en="Weekly" es="Semanal" />
       </Link>
+      {/* The third section. Managers and admin only; a leader on the crew code
+          never sees it, the same as the weekly board. */}
+      {canWalkthroughs ? (
+        <Link href="/walkthroughs" className={tab(inWalkthroughs)}>
+          <T en="Walkthroughs" es="Recorridos" />
+        </Link>
+      ) : null}
 
       {inWeekly ? (
         <>
