@@ -11,9 +11,10 @@ import {
   isNightOver,
 } from "@/lib/night";
 import { previousNight } from "@/lib/close-status";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage, mayReachVenue } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
 import { db } from "@/lib/supabase";
+import { loadPortfolio, portfolioTotals } from "@/lib/walkthroughs";
 import { formatDeadline } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
@@ -84,6 +85,18 @@ export default async function Home() {
   const weekOpen = filed < owed || sentBack > 0;
   const nightOpen = lists.length > 0 && signed < lists.length;
 
+  // Managers check off walkthrough commitments; leaders on the crew code do
+  // not, so the door only shows for a manager, scoped to their own property.
+  const canWalk = mayManage(session);
+  let walk: ReturnType<typeof portfolioTotals> | null = null;
+  if (canWalk) {
+    const { properties } = await loadPortfolio();
+    const mine = properties.filter(
+      (p) => p.venueId != null && mayReachVenue(session, p.venueId),
+    );
+    walk = mine.length > 0 ? portfolioTotals(mine) : null;
+  }
+
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
       {/* Centred, the way the sign-in page is. This is the same kind of
@@ -152,6 +165,30 @@ export default async function Home() {
             )
           }
         />
+
+        {/* The walkthroughs door, for a manager with a property. */}
+        {walk ? (
+          <Card
+            href="/walkthroughs"
+            title={<T en="Walkthroughs" es="Recorridos" />}
+            lit={walk.overdue > 0}
+            note={
+              walk.actionable === 0 ? (
+                <T en="Nothing open" es="Nada pendiente" />
+              ) : walk.overdue > 0 ? (
+                <T
+                  en={`${walk.overdue} overdue to sign off`}
+                  es={`${walk.overdue} vencidas por firmar`}
+                />
+              ) : (
+                <T
+                  en={`${walk.signed} of ${walk.actionable} signed off`}
+                  es={`${walk.signed} de ${walk.actionable} firmadas`}
+                />
+              )
+            }
+          />
+        ) : null}
       </ul>
 
       <p className="label mt-6 text-center">
@@ -194,6 +231,10 @@ async function AdminHome() {
   // Not signed and not done, which are the two ways a list is short of done
   // and signed. The same ruler as every report page.
   const failedLists = venues.reduce((n, v) => n + v.notSigned + v.notDone, 0);
+
+  // The walkthroughs, summed across every property.
+  const { properties } = await loadPortfolio();
+  const walk = portfolioTotals(properties);
 
   return (
     <main className="rise mx-auto flex min-h-[calc(100dvh-9rem)] max-w-md flex-col justify-center">
@@ -250,6 +291,28 @@ async function AdminHome() {
               en="Every venue's board, and the grading queue"
               es="El tablero de cada lugar, y la fila de calificación"
             />
+          }
+        />
+
+        {/* The third door. Lit when a commitment is past its date. */}
+        <Card
+          href="/walkthroughs"
+          title={<T en="Walkthroughs" es="Recorridos" />}
+          lit={walk.overdue > 0}
+          note={
+            walk.actionable === 0 ? (
+              <T en="No walkthroughs yet" es="Todavía sin recorridos" />
+            ) : walk.overdue > 0 ? (
+              <T
+                en={`${walk.overdue} overdue · ${walk.properties} properties`}
+                es={`${walk.overdue} vencidas · ${walk.properties} propiedades`}
+              />
+            ) : (
+              <T
+                en={`${walk.signed} of ${walk.actionable} signed off`}
+                es={`${walk.signed} de ${walk.actionable} firmadas`}
+              />
+            )
           }
         />
       </ul>
