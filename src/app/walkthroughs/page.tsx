@@ -14,21 +14,19 @@ import {
 export const dynamic = "force-dynamic";
 
 /**
- * The whole portfolio, on one screen. A ring for all of it, and a dial per
- * property under it.
+ * The whole portfolio on one screen: a ring for all of it, then every property
+ * as a progress bar under it, worst first.
  *
- * The same shape as logging in and seeing the locations: the number that says
- * whether you need to do anything, before you open anything. Here the number is
- * how much of what the walkthroughs asked for has been signed off with a photo
- * behind it. Overdue is the red, because a commitment past its date is the
- * thing that gets a building opened.
+ * The same read as the checklists locations page. The ring is how much of what
+ * the walkthroughs asked for has been signed off with a photo behind it, and
+ * the bars are that same measure per building, so the one that needs a visit is
+ * the longest red bar at the top.
  */
 export default async function WalkthroughsPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
   const { properties } = await loadPortfolio();
-  // Admin sees every building. A manager sees only their own.
   const visible =
     session.role === "admin"
       ? properties
@@ -60,47 +58,49 @@ export default async function WalkthroughsPage() {
 
       <header className="mt-4 mb-6">
         <p className="label">
-          {totals.properties} {totals.properties === 1 ? "property" : "properties"}{" "}
-          · signed off with a photo behind it
+          {totals.properties}{" "}
+          {totals.properties === 1 ? "property" : "properties"} · signed off with
+          a photo behind it
         </p>
         <h1 className="text-metric mt-2 tracking-normal">Walkthroughs</h1>
       </header>
 
-      {/* The portfolio ring, the Heart of House card asked of buildings. */}
       <Card
         title="All properties"
         hint={`${totals.signed} of ${totals.actionable} signed off · ${
           totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"
         }`}
       >
-        <div className="grid gap-6 lg:grid-cols-[200px_1fr]">
-          <div>
+        {/* Ring and the numbers that make it, side by side and tight. */}
+        <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
+          <div className="w-40 shrink-0">
             <Dial
               percent={totals.percent}
               tone={behind ? "var(--warn)" : "var(--ink)"}
               caption={`${totals.signed} of ${totals.actionable} signed off`}
-              size={200}
+              size={160}
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-x-6 gap-y-5 self-center">
+          <div className="grid grid-cols-3 gap-x-10 gap-y-4">
             <Stat label="Open" value={totals.actionable - totals.signed} />
-            <Stat label="Overdue" value={totals.overdue} accent={totals.overdue > 0} />
+            <Stat
+              label="Overdue tasks"
+              value={totals.overdue}
+              accent={totals.overdue > 0}
+            />
             <Stat label="Signed" value={totals.signed} />
-            <Stat label="Properties" value={totals.properties} />
-            <Stat label="Repeats" value={totals.repeats} accent={totals.repeats > 0} />
-            <Stat label="On you" value={totals.onB} sub="B owns, open" />
           </div>
         </div>
-      </Card>
 
-      {/* One dial per building, three or four across, cascading down. Worst
-          first: the order loadPortfolio already put them in. */}
-      <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {visible.map((p) => (
-          <PropertyTile key={p.id} property={p} />
-        ))}
-      </ul>
+        {/* Every building as a bar. This is the leaderboard: worst first, the
+            reason to open the page sitting at the top. */}
+        <ul className="mt-6 space-y-2">
+          {visible.map((p) => (
+            <PropertyBar key={p.id} property={p} />
+          ))}
+        </ul>
+      </Card>
     </main>
   );
 }
@@ -143,34 +143,45 @@ function fmtDate(date: string | null): string {
 }
 
 /**
- * One building as a dial. The ring is its signed share; the line under it is
- * the walk date and, when there is one, the overdue count in red, which is the
- * reason to tap in.
+ * One building as a progress bar, and the door into it. The fill is its signed
+ * share; the count and any overdue ride the same line, red when late.
  */
-function PropertyTile({ property }: { property: PropertySummary }) {
+function PropertyBar({ property }: { property: PropertySummary }) {
   const behind = property.overdue > 0;
+  const fill = property.actionable
+    ? Math.round((property.signed / property.actionable) * 100)
+    : 0;
   return (
     <li>
       <Link
         href={`/walkthroughs/${property.id}`}
-        className="bg-inset hover:ring-muted/40 flex h-full flex-col items-center gap-3 rounded-[6px] p-4 ring-1 ring-inset ring-transparent"
+        className="bg-inset hover:ring-muted/30 block rounded-[6px] p-4 ring-1 ring-inset ring-transparent"
       >
-        <Dial
-          percent={property.percent}
-          tone={behind ? "var(--warn)" : "var(--ink)"}
-          caption=""
-          label={`${property.signed}/${property.actionable}`}
-          size={128}
-        />
-        <div className="text-center">
-          <p className="text-title tracking-normal">{property.name}</p>
-          <p className="label mt-1">{fmtDate(property.lastWalk)}</p>
-          {property.overdue > 0 ? (
-            <p className="text-label text-warn mt-1 tracking-[0.08em]">
-              {property.overdue} overdue
-            </p>
-          ) : null}
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+          <span className="text-title tracking-normal">{property.name}</span>
+          <span className="label flex items-center gap-2 whitespace-nowrap">
+            {property.overdue > 0 ? (
+              <span className="text-warn">{property.overdue} overdue</span>
+            ) : null}
+            <span className="tabular-nums">
+              {property.signed}/{property.actionable}
+            </span>
+            <span aria-hidden>→</span>
+          </span>
         </div>
+
+        {/* The bar. */}
+        <div className="bg-paper mt-3 h-2 w-full overflow-hidden rounded-full">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: `${Math.max(fill, property.signed > 0 ? 3 : 0)}%`,
+              background: behind ? "var(--warn)" : "var(--ink)",
+            }}
+          />
+        </div>
+
+        <p className="label mt-2">walked {fmtDate(property.lastWalk)}</p>
       </Link>
     </li>
   );

@@ -99,7 +99,6 @@ export default async function PropertyPage({
             )}
             {" · "}
             {photoCount} {photoCount === 1 ? "photo" : "photos"}
-            {s.repeats > 0 ? ` · ${s.repeats} repeats` : ""}
           </p>
         </div>
       </div>
@@ -160,20 +159,13 @@ function CommitmentRow({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          {/* The repeat flag, loud, above the line. */}
-          {(item.repeatNote || item.repeatCount > 1) && (
-            <p className="text-label text-warn mb-1 tracking-[0.08em]">
-              ↻ {item.repeatNote ? item.repeatNote : `${item.repeatCount}x raised`}
-            </p>
-          )}
           <p className="text-body text-ink leading-snug break-words">
             {item.commitment}
           </p>
 
-          {/* Badges: category, owner, and the two dates. */}
+          {/* Badges: category, and the two dates. */}
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
             <Badge>{CATEGORY_BADGE[item.category]}</Badge>
-            <Badge>{item.owner === "B" ? "You" : "Venue"}</Badge>
             <span className="label">seen {fmtDate(observed)}</span>
             {item.category !== "future_goal" ? (
               <span className={`label ${overdue ? "text-warn" : ""}`}>

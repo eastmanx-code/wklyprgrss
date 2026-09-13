@@ -266,7 +266,9 @@ export async function loadPortfolio(): Promise<{
     const propertyId = walkProperty.get(c.walkthrough_id);
     if (!propertyId) continue;
     const a = acc.get(propertyId);
-    if (!a || !isActionable(c.category)) continue;
+    // B's own repairs and vendor jobs live in ClickUp, not here. This page is
+    // only what a manager checks off, so only the venue's work counts.
+    if (!a || !isActionable(c.category) || c.owner === "B") continue;
     const { status } = deriveStatus(
       {
         category: c.category,
@@ -444,7 +446,8 @@ export async function loadProperty(
   }
 
   const items: Commitment[] = allCommits
-    .filter((c) => c.walkthrough_id === latest.id)
+    // Only the venue's work. B's repairs are tracked in ClickUp, not here.
+    .filter((c) => c.walkthrough_id === latest.id && c.owner !== "B")
     .map((c) => {
       const photos = photosByItem.get(c.id) ?? [];
       const { status, daysOverdue } = deriveStatus(
