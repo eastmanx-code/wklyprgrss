@@ -2,11 +2,13 @@ import { notFound, redirect } from "next/navigation";
 
 import { Dial } from "@/components/Dial";
 import { BackLink } from "@/components/ui";
+import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
 import { signedUrls } from "@/lib/photos";
 import { getSession, mayReachVenue } from "@/lib/session";
 import {
   CATEGORY_BADGE,
   CATEGORY_LABEL,
+  isActionable,
   loadProperty,
   type Commitment,
   type WalkCategory,
@@ -63,6 +65,17 @@ export default async function PropertyPage({
   const s = property.summary;
   const behind = s.overdue > 0;
   const photoCount = paths.length;
+  const isAdmin = session.role === "admin";
+
+  // Tasks due, broken out by category, so the header says where the work is.
+  const dueByCategory = property.groups
+    .filter((g) => isActionable(g.category))
+    .map((g) => ({
+      category: g.category,
+      open: g.items.filter((i) => i.status !== "signed").length,
+      overdue: g.items.filter((i) => i.status === "overdue").length,
+    }))
+    .filter((c) => c.open > 0);
 
   return (
     <main className="close-flow mx-auto max-w-2xl">
@@ -103,6 +116,26 @@ export default async function PropertyPage({
         </div>
       </div>
 
+      {/* Tasks due, by category, so you see where the work sits at a glance. */}
+      {dueByCategory.length > 0 ? (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {dueByCategory.map((c) => (
+            <span
+              key={c.category}
+              className="bg-inset text-label inline-flex items-center gap-2 rounded px-3 py-2 tracking-[0.08em]"
+            >
+              <span className="text-ink">{CATEGORY_BADGE[c.category]}</span>
+              <span className="text-muted tabular-nums">{c.open} due</span>
+              {c.overdue > 0 ? (
+                <span className="text-warn tabular-nums">
+                  {c.overdue} overdue
+                </span>
+              ) : null}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
       <div className="space-y-8">
         {property.groups.map((group) => (
           <section key={group.category}>
@@ -117,6 +150,7 @@ export default async function PropertyPage({
                   item={item}
                   urls={urls}
                   observed={property.lastWalk}
+                  isAdmin={isAdmin}
                 />
               ))}
             </ul>
@@ -138,14 +172,19 @@ function CommitmentRow({
   item,
   urls,
   observed,
+  isAdmin,
 }: {
   item: Commitment;
   urls: Map<string, string>;
   observed: string | null;
+  isAdmin: boolean;
 }) {
   const overdue = item.status === "overdue";
   const signed = item.status === "signed";
   const special = SPECIAL.includes(item.category);
+  const photoUrls = item.photos
+    .map((p) => urls.get(p.path))
+    .filter((u): u is string => Boolean(u));
 
   return (
     <li
@@ -188,32 +227,31 @@ function CommitmentRow({
         <StatusPill item={item} />
       </div>
 
-      {/* Proof, as thumbnails. */}
-      {item.photos.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {item.photos.map((photo) => {
-            const url = urls.get(photo.path);
-            return url ? (
+      {/* Actionable rows get the check-off: photograph it, then sign. Special
+          rows (questions, goals, covered notes) are never signed here, so they
+          show their proof if any and nothing else. */}
+      {special ? (
+        photoUrls.length > 0 ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {photoUrls.map((url, i) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                key={photo.id}
+                key={i}
                 src={url}
                 alt=""
                 className="h-16 w-16 rounded-[4px] object-cover"
               />
-            ) : null;
-          })}
-        </div>
-      ) : null}
-
-      {/* The sign off comes next; for now the row says what it is waiting on. */}
-      {!special && !signed ? (
-        <p className="label mt-3">
-          {item.photos.length === 0
-            ? "Needs a photo before it can be signed"
-            : "Ready to sign"}
-        </p>
-      ) : null}
+            ))}
+          </div>
+        ) : null
+      ) : (
+        <CommitmentActions
+          id={item.id}
+          signed={signed}
+          canReopen={isAdmin}
+          initialPhotos={photoUrls}
+        />
+      )}
     </li>
   );
 }
