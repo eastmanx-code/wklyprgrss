@@ -354,6 +354,17 @@ export async function nightCompliance(
   );
 }
 
+/**
+ * One piece of proof behind an item: the picture, the clip, or the note the
+ * crew left. `path` is the storage key a photo or video lives under, to be
+ * signed for viewing; a note carries its words in `body` and has no path.
+ */
+export type ProofShot = {
+  kind: "photo" | "video" | "note";
+  path: string | null;
+  body: string | null;
+};
+
 export type ItemOutcome = {
   id: string;
   title: string;
@@ -365,6 +376,8 @@ export type ItemOutcome = {
   /** What the item asked for, and whether it arrived. */
   proofWanted: ("photo" | "video" | "note")[];
   proofGiven: number;
+  /** The proof itself, so the review page can show it and not just count it. */
+  proofShots: ProofShot[];
 };
 
 export type ListDetail = {
@@ -470,14 +483,25 @@ export async function listDetail(
     created_at: string;
     client_at: string | null;
   }[] = [];
-  let proof: { item_id: string }[] = [];
+  let proof: {
+    item_id: string;
+    shot_index: number;
+    kind: "photo" | "video" | "note";
+    storage_path: string | null;
+    body: string | null;
+  }[] = [];
   if (stored) {
     const [t, p] = await Promise.all([
       db()
         .from("close_ticks")
         .select("item_id, initials, created_at, client_at")
         .eq("night_id", stored.id),
-      db().from("close_proof").select("item_id").eq("night_id", stored.id),
+      db()
+        .from("close_proof")
+        .select("item_id, shot_index, kind, storage_path, body")
+        .eq("night_id", stored.id)
+        .order("item_id")
+        .order("shot_index"),
     ]);
     ticks = (t.data ?? []) as typeof ticks;
     proof = (p.data ?? []) as typeof proof;
@@ -485,8 +509,12 @@ export async function listDetail(
 
   const tickOf = new Map(ticks.map((t) => [t.item_id, t]));
   const proofCount = new Map<string, number>();
+  const proofByItem = new Map<string, ProofShot[]>();
   for (const row of proof) {
     proofCount.set(row.item_id, (proofCount.get(row.item_id) ?? 0) + 1);
+    const shots = proofByItem.get(row.item_id) ?? [];
+    shots.push({ kind: row.kind, path: row.storage_path, body: row.body });
+    proofByItem.set(row.item_id, shots);
   }
 
   const outcomes: ItemOutcome[] = items
@@ -514,6 +542,7 @@ export async function listDetail(
         at: tick?.created_at ?? null,
         proofWanted: (item.proof ?? []).map((p) => p.kind),
         proofGiven: proofCount.get(item.id) ?? 0,
+        proofShots: proofByItem.get(item.id) ?? [],
       };
     });
 

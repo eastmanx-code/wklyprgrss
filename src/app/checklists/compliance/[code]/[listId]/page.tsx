@@ -14,6 +14,7 @@ import {
   isNightOver,
 } from "@/lib/night";
 import { describeLag } from "@/lib/pace";
+import { signedUrls } from "@/lib/photos";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -64,6 +65,17 @@ export default async function ListCompliancePage({
 
   const detail = await listDetail(listId, night);
   if (!detail) notFound();
+
+  // Sign every proof path on the list in one pass, so a row can show the photo
+  // behind it and not just say one is attached. This is the only place the
+  // crew's proof is actually looked at.
+  const proofPaths = detail.items.flatMap((i) =>
+    i.proofShots.map((s) => s.path).filter((p): p is string => Boolean(p)),
+  );
+  const proofUrls =
+    proofPaths.length > 0
+      ? await signedUrls(proofPaths)
+      : new Map<string, string>();
 
   const name = await venueNameOf(code);
   const open = detail.items.filter((i) => !i.ticked);
@@ -223,7 +235,7 @@ export default async function ListCompliancePage({
           {open.length > 0 ? (
             <ul className="mb-4">
               {open.map((item) => (
-                <ItemRow key={item.id} item={item} />
+                <ItemRow key={item.id} item={item} urls={proofUrls} />
               ))}
             </ul>
           ) : null}
@@ -243,7 +255,7 @@ export default async function ListCompliancePage({
                 {detail.items
                   .filter((i) => i.ticked)
                   .map((item) => (
-                    <ItemRow key={item.id} item={item} />
+                    <ItemRow key={item.id} item={item} urls={proofUrls} />
                   ))}
               </ul>
             </details>
@@ -259,7 +271,17 @@ export default async function ListCompliancePage({
  * column of their own on the right. Yellow text where it was not checked
  * off. What the item asked for, and whether it arrived, on a line under.
  */
-function ItemRow({ item }: { item: ItemOutcome }) {
+function ItemRow({
+  item,
+  urls,
+}: {
+  item: ItemOutcome;
+  urls: Map<string, string>;
+}) {
+  const notes = item.proofShots.filter((s) => s.kind === "note" && s.body);
+  const media = item.proofShots.filter(
+    (s) => s.kind !== "note" && s.path && urls.get(s.path),
+  );
   return (
     <li className="border-divider grid grid-cols-[1.25rem_minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-t py-4 first:border-t-0 first:pt-0">
       <span
@@ -296,6 +318,48 @@ function ItemRow({ item }: { item: ItemOutcome }) {
             : "none attached"}
         </span>
       ) : null}
+
+      {/* The proof itself. A photo is the whole point of the ask, so it is
+          shown, not counted: tap the thumbnail for the full frame. */}
+      {media.length > 0 ? (
+        <div className="col-span-2 col-start-2 mt-1 flex flex-wrap gap-2">
+          {media.map((shot, i) => {
+            const url = urls.get(shot.path!)!;
+            if (shot.kind === "video") {
+              return (
+                <a
+                  key={i}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-inset text-label ring-card-border inline-flex h-16 w-16 items-center justify-center rounded-[4px] tracking-[0.08em] ring-1"
+                >
+                  video
+                </a>
+              );
+            }
+            return (
+              <a key={i} href={url} target="_blank" rel="noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={url}
+                  alt=""
+                  className="h-16 w-16 rounded-[4px] object-cover"
+                />
+              </a>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {notes.map((shot, i) => (
+        <p
+          key={i}
+          className="note text-muted col-span-2 col-start-2 mt-1 leading-relaxed"
+        >
+          {shot.body}
+        </p>
+      ))}
     </li>
   );
 }
