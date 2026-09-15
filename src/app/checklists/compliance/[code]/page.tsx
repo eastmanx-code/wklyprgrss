@@ -145,6 +145,19 @@ export default async function VenueCompliancePage({
         <NightNav night={night} base={`/checklists/compliance/${code}`} />
       </header>
 
+      {/* Straight to the night's photographs, all of them, each under its
+          task. The one thing a manager asks for that used to mean opening
+          every list in turn. */}
+      <p className="mb-5">
+        <Link
+          href={`/checklists/compliance/${code}/photos?night=${night}`}
+          className="btn btn-sm inline-flex items-center gap-2"
+        >
+          See all photos from this night
+          <span aria-hidden>→</span>
+        </Link>
+      </p>
+
       {/* One panel, every list a bar, fails first. The same bars the weekly
           board uses: name in the row, the verdict at the right, the facts in
           small type under. It was two solid yellow cards with a paragraph
