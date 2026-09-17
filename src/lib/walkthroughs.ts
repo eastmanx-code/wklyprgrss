@@ -77,6 +77,7 @@ export type WalkStatus =
   | "submitted"
   | "signed"
   | "question"
+  | "answered"
   | "goal"
   | "covered";
 
@@ -163,7 +164,10 @@ function deriveStatus(
   const isOverdue = row.due !== null && overdue > 0;
 
   if (row.category === "open_question") {
-    // A question is never signed with a photo; it still nags when it is late.
+    // A question is answered in words, not signed with a photo. Once somebody
+    // has put an answer to it, it is closed; until then it still nags when it
+    // is late.
+    if (row.signed_at) return { status: "answered", daysOverdue: 0 };
     return { status: "question", daysOverdue: isOverdue ? overdue : 0 };
   }
 
