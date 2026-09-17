@@ -351,6 +351,25 @@ export function portfolioTotals(properties: PropertySummary[]): PortfolioTotals 
   };
 }
 
+/**
+ * Does this venue have any active walkthrough property?
+ *
+ * Used to decide whether to offer the walkthroughs door to a venue's crew. It
+ * is the same venue scope the sign-off action already enforces, so the door is
+ * never shown to somebody the action would then refuse.
+ */
+export async function venueHasWalkthrough(
+  venueId: string | null,
+): Promise<boolean> {
+  if (!venueId) return false;
+  const { count } = await db()
+    .from("walk_properties")
+    .select("id", { count: "exact", head: true })
+    .eq("venue_id", venueId)
+    .eq("active", true);
+  return Boolean(count && count > 0);
+}
+
 export type PropertyDetail = {
   id: string;
   name: string;

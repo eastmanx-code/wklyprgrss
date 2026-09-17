@@ -5,7 +5,8 @@ import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
 import { LangSwitch, T } from "@/components/Lang";
 import { SignOut } from "@/components/SignOut";
-import { getSession, mayManage } from "@/lib/session";
+import { getSession, mayManage, venueOfSession } from "@/lib/session";
+import { venueHasWalkthrough } from "@/lib/walkthroughs";
 import { currentWeekStart, deadlineFor } from "@/lib/week";
 
 /**
@@ -27,6 +28,12 @@ export async function CornerMenu() {
   // you are here for. The sections themselves are in SectionNav.
   const isAdmin = session?.role === "admin";
   const canEdit = mayManage(session);
+  // Walkthroughs are the crew's to work, not just a manager's, so the link
+  // shows for anyone on a venue that has one. Editing a list stays with
+  // managers, which is why that door keeps its own flag below.
+  const canWalkthroughs = session
+    ? isAdmin || (await venueHasWalkthrough(venueOfSession(session)))
+    : false;
   const home = session ? "/home" : null;
 
   return (
@@ -66,7 +73,7 @@ export async function CornerMenu() {
               <span className="bg-card-border h-6 w-px" aria-hidden />
               <SectionNav
                 isAdmin={isAdmin}
-                canWalkthroughs={canEdit}
+                canWalkthroughs={canWalkthroughs}
                 deadlineMs={deadlineMs}
               />
             </>

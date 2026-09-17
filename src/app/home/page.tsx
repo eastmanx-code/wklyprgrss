@@ -11,7 +11,7 @@ import {
   isNightOver,
 } from "@/lib/night";
 import { previousNight } from "@/lib/close-status";
-import { getSession, mayManage, mayReachVenue } from "@/lib/session";
+import { getSession, mayReachVenue } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
 import { db } from "@/lib/supabase";
 import { loadPortfolio, portfolioTotals } from "@/lib/walkthroughs";
@@ -85,11 +85,13 @@ export default async function Home() {
   const weekOpen = filed < owed || sentBack > 0;
   const nightOpen = lists.length > 0 && signed < lists.length;
 
-  // Managers check off walkthrough commitments; leaders on the crew code do
-  // not, so the door only shows for a manager, scoped to their own property.
-  const canWalk = mayManage(session);
+  // The whole point of the walkthroughs is the crew seeing their building's
+  // follow-ups and signing progress off, so the door shows for anyone on the
+  // venue, leader or manager, scoped to their own property. The sign-off action
+  // enforces the same venue scope, so this only decides what gets offered, and
+  // it stays hidden at a venue with no walkthrough on record.
   let walk: ReturnType<typeof portfolioTotals> | null = null;
-  if (canWalk) {
+  {
     const { properties } = await loadPortfolio();
     const mine = properties.filter(
       (p) => p.venueId != null && mayReachVenue(session, p.venueId),
