@@ -20,17 +20,19 @@ async function reach(commitmentId: string): Promise<{
   propertyId: string;
   signed: boolean;
   isAdmin: boolean;
+  category: string;
 } | null> {
   if (!commitmentId) return null;
   const { data: commit } = await db()
     .from("walk_commitments")
-    .select("id, signed_at, owner, walkthrough_id")
+    .select("id, signed_at, owner, walkthrough_id, category")
     .eq("id", commitmentId)
     .maybeSingle();
   const c = commit as {
     signed_at: string | null;
     owner: string;
     walkthrough_id: string;
+    category: string;
   } | null;
   if (!c) return null;
   // B's items are not signed off here at all.
@@ -57,7 +59,12 @@ async function reach(commitmentId: string): Promise<{
     isAdmin || (venueId != null && mayReachVenue(session, venueId));
   if (!allowed) return null;
 
-  return { propertyId, signed: Boolean(c.signed_at), isAdmin };
+  return {
+    propertyId,
+    signed: Boolean(c.signed_at),
+    isAdmin,
+    category: c.category,
+  };
 }
 
 /**
@@ -131,6 +138,47 @@ export async function signWalkCommitment(
       signed_at: new Date().toISOString(),
       signed_by: signedBy.slice(0, 80),
       note: note ? note.slice(0, 1000) : null,
+    })
+    .eq("id", id)
+    .is("signed_at", null);
+  if (error) return { error: "Could not save that. Try again." };
+
+  revalidatePath(`/walkthroughs/${ok.propertyId}`);
+  revalidatePath("/walkthroughs");
+  return { error: null, ok: true };
+}
+
+/**
+ * Answers an open question and closes it. A question is not signed with a
+ * photo, it is answered in words, so this is its version of the sign-off: an
+ * answer and a name, no photo. Same venue scope as everything else here, so a
+ * building only answers its own questions. The answer lands in the note, the
+ * name and time in the same columns a sign-off uses, so an answered question
+ * reads back exactly like a closed item.
+ */
+export async function answerWalkQuestion(
+  _prev: SignState,
+  formData: FormData,
+): Promise<SignState> {
+  const id = String(formData.get("id") ?? "");
+  const answeredBy = String(formData.get("answeredBy") ?? "").trim();
+  const answer = String(formData.get("answer") ?? "").trim();
+
+  const ok = await reach(id);
+  if (!ok) return { error: "That question is not yours to answer." };
+  if (ok.category !== "open_question") {
+    return { error: "That item is not a question." };
+  }
+  if (ok.signed) return { error: "That question is already answered." };
+  if (answer.length < 2) return { error: "Write an answer first." };
+  if (answeredBy.length < 2) return { error: "Put your name to it." };
+
+  const { error } = await db()
+    .from("walk_commitments")
+    .update({
+      signed_at: new Date().toISOString(),
+      signed_by: answeredBy.slice(0, 80),
+      note: answer.slice(0, 1000),
     })
     .eq("id", id)
     .is("signed_at", null);

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Dial } from "@/components/Dial";
 import { BackLink } from "@/components/ui";
 import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
+import { QuestionAnswer } from "@/components/walkthroughs/QuestionAnswer";
 import { signedUrls } from "@/lib/photos";
 import { getSession, mayReachVenue } from "@/lib/session";
 import {
@@ -181,17 +182,33 @@ function CommitmentRow({
 }) {
   const overdue = item.status === "overdue";
   const signed = item.status === "signed";
+  const answered = item.status === "answered";
+  const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
   const photoUrls = item.photos
     .map((p) => urls.get(p.path))
     .filter((u): u is string => Boolean(u));
+  const photoStrip =
+    photoUrls.length > 0 ? (
+      <div className="mt-3 flex flex-wrap gap-2">
+        {photoUrls.map((url, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={i}
+            src={url}
+            alt=""
+            className="h-16 w-16 rounded-[4px] object-cover"
+          />
+        ))}
+      </div>
+    ) : null;
 
   return (
     <li
       className={`rounded-[6px] p-4 ${
         overdue
           ? "bg-warn/10 ring-warn/40 ring-1"
-          : signed
+          : signed || answered
             ? "bg-inset opacity-80"
             : "bg-inset"
       }`}
@@ -216,7 +233,8 @@ function CommitmentRow({
 
           {item.signedBy ? (
             <p className="label mt-2">
-              Signed {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
+              {question ? "Answered by " : "Signed "}
+              {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
             </p>
           ) : null}
           {item.note ? (
@@ -227,23 +245,19 @@ function CommitmentRow({
         <StatusPill item={item} />
       </div>
 
-      {/* Actionable rows get the check-off: photograph it, then sign. Special
-          rows (questions, goals, covered notes) are never signed here, so they
-          show their proof if any and nothing else. */}
-      {special ? (
-        photoUrls.length > 0 ? (
-          <div className="mt-3 flex flex-wrap gap-2">
-            {photoUrls.map((url, i) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={i}
-                src={url}
-                alt=""
-                className="h-16 w-16 rounded-[4px] object-cover"
-              />
-            ))}
-          </div>
-        ) : null
+      {/* Actionable rows get the check-off: photograph it, then sign. A
+          question is answered in words instead, so an open one gets the answer
+          box and a closed one shows its answer above. Goals and covered notes
+          are never closed here, so they show their proof if any and nothing
+          else. */}
+      {question ? (
+        answered ? (
+          photoStrip
+        ) : (
+          <QuestionAnswer id={item.id} />
+        )
+      ) : special ? (
+        photoStrip
       ) : (
         <CommitmentActions
           id={item.id}
@@ -271,6 +285,7 @@ function StatusPill({ item }: { item: Commitment }) {
     overdue: { text: "Overdue", cls: "bg-warn text-on-warn" },
     open: { text: "Open", cls: "bg-panel text-muted" },
     question: { text: "Question", cls: "bg-panel text-muted" },
+    answered: { text: "Answered", cls: "pill-done" },
     goal: { text: "Goal", cls: "bg-panel text-muted" },
     covered: { text: "Covered", cls: "bg-panel text-muted" },
   };
