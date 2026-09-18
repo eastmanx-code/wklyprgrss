@@ -151,11 +151,15 @@ export function CommitmentActions({
       ) : null}
 
       <label className="btn-ghost btn-sm inline-flex cursor-pointer items-center">
+        {/* No forced camera here, unlike the nightly close. A walkthrough
+            follow-up is a repair worked over days, so the honest photo is
+            often one taken earlier, and a manager may be closing it out from a
+            computer. This matches the weekly board, which also lets a chosen
+            file stand in for a live shot. */}
         <input
           ref={fileRef}
           type="file"
           accept="image/*"
-          capture="environment"
           className="sr-only"
           onChange={pick}
           disabled={busy}
@@ -164,7 +168,7 @@ export function CommitmentActions({
           ? "Working…"
           : photos.length > 0
             ? "Add another photo"
-            : "Photograph it"}
+            : "Add a photo"}
       </label>
 
       <input
