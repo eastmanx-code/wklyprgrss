@@ -225,6 +225,26 @@ export default async function LocationsPage({
         <NightNav night={night} base="/checklists/locations" />
       </header>
 
+      {/* The run leads now. How the month is going, and who is best and worst,
+          is what an admin wants first when they open this in the morning, above
+          the per-venue breakdown of a single night. */}
+      {lists > 0 && ran.length >= 2 ? (
+        <div className="mb-6">
+          <RunCard
+            done={done}
+            total={lists}
+            nights={points.length}
+            points={points}
+            failed={short > 0}
+            labelLeft={formatNight(ran[0].night)}
+            labelRight={`${formatNight(night)}${over ? "" : " · so far"}`}
+            over={over}
+            best={best}
+            worst={worst}
+          />
+        </div>
+      ) : null}
+
       <div>
         <Card
           /* "Last night" only when it is; browsing back, the card is
@@ -297,25 +317,6 @@ export default async function LocationsPage({
           )}
         </Card>
       </div>
-
-      {/* The run, under the night. What failed is the reason to open the
-          page; how the month is going is the second thing. */}
-      {lists > 0 && ran.length >= 2 ? (
-        <div className="mt-6">
-          <RunCard
-            done={done}
-            total={lists}
-            nights={points.length}
-            points={points}
-            failed={short > 0}
-            labelLeft={formatNight(ran[0].night)}
-            labelRight={`${formatNight(night)}${over ? "" : " · so far"}`}
-            over={over}
-            best={best}
-            worst={worst}
-          />
-        </div>
-      ) : null}
 
       {/* Closed, one small button. Open, the same line is the heading with
           its own button to close it, and each venue's Add is a button with
