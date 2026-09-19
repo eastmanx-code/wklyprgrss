@@ -374,6 +374,77 @@ export async function venueHasWalkthrough(
   return Boolean(count && count > 0);
 }
 
+/**
+ * One line of the change log: an edit somebody made to a property's
+ * walkthrough. Shown to managers and admins, never to a leader.
+ */
+export type WalkEvent = {
+  id: string;
+  kind: string;
+  actor: string;
+  detail: string | null;
+  createdAt: string;
+  /** The item it touched, or null once that item has been removed. */
+  commitment: string | null;
+};
+
+/** How each kind of edit reads in the log. Unknown kinds fall back to raw. */
+export const EVENT_LABEL: Record<string, string> = {
+  photo_added: "Photo added",
+  photo_removed: "Photo removed",
+  signed: "Signed off",
+  question_answered: "Question answered",
+  reopened: "Reopened",
+};
+
+/**
+ * The recent edits on one property, newest first. Two small queries: the log
+ * rows, then the titles of the items they name, so a line reads "Photo removed
+ * · under the POS" rather than a bare id.
+ */
+export async function loadWalkLog(
+  propertyId: string,
+  limit = 50,
+): Promise<WalkEvent[]> {
+  const { data } = await db()
+    .from("walk_events")
+    .select("id, kind, actor, detail, created_at, commitment_id")
+    .eq("property_id", propertyId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  const rows = (data ?? []) as {
+    id: string;
+    kind: string;
+    actor: string;
+    detail: string | null;
+    created_at: string;
+    commitment_id: string | null;
+  }[];
+
+  const ids = [
+    ...new Set(rows.map((r) => r.commitment_id).filter(Boolean)),
+  ] as string[];
+  const titles = new Map<string, string>();
+  if (ids.length > 0) {
+    const { data: cs } = await db()
+      .from("walk_commitments")
+      .select("id, commitment")
+      .in("id", ids);
+    for (const c of (cs ?? []) as { id: string; commitment: string }[]) {
+      titles.set(c.id, c.commitment);
+    }
+  }
+
+  return rows.map((r) => ({
+    id: r.id,
+    kind: r.kind,
+    actor: r.actor,
+    detail: r.detail,
+    createdAt: r.created_at,
+    commitment: r.commitment_id ? (titles.get(r.commitment_id) ?? null) : null,
+  }));
+}
+
 export type PropertyDetail = {
   id: string;
   name: string;

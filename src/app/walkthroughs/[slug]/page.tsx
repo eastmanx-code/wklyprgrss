@@ -3,16 +3,20 @@ import { notFound, redirect } from "next/navigation";
 import { Dial } from "@/components/Dial";
 import { BackLink } from "@/components/ui";
 import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
+import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 import { QuestionAnswer } from "@/components/walkthroughs/QuestionAnswer";
 import { signedUrls } from "@/lib/photos";
-import { getSession, mayReachVenue } from "@/lib/session";
+import { getSession, mayManage, mayReachVenue } from "@/lib/session";
 import {
   CATEGORY_BADGE,
   CATEGORY_LABEL,
+  EVENT_LABEL,
   isActionable,
   loadProperty,
+  loadWalkLog,
   type Commitment,
   type WalkCategory,
+  type WalkEvent,
 } from "@/lib/walkthroughs";
 
 export const dynamic = "force-dynamic";
@@ -67,6 +71,10 @@ export default async function PropertyPage({
   const behind = s.overdue > 0;
   const photoCount = paths.length;
   const isAdmin = session.role === "admin";
+  // The change log is a manager's view, not a leader's: a leader signs the
+  // work, a manager answers for it. Load it only for those who see it.
+  const canSeeLog = mayManage(session);
+  const events = canSeeLog ? await loadWalkLog(property.id) : [];
 
   // Tasks due, broken out by category, so the header says where the work is.
   const dueByCategory = property.groups
@@ -158,7 +166,65 @@ export default async function PropertyPage({
           </section>
         ))}
       </div>
+
+      {canSeeLog ? <ChangeLog events={events} /> : null}
     </main>
+  );
+}
+
+/** Date and time in Pacific for a log line, e.g. "Sep 19 · 3:04 PM". */
+function fmtWhen(iso: string): string {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return "";
+  const d = new Date(t);
+  const day = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    month: "short",
+    day: "numeric",
+  }).format(d);
+  const time = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(d);
+  return `${day} · ${time}`;
+}
+
+/**
+ * The change log, managers and admins only. Every edit since the table was
+ * built: a photo added or pulled back off, a sign-off, an answer, a reopen.
+ * Collapsed by default so it does not crowd the work; open it to see who
+ * touched what. This is the accountability behind the remove button.
+ */
+function ChangeLog({ events }: { events: WalkEvent[] }) {
+  return (
+    <details className="panel mt-8 p-5">
+      <summary className="card-title cursor-pointer select-none">
+        Change log
+        <span className="label text-muted ml-2">{events.length}</span>
+      </summary>
+      {events.length === 0 ? (
+        <p className="label text-muted mt-3">No edits recorded yet.</p>
+      ) : (
+        <ul className="mt-3 space-y-2">
+          {events.map((e) => (
+            <li key={e.id} className="text-body leading-snug">
+              <span className="text-ink">{EVENT_LABEL[e.kind] ?? e.kind}</span>
+              <span className="text-muted"> by {e.actor}</span>
+              {e.commitment ? (
+                <span className="text-muted"> · {e.commitment}</span>
+              ) : null}
+              {e.detail ? (
+                <span className="text-muted"> · {e.detail}</span>
+              ) : null}
+              <span className="label text-muted block">
+                {fmtWhen(e.createdAt)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </details>
   );
 }
 
@@ -185,21 +251,13 @@ function CommitmentRow({
   const answered = item.status === "answered";
   const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
-  const photoUrls = item.photos
-    .map((p) => urls.get(p.path))
-    .filter((u): u is string => Boolean(u));
+  const photos = item.photos
+    .map((p) => ({ id: p.id, url: urls.get(p.path) }))
+    .filter((p): p is { id: string; url: string } => Boolean(p.url));
   const photoStrip =
-    photoUrls.length > 0 ? (
-      <div className="mt-3 flex flex-wrap gap-2">
-        {photoUrls.map((url, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={i}
-            src={url}
-            alt=""
-            className="h-16 w-16 rounded-[4px] object-cover"
-          />
-        ))}
+    photos.length > 0 ? (
+      <div className="mt-3">
+        <PhotoGrid photos={photos} />
       </div>
     ) : null;
 
@@ -263,7 +321,7 @@ function CommitmentRow({
           id={item.id}
           signed={signed}
           canReopen={isAdmin}
-          initialPhotos={photoUrls}
+          initialPhotos={photos}
         />
       )}
     </li>
