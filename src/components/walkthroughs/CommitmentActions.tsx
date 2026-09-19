@@ -11,6 +11,7 @@ import {
   walkPhotoUploadUrl,
 } from "@/app/walkthroughs/actions";
 import { compressToJpeg } from "@/lib/compress";
+import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 
 /**
  * The check-off: photograph the thing done, put a name to it, sign.
@@ -119,19 +120,8 @@ export function CommitmentActions({
     if (initialPhotos.length === 0 && !canReopen) return null;
     return (
       <div className="mt-3 space-y-2">
-        {initialPhotos.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {initialPhotos.map((p) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={p.id}
-                src={p.url}
-                alt=""
-                className="h-16 w-16 rounded-[4px] object-cover"
-              />
-            ))}
-          </div>
-        ) : null}
+        {/* Signed: photos are view-only, tap to enlarge, no remove. */}
+        <PhotoGrid photos={initialPhotos} />
         {canReopen ? (
           <button
             type="button"
@@ -153,31 +143,8 @@ export function CommitmentActions({
 
   return (
     <div className="mt-3 space-y-3">
-      {hasPhoto ? (
-        <div className="flex flex-wrap gap-2">
-          {initialPhotos.map((p) => (
-            <span key={p.id} className="relative inline-block">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.url}
-                alt=""
-                className="h-16 w-16 rounded-[4px] object-cover"
-              />
-              {/* Pull a photo back off while the item is still open, for the
-                  one on the wrong task. */}
-              <button
-                type="button"
-                onClick={() => remove(p.id)}
-                disabled={busy}
-                aria-label="Remove this photo"
-                className="bg-surface text-warn ring-card-border absolute -top-2 -right-2 grid size-5 place-items-center rounded-full text-[13px] leading-none ring-1"
-              >
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
-      ) : null}
+      {/* Open: tap to enlarge, and the × pulls a photo back off the wrong task. */}
+      <PhotoGrid photos={initialPhotos} onRemove={remove} busy={busy} />
 
       <label className="btn-ghost btn-sm inline-flex cursor-pointer items-center">
         {/* No forced camera here, unlike the nightly close. A walkthrough

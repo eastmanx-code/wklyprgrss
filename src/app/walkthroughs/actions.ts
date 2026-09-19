@@ -68,6 +68,29 @@ async function reach(commitmentId: string): Promise<{
 }
 
 /**
+ * Writes one line to the change log. Fire and forget: a missing log line must
+ * never fail the act it was meant to record, so the error is swallowed. The
+ * actor is the name where the act carries one and the role where it does not.
+ */
+async function logWalkEvent(
+  propertyId: string,
+  commitmentId: string | null,
+  kind: string,
+  actor: string,
+  detail?: string,
+): Promise<void> {
+  await db()
+    .from("walk_events")
+    .insert({
+      property_id: propertyId,
+      commitment_id: commitmentId,
+      kind,
+      actor: (actor.trim() || "someone").slice(0, 80),
+      detail: detail ? detail.slice(0, 300) : null,
+    });
+}
+
+/**
  * A signed URL to put one photo behind. The bytes are re-encoded to JPEG in the
  * browser first, the same as every other photo in the app.
  */
@@ -103,6 +126,12 @@ export async function attachWalkPhoto(
     uploaded_by: uploadedBy.trim().slice(0, 80) || "manager",
   });
   if (error) return { error: "Could not save that photo." };
+  await logWalkEvent(
+    ok.propertyId,
+    commitmentId,
+    "photo_added",
+    uploadedBy.trim() || "manager",
+  );
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   return { error: null };
 }
@@ -143,6 +172,7 @@ export async function signWalkCommitment(
     .is("signed_at", null);
   if (error) return { error: "Could not save that. Try again." };
 
+  await logWalkEvent(ok.propertyId, id, "signed", signedBy);
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   revalidatePath("/walkthroughs");
   return { error: null, ok: true };
@@ -164,10 +194,14 @@ export async function removeWalkPhoto(
 
   const { data: photo } = await db()
     .from("walk_photos")
-    .select("id, path, commitment_id")
+    .select("id, path, commitment_id, uploaded_by")
     .eq("id", photoId)
     .maybeSingle();
-  const p = photo as { path: string; commitment_id: string } | null;
+  const p = photo as {
+    path: string;
+    commitment_id: string;
+    uploaded_by: string | null;
+  } | null;
   if (!p) return { error: "That photo is already gone." };
 
   const ok = await reach(p.commitment_id);
@@ -184,6 +218,16 @@ export async function removeWalkPhoto(
     // failed cleanup must not fail the removal the manager asked for.
     await db().storage.from(PHOTO_BUCKET).remove([p.path]);
   }
+
+  // A removal has no typed name, so the role answers for it, and the log keeps
+  // whose photo came off.
+  await logWalkEvent(
+    ok.propertyId,
+    p.commitment_id,
+    "photo_removed",
+    ok.isAdmin ? "admin" : "manager",
+    p.uploaded_by ? `was ${p.uploaded_by}'s photo` : undefined,
+  );
 
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   revalidatePath("/walkthroughs");
@@ -226,6 +270,7 @@ export async function answerWalkQuestion(
     .is("signed_at", null);
   if (error) return { error: "Could not save that. Try again." };
 
+  await logWalkEvent(ok.propertyId, id, "question_answered", answeredBy);
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   revalidatePath("/walkthroughs");
   return { error: null, ok: true };
@@ -259,6 +304,7 @@ export async function reopenWalkCommitment(
     .eq("id", id);
   if (error) return { error: "Could not reopen that." };
 
+  await logWalkEvent(ok.propertyId, id, "reopened", "admin");
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   revalidatePath("/walkthroughs");
   return { error: null, ok: true };
