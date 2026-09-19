@@ -1325,6 +1325,15 @@ export function CloseChecklist({
   const locked = certified !== null;
 
   /**
+   * Signed with boxes still open. The one signal that survives a page reload —
+   * a reason is stored only when the night was certified with work left open —
+   * so it is what the locked banner keys the "a manager can reopen this to
+   * finish it" teaching on. This is the Starlite MDR case: signed early, then
+   * the person who finished the rest could not sign a locked list.
+   */
+  const signedWithOpen = locked && Boolean(saved.openReason);
+
+  /**
    * The banner over a signed list. Named by who, and by how much when this
    * device is the one that signed it — a list reopened on another phone knows
    * the name from the record and not the count.
@@ -1556,31 +1565,49 @@ export function CloseChecklist({
       {locked ? (
         <section className="panel border-ink bg-ink text-paper px-4 py-3">
           <p className="text-title tracking-[0.08em]">{certifiedLabel}</p>
-          <p className="text-label mt-1 tracking-[0.08em] opacity-70">
-            {t(
-              "Signed and locked. Nothing on this list can change now.",
-              "Firmada y cerrada. Ya nada de esta lista puede cambiar.",
-            )}
-          </p>
+          {signedWithOpen ? (
+            /* The exact trap from the floor: it was signed with boxes still
+               open, so it locked, and the closer who then finished them was
+               told the list would not let them sign. The banner names the way
+               out instead of leaving them stuck — a manager reopens it below,
+               the crew finishes, and it is signed again. */
+            <p className="text-label text-warn mt-1 leading-relaxed tracking-[0.08em]">
+              {t(
+                "This was signed with boxes still open. If that work is now done, a manager reopens it below so the crew can finish and sign it.",
+                "Se firmó con casillas aún abiertas. Si ese trabajo ya está hecho, un gerente la reabre abajo para que el equipo lo termine y lo firme.",
+              )}
+            </p>
+          ) : (
+            <p className="text-label mt-1 tracking-[0.08em] opacity-70">
+              {t(
+                "Signed and locked. Nothing on this list can change now.",
+                "Firmada y cerrada. Ya nada de esta lista puede cambiar.",
+              )}
+            </p>
+          )}
 
           {/* Behind a disclosure, not a button on the banner. Reopening a
               signed night should take a decision, and the person who needs it
-              will find it — the person who does not should not trip over it. */}
-          <details className="mt-3">
+              will find it — the person who does not should not trip over it.
+              Opened by default only when it was signed with work still open,
+              because that is the night that actually needs finishing. */}
+          <details className="mt-3" open={signedWithOpen}>
             <summary className="text-label inline-flex min-h-11 cursor-pointer items-center tracking-[0.08em] underline underline-offset-4 opacity-70">
-              Reopen with a manager PIN
+              {t("Reopen with a manager PIN", "Reabrir con el PIN de un gerente")}
             </summary>
 
             <div className="mt-3 space-y-3">
               <p className="text-label leading-relaxed tracking-[0.08em] opacity-70">
-                The signature already on this night is kept. The record will
-                show it was certified, reopened, and certified again.
+                {t(
+                  "A manager enters their PIN and a reason, and the night unlocks so the crew can finish. Ticks and photos already on it stay. Sign it again when the work is done. The record shows it was certified, reopened, and certified again.",
+                  "Un gerente pone su PIN y un motivo, y la noche se reabre para que el equipo termine. Las marcas y fotos que ya tiene se quedan. Fírmala de nuevo cuando el trabajo esté hecho. El registro muestra que se certificó, se reabrió y se volvió a certificar.",
+                )}
               </p>
               <input
                 className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
                 inputMode="numeric"
                 autoComplete="off"
-                placeholder="Manager PIN"
+                placeholder={t("Manager PIN", "PIN de gerente")}
                 type="password"
                 value={reopenPin}
                 onChange={(event) => setReopenPin(event.target.value)}
@@ -1588,7 +1615,10 @@ export function CloseChecklist({
               <input
                 className="field bg-paper/10 border-paper/25 text-paper placeholder:text-paper/40"
                 autoComplete="off"
-                placeholder="Why you are reopening this (required)"
+                placeholder={t(
+                  "Why you are reopening this (required)",
+                  "Por qué la reabres (requerido)",
+                )}
                 value={reopenReason}
                 onChange={(event) => setReopenReason(event.target.value)}
               />
@@ -1603,7 +1633,9 @@ export function CloseChecklist({
                 disabled={saving}
                 onClick={() => void reopen()}
               >
-                {saving ? "Unlocking…" : "Unlock this night"}
+                {saving
+                  ? t("Unlocking…", "Reabriendo…")
+                  : t("Unlock this night", "Reabrir esta noche")}
               </button>
             </div>
           </details>
