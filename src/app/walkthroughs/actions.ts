@@ -149,6 +149,48 @@ export async function signWalkCommitment(
 }
 
 /**
+ * Pulls a photo back off an open commitment. The one that landed on the wrong
+ * item is the manager's to fix, so this is scoped the same as the sign-off and
+ * needs no admin. It refuses once the item is signed: a signed record is not
+ * edited, it is reopened first and then the photo comes off while it is open.
+ * The storage object is removed too, best effort, so nothing is orphaned.
+ */
+export async function removeWalkPhoto(
+  _prev: SignState,
+  formData: FormData,
+): Promise<SignState> {
+  const photoId = String(formData.get("photoId") ?? "");
+  if (!photoId) return { error: "No photo given." };
+
+  const { data: photo } = await db()
+    .from("walk_photos")
+    .select("id, path, commitment_id")
+    .eq("id", photoId)
+    .maybeSingle();
+  const p = photo as { path: string; commitment_id: string } | null;
+  if (!p) return { error: "That photo is already gone." };
+
+  const ok = await reach(p.commitment_id);
+  if (!ok) return { error: "That is not yours to change." };
+  if (ok.signed) {
+    return { error: "Reopen the item first, then the photo can come off." };
+  }
+
+  const { error } = await db().from("walk_photos").delete().eq("id", photoId);
+  if (error) return { error: "Could not remove that. Try again." };
+
+  if (p.path) {
+    // Best effort: a leftover file in a private bucket is harmless, and a
+    // failed cleanup must not fail the removal the manager asked for.
+    await db().storage.from(PHOTO_BUCKET).remove([p.path]);
+  }
+
+  revalidatePath(`/walkthroughs/${ok.propertyId}`);
+  revalidatePath("/walkthroughs");
+  return { error: null, ok: true };
+}
+
+/**
  * Answers an open question and closes it. A question is not signed with a
  * photo, it is answered in words, so this is its version of the sign-off: an
  * answer and a name, no photo. Same venue scope as everything else here, so a

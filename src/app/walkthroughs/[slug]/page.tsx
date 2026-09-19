@@ -185,17 +185,17 @@ function CommitmentRow({
   const answered = item.status === "answered";
   const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
-  const photoUrls = item.photos
-    .map((p) => urls.get(p.path))
-    .filter((u): u is string => Boolean(u));
+  const photos = item.photos
+    .map((p) => ({ id: p.id, url: urls.get(p.path) }))
+    .filter((p): p is { id: string; url: string } => Boolean(p.url));
   const photoStrip =
-    photoUrls.length > 0 ? (
+    photos.length > 0 ? (
       <div className="mt-3 flex flex-wrap gap-2">
-        {photoUrls.map((url, i) => (
+        {photos.map((p) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            key={i}
-            src={url}
+            key={p.id}
+            src={p.url}
             alt=""
             className="h-16 w-16 rounded-[4px] object-cover"
           />
@@ -263,7 +263,7 @@ function CommitmentRow({
           id={item.id}
           signed={signed}
           canReopen={isAdmin}
-          initialPhotos={photoUrls}
+          initialPhotos={photos}
         />
       )}
     </li>

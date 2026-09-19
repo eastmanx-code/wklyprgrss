@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import {
   attachWalkPhoto,
+  removeWalkPhoto,
   reopenWalkCommitment,
   signWalkCommitment,
   walkPhotoUploadUrl,
@@ -15,9 +16,11 @@ import { compressToJpeg } from "@/lib/compress";
  * The check-off: photograph the thing done, put a name to it, sign.
  *
  * The photo is the gate. The sign button stays dead until at least one picture
- * is on the commitment, the same rule the close lists live by. Once signed the
- * row locks; only an admin can reopen it, in case the picture did not show what
- * was asked.
+ * is on the commitment, the same rule the close lists live by. A photo put on
+ * the wrong item can be pulled back off while the item is still open, so a
+ * mistake is the manager's to fix and does not need the office. Once signed the
+ * row locks; only an admin can reopen it, and a photo can be removed again once
+ * it is open.
  */
 export function CommitmentActions({
   id,
@@ -28,15 +31,16 @@ export function CommitmentActions({
   id: string;
   signed: boolean;
   canReopen: boolean;
-  initialPhotos: string[];
+  initialPhotos: { id: string; url: string }[];
 }) {
   const router = useRouter();
-  const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const hasPhoto = initialPhotos.length > 0;
 
   async function pick(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -57,7 +61,9 @@ export function CommitmentActions({
       if (!res.ok) throw new Error(`upload ${res.status}`);
       const rec = await attachWalkPhoto(id, target.path, name.trim());
       if (rec.error) throw new Error(rec.error);
-      setPhotos((p) => [...p, URL.createObjectURL(jpeg)]);
+      // Re-fetch so the new photo comes back with its id, which is what lets it
+      // be removed again if it landed on the wrong item.
+      router.refresh();
     } catch {
       setError("That photo did not upload. Try again.");
     } finally {
@@ -66,8 +72,19 @@ export function CommitmentActions({
     }
   }
 
+  async function remove(photoId: string) {
+    setBusy(true);
+    setError(null);
+    const data = new FormData();
+    data.set("photoId", photoId);
+    const r = await removeWalkPhoto({ error: null }, data);
+    setBusy(false);
+    if (r.error) setError(r.error);
+    else router.refresh();
+  }
+
   async function sign() {
-    if (photos.length === 0) {
+    if (!hasPhoto) {
       setError("Add a photo first.");
       return;
     }
@@ -104,11 +121,11 @@ export function CommitmentActions({
       <div className="mt-3 space-y-2">
         {initialPhotos.length > 0 ? (
           <div className="flex flex-wrap gap-2">
-            {initialPhotos.map((url, i) => (
+            {initialPhotos.map((p) => (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                key={i}
-                src={url}
+                key={p.id}
+                src={p.url}
                 alt=""
                 className="h-16 w-16 rounded-[4px] object-cover"
               />
@@ -136,16 +153,28 @@ export function CommitmentActions({
 
   return (
     <div className="mt-3 space-y-3">
-      {photos.length > 0 ? (
+      {hasPhoto ? (
         <div className="flex flex-wrap gap-2">
-          {photos.map((url, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={i}
-              src={url}
-              alt=""
-              className="h-16 w-16 rounded-[4px] object-cover"
-            />
+          {initialPhotos.map((p) => (
+            <span key={p.id} className="relative inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={p.url}
+                alt=""
+                className="h-16 w-16 rounded-[4px] object-cover"
+              />
+              {/* Pull a photo back off while the item is still open, for the
+                  one on the wrong task. */}
+              <button
+                type="button"
+                onClick={() => remove(p.id)}
+                disabled={busy}
+                aria-label="Remove this photo"
+                className="bg-surface text-warn ring-card-border absolute -top-2 -right-2 grid size-5 place-items-center rounded-full text-[13px] leading-none ring-1"
+              >
+                ×
+              </button>
+            </span>
           ))}
         </div>
       ) : null}
@@ -164,11 +193,7 @@ export function CommitmentActions({
           onChange={pick}
           disabled={busy}
         />
-        {busy
-          ? "Working…"
-          : photos.length > 0
-            ? "Add another photo"
-            : "Add a photo"}
+        {busy ? "Working…" : hasPhoto ? "Add another photo" : "Add a photo"}
       </label>
 
       <input
@@ -189,7 +214,7 @@ export function CommitmentActions({
       <button
         type="button"
         onClick={sign}
-        disabled={busy || photos.length === 0}
+        disabled={busy || !hasPhoto}
         className="btn btn-sm"
       >
         Sign off
