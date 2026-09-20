@@ -10,7 +10,7 @@ import {
   signWalkCommitment,
   walkPhotoUploadUrl,
 } from "@/app/walkthroughs/actions";
-import { compressToJpeg } from "@/lib/compress";
+import { compressToJpeg, decodeMessage } from "@/lib/compress";
 import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 
 /**
@@ -49,14 +49,18 @@ export function CommitmentActions({
     setBusy(true);
     setError(null);
     try {
-      const jpeg = await compressToJpeg(file).catch(() => file);
+      // No silent fallback to the raw file: an iPhone HEIC that fails to convert
+      // uploads as a picture most browsers cannot render, which is the broken
+      // photo a manager could never clear. compressToJpeg now reads HEIC too, so
+      // a real failure here is worth surfacing rather than storing anyway.
+      const jpeg = await compressToJpeg(file);
       const target = await walkPhotoUploadUrl(id);
       if (target.error || !target.signedUrl || !target.path) {
         throw new Error(target.error ?? "no url");
       }
       const res = await fetch(target.signedUrl, {
         method: "PUT",
-        headers: { "content-type": jpeg.type || "image/jpeg" },
+        headers: { "content-type": "image/jpeg" },
         body: jpeg,
       });
       if (!res.ok) throw new Error(`upload ${res.status}`);
@@ -65,8 +69,8 @@ export function CommitmentActions({
       // Re-fetch so the new photo comes back with its id, which is what lets it
       // be removed again if it landed on the wrong item.
       router.refresh();
-    } catch {
-      setError("That photo did not upload. Try again.");
+    } catch (e) {
+      setError(decodeMessage(e));
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";

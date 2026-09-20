@@ -91,6 +91,37 @@ function decodeViaImgElement(file: File): Promise<HTMLImageElement> {
   });
 }
 
+/**
+ * Is this an Apple HEIC/HEIF capture?
+ *
+ * Type is the tell when it is there, but a file picked from the library often
+ * arrives with an empty type on Android and some desktop browsers, so the
+ * extension is the backstop. Either way, the browser decoders below cannot read
+ * it off anything but Safari, which is what makes the WASM step below necessary.
+ */
+function isHeic(file: File): boolean {
+  const type = file.type.toLowerCase();
+  if (type.includes("heic") || type.includes("heif")) return true;
+  return /\.hei[cf]$/i.test(file.name);
+}
+
+/**
+ * Decode a HEIC to a JPEG blob in pure WASM, no browser support required.
+ *
+ * This is the one thing a canvas cannot do for us: Chrome, Firefox and every
+ * non-Safari browser refuse HEIC outright, so `decode` below throws on them and
+ * the raw HEIC was being uploaded as-is — a file most browsers then cannot
+ * render, which is the "tap to retry that never works" a manager hit. libheif,
+ * loaded only when a HEIC actually appears, reads it everywhere. The result
+ * still goes through the canvas pass below for sizing, so nothing else changes.
+ */
+async function heicToJpeg(file: File): Promise<File> {
+  const { default: heic2any } = await import("heic2any");
+  const out = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.9 });
+  const blob = Array.isArray(out) ? out[0] : out;
+  return new File([blob], "photo.jpg", { type: "image/jpeg" });
+}
+
 /** Whichever decoder can actually read this file, modern one first. */
 async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
   try {
@@ -112,7 +143,12 @@ async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
  * iPhone HEIC capture into something every browser can render.
  */
 export async function compressToJpeg(file: File): Promise<File> {
-  const source = await decode(file);
+  // HEIC first, on any browser but Safari the canvas decoders below cannot read
+  // it. This turns it into a JPEG they can, before the sizing pass.
+  const readable = isHeic(file)
+    ? await withTimeout(heicToJpeg(file), DECODE_TIMEOUT_MS)
+    : file;
+  const source = await decode(readable);
   const sourceWidth =
     source instanceof HTMLImageElement ? source.naturalWidth : source.width;
   const sourceHeight =
