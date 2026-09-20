@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { signedUrl } from "@/lib/photos";
 import { getSession, mayManage, mayReachVenue } from "@/lib/session";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
@@ -232,6 +233,36 @@ export async function removeWalkPhoto(
   revalidatePath(`/walkthroughs/${ok.propertyId}`);
   revalidatePath("/walkthroughs");
   return { error: null, ok: true };
+}
+
+/**
+ * A fresh signed URL for one walkthrough photo.
+ *
+ * The private bucket's URLs lapse after an hour. A photo strip left open past
+ * that shows a "tap to retry" tile, and retrying against the same lapsed URL
+ * can never succeed, so a photo that is still there reads as broken with no way
+ * back. This re-signs the path by photo id so the retry has a live URL to load.
+ * It reads only, and is scoped through reach() so a photo re-signs only for
+ * someone who may see the building it belongs to; a signed or display-only item
+ * is fine, since nothing here changes the item.
+ */
+export async function refreshWalkPhotoUrl(
+  photoId: string,
+): Promise<string | null> {
+  if (!photoId) return null;
+
+  const { data: photo } = await db()
+    .from("walk_photos")
+    .select("path, commitment_id")
+    .eq("id", photoId)
+    .maybeSingle();
+  const p = photo as { path: string; commitment_id: string } | null;
+  if (!p?.path) return null;
+
+  const ok = await reach(p.commitment_id);
+  if (!ok) return null;
+
+  return signedUrl(p.path);
 }
 
 /**

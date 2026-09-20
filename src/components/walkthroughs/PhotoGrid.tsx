@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { refreshWalkPhotoUrl } from "@/app/walkthroughs/actions";
+
 export type GridPhoto = { id: string; url: string };
 
 /**
@@ -11,8 +13,10 @@ export type GridPhoto = { id: string; url: string };
  * the same. A tap opens the full picture over the page. A photo that does not
  * load shows a plain "tap to retry" tile instead of the browser's broken-image
  * icon, because a private signed URL can lapse and the file is almost always
- * still there. And when the caller passes onRemove, each open item's photo gets
- * the × to pull it back off, for the one that landed on the wrong task.
+ * still there. Retry does not re-load the same URL — a lapsed one only lapses
+ * again — it asks the server for a freshly signed one and swaps it in. And when
+ * the caller passes onRemove, each open item's photo gets the × to pull it back
+ * off, for the one that landed on the wrong task.
  */
 export function PhotoGrid({
   photos,
@@ -25,21 +29,44 @@ export function PhotoGrid({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [failed, setFailed] = useState<Set<string>>(new Set());
-  // Bumped on a retry so the <img> remounts and re-fetches the same URL.
-  const [attempt, setAttempt] = useState(0);
+  // A retry mints a new signed URL server-side; when it lands, it lives here
+  // and wins over the one that was passed in. Keyed by photo id.
+  const [fresh, setFresh] = useState<Record<string, string>>({});
+  const [retrying, setRetrying] = useState<Set<string>>(new Set());
 
   if (photos.length === 0) return null;
+
+  const urlOf = (p: GridPhoto) => fresh[p.id] ?? p.url;
 
   function markFailed(id: string) {
     setFailed((s) => new Set(s).add(id));
   }
-  function retry(id: string) {
-    setFailed((s) => {
+  function setRetry(id: string, on: boolean) {
+    setRetrying((s) => {
       const next = new Set(s);
-      next.delete(id);
+      if (on) next.add(id);
+      else next.delete(id);
       return next;
     });
-    setAttempt((a) => a + 1);
+  }
+  async function retry(id: string) {
+    if (retrying.has(id)) return;
+    setRetry(id, true);
+    try {
+      const url = await refreshWalkPhotoUrl(id);
+      if (url) {
+        setFresh((f) => ({ ...f, [id]: url }));
+        setFailed((s) => {
+          const next = new Set(s);
+          next.delete(id);
+          return next;
+        });
+      }
+      // A null answer means the file is genuinely gone or not ours to see, so
+      // the tile stays failed rather than flickering back to a broken image.
+    } finally {
+      setRetry(id, false);
+    }
   }
 
   return (
@@ -51,21 +78,22 @@ export function PhotoGrid({
               <button
                 type="button"
                 onClick={() => retry(p.id)}
+                disabled={retrying.has(p.id)}
                 className="bg-inset text-muted ring-card-border grid h-16 w-16 place-items-center rounded-[4px] px-1 text-center text-[10px] leading-tight ring-1"
               >
-                Didn’t load · tap to retry
+                {retrying.has(p.id) ? "Loading…" : "Didn’t load · tap to retry"}
               </button>
             ) : (
               <button
                 type="button"
-                onClick={() => setOpen(p.url)}
+                onClick={() => setOpen(urlOf(p))}
                 className="block cursor-zoom-in"
                 aria-label="View photo larger"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  key={`${p.id}-${attempt}`}
-                  src={p.url}
+                  key={urlOf(p)}
+                  src={urlOf(p)}
                   alt=""
                   onError={() => markFailed(p.id)}
                   className="h-16 w-16 rounded-[4px] object-cover"
