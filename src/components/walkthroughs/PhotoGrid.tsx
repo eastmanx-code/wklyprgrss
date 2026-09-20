@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { refreshWalkPhotoUrl } from "@/app/walkthroughs/actions";
 
@@ -10,13 +10,20 @@ export type GridPhoto = { id: string; url: string };
  * The photo strip, everywhere a walkthrough shows photos.
  *
  * Three jobs in one place so signed, open, and display-only items all behave
- * the same. A tap opens the full picture over the page. A photo that does not
- * load shows a plain "tap to retry" tile instead of the browser's broken-image
- * icon, because a private signed URL can lapse and the file is almost always
- * still there. Retry does not re-load the same URL — a lapsed one only lapses
- * again — it asks the server for a freshly signed one and swaps it in. And when
- * the caller passes onRemove, each open item's photo gets the × to pull it back
- * off, for the one that landed on the wrong task.
+ * the same. A tap opens the full picture over the page.
+ *
+ * The pictures sit in a private bucket behind a signed URL that lapses after an
+ * hour, so a strip left open past that would load nothing but broken images
+ * with no way back, worst of all on a signed item that has no upload control.
+ * Two things keep that from happening. When an image fails, the grid quietly
+ * asks the server for a freshly signed URL and swaps it in, so a lapsed link
+ * heals itself with nothing for the person to do. Only if that fresh URL also
+ * fails does the broken tile appear, and its tap re-signs again rather than
+ * re-loading the same dead link. A file that is genuinely gone lands on that
+ * tile and stays there.
+ *
+ * And when the caller passes onRemove, each open item's photo gets the × to
+ * pull it back off, for the one that landed on the wrong task.
  */
 export function PhotoGrid({
   photos,
@@ -29,10 +36,14 @@ export function PhotoGrid({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [failed, setFailed] = useState<Set<string>>(new Set());
-  // A retry mints a new signed URL server-side; when it lands, it lives here
+  // A refresh mints a new signed URL server-side; when it lands, it lives here
   // and wins over the one that was passed in. Keyed by photo id.
   const [fresh, setFresh] = useState<Record<string, string>>({});
   const [retrying, setRetrying] = useState<Set<string>>(new Set());
+  // Which photos have already had their one silent auto-refresh. A ref, not
+  // state, so a second onError firing before the re-render still sees it and
+  // does not fetch twice or loop.
+  const autoTried = useRef<Set<string>>(new Set());
 
   if (photos.length === 0) return null;
 
@@ -49,21 +60,36 @@ export function PhotoGrid({
       return next;
     });
   }
+  /** Pull a fresh signed URL in; returns whether one came back. */
+  async function resign(id: string): Promise<boolean> {
+    const url = await refreshWalkPhotoUrl(id);
+    if (!url) return false;
+    setFresh((f) => ({ ...f, [id]: url }));
+    setFailed((s) => {
+      const next = new Set(s);
+      next.delete(id);
+      return next;
+    });
+    return true;
+  }
+  // First failure: try once to heal it silently before the broken tile shows.
+  // If it lapsed, the fresh URL loads and the person never sees a gap; if the
+  // file is really gone, or the fresh one fails too, fall through to the tile.
+  async function onImgError(id: string) {
+    if (autoTried.current.has(id)) {
+      markFailed(id);
+      return;
+    }
+    autoTried.current.add(id);
+    if (!(await resign(id))) markFailed(id);
+  }
   async function retry(id: string) {
     if (retrying.has(id)) return;
     setRetry(id, true);
     try {
-      const url = await refreshWalkPhotoUrl(id);
-      if (url) {
-        setFresh((f) => ({ ...f, [id]: url }));
-        setFailed((s) => {
-          const next = new Set(s);
-          next.delete(id);
-          return next;
-        });
-      }
       // A null answer means the file is genuinely gone or not ours to see, so
       // the tile stays failed rather than flickering back to a broken image.
+      await resign(id);
     } finally {
       setRetry(id, false);
     }
@@ -95,7 +121,7 @@ export function PhotoGrid({
                   key={urlOf(p)}
                   src={urlOf(p)}
                   alt=""
-                  onError={() => markFailed(p.id)}
+                  onError={() => onImgError(p.id)}
                   className="h-16 w-16 rounded-[4px] object-cover"
                 />
               </button>
