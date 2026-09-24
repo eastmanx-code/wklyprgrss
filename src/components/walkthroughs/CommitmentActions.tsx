@@ -4,36 +4,22 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
-  attachWalkPhoto,
   removeWalkPhoto,
   reopenWalkCommitment,
   signWalkCommitment,
-  walkPhotoUploadUrl,
 } from "@/app/walkthroughs/actions";
 import { compressToJpeg, decodeMessage } from "@/lib/compress";
+import { enqueueWalkPhoto, walkPhotoKey, type WalkPhotoOp } from "@/lib/outbox";
+import { bumpWalkDrain, sendWalkPhoto } from "@/lib/walk-send";
 import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 
-/**
- * Three tries with a widening pause between them.
- *
- * The close lists survive a bad connection because they queue to an outbox and
- * drain later. The walkthrough had none of that: one fetch, and on failure the
- * manager was told to do it again. In a venue on shift that is the difference
- * between a commitment being closed and being redone four days running.
- */
-async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
-  let last: unknown;
-  for (let i = 0; i < attempts; i += 1) {
-    try {
-      return await fn();
-    } catch (e) {
-      last = e;
-      if (i < attempts - 1) {
-        await new Promise((r) => setTimeout(r, 400 * 2 ** i));
-      }
-    }
-  }
-  throw last;
+/** A stable, collision-free object key, with a fallback for old Safari. */
+function newPath(commitmentId: string): string {
+  const id =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+  return `walk/${commitmentId}/${id}.jpg`;
 }
 
 /**
@@ -45,6 +31,11 @@ async function withRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
  * mistake is the manager's to fix and does not need the office. Once signed the
  * row locks; only an admin can reopen it, and a photo can be removed again once
  * it is open.
+ *
+ * A picked photo goes to the same offline queue the nightly close lists ride,
+ * so a walkthrough closed out in a basement bar survives the page being shut or
+ * the signal dropping outright. It lands durably in the browser here and the
+ * sending belongs to the one WalkQueue drainer on the board, which this nudges.
  */
 export function CommitmentActions({
   id,
@@ -71,58 +62,41 @@ export function CommitmentActions({
     if (!files.length) return;
     setBusy(true);
     setError(null);
-    let done = 0;
+    let sentNow = false;
     try {
       for (const file of files) {
-        // No silent fallback to the raw file: an iPhone HEIC that fails to convert
-        // uploads as a picture most browsers cannot render, which is the broken
-        // photo a manager could never clear. compressToJpeg now reads HEIC too, so
-        // a real failure here is worth surfacing rather than storing anyway.
+        // No silent fallback to the raw file: an iPhone HEIC that fails to
+        // convert uploads as a picture most browsers cannot render. compressToJpeg
+        // reads HEIC too, so a real failure here is worth surfacing.
         const jpeg = await compressToJpeg(file);
+        const path = newPath(id);
+        const op: WalkPhotoOp = {
+          kind: "walkphoto",
+          key: walkPhotoKey(path),
+          commitmentId: id,
+          path,
+          name: name.trim(),
+          bytes: jpeg.size,
+          clientAt: new Date().toISOString(),
+        };
 
-        // The signed URL and the PUT retry together. A URL that was issued and
-        // then half used cannot be reused, so asking for a fresh one is part of
-        // the retry rather than something done once above it. This is the step
-        // that fails in a basement bar on bad wifi, and before this it failed
-        // once and stopped, which is what sent managers back to redo work they
-        // had already done.
-        const path = await withRetry(async () => {
-          const target = await walkPhotoUploadUrl(id);
-          if (target.error || !target.signedUrl || !target.path) {
-            throw new Error(target.error ?? "no url");
-          }
-          const res = await fetch(target.signedUrl, {
-            method: "PUT",
-            headers: { "content-type": "image/jpeg" },
-            body: jpeg,
-          });
-          if (!res.ok) throw new Error(`upload ${res.status}`);
-          return target.path;
-        });
-
-        // The bytes are in storage from here on. Registering them is what makes
-        // them count, so this tries harder than the upload did: an object with
-        // no row behind it is invisible to the manager, the board and the
-        // office, and it cannot be retried later because nothing knows it.
-        await withRetry(async () => {
-          const rec = await attachWalkPhoto(id, path, name.trim());
-          if (rec.error) throw new Error(rec.error);
-        }, 5);
-
-        done += 1;
+        const held = await enqueueWalkPhoto(op, jpeg);
+        if (!held.stored) {
+          // The queue would not take it, so sending now is the only way through.
+          // A failure here is real and surfaces, the same as before the queue.
+          const r = await sendWalkPhoto(op, jpeg);
+          if (r.error) throw new Error(r.error);
+          sentNow = true;
+        }
       }
-      // Re-fetch so the new photo comes back with its id, which is what lets it
-      // be removed again if it landed on the wrong item.
-      router.refresh();
+      // Wake the board's drainer to push up whatever just queued, if there is
+      // signal. Offline, it does nothing and the photos wait, which is the point.
+      bumpWalkDrain();
+      // A photo sent past the queue is already a row, so show it now; queued
+      // ones appear when the drainer lands them.
+      if (sentNow) router.refresh();
     } catch (e) {
-      // Say how far it got. "It failed" after four of five landed sends someone
-      // back to do all five again.
-      setError(
-        done
-          ? `${done} of ${files.length} uploaded. ${decodeMessage(e)}`
-          : decodeMessage(e),
-      );
-      if (done) router.refresh();
+      setError(decodeMessage(e));
     } finally {
       setBusy(false);
       if (fileRef.current) fileRef.current.value = "";

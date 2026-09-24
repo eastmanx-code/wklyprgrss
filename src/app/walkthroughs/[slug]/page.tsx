@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Dial } from "@/components/Dial";
 import { BackLink } from "@/components/ui";
 import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
+import { WalkQueue } from "@/components/walkthroughs/WalkQueue";
 import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 import { QuestionAnswer } from "@/components/walkthroughs/QuestionAnswer";
 import { signedUrls } from "@/lib/photos";
@@ -97,6 +98,10 @@ export default async function PropertyPage({
         </p>
         <h1 className="text-metric mt-2 font-medium">Walkthrough</h1>
       </header>
+
+      {/* The one drainer for this board's photo queue, and the only place it is
+          shown what is still waiting to upload. */}
+      <WalkQueue />
 
       {/* The building's own ring, small, with the counts that make it. */}
       <div className="panel mb-5 flex items-center gap-5 p-5">
