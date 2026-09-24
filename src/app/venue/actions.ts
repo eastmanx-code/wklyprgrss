@@ -505,6 +505,18 @@ export async function clearApproved(
   // not been graded by a screen that was naming both the people who graded it.
   // The five venues with a single house kept resetting normally, which is why
   // it looked like nobody wanted to.
+  // One house at a time, so a dining room graded this week can clear its own
+  // finished work without waiting on a kitchen grade that never came. A single
+  // missing grade used to freeze the whole board, with the leader no way to act
+  // and only an admin able to unfreeze it. Named house clears itself on its own
+  // grade; no house named is the old whole-venue reset, kept for the callers
+  // that still send none, and it still needs every house it owes graded.
+  const requestedHouse = String(formData.get("house") ?? "").trim();
+  const house: House | null =
+    requestedHouse === "FOH" || requestedHouse === "HOH"
+      ? requestedHouse
+      : null;
+
   const gradedWeek = mostRecentCompletedWeek();
   const { data: venueRow } = await db()
     .from("venues")
@@ -516,16 +528,23 @@ export async function clearApproved(
     { houses: (venueRow as { houses: House[] } | null)?.houses ?? HOUSES },
     gradedWeek,
   );
-  if (!owed.every((house) => grades.has(house))) {
+  const target = house ? owed.filter((h) => h === house) : owed;
+  if (house && target.length === 0) {
+    // A house the venue does not run, or one that does not count this week.
+    return { error: "Nothing to reset there." };
+  }
+  if (!target.every((h) => grades.has(h))) {
     return { error: "That week has not been graded yet." };
   }
 
   const { data: items } = await db()
     .from("items")
-    .select("id")
+    .select("id, house")
     .eq("venue_id", venueId)
     .eq("active", true);
-  const itemIds = ((items ?? []) as { id: string }[]).map((row) => row.id);
+  const itemIds = ((items ?? []) as { id: string; house: House }[])
+    .filter((row) => (house ? row.house === house : true))
+    .map((row) => row.id);
   if (itemIds.length === 0) return { error: null, ok: true };
 
   const { data: subs } = await db()
