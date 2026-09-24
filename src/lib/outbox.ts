@@ -24,8 +24,21 @@
 import { words } from "./trouble";
 
 const DB_NAME = "ww-close";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE = "outbox";
+/**
+ * The walkthrough's own queue, kept apart from the close list's.
+ *
+ * One store shared would have been fewer lines and a real bug: the close
+ * screen's drain reads every op in its store and hands each to a sender that
+ * only knows ticks and proof, so a walkthrough photo sitting in the same store
+ * would be pushed through the proof path on the next close screen and mangled.
+ * A separate pair of stores means the two drains cannot see each other's work,
+ * which is the property that lets the walkthrough borrow this file without
+ * touching a line the close lists run on.
+ */
+const WALK_STORE = "walk-outbox";
+const WALK_BLOBS = "walk-blobs";
 /**
  * The bytes, kept apart from the queue that describes them.
  *
@@ -74,11 +87,38 @@ export type ProofOp = {
 
 export type Op = TickOp | ProofOp;
 
+/**
+ * One walkthrough photo, waiting to go up.
+ *
+ * Kept off the `Op` union on purpose. The close screen's drain hands every Op
+ * to a sender that only knows ticks and proof, and widening that union would
+ * make the walkthrough's photo a shape that sender has to be taught to refuse.
+ * A separate type in a separate store is the same isolation the WALK stores
+ * give the bytes: the two systems share this file and nothing else.
+ *
+ * `path` is the object key, decided when the photo is taken and carried here so
+ * a replay puts the bytes back at the same key and records the same one. That
+ * is what makes retrying safe, the way (night, item, shot) does for proof:
+ * `attachWalkPhoto` no-ops on a path it has already recorded.
+ */
+export type WalkPhotoOp = {
+  kind: "walkphoto";
+  key: string;
+  commitmentId: string;
+  path: string;
+  /** The name that goes on the photo. Blank becomes "manager" server-side. */
+  name: string;
+  bytes: number;
+  clientAt: string;
+};
+
 export const tickKey = (slug: string, itemId: string) =>
   `tick:${slug}:${itemId}`;
 
 export const proofKey = (slug: string, itemId: string, shotIndex: number) =>
   `proof:${slug}:${itemId}:${shotIndex}`;
+
+export const walkPhotoKey = (path: string) => `walkphoto:${path}`;
 
 /**
  * What the device will hold before it says no.
@@ -139,6 +179,14 @@ function db(): Promise<IDBDatabase> {
       }
       if (!held.objectStoreNames.contains(BLOBS)) {
         held.createObjectStore(BLOBS);
+      }
+      // The walkthrough's pair, added at version 3. A store the old versions
+      // never had, so it only ever gets created, never migrated.
+      if (!held.objectStoreNames.contains(WALK_STORE)) {
+        held.createObjectStore(WALK_STORE, { keyPath: "key" });
+      }
+      if (!held.objectStoreNames.contains(WALK_BLOBS)) {
+        held.createObjectStore(WALK_BLOBS);
       }
     };
     request.onsuccess = () => {
@@ -368,9 +416,13 @@ function isStoredBytes(value: unknown): value is StoredBytes {
  * because reading a fifty megabyte video into memory to store it is a bad
  * trade to make on every phone for the sake of the few that need it.
  */
-async function putBytes(key: string, blob: Blob): Promise<string | undefined> {
+async function putBytes(
+  key: string,
+  blob: Blob,
+  blobsStore: string = BLOBS,
+): Promise<string | undefined> {
   try {
-    await run(BLOBS, "readwrite", (store) => store.put(blob, key));
+    await run(blobsStore, "readwrite", (store) => store.put(blob, key));
     return undefined;
   } catch (problem) {
     // Fall through. The reason is carried out so the record can say the
@@ -379,7 +431,7 @@ async function putBytes(key: string, blob: Blob): Promise<string | undefined> {
       buffer: await blob.arrayBuffer(),
       type: blob.type,
     };
-    await run(BLOBS, "readwrite", (store) => store.put(held, key));
+    await run(blobsStore, "readwrite", (store) => store.put(held, key));
     return words(problem);
   }
 }
@@ -390,9 +442,12 @@ async function putBytes(key: string, blob: Blob): Promise<string | undefined> {
  * Comes back a Blob whichever way it went in, so nothing above this line has
  * to know that two ways exist.
  */
-export async function blobFor(key: string): Promise<Blob | undefined> {
+export async function blobFor(
+  key: string,
+  blobsStore: string = BLOBS,
+): Promise<Blob | undefined> {
   try {
-    const held = await run<unknown>(BLOBS, "readonly", (store) =>
+    const held = await run<unknown>(blobsStore, "readonly", (store) =>
       store.get(key),
     );
     if (held instanceof Blob) return held;
@@ -405,10 +460,14 @@ export async function blobFor(key: string): Promise<Blob | undefined> {
   }
 }
 
-async function drop(key: string): Promise<void> {
+async function drop(
+  key: string,
+  store: string = STORE,
+  blobsStore: string = BLOBS,
+): Promise<void> {
   try {
-    await run(STORE, "readwrite", (store) => store.delete(key));
-    await run(BLOBS, "readwrite", (store) => store.delete(key));
+    await run(store, "readwrite", (s) => s.delete(key));
+    await run(blobsStore, "readwrite", (s) => s.delete(key));
   } catch {
     // The store went away mid-drain. Whatever is left in it is unreachable
     // anyway, and throwing here would take down the drain that is currently
@@ -490,4 +549,99 @@ export async function flush(
   }
 
   return { sent, refused, lost, left: await pending() };
+}
+
+// --- The walkthrough's half. Its own stores, so a photo queued here is never
+// seen by the close screen's drain and never fed to the proof sender. Every
+// function below is the walkthrough's alone; the close path above is untouched.
+
+/** What is waiting to go up for the walkthrough, oldest first. */
+export async function queuedWalk(): Promise<WalkPhotoOp[]> {
+  let all: WalkPhotoOp[];
+  try {
+    all = await run<WalkPhotoOp[]>(WALK_STORE, "readonly", (store) =>
+      store.getAll(),
+    );
+  } catch {
+    return [];
+  }
+  return [...all].sort((a, b) => a.clientAt.localeCompare(b.clientAt));
+}
+
+/** The walkthrough bytes waiting, so the same cap can be enforced here too. */
+export async function queuedWalkBytes(): Promise<number> {
+  return (await queuedWalk()).reduce((n, op) => n + op.bytes, 0);
+}
+
+/** How many walkthrough photos are still to go up. */
+export async function pendingWalk(): Promise<number> {
+  return (await queuedWalk()).length;
+}
+
+/**
+ * Put a walkthrough photo in the queue, bytes and all.
+ *
+ * The same contract as `enqueueProof`: never throws, and every failure comes
+ * back as an answer so the caller knows it has to send the bytes itself. Shares
+ * the WebKit blob fallback and the byte cap through the helpers above.
+ */
+export async function enqueueWalkPhoto(
+  op: WalkPhotoOp,
+  blob: Blob,
+): Promise<Held> {
+  try {
+    const held = await queuedWalkBytes();
+    if (held + blob.size > QUEUE_BYTES_MAX) {
+      return { stored: false, reason: "full" };
+    }
+    const fellBack = await putBytes(op.key, blob, WALK_BLOBS);
+    await run(WALK_STORE, "readwrite", (store) => store.put(op));
+    return fellBack ? { stored: true, fellBack } : { stored: true };
+  } catch (problem) {
+    return { stored: false, reason: "unavailable", why: words(problem) };
+  }
+}
+
+/**
+ * Send the queued walkthrough photos, oldest first, keeping whatever will not
+ * go. The same shape as `flush`, scoped to the walk stores: a thrown error is
+ * the network and stops the drain with the rest kept; a returned error is the
+ * server refusing and the op is dropped so a certified or vanished item cannot
+ * jam the queue. A capture whose bytes are gone is handed back as lost, the one
+ * outcome worth telling the person about because only they can retake it.
+ */
+export async function flushWalk(
+  send: (op: WalkPhotoOp, blob: Blob) => Promise<{ error: string | null }>,
+): Promise<{
+  sent: number;
+  refused: { op: WalkPhotoOp; error: string }[];
+  lost: WalkPhotoOp[];
+  left: number;
+}> {
+  if (!canQueue()) return { sent: 0, refused: [], lost: [], left: 0 };
+
+  let sent = 0;
+  const refused: { op: WalkPhotoOp; error: string }[] = [];
+  const lost: WalkPhotoOp[] = [];
+
+  for (const op of await queuedWalk()) {
+    let result: { error: string | null };
+    try {
+      const blob = await blobFor(op.key, WALK_BLOBS);
+      if (!blob) {
+        lost.push(op);
+        await drop(op.key, WALK_STORE, WALK_BLOBS);
+        continue;
+      }
+      result = await send(op, blob);
+    } catch {
+      // Network, not refusal. Keep it and stop.
+      break;
+    }
+    await drop(op.key, WALK_STORE, WALK_BLOBS);
+    if (result.error) refused.push({ op, error: result.error });
+    else sent += 1;
+  }
+
+  return { sent, refused, lost, left: await pendingWalk() };
 }

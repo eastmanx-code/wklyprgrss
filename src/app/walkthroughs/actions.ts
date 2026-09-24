@@ -97,15 +97,27 @@ async function logWalkEvent(
  */
 export async function walkPhotoUploadUrl(
   commitmentId: string,
+  wantPath?: string,
 ): Promise<{ error: string | null; path?: string; signedUrl?: string }> {
   const ok = await reach(commitmentId);
   if (!ok) return { error: "That commitment is not yours to sign." };
   if (ok.signed) return { error: "That is already signed." };
 
-  const path = `walk/${commitmentId}/${Date.now()}.jpg`;
+  // The offline queue decides the path when the photo is taken and asks for a
+  // URL to that exact key, so a retry re-uploads the same object rather than
+  // scattering a new one each attempt. Only a path under this commitment's own
+  // folder is honoured; anything else falls back to a fresh one, so a bad value
+  // can never point the upload somewhere it should not go.
+  const path =
+    wantPath && wantPath.startsWith(`walk/${commitmentId}/`)
+      ? wantPath
+      : `walk/${commitmentId}/${Date.now()}.jpg`;
+  // upsert, because the retry that makes a fixed path worth having is the one
+  // where the bytes already landed and only the record was lost. Re-putting the
+  // same photo over itself is the safe way through that.
   const { data, error } = await db()
     .storage.from(PHOTO_BUCKET)
-    .createSignedUploadUrl(path);
+    .createSignedUploadUrl(path, { upsert: true });
   if (error || !data) return { error: "Could not start the upload." };
   return { error: null, path, signedUrl: data.signedUrl };
 }
@@ -121,6 +133,17 @@ export async function attachWalkPhoto(
   if (!path.startsWith(`walk/${commitmentId}/`)) {
     return { error: "Something went wrong. Try again." };
   }
+  // Idempotent on the path. The offline queue replays a photo whenever its
+  // upload landed but the record did not, so the same path can arrive twice;
+  // recording it twice would show the manager two of one photo. A row already
+  // here means this exact photo is already counted, so the replay is done.
+  const { data: already } = await db()
+    .from("walk_photos")
+    .select("id")
+    .eq("path", path)
+    .maybeSingle();
+  if (already) return { error: null };
+
   const { error } = await db().from("walk_photos").insert({
     commitment_id: commitmentId,
     path,
