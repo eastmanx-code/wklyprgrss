@@ -15,7 +15,6 @@ import { getSession, venueOfSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
   countUnapproved,
-  fullyGradedVenueIds,
   getLeaderBoard,
   getVenue,
   gradesFor,
@@ -56,7 +55,6 @@ export default async function VenuePage() {
   // week: a venue reset on the strength of the dining room alone would clear a
   // kitchen nobody had looked at.
   const grades = await gradesFor(venue.id, gradedWeek);
-  const fullyGraded = (await fullyGradedVenueIds(gradedWeek)).has(venue.id);
   // Both shots, not just the headline one. A tile that showed only the after
   // made a before uploaded the same week invisible, which a leader read as the
   // second photo overriding the first.
@@ -78,11 +76,6 @@ export default async function VenuePage() {
           : formatWeekStart(houseStartWeek(house.house)),
       },
     ]),
-  );
-
-  const finished = board.houses.reduce(
-    (sum, house) => sum + house.approvedItemIds.size,
-    0,
   );
 
   /**
@@ -267,17 +260,20 @@ export default async function VenuePage() {
           above either of them, so the first thing on the screen was a button
           about the boards rather than the boards. Whoever is resetting will
           scroll; whoever is walking the building should not have to. */}
-      <ClearFinished
-        venueId={venue.id}
-        finished={finished}
-        graded={fullyGraded}
-        grades={board.houses.map((house) => ({
-          house: house.house,
-          gradedBy: grades.get(house.house)?.gradedBy ?? null,
-          scored: house.scored,
-        }))}
-        weekLabel={formatWeekStart(gradedWeek)}
-      />
+      {/* One reset per house, each held by its own grade. A dining room graded
+          this week clears itself without waiting on a kitchen grade that has
+          not landed. */}
+      {board.houses.map((house) => (
+        <ClearFinished
+          key={house.house}
+          venueId={venue.id}
+          house={house.house}
+          finished={house.approvedItemIds.size}
+          graded={grades.has(house.house)}
+          gradedBy={grades.get(house.house)?.gradedBy ?? null}
+          weekLabel={formatWeekStart(gradedWeek)}
+        />
+      ))}
 
       <StartOver venueId={venue.id} pending={unapproved} />
 
