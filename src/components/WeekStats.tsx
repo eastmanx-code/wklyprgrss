@@ -81,7 +81,12 @@ export function WeekStats({
   // How the company did, counted in halves rather than venues: a dining room
   // at ten and a kitchen at two is not "one venue at six".
   const judged = scoredHouses.filter((h) => h.hasBoard && h.pendingCount === 0);
-  const wins = judged.filter((h) => isWin(h.approvedCount, h.activeCount));
+  // A short board is never a win however much of it was signed off: eight of a
+  // nine-card kitchen is still a kitchen that never built its tenth card, and
+  // its status already reads FAIL for it.
+  const wins = judged.filter(
+    (h) => h.status !== "FAIL" && isWin(h.approvedCount, h.activeCount),
+  );
 
   // The longest run going, and who is on it. Named because a streak is the
   // one number here worth being seen holding.
