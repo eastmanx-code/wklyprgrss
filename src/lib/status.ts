@@ -631,9 +631,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
 
   // Active-only, because this answers "is this house set up right now".
   const activeCountByKey = new Map<string, number>();
+  // The live cards themselves. This week's completion is measured against the
+  // ten cards actually on the board now, so a photo left on a card that has
+  // since been retired cannot fill one of the ten.
+  const activeIdsByKey = new Map<string, Set<string>>();
   for (const item of allItems.filter((i) => i.active)) {
     const key = keyOf(item.venue_id, item.house);
     activeCountByKey.set(key, (activeCountByKey.get(key) ?? 0) + 1);
+    let ids = activeIdsByKey.get(key);
+    if (!ids) {
+      ids = new Set<string>();
+      activeIdsByKey.set(key, ids);
+    }
+    ids.add(item.id);
   }
 
   // Sent-back submissions are filtered in SQL so they never count anywhere.
@@ -747,17 +757,27 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       (house): HouseWeek => {
         const key = keyOf(venue.id, house);
         const weeks = doneByKeyWeek.get(key);
-        const doneThisWeek = weeks?.get(weekStart);
         /**
-         * What was filed this week, whether or not the task is still on the
-         * board.
+         * What was filed against the ten live cards this week.
          *
-         * This filtered by active, so retiring a finished task took its
-         * photograph out of the score with it and a graded 10/10 fell to 9/10
-         * the moment a venue tidied up. Leaders were told to freeze their boards
-         * until Monday because of it. The work happened; a board edit afterwards
-         * is not a confession that it did not.
+         * The ten are the ten cards on the board now, so only a fresh photo on
+         * a card that is still live fills a slot. A submission left on a card
+         * that has since been retired no longer counts toward the week, which
+         * is what let a nine-card board read as a full ten: one stray photo on
+         * a killed card padded the count and the short board passed.
+         *
+         * This filter is the current week only. Every past week keeps every
+         * filing it ever had, counted a few lines down against all items and
+         * not just the live ones, so retiring a card today never rewrites a
+         * week that was already walked and graded. The old fear, that tidying
+         * a board would drop a graded 10/10 to 9/10, was about exactly that
+         * rewriting of history and it still cannot happen.
          */
+        const activeIds = activeIdsByKey.get(key) ?? new Set<string>();
+        const filedRaw = weeks?.get(weekStart);
+        const doneThisWeek = filedRaw
+          ? new Set([...filedRaw].filter((id) => activeIds.has(id)))
+          : undefined;
         const doneCount = doneThisWeek ? doneThisWeek.size : 0;
         /**
          * Ten. Always ten, whatever the board happens to hold.
@@ -949,6 +969,15 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
   });
 
   /**
+   * A half's tier for the company tally, completion before quality. A half
+   * whose status is already a fail — short of its ten live cards when the
+   * deadline went — is a fail here too, whatever it got signed off. Only a
+   * complete ten is split good or neutral on its approvals.
+   */
+  const houseTier = (h: HouseWeek): "good" | "neutral" | "fail" =>
+    h.status === "FAIL" ? "fail" : tierOf(h.approvedCount, h.activeCount);
+
+  /**
    * The same totals, worked out once per house and never added together.
    *
    * How many venues owe a house changes the denominator: sixteen run a kitchen
@@ -993,15 +1022,14 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           (activeCountByKey.get(keyOf(venue.id, house)) ?? 0) >=
           WEEKLY_ITEM_TARGET,
       ).length,
-      good: mine.filter(
-        (h) => tierOf(h.approvedCount, h.activeCount) === "good",
-      ).length,
-      neutral: mine.filter(
-        (h) => tierOf(h.approvedCount, h.activeCount) === "neutral",
-      ).length,
-      fail: mine.filter(
-        (h) => tierOf(h.approvedCount, h.activeCount) === "fail",
-      ).length,
+      // A half that did not land a fresh photo on all ten live cards by the
+      // deadline is a fail whatever it got signed off, the same verdict its
+      // status already carries. Only a complete ten is then split good or
+      // neutral on what was approved, so a short board can never sit in the
+      // neutral column the way a nine-card kitchen padded to ten once did.
+      good: mine.filter((h) => houseTier(h) === "good").length,
+      neutral: mine.filter((h) => houseTier(h) === "neutral").length,
+      fail: mine.filter((h) => houseTier(h) === "fail").length,
       finishes: owed
         .map((venue) => ({
           code: venue.code,
