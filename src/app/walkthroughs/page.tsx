@@ -81,15 +81,18 @@ export default async function WalkthroughsPage() {
         <h1 className="text-metric mt-2 tracking-normal">Walkthroughs</h1>
       </header>
 
+      <Turnaround properties={visible} />
+
       <Card
+        className="mt-6"
         title="All properties"
         hint={`${totals.signed} of ${totals.actionable} signed off · ${
           totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"
         }`}
       >
-        {/* Ring, the graph that breaks it down, and the numbers that don't fit
-            on the ring — one row, the way the weekly hero reads. */}
-        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_1fr_auto] lg:items-center">
+        {/* Ring and the graph that breaks it down — waiting on a signature is
+            a different problem from nobody having started. */}
+        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_1fr] lg:items-center">
           <div className="mx-auto w-full max-w-[180px] lg:mx-0">
             <Dial
               percent={totals.percent}
@@ -99,9 +102,6 @@ export default async function WalkthroughsPage() {
             />
           </div>
 
-          {/* The graph: every actionable line, sorted into where it stands. It
-              says what the ring's gap is — waiting on a signature is a
-              different problem from nobody having started. */}
           <div className="flex min-w-0 flex-col justify-center">
             <CompositionBar
               total={totals.actionable}
@@ -125,30 +125,34 @@ export default async function WalkthroughsPage() {
                 },
               ]}
             />
-            <p className="label mt-4 leading-snug">
-              {fullySigned} of {totals.properties} properties fully signed
-              {behindCount > 0 ? ` · ${behindCount} behind` : ""}
-            </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-3 gap-x-8 gap-y-4 lg:grid-cols-1 lg:gap-y-5">
-            <Stat
-              label="Overdue tasks"
-              value={totals.overdue}
-              accent={totals.overdue > 0}
-            />
-            <Stat
-              label="Awaiting review"
-              value={totals.submitted}
-              sub="photo up, not signed"
-            />
-            <Stat
-              label="Repeats"
-              value={totals.repeats}
-              sub="raised on another walk"
-              accent={totals.repeats > 0}
-            />
-          </div>
+        {/* The numbers, in a row across the bottom rather than a column down
+            the side: a tall rail of three left most of the card empty. */}
+        <hr className="border-divider my-5 border-0 border-t" />
+        <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+          <Stat
+            label="Overdue tasks"
+            value={totals.overdue}
+            accent={totals.overdue > 0}
+          />
+          <Stat
+            label="Awaiting review"
+            value={totals.submitted}
+            sub="photo up, not signed"
+          />
+          <Stat
+            label="Repeats"
+            value={totals.repeats}
+            sub="raised again"
+            accent={totals.repeats > 0}
+          />
+          <Stat
+            label="Fully signed"
+            value={`${fullySigned}/${totals.properties}`}
+            sub={behindCount > 0 ? `${behindCount} behind` : "none behind"}
+          />
         </div>
 
         <hr className="border-divider my-5 border-0 border-t" />
@@ -162,8 +166,6 @@ export default async function WalkthroughsPage() {
           ))}
         </ul>
       </Card>
-
-      <Turnaround properties={visible} />
     </main>
   );
 }
@@ -198,7 +200,6 @@ function Turnaround({ properties }: { properties: PropertySummary[] }) {
     <Card
       title="Turnaround race"
       hint="days from the walk to sign-off · signed items only · fastest wins"
-      className="mt-6"
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Podium
@@ -297,7 +298,7 @@ function Podium({
         <span className="text-title">d</span>
       </p>
       <p className="label mt-1">
-        {count} signed · avg to sign-off
+        avg over {count} signed
       </p>
     </div>
   );
