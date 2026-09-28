@@ -162,7 +162,144 @@ export default async function WalkthroughsPage() {
           ))}
         </ul>
       </Card>
+
+      <Turnaround properties={visible} />
     </main>
+  );
+}
+
+/**
+ * The race: how fast a signed item goes from the walk to the signature, per
+ * building, fastest at the top. The rest of the page is worst first and about
+ * how much is left; this is the one place a building that is quick to close
+ * things out gets the top spot, and the one that sits on them is named.
+ *
+ * Speed, not volume: a fuller bar is a faster average, the leader fills it and
+ * everyone else trails. Volume is on the row as the count the average rests on,
+ * so a two-day average off a single signature reads as what it is.
+ */
+function Turnaround({ properties }: { properties: PropertySummary[] }) {
+  const timed = properties
+    .filter((p) => p.avgDaysToSign != null)
+    .sort(
+      (a, b) =>
+        (a.avgDaysToSign as number) - (b.avgDaysToSign as number) ||
+        b.signedTimed - a.signedTimed ||
+        a.name.localeCompare(b.name),
+    );
+  if (timed.length === 0) return null;
+
+  const fastest = timed[0];
+  const slowest = timed[timed.length - 1];
+  const fastestDays = fastest.avgDaysToSign as number;
+  const race = timed.length > 1;
+
+  return (
+    <Card
+      title="Turnaround race"
+      hint="days from the walk to sign-off · signed items only · fastest wins"
+      className="mt-6"
+    >
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Podium
+          tag="Fastest"
+          name={fastest.name}
+          days={fastestDays}
+          count={fastest.signedTimed}
+        />
+        {race ? (
+          <Podium
+            tag="Slowest"
+            name={slowest.name}
+            days={slowest.avgDaysToSign as number}
+            count={slowest.signedTimed}
+            accent
+          />
+        ) : null}
+      </div>
+
+      {race ? (
+        <>
+          <hr className="border-divider my-5 border-0 border-t" />
+          <ol className="space-y-2.5">
+            {timed.map((p, i) => {
+              const days = p.avgDaysToSign as number;
+              // Fuller is faster: the leader's average sets 100%, and a
+              // property twice as slow fills half the track.
+              const fill = days > 0 ? Math.round((fastestDays / days) * 100) : 100;
+              const isSlowest = i === timed.length - 1;
+              const lead = i === 0;
+              return (
+                <li key={p.id} className="flex items-center gap-3">
+                  <span className="label w-5 shrink-0 text-right tabular-nums">
+                    {i + 1}
+                  </span>
+                  <span className="text-title w-16 shrink-0 truncate tracking-normal">
+                    {p.name}
+                  </span>
+                  <div className="bg-inset h-2 flex-1 overflow-hidden rounded-full">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${Math.max(fill, 4)}%`,
+                        background: isSlowest ? "var(--warn)" : "var(--ink)",
+                        opacity: lead || isSlowest ? 1 : 0.5,
+                      }}
+                    />
+                  </div>
+                  <span
+                    className={`label shrink-0 tabular-nums ${
+                      isSlowest ? "text-warn" : ""
+                    }`}
+                  >
+                    {days}d
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </>
+      ) : null}
+    </Card>
+  );
+}
+
+/** One end of the race, named and dated. Fastest in ink, slowest in warn. */
+function Podium({
+  tag,
+  name,
+  days,
+  count,
+  accent = false,
+}: {
+  tag: string;
+  name: string;
+  days: number;
+  count: number;
+  accent?: boolean;
+}) {
+  return (
+    <div className="bg-inset rounded-[6px] p-4">
+      <p className="label">{tag}</p>
+      <p
+        className={`text-title mt-1 tracking-normal ${
+          accent ? "text-warn" : "text-ink"
+        }`}
+      >
+        {name}
+      </p>
+      <p
+        className={`text-metric mt-1 leading-[1.1] tracking-normal tabular-nums ${
+          accent ? "text-warn" : "text-ink"
+        }`}
+      >
+        {days}
+        <span className="text-title">d</span>
+      </p>
+      <p className="label mt-1">
+        {count} signed · avg to sign-off
+      </p>
+    </div>
   );
 }
 
