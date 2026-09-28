@@ -269,5 +269,61 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   is("rota: one of seven", mondayOnly.byRole, [{ role: "Bar deep clean", done: 1, of: 7 }]);
 }
 
+// ------------------------------------------------- the frozen snapshot
+//
+// A certified night is scored against the list it was signed against, not
+// today's. An item added since is not counted on the nights before it existed,
+// and one retired since still shows for the nights it was on the board.
+{
+  const W2 = ["2026-08-10", "2026-08-11", "2026-08-12"];
+  const lists = [{ id: "L", venue_id: "V", house: "FOH", role: "MOD", phase: "close" }];
+  // Today's board: i1 and a since-added iNew. iRetired is gone from it and
+  // lives only in the old snapshots.
+  const now = [
+    { id: "i1", checklist_id: "L", title: "Back door" },
+    { id: "iNew", checklist_id: "L", title: "Ice well" },
+  ];
+  const nights = [
+    { id: "n1", checklist_id: "L", night: W2[0], certified_at: "t", certified_by: "Ana",
+      signed: [{ item_id: "i1", title: "Back door", ticked: true }, { item_id: "iRetired", title: "Old thing", ticked: false }] },
+    { id: "n2", checklist_id: "L", night: W2[1], certified_at: "t", certified_by: "Ana",
+      signed: [{ item_id: "i1", title: "Back door", ticked: true }, { item_id: "iRetired", title: "Old thing", ticked: false }] },
+    { id: "n3", checklist_id: "L", night: W2[2], certified_at: "t", certified_by: "Ana",
+      signed: [{ item_id: "i1", title: "Back door", ticked: true }, { item_id: "iNew", title: "Ice well", ticked: false }] },
+  ];
+  const snap = computeRollup({ checklists: lists, items: now, nights, ticks: [] }, W2, isDue);
+  // iRetired kept for the two nights it was on the board; iNew only for the one
+  // it existed, not the three the window has.
+  is("snapshot: retired item kept, new item not back-counted",
+    snap.missed.map((m) => [m.item, m.open, m.of]),
+    [["Old thing", 2, 2], ["Ice well", 1, 1]]);
+  is("snapshot: signed-with-gaps nights are not done", snap.strip, "mmm");
+  is("snapshot: none done and signed", [snap.done, snap.of], [0, 3]);
+}
+
+// A night signed clean is done even though the list has grown since. Today's
+// board carries an extra item that did not exist that night; the snapshot does
+// not, so it is not a false open.
+{
+  const one = ["2026-08-13"];
+  const lists = [{ id: "L", venue_id: "V", house: "FOH", role: "MOD", phase: "close" }];
+  const now = [
+    { id: "i1", checklist_id: "L", title: "Back door" },
+    { id: "i2", checklist_id: "L", title: "Stanchions" },
+    { id: "iNew", checklist_id: "L", title: "Ice well" },
+  ];
+  const nights = [
+    { id: "n1", checklist_id: "L", night: one[0], certified_at: "t", certified_by: "Ana",
+      signed: [{ item_id: "i1", title: "Back door", ticked: true }, { item_id: "i2", title: "Stanchions", ticked: true }] },
+  ];
+  const clean = computeRollup({ checklists: lists, items: now, nights, ticks: [] }, one, isDue);
+  is("snapshot: a clean signed night is done despite a since-added item", clean.strip, "c");
+  is("snapshot: no false open from the new item", clean.missed, []);
+  is("snapshot: byRole reads the snapshot", clean.byRole, [{ role: "MOD", done: 1, of: 1 }]);
+  is("snapshot: group done from the snapshot",
+    computeGroup({ checklists: lists, items: now, nights, ticks: [] }, one, new Map([["V", "HOOD"]]), isDue),
+    [{ code: "HOOD", done: 1, of: 1 }]);
+}
+
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
 process.exit(fail ? 1 : 0);
