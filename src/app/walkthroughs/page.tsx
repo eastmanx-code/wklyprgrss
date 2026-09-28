@@ -108,7 +108,7 @@ export default async function WalkthroughsPage() {
               segments={[
                 { label: "Signed", value: totals.signed, fill: "var(--ink)" },
                 {
-                  label: "Awaiting review",
+                  label: "Waiting to sign",
                   value: totals.submitted,
                   fill: "var(--ink)",
                   opacity: 0.4,
@@ -138,9 +138,9 @@ export default async function WalkthroughsPage() {
             accent={totals.overdue > 0}
           />
           <Stat
-            label="Awaiting review"
+            label="Waiting to sign"
             value={totals.submitted}
-            sub="photo up, not signed"
+            sub="photo in not signed"
           />
           <Stat
             label="Repeats"
