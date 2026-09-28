@@ -1,6 +1,6 @@
 import "server-only";
 
-import { closeStatus, type CloseStatusRow } from "./close-status";
+import { closeStatus, signedList, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
 import { dueOnNight } from "./due";
 import { listName } from "./slug";
@@ -449,7 +449,7 @@ export async function listDetail(
     db()
       .from("close_nights")
       .select(
-        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, open_reason, history",
+        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, open_reason, history, list_at_signing",
       )
       .eq("checklist_id", checklistId)
       .eq("night", night)
@@ -475,6 +475,7 @@ export async function listDetail(
     open_at_signing: unknown;
     open_reason: string | null;
     history: unknown[] | null;
+    list_at_signing: unknown;
   } | null;
 
   let ticks: {
@@ -517,7 +518,47 @@ export async function listDetail(
     proofByItem.set(row.item_id, shots);
   }
 
-  const outcomes: ItemOutcome[] = items
+  // A certified night is read from the list it was signed against, not the
+  // live one. Reordering or retiring an item afterwards changed the current
+  // table and used to re-measure every recorded night — a since-added item
+  // showed up "open" on an old finished night, and a since-retired item's
+  // work vanished. The signature froze the real list; a night still being
+  // walked has no snapshot and reads from the current items, which is right.
+  const frozen = stored?.certified_at ? signedList(stored.list_at_signing) : null;
+  const source: {
+    id: string;
+    title: string;
+    section: string | null;
+    proof: { kind: "photo" | "video" | "note" }[] | null;
+    ticked: boolean;
+    initials: string | null;
+    at: string | null;
+  }[] = frozen
+    ? frozen.map((i) => ({
+        id: i.item_id,
+        title: i.title,
+        section: i.section,
+        proof: (i.proof ?? null) as
+          | { kind: "photo" | "video" | "note" }[]
+          | null,
+        ticked: i.ticked,
+        initials: i.initials?.trim() || null,
+        at: i.ticked_at,
+      }))
+    : items.map((item) => {
+        const tick = tickOf.get(item.id);
+        return {
+          id: item.id,
+          title: item.title,
+          section: item.section,
+          proof: item.proof,
+          ticked: Boolean(tick),
+          initials: tick?.initials?.trim() || null,
+          at: tick?.created_at ?? null,
+        };
+      });
+
+  const outcomes: ItemOutcome[] = source
     /**
      * Only what this night asked for.
      *
@@ -530,21 +571,18 @@ export async function listDetail(
      * getting ahead is still credited. Only the ones nobody was asked for and
      * nobody did drop out.
      */
-    .filter((item) => dueOnNight(item.section, night) || tickOf.has(item.id))
-    .map((item) => {
-      const tick = tickOf.get(item.id);
-      return {
-        id: item.id,
-        title: item.title,
-        section: item.section,
-        ticked: Boolean(tick),
-        initials: tick?.initials?.trim() || null,
-        at: tick?.created_at ?? null,
-        proofWanted: (item.proof ?? []).map((p) => p.kind),
-        proofGiven: proofCount.get(item.id) ?? 0,
-        proofShots: proofByItem.get(item.id) ?? [],
-      };
-    });
+    .filter((item) => dueOnNight(item.section, night) || item.ticked)
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      section: item.section,
+      ticked: item.ticked,
+      initials: item.initials,
+      at: item.at,
+      proofWanted: (item.proof ?? []).map((p) => p.kind),
+      proofGiven: proofCount.get(item.id) ?? 0,
+      proofShots: proofByItem.get(item.id) ?? [],
+    }));
 
   const times = ticks
     .map((t) => t.created_at)
@@ -644,7 +682,7 @@ export async function nightTrend(
       .eq("active", true),
     db()
       .from("close_nights")
-      .select("id, checklist_id, night, certified_at")
+      .select("id, checklist_id, night, certified_at, open_at_signing")
       .in("checklist_id", ids)
       .gte("night", window[0])
       .lte("night", window[window.length - 1]),
@@ -660,6 +698,7 @@ export async function nightTrend(
     checklist_id: string;
     night: string;
     certified_at: string | null;
+    open_at_signing: unknown;
   }[];
 
   let ticks: { night_id: string; item_id: string }[] = [];
@@ -682,13 +721,23 @@ export async function nightTrend(
     itemsOf.set(item.checklist_id, held);
   }
 
-  // Done and signed: a name on it, and every item owed that night ticked.
-  // The same rule the rollup and the night page use, or the line and the
-  // ring disagree about the same night.
-  const complete = (row: { id: string; checklist_id: string; night: string }) =>
-    (itemsOf.get(row.checklist_id) ?? [])
-      .filter((item) => dueOnNight(item.section, row.night))
-      .every((item) => ticked.has(`${row.id}:${item.id}`));
+  // Done and signed: a name on it, and nothing left open at the signature.
+  // What was open is frozen on the night (open_at_signing), so read it there
+  // rather than replaying today's items against an old night — reordering or
+  // adding an item afterwards made a finished night read as incomplete. Fall
+  // back to the item replay only for a night with no snapshot (none exist
+  // after 2026-09-07, when the freeze began).
+  const complete = (row: {
+    id: string;
+    checklist_id: string;
+    night: string;
+    open_at_signing: unknown;
+  }) =>
+    Array.isArray(row.open_at_signing)
+      ? row.open_at_signing.length === 0
+      : (itemsOf.get(row.checklist_id) ?? [])
+          .filter((item) => dueOnNight(item.section, row.night))
+          .every((item) => ticked.has(`${row.id}:${item.id}`));
 
   // Every list that exists is owed every night in the window. A night nobody
   // opened has to count against the total or the quietest night reads as the
