@@ -86,6 +86,40 @@ export type CloseStatusRow = {
   pace: Pace;
 };
 
+/**
+ * One line of the list a night was signed against, frozen at the signature.
+ *
+ * Stored on close_nights.list_at_signing by certifyNight — the lines, their
+ * proof, and who ticked them, as they stood that night. See listAtSigning in
+ * checklists/actions.ts for where it is written.
+ */
+export type SignedItem = {
+  item_id: string;
+  position: number;
+  title: string;
+  proof: { kind: string }[] | null;
+  section: string | null;
+  ticked: boolean;
+  initials: string | null;
+  ticked_at: string | null;
+};
+
+/**
+ * The frozen list a certified night was signed against, or null when there
+ * isn't one to read.
+ *
+ * A report must score an old night against the list that existed that night,
+ * not today's. Items get reordered, renamed and retired, so joining a past
+ * night to the live table remeasured it every time somebody edited the list —
+ * a night done exactly as written came back with a box unchecked and things
+ * "still open". The signature froze the real list for exactly this; this reads
+ * it back.
+ */
+export function signedList(listAtSigning: unknown): SignedItem[] | null {
+  if (!Array.isArray(listAtSigning) || listAtSigning.length === 0) return null;
+  return listAtSigning as SignedItem[];
+}
+
 export async function closeStatus(
   night: string = currentNight(),
 ): Promise<CloseStatusRow[]> {
@@ -124,7 +158,7 @@ export async function closeStatus(
       db()
         .from("close_nights")
         .select(
-          "id, checklist_id, certified_at, certified_by, open_reason, history",
+          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
         )
         .in("checklist_id", ids)
         .eq("night", night),
@@ -150,6 +184,7 @@ export async function closeStatus(
     certified_by: string | null;
     open_reason: string | null;
     history: unknown[] | null;
+    list_at_signing: unknown;
   }[];
 
   // Two more columns on a query that was already running. The timestamps are
@@ -219,24 +254,50 @@ export async function closeStatus(
     .filter((list) => code.has(list.venue_id))
     .map((list) => {
       const row = nightOf.get(list.id);
+      const certified = Boolean(row?.certified_at);
+      // A certified night is scored against the list it was signed against,
+      // not today's. Reordering, renaming or retiring an item changes the live
+      // table and used to reach backwards into every recorded night — the
+      // reordered item that landed at position 1 showed as unchecked, and a
+      // finished night read as two still open. The signature froze the real
+      // list; a live night has no snapshot and is measured against the items
+      // as they stand now, which is correct because it is being walked now.
+      const frozen = certified ? signedList(row?.list_at_signing) : null;
       // Only the items this night asked for. A deep clean carries one job per
       // weekday under a heading that names the day, and counting all seven
       // against tonight reported a list done exactly as written as signed
       // with six still open — a failure, on the report, for doing it right.
-      // The same rule the drill-in page already used; this summary did not.
       // Anything ticked counts whether or not it was owed, so a job done on
       // the wrong day is still visible rather than quietly dropped.
-      const asked = items.filter(
-        (i) =>
-          i.checklist_id === list.id &&
-          (dueOnNight(i.section, night) ||
-            (row ? tickOf.has(`${row.id}:${i.id}`) : false)),
-      );
+      const asked: {
+        id: string;
+        title: string;
+        proofLen: number;
+        tickedHere: boolean;
+      }[] = frozen
+        ? frozen
+            .filter((i) => dueOnNight(i.section, night) || i.ticked)
+            .map((i) => ({
+              id: i.item_id,
+              title: i.title,
+              proofLen: i.proof?.length ?? 0,
+              tickedHere: i.ticked,
+            }))
+        : items
+            .filter(
+              (i) =>
+                i.checklist_id === list.id &&
+                (dueOnNight(i.section, night) ||
+                  (row ? tickOf.has(`${row.id}:${i.id}`) : false)),
+            )
+            .map((i) => ({
+              id: i.id,
+              title: i.title,
+              proofLen: i.proof?.length ?? 0,
+              tickedHere: row ? tickOf.has(`${row.id}:${i.id}`) : false,
+            }));
       const owed = asked.length;
-      const ticked = row
-        ? asked.filter((i) => tickOf.has(`${row.id}:${i.id}`)).length
-        : 0;
-      const certified = Boolean(row?.certified_at);
+      const ticked = asked.filter((i) => i.tickedHere).length;
       return {
         night,
         checklist_id: list.id,
@@ -260,15 +321,13 @@ export async function closeStatus(
         proof_missing: row
           ? asked.filter(
               (i) =>
-                (i.proof?.length ?? 0) > 0 &&
-                tickOf.has(`${row.id}:${i.id}`) &&
+                i.proofLen > 0 &&
+                i.tickedHere &&
                 !proofOf.has(`${row.id}:${i.id}`),
             ).length
           : 0,
         open_titles: row
-          ? asked
-              .filter((i) => !tickOf.has(`${row.id}:${i.id}`))
-              .map((i) => i.title)
+          ? asked.filter((i) => !i.tickedHere).map((i) => i.title)
           : asked.map((i) => i.title),
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
         last_activity: row

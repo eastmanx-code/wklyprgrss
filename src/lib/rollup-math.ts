@@ -147,12 +147,34 @@ export type ItemRow = {
    */
   section?: string | null;
 };
+/**
+ * One line of a night's frozen list, as much of it as the rollup needs.
+ *
+ * certifyNight snapshots the whole list at the signature; the loader hands
+ * over just the id, the name it went by that night, its rota heading, and
+ * whether it was ticked.
+ */
+export type SignedItem = {
+  item_id: string;
+  title?: string | null;
+  section?: string | null;
+  ticked: boolean;
+};
 export type NightRow = {
   id: string;
   checklist_id: string;
   night: string;
   certified_at: string | null;
   certified_by: string | null;
+  /**
+   * The list as it was signed, frozen on the night. When it is here a
+   * certified night is scored from it — the items that existed that night,
+   * owed and ticked as they were — so reordering, renaming or retiring an item
+   * afterwards never reaches back into a recorded night. Absent on a night
+   * still open, and on the hand-worked fixtures, both of which fall back to the
+   * current items and live ticks, the behaviour from before the snapshot.
+   */
+  signed?: SignedItem[] | null;
 };
 export type TickRow = { night_id: string; item_id: string };
 
@@ -162,6 +184,58 @@ export type Loaded = {
   nights: NightRow[];
   ticks: TickRow[];
 };
+
+/** One item as it stood on one night: owed then, and ticked then. */
+type Present = {
+  id: string;
+  title: string;
+  section: string | null;
+  due: boolean;
+  ticked: boolean;
+};
+
+/**
+ * The items on a list on one night, each with whether it was owed and ticked.
+ *
+ * A certified night is read from its frozen snapshot, so it is measured
+ * against the list that existed that night — an item added since is not there,
+ * and one retired since still is. Any other night (one still open, or a
+ * fixture with no snapshot) falls back to the checklist's current items and
+ * the live ticks, which is the behaviour from before snapshots existed.
+ */
+function presentOn(
+  list: ChecklistRow,
+  night: string,
+  row: NightRow | undefined,
+  itemsOf: Map<string, ItemRow[]>,
+  ticked: Set<string>,
+  isDue: IsDue,
+): Present[] {
+  if (row?.signed) {
+    return row.signed.map((s) => ({
+      id: s.item_id,
+      title: s.title ?? "",
+      section: s.section ?? null,
+      due: isDue(
+        {
+          id: s.item_id,
+          checklist_id: list.id,
+          title: s.title ?? "",
+          section: s.section ?? null,
+        },
+        night,
+      ),
+      ticked: s.ticked,
+    }));
+  }
+  return (itemsOf.get(list.id) ?? []).map((it) => ({
+    id: it.id,
+    title: it.title,
+    section: it.section ?? null,
+    due: isDue(it, night),
+    ticked: row ? ticked.has(`${row.id}:${it.id}`) : false,
+  }));
+}
 
 /**
  * The arithmetic, separated from the fetching so it can be tested against
@@ -191,12 +265,35 @@ export function computeRollup(
   for (const night of nights)
     nightAt.set(`${night.checklist_id}:${night.night}`, night);
 
-  // Done and signed: a signature, and every item owed that night signed off.
+  // What was on each list on each running night — read from the frozen
+  // snapshot where the night was signed against one, the current items
+  // otherwise. Every count below reads this rather than joining today's list
+  // to an old night.
+  const presentAt = new Map<string, Present[]>();
+  for (const list of checklists) {
+    for (const night of live) {
+      presentAt.set(
+        `${list.id}:${night}`,
+        presentOn(
+          list,
+          night,
+          nightAt.get(`${list.id}:${night}`),
+          itemsOf,
+          ticked,
+          isDue,
+        ),
+      );
+    }
+  }
+  const at = (listId: string, night: string) =>
+    presentAt.get(`${listId}:${night}`) ?? [];
+
+  // Done and signed: a signature, and every item owed that night ticked.
   const complete = (list: ChecklistRow, night: string, row?: NightRow) =>
     Boolean(row?.certified_at) &&
-    (itemsOf.get(list.id) ?? [])
-      .filter((item) => isDue(item, night))
-      .every((item) => ticked.has(`${row!.id}:${item.id}`));
+    at(list.id, night)
+      .filter((i) => i.due)
+      .every((i) => i.ticked);
   const named = (list: ChecklistRow): NamedList => ({
     role: list.role,
     room: list.room ?? null,
@@ -231,29 +328,77 @@ export function computeRollup(
 
   // What keeps getting left open. Every night the venue was running is a
   // chance to have done it, whether or not anyone opened this list.
-  const missed: MissedRow[] = items
-    .map((item) => {
-      const list = checklists.find((c) => c.id === item.checklist_id)!;
+  //
+  // Ranked over every item that was on a list on any running night: the ones
+  // there now, and any that show up only in a snapshot because they have since
+  // been retired, so a chronically missed item does not vanish from the record
+  // the night it is removed. An item is named the way it went by — its current
+  // title while it is live, otherwise the title from the most recent night it
+  // was signed against.
+  const listOf = new Map(checklists.map((c) => [c.id, c]));
+  const catalog = new Map<
+    string,
+    {
+      checklist_id: string;
+      title: string;
+      itemEs: string | null;
+      active: boolean;
+      seen: string;
+    }
+  >();
+  for (const it of items) {
+    catalog.set(it.id, {
+      checklist_id: it.checklist_id,
+      title: it.title,
+      itemEs: it.title_es ?? null,
+      active: true,
+      seen: "",
+    });
+  }
+  for (const night of nights) {
+    if (!night.signed) continue;
+    for (const s of night.signed) {
+      const held = catalog.get(s.item_id);
+      if (held?.active) continue; // a live item is named by its current title
+      if (!held || night.night > held.seen) {
+        catalog.set(s.item_id, {
+          checklist_id: night.checklist_id,
+          title: s.title ?? "",
+          itemEs: held?.itemEs ?? null,
+          active: false,
+          seen: night.night,
+        });
+      }
+    }
+  }
+
+  const missed: MissedRow[] = [...catalog.entries()]
+    .map(([id, cat]) => {
+      const list = listOf.get(cat.checklist_id);
+      if (!list) return null;
       let open = 0;
       let asked = 0;
       for (const night of live) {
-        // A night this item was not owed on is not a night it was missed on.
-        if (!isDue(item, night)) continue;
+        // Only the nights this item was on the list and owed. A night it was
+        // not on the list yet, or already retired from it, is not a miss.
+        const entry = at(list.id, night).find((p) => p.id === id);
+        if (!entry || !entry.due) continue;
         asked += 1;
-        const row = nightAt.get(`${list.id}:${night}`);
-        if (!row || !ticked.has(`${row.id}:${item.id}`)) open += 1;
+        if (!entry.ticked) open += 1;
       }
       return {
         house: list.house,
         role: list.role,
         phase: list.phase,
-        item: item.title,
-        itemEs: item.title_es ?? null,
+        item: cat.title,
+        itemEs: cat.itemEs,
         open,
         of: asked,
       };
     })
-    .filter((row) => row.of > 0 && row.open > 0)
+    .filter(
+      (row): row is MissedRow => row !== null && row.of > 0 && row.open > 0,
+    )
     // Count first, then rate. Sorted by rate, a deep clean job owed one night
     // and missed once sat at 100% above restrooms missed three nights of
     // four, on a panel called "what keeps getting left open". A thing missed
@@ -317,6 +462,12 @@ export function computeGroup(
 ): GroupRow[] {
   const { checklists, items, nights, ticks } = data;
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
+  const itemsOf = new Map<string, ItemRow[]>();
+  for (const item of items) {
+    const list = itemsOf.get(item.checklist_id) ?? [];
+    list.push(item);
+    itemsOf.set(item.checklist_id, list);
+  }
   const nightAt = new Map<string, NightRow>();
   for (const night of nights)
     nightAt.set(`${night.checklist_id}:${night.night}`, night);
@@ -336,21 +487,21 @@ export function computeGroup(
 
   const totals = new Map<string, { done: number; of: number }>();
   for (const list of checklists) {
-    const owed = items.filter((item) => item.checklist_id === list.id);
     const code = codeOf.get(list.venue_id) ?? "—";
     const running = totals.get(code) ?? { done: 0, of: 0 };
     const live = liveAt.get(list.venue_id);
     for (const night of window) {
       if (!live?.has(night)) continue;
       // Lists, the same ruler as everywhere else: done and signed means a
-      // signature and every item owed that night signed off.
+      // signature and every item owed that night signed off — read from the
+      // night's own frozen list where it has one, the current items otherwise.
       running.of += 1;
       const row = nightAt.get(`${list.id}:${night}`);
       if (
         row?.certified_at &&
-        owed
-          .filter((item) => isDue(item, night))
-          .every((item) => ticked.has(`${row.id}:${item.id}`))
+        presentOn(list, night, row, itemsOf, ticked, isDue)
+          .filter((i) => i.due)
+          .every((i) => i.ticked)
       )
         running.done += 1;
     }

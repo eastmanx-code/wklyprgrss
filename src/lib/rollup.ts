@@ -75,14 +75,43 @@ async function load(
       .eq("active", true),
     db()
       .from("close_nights")
-      .select("id, checklist_id, night, certified_at, certified_by")
+      .select(
+        "id, checklist_id, night, certified_at, certified_by, list_at_signing",
+      )
       .in("checklist_id", checklistIds)
       .gte("night", window[0])
       .lte("night", window[window.length - 1]),
   ]);
 
   const items = (itemRows ?? []) as ItemRow[];
-  const nights = (nightRows ?? []) as NightRow[];
+  // The frozen list rides along on each certified night, so the report scores
+  // an old night against the list it was signed against rather than today's.
+  const nights: NightRow[] = (
+    (nightRows ?? []) as (Omit<NightRow, "signed"> & {
+      list_at_signing: unknown;
+    })[]
+  ).map((n) => ({
+    id: n.id,
+    checklist_id: n.checklist_id,
+    night: n.night,
+    certified_at: n.certified_at,
+    certified_by: n.certified_by,
+    signed: Array.isArray(n.list_at_signing)
+      ? (
+          n.list_at_signing as {
+            item_id: string;
+            title?: string | null;
+            section?: string | null;
+            ticked?: boolean;
+          }[]
+        ).map((s) => ({
+          item_id: s.item_id,
+          title: s.title ?? null,
+          section: s.section ?? null,
+          ticked: Boolean(s.ticked),
+        }))
+      : null,
+  }));
 
   let ticks: TickRow[] = [];
   if (nights.length > 0) {
