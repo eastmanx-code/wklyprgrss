@@ -298,7 +298,7 @@ function Podium({
         <span className="text-title">d</span>
       </p>
       <p className="label mt-1">
-        avg over {count} signed
+        avg of {count} sign-{count === 1 ? "off" : "offs"}
       </p>
     </div>
   );
