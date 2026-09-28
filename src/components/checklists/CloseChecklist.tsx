@@ -101,8 +101,17 @@ function describeHeld(ticks: number, proof: number, es = false): string {
   return parts.join(es ? " y " : " and ");
 }
 
-/** One capture slot: item number and which of that item's shots. */
-const slotKey = (item: number, shot: number) => `${item}:${shot}`;
+/**
+ * One capture slot: the item's stable id and which of that item's shots.
+ *
+ * Keyed by id, not the item's number, because the number is the row's board
+ * position and a manager reordering the list changes it. State keyed by
+ * position gets remapped to a different item the moment the board is refreshed
+ * after a move — which is how a signed list came back with its first box
+ * unchecked and two items reported missing. The id never moves, and this is
+ * the same shape the saved proof already uses ("itemId:shotIndex").
+ */
+const slotKey = (itemId: string, shot: number) => `${itemId}:${shot}`;
 
 /**
  * A close checklist, for review. Nothing is saved yet.
@@ -177,45 +186,42 @@ export function CloseChecklist({
   const VIDEO_SHOTS = shotsOfKind("video");
   const NOTE_SHOTS = shotsOfKind("note");
 
-  const [done, setDone] = useState<Record<number, boolean>>(() =>
+  const [done, setDone] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(
-      items.map((item) => [item.number, Boolean(saved.ticks[item.id ?? ""])]),
+      items.map((item) => [
+        item.id ?? "",
+        Boolean(saved.ticks[item.id ?? ""]),
+      ]),
     ),
   );
+  // Saved proof is already keyed "itemId:shotIndex", the exact shape slotKey
+  // now produces, so each entry drops straight in with no id-to-number lookup.
   const [captures, setCaptures] = useState<Record<string, Capture>>(() =>
     Object.fromEntries(
       Object.entries(saved.proof)
         .filter(([, v]) => v.kind !== "note" && v.url)
-        .map(([k, v]) => {
-          const [itemId, shot] = k.split(":");
-          const item = items.find((i) => i.id === itemId);
-          return [
-            slotKey(item?.number ?? 0, Number(shot)),
-            { url: v.url as string, kind: v.kind as "photo" | "video" },
-          ];
-        }),
+        .map(([k, v]) => [
+          k,
+          { url: v.url as string, kind: v.kind as "photo" | "video" },
+        ]),
     ),
   );
   const [notes, setNotes] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       Object.entries(saved.proof)
         .filter(([, v]) => v.kind === "note" && v.body)
-        .map(([k, v]) => {
-          const [itemId, shot] = k.split(":");
-          const item = items.find((i) => i.id === itemId);
-          return [slotKey(item?.number ?? 0, Number(shot)), v.body as string];
-        }),
+        .map(([k, v]) => [k, v.body as string]),
     ),
   );
-  const [rowInitials, setRowInitials] = useState<Record<number, string>>(() =>
+  const [rowInitials, setRowInitials] = useState<Record<string, string>>(() =>
     Object.fromEntries(
       items
         .filter((item) => saved.ticks[item.id ?? ""])
-        .map((item) => [item.number, saved.ticks[item.id ?? ""]]),
+        .map((item) => [item.id ?? "", saved.ticks[item.id ?? ""]]),
     ),
   );
   const [saving, setSaving] = useState(false);
-  const [initialsWanted, setInitialsWanted] = useState<number | null>(null);
+  const [initialsWanted, setInitialsWanted] = useState<string | null>(null);
 
   /**
    * Initials typed but not yet ticked survive a reload.
@@ -248,9 +254,9 @@ export function CloseChecklist({
     const apply = window.setTimeout(() => {
       setRowInitials((current) => {
         const merged = { ...current };
-        for (const [number, said] of Object.entries(kept)) {
-          if (merged[Number(number)] === undefined && said.trim())
-            merged[Number(number)] = said;
+        for (const [itemId, said] of Object.entries(kept)) {
+          if (merged[itemId] === undefined && said.trim())
+            merged[itemId] = said;
         }
         return merged;
       });
@@ -267,7 +273,7 @@ export function CloseChecklist({
     }
   }, [initialsKey, rowInitials]);
   /** Tapped, and waiting on its initials before it does anything. */
-  const [pending, setPending] = useState<number | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
   /**
    * Why the work is not done, in the signer's words.
@@ -346,7 +352,7 @@ export function CloseChecklist({
 
   const inputs = useRef<Record<string, HTMLInputElement | null>>({});
   const notesRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
-  const initialsRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const initialsRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
   const signatureRef = useRef<string | null>(null);
@@ -475,9 +481,10 @@ export function CloseChecklist({
       let changed = false;
       const next = { ...current };
       for (const item of items) {
-        const on = Boolean(saved.ticks[item.id ?? ""]);
-        if (on !== Boolean(next[item.number])) {
-          next[item.number] = on;
+        const id = item.id ?? "";
+        const on = Boolean(saved.ticks[id]);
+        if (on !== Boolean(next[id])) {
+          next[id] = on;
           changed = true;
         }
       }
@@ -488,26 +495,26 @@ export function CloseChecklist({
       let changed = false;
       const next = { ...current };
       for (const item of items) {
-        const theirs = saved.ticks[item.id ?? ""];
-        if (theirs && next[item.number] !== theirs) {
-          next[item.number] = theirs;
+        const id = item.id ?? "";
+        const theirs = saved.ticks[id];
+        if (theirs && next[id] !== theirs) {
+          next[id] = theirs;
           changed = true;
         }
       }
       return changed ? next : current;
     });
 
+    // The saved key ("itemId:shotIndex") already is the slot key, so it merges
+    // straight in — no position lookup that a reorder could send to the wrong
+    // item.
     setCaptures((current) => {
       let changed = false;
       const next = { ...current };
       for (const [key, value] of Object.entries(saved.proof)) {
         if (value.kind === "note" || !value.url) continue;
-        const [itemId, shot] = key.split(":");
-        const number = items.find((i) => i.id === itemId)?.number;
-        if (number === undefined) continue;
-        const slot = slotKey(number, Number(shot));
-        if (!next[slot]) {
-          next[slot] = {
+        if (!next[key]) {
+          next[key] = {
             url: value.url,
             kind: value.kind as "photo" | "video",
           };
@@ -522,12 +529,8 @@ export function CloseChecklist({
       const next = { ...current };
       for (const [key, value] of Object.entries(saved.proof)) {
         if (value.kind !== "note" || !value.body) continue;
-        const [itemId, shot] = key.split(":");
-        const number = items.find((i) => i.id === itemId)?.number;
-        if (number === undefined) continue;
-        const slot = slotKey(number, Number(shot));
-        if (!next[slot]) {
-          next[slot] = value.body;
+        if (!next[key]) {
+          next[key] = value.body;
           changed = true;
         }
       }
@@ -544,18 +547,18 @@ export function CloseChecklist({
   }, [saved, saving, items, outstanding]);
 
   /** A shot is met by a capture, or — for a note — by words in the box. */
-  const shotFilled = (item: number, index: number, kind: ProofKind) =>
+  const shotFilled = (itemId: string, index: number, kind: ProofKind) =>
     kind === "note"
-      ? Boolean(notes[slotKey(item, index)]?.trim())
-      : Boolean(captures[slotKey(item, index)]);
+      ? Boolean(notes[slotKey(itemId, index)]?.trim())
+      : Boolean(captures[slotKey(itemId, index)]);
 
   /** An item owing proof is complete only when every one of its shots is in. */
   const shotsTaken = (item: CloseItem) =>
     (item.proof ?? []).filter((shot, index) =>
-      shotFilled(item.number, index, shot.kind),
+      shotFilled(item.id ?? "", index, shot.kind),
     ).length;
-  const doneCount = dueItems.filter((item) => done[item.number]).length;
-  const openItems = dueItems.filter((item) => !done[item.number]);
+  const doneCount = dueItems.filter((item) => done[item.id ?? ""]).length;
+  const openItems = dueItems.filter((item) => !done[item.id ?? ""]);
   const untouched = doneCount === 0;
 
   /**
@@ -574,14 +577,14 @@ export function CloseChecklist({
    * there. The record is identical either way: initials per item, entered by
    * the person who did it.
    */
-  const initialsFor = (number: number) => {
-    const own = rowInitials[number];
+  const initialsFor = (item: CloseItem) => {
+    const own = rowInitials[item.id ?? ""];
     if (own !== undefined) return own;
     // A shared list carries nothing: every row is blank until the person who
     // did it signs it, so two bartenders working it at once do not stamp each
     // other's work. Only the row's own initials count, never a neighbour's.
     if (!carry) return "";
-    const index = CLOSE_CHECKLIST.findIndex((it) => it.number === number);
+    const index = CLOSE_CHECKLIST.findIndex((it) => it.id === item.id);
     const mine = dayOfSection(CLOSE_CHECKLIST[index]?.section);
     // The nearest row above that somebody has signed for. Above rather than
     // anywhere, so a list worked top to bottom carries forward and never
@@ -605,18 +608,19 @@ export function CloseChecklist({
        * and FIRST CUTS, which group work rather than schedule it.
        */
       if (dayOfSection(CLOSE_CHECKLIST[i].section) !== mine) break;
-      const said = rowInitials[CLOSE_CHECKLIST[i].number];
+      const said = rowInitials[CLOSE_CHECKLIST[i].id ?? ""];
       if (said?.trim()) return said;
     }
     return "";
   };
 
   /** Nothing happens on a row until it is signed for. */
-  function haveInitials(number: number) {
-    if (initialsFor(number).trim()) return true;
-    setInitialsWanted(number);
-    setPending(number);
-    initialsRefs.current[number]?.focus();
+  function haveInitials(item: CloseItem) {
+    const id = item.id ?? "";
+    if (initialsFor(item).trim()) return true;
+    setInitialsWanted(id);
+    setPending(id);
+    initialsRefs.current[id]?.focus();
     return false;
   }
 
@@ -799,7 +803,7 @@ export function CloseChecklist({
       key: tickKey(slug, item.id ?? ""),
       slug,
       itemId: item.id ?? "",
-      initials: initialsFor(item.number),
+      initials: initialsFor(item),
       on,
       clientAt: new Date().toISOString(),
     };
@@ -861,20 +865,21 @@ export function CloseChecklist({
   function toggle(item: CloseItem) {
     if (locked) return;
     touch();
-    if (done[item.number]) {
-      setDone((c) => ({ ...c, [item.number]: false }));
+    const id = item.id ?? "";
+    if (done[id]) {
+      setDone((c) => ({ ...c, [id]: false }));
       if (item.proof) {
         setCaptures((c) => {
           const next = { ...c };
           item.proof!.forEach(
-            (_, index) => delete next[slotKey(item.number, index)],
+            (_, index) => delete next[slotKey(id, index)],
           );
           return next;
         });
         setNotes((c) => {
           const next = { ...c };
           item.proof!.forEach(
-            (_, index) => delete next[slotKey(item.number, index)],
+            (_, index) => delete next[slotKey(id, index)],
           );
           return next;
         });
@@ -899,14 +904,14 @@ export function CloseChecklist({
     // failure was silent and the next one should not be.
     if (item.proof && item.proof.length > 0) {
       const at = item.proof.findIndex(
-        (shot, index) => !shotFilled(item.number, index, shot.kind),
+        (shot, index) => !shotFilled(id, index, shot.kind),
       );
       // Only when something is still outstanding. This used to clamp -1 to 0,
       // so an item with every shot already in reopened the camera on the first
       // one instead of letting the tap be the signature — and the clamp is
       // what turned an empty proof list into a crash.
       if (at >= 0) {
-        const key = slotKey(item.number, at);
+        const key = slotKey(id, at);
         if (item.proof[at].kind === "note") notesRefs.current[key]?.focus();
         else inputs.current[key]?.click();
         return;
@@ -914,9 +919,9 @@ export function CloseChecklist({
     }
 
     // Nothing left to collect, so this tap is the signature.
-    if (!haveInitials(item.number)) return;
+    if (!haveInitials(item)) return;
 
-    setDone((c) => ({ ...c, [item.number]: true }));
+    setDone((c) => ({ ...c, [id]: true }));
     void persistTick(item, true);
   }
 
@@ -942,7 +947,7 @@ export function CloseChecklist({
       objectUrls.current.push(url);
       setCaptures((current) => ({
         ...current,
-        [slotKey(item.number, op.shotIndex)]: { url, kind: op.shot },
+        [slotKey(item.id ?? "", op.shotIndex)]: { url, kind: op.shot },
       }));
     }
   }
@@ -1012,7 +1017,7 @@ export function CloseChecklist({
       shotIndex,
       shot: kind,
       extension,
-      initials: initialsFor(item.number),
+      initials: initialsFor(item),
       bytes: upload.size,
       clientAt: new Date().toISOString(),
     };
@@ -1086,7 +1091,7 @@ export function CloseChecklist({
 
     const url = URL.createObjectURL(upload);
     objectUrls.current.push(url);
-    const shotKey = slotKey(item.number, shotIndex);
+    const shotKey = slotKey(item.id ?? "", shotIndex);
     setCaptures((current) => ({ ...current, [shotKey]: { url, kind } }));
     setSaving(false);
 
@@ -1103,13 +1108,14 @@ export function CloseChecklist({
     // inside one.
     const all = item.proof.every((shot, index) =>
       shot.kind === "note"
-        ? Boolean(notes[slotKey(item.number, index)]?.trim())
-        : index === shotIndex || Boolean(captures[slotKey(item.number, index)]),
+        ? Boolean(notes[slotKey(item.id ?? "", index)]?.trim())
+        : index === shotIndex ||
+          Boolean(captures[slotKey(item.id ?? "", index)]),
     );
     // The last shot is in. Now the signature — and if it is not there yet, ask
     // for it rather than leaving a finished job looking unfinished.
-    if (all && haveInitials(item.number)) {
-      setDone((c) => ({ ...c, [item.number]: true }));
+    if (all && haveInitials(item)) {
+      setDone((c) => ({ ...c, [item.id ?? ""]: true }));
       void persistTick(item, true);
     }
   }
@@ -1359,7 +1365,7 @@ export function CloseChecklist({
               /* Hanging indent: a wrapped title lines up under the title,
                    not under the number. */
               <li
-                key={item.number}
+                key={item.id ?? item.number}
                 className="text-warn text-label leading-snug tracking-[0.08em] break-words pl-7 -indent-7"
               >
                 {item.number} · {titleOf(item)}
@@ -1697,9 +1703,9 @@ export function CloseChecklist({
         <div className="mt-2.5 flex gap-[3px]" aria-hidden>
           {dueItems.map((item) => (
             <span
-              key={item.number}
+              key={item.id ?? item.number}
               className={`h-1.5 flex-1 rounded-[1px] ${
-                done[item.number] ? "bg-ink" : "bg-warn/50"
+                done[item.id ?? ""] ? "bg-ink" : "bg-warn/50"
               }`}
             />
           ))}
@@ -1761,12 +1767,12 @@ export function CloseChecklist({
 
       <ul className="space-y-3">
         {CLOSE_CHECKLIST.map((item, index) => {
-          const isDone = Boolean(done[item.number]);
+          const isDone = Boolean(done[item.id ?? ""]);
           const shots = item.proof ?? [];
           const taken = shotsTaken(item);
 
-          const mine = initialsFor(item.number);
-          const wanted = initialsWanted === item.number && !mine.trim();
+          const mine = initialsFor(item);
+          const wanted = initialsWanted === (item.id ?? "") && !mine.trim();
 
           /**
            * A heading, when this item starts a new run of one.
@@ -1785,7 +1791,7 @@ export function CloseChecklist({
           const run = heading
             ? CLOSE_CHECKLIST.filter((other) => other.section === item.section)
             : [];
-          const runDone = run.filter((other) => done[other.number]).length;
+          const runDone = run.filter((other) => done[other.id ?? ""]).length;
 
           /**
            * A heading that names a day is a rota, not a grouping.
@@ -1801,7 +1807,7 @@ export function CloseChecklist({
 
           return (
             <li
-              key={item.number}
+              key={item.id ?? item.number}
               className={`panel p-0 ${notTonight ? "opacity-45" : ""}`}
             >
               {heading ? (
@@ -1924,7 +1930,7 @@ export function CloseChecklist({
                 >
                   <input
                     ref={(node) => {
-                      initialsRefs.current[item.number] = node;
+                      initialsRefs.current[item.id ?? ""] = node;
                     }}
                     className="field order-2 h-11 min-h-0 w-16 px-1.5 text-center tracking-[0.1em] sm:order-1"
                     placeholder="––"
@@ -1938,7 +1944,7 @@ export function CloseChecklist({
                     onChange={(event) => {
                       setRowInitials((c) => ({
                         ...c,
-                        [item.number]: event.target.value,
+                        [item.id ?? ""]: event.target.value,
                       }));
                       if (event.target.value.trim()) setInitialsWanted(null);
                     }}
@@ -1952,8 +1958,8 @@ export function CloseChecklist({
                       // Tapped first, initialled second — finish what the tap
                       // started rather than making them tap the card again.
                       if (
-                        pending === item.number &&
-                        initialsFor(item.number).trim()
+                        pending === (item.id ?? "") &&
+                        initialsFor(item).trim()
                       ) {
                         setPending(null);
                         toggle(item);
@@ -2032,7 +2038,7 @@ export function CloseChecklist({
               {shots.length > 0 ? (
                 <div className="border-divider space-y-3.5 border-t px-4 py-5 sm:pl-[3.6rem]">
                   {shots.map((shot, index) => {
-                    const key = slotKey(item.number, index);
+                    const key = slotKey(item.id ?? "", index);
                     const got = captures[key];
                     return (
                       <div
@@ -2087,20 +2093,20 @@ export function CloseChecklist({
                                   otherIndex === index
                                     ? Boolean(text.trim())
                                     : shotFilled(
-                                        item.number,
+                                        item.id ?? "",
                                         otherIndex,
                                         other.kind,
                                       ),
                                 );
-                                if (all && initialsFor(item.number).trim()) {
+                                if (all && initialsFor(item).trim()) {
                                   setDone((c) => ({
                                     ...c,
-                                    [item.number]: true,
+                                    [item.id ?? ""]: true,
                                   }));
                                 } else if (!all) {
                                   setDone((c) => ({
                                     ...c,
-                                    [item.number]: false,
+                                    [item.id ?? ""]: false,
                                   }));
                                 }
                               }}
@@ -2110,7 +2116,7 @@ export function CloseChecklist({
                                 data.set("slug", slug);
                                 data.set("itemId", item.id ?? "");
                                 data.set("shotIndex", String(index));
-                                data.set("initials", initialsFor(item.number));
+                                data.set("initials", initialsFor(item));
                                 data.set("body", notes[key] ?? "");
                                 setSaving(true);
                                 const r = await saveNote({ error: null }, data);
@@ -2123,14 +2129,14 @@ export function CloseChecklist({
                                   otherIndex === index
                                     ? Boolean((notes[key] ?? "").trim())
                                     : shotFilled(
-                                        item.number,
+                                        item.id ?? "",
                                         otherIndex,
                                         other.kind,
                                       ),
                                 );
                                 // Written, but not yet signed for. Ask, rather
                                 // than firing a save the server will refuse.
-                                if (all && haveInitials(item.number)) {
+                                if (all && haveInitials(item)) {
                                   void persistTick(item, true);
                                 }
                               }}
@@ -2316,7 +2322,7 @@ export function CloseChecklist({
                 <ul className="mt-4 space-y-2">
                   {openItems.map((item) => (
                     <li
-                      key={item.number}
+                      key={item.id ?? item.number}
                       className="bg-warn text-on-warn rounded-[4px] px-4 py-3 text-body leading-snug font-medium break-words"
                     >
                       {item.number} · {titleOf(item)}
