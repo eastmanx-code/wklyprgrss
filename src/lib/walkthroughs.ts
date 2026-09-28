@@ -128,6 +128,16 @@ export type PropertySummary = {
   /** Distinct actionable lines flagged as a repeat. */
   repeats: number;
   percent: number;
+  /**
+   * Average days from the walk to the signature, over the actionable items
+   * this property has signed off. How fast a closed item gets closed, rather
+   * than how many are closed — the two are different and a building can be
+   * good at one and bad at the other. Null until it has signed one, since a
+   * property with nothing signed has no speed to report.
+   */
+  avgDaysToSign: number | null;
+  /** How many signatures that average is built on. */
+  signedTimed: number;
 };
 
 /** Today in Pacific, as YYYY-MM-DD, for the overdue line. */
@@ -243,11 +253,15 @@ export async function loadPortfolio(): Promise<{
     photoCount.set(row.commitment_id, (photoCount.get(row.commitment_id) ?? 0) + 1);
   }
 
-  // walkthrough -> property, and the latest walk date per property.
+  // walkthrough -> property, walkthrough -> its walk date, and the latest walk
+  // per property. The per-walk date is what a signature's turnaround is
+  // measured from — the walk that raised the item, not the property's newest.
   const walkProperty = new Map<string, string>();
+  const walkedOnOf = new Map<string, string>();
   const lastWalk = new Map<string, { on: string; by: string | null }>();
   for (const w of walkRows) {
     walkProperty.set(w.id, w.property_id);
+    walkedOnOf.set(w.id, w.walked_on);
     const seen = lastWalk.get(w.property_id);
     if (!seen || w.walked_on > seen.on) {
       lastWalk.set(w.property_id, { on: w.walked_on, by: w.walked_by });
@@ -262,6 +276,8 @@ export async function loadPortfolio(): Promise<{
     open: 0,
     onB: 0,
     repeatKeys: new Set<string>(),
+    dtsSum: 0,
+    dtsCount: 0,
   });
   const acc = new Map<string, ReturnType<typeof blank>>();
   for (const p of propertyRows) acc.set(p.id, blank());
@@ -289,6 +305,16 @@ export async function loadPortfolio(): Promise<{
     else a.open += 1;
     if (status !== "signed" && c.owner === "B") a.onB += 1;
     if (c.repeat_note?.trim()) a.repeatKeys.add(repeatKey(c.commitment));
+    // Turnaround, for the signed ones only. Measured from the walk that
+    // raised the line to the day it was signed, floored at zero so a clock
+    // skew can't hand a property a negative head start.
+    if (status === "signed" && c.signed_at) {
+      const walkedOn = walkedOnOf.get(c.walkthrough_id);
+      if (walkedOn) {
+        a.dtsSum += Math.max(0, daysBetween(walkedOn, c.signed_at.slice(0, 10)));
+        a.dtsCount += 1;
+      }
+    }
   }
 
   const properties = propertyRows
@@ -311,6 +337,10 @@ export async function loadPortfolio(): Promise<{
         percent: a.actionable
           ? Math.round((a.signed / a.actionable) * 100)
           : 0,
+        avgDaysToSign: a.dtsCount
+          ? Math.round((a.dtsSum / a.dtsCount) * 10) / 10
+          : null,
+        signedTimed: a.dtsCount,
       };
     })
     // Worst first: most overdue on top, then least signed.
@@ -620,5 +650,7 @@ function emptySummary(p: PropertyRow): PropertySummary {
     onB: 0,
     repeats: 0,
     percent: 0,
+    avgDaysToSign: null,
+    signedTimed: 0,
   };
 }
