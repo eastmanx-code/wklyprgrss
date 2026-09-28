@@ -198,7 +198,7 @@ function Turnaround({ properties }: { properties: PropertySummary[] }) {
 
   return (
     <Card
-      title="Turnaround race"
+      title="Sign-off speed"
       hint="days from the walk to sign-off · signed items only · fastest wins"
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
