@@ -379,25 +379,25 @@ function propertySegments(p: PropertySummary): Segment[] {
  * is dropped.
  */
 function SegmentBar({
-  total,
   segments,
-  className = "h-2.5",
+  className = "h-2.5 rounded-full",
 }: {
-  total: number;
   segments: Segment[];
   className?: string;
 }) {
   const shown = segments.filter((s) => s.value > 0);
   return (
-    <div
-      className={`bg-paper flex w-full gap-[2px] overflow-hidden rounded-full ${className}`}
-    >
+    <div className={`bg-paper flex w-full gap-[2px] overflow-hidden ${className}`}>
       {shown.map((s) => (
         <div
           key={s.label}
-          className="h-full"
+          // Proportional flex rather than a width percentage: the parts always
+          // sum to the track exactly, so a floored small part can never push
+          // the total past 100 and clip the tail. A 3px floor keeps a count of
+          // one visible without adding width the row cannot give back.
+          className="h-full min-w-[3px]"
           style={{
-            width: `${Math.max((s.value / total) * 100, 2)}%`,
+            flex: `${s.value} 1 0%`,
             background: s.fill,
             opacity: s.opacity ?? 1,
           }}
@@ -434,7 +434,10 @@ function CompositionBar({
   };
   return (
     <div>
-      <SegmentBar total={total} segments={segments} className="h-10" />
+      <SegmentBar
+        segments={segments}
+        className="border-divider h-9 rounded-[6px] border"
+      />
 
       <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
         {segments.map((s) => (
@@ -523,9 +526,8 @@ function PropertyBar({ property: p }: { property: PropertySummary }) {
         </div>
 
         <SegmentBar
-          total={p.actionable}
           segments={propertySegments(p)}
-          className="mt-3 h-2.5"
+          className="mt-3 h-2.5 rounded-full"
         />
 
         <p className="label mt-2">walked {fmtDate(p.lastWalk)}</p>
