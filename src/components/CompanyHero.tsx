@@ -80,8 +80,16 @@ export function CompanyHero({
         const goodRate = venues ? Math.round((totals.good / venues) * 100) : 0;
         const first = totals.finishes[0];
         const last = totals.finishes[totals.finishes.length - 1];
-        const hasTrend = totals.history.length > 1;
         const hasLast = Boolean(last && last.code !== first?.code);
+        // The trend keeps its weeks, but before the deadline it drops the week
+        // in progress: plotting a day-two week as a finished point drew a cliff
+        // off last week's height. Dropped, the line ends at the last week that
+        // actually finished, which is the honest picture and still a real
+        // multi-week chart rather than no chart at all.
+        const trendPoints = deadlinePassed
+          ? totals.history
+          : totals.history.slice(0, -1);
+        const showTrend = trendPoints.length > 1;
         /**
          * The headline is the score, not the upload rate.
          *
@@ -124,13 +132,7 @@ export function CompanyHero({
             }
             className="col-span-12"
           >
-            <div
-              className={`grid gap-6 ${
-                deadlinePassed
-                  ? "lg:grid-cols-[200px_minmax(0,1fr)_auto]"
-                  : "lg:grid-cols-[200px_minmax(0,1fr)] lg:items-center"
-              }`}
-            >
+            <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
               {/* Where the week landed. */}
               <div>
                 <Dial
@@ -155,26 +157,20 @@ export function CompanyHero({
                 ) : null}
               </div>
 
-              {/* Whether that is the direction of travel. Beside the ring
-                  rather than a screen below it: apart, each is half an answer
-                  and the reader has to hold one in their head to use the
-                  other. */}
-              {/* No trend before the deadline: this week is a day or two in,
-                  so plotting it drops a cliff off last week's finished height
-                  and reads as a collapse that has not happened. */}
-              {deadlinePassed ? (
-                hasTrend ? (
-                  <Trend
-                    points={totals.history}
-                    labelLeft={formatWeekStart(totals.history[0].weekStart)}
-                    labelRight="This week"
-                    target={showScore ? TARGET : undefined}
-                    showApproved={showScore}
-                  />
-                ) : (
-                  <div />
-                )
-              ) : null}
+              {/* The direction of travel, beside the ring. Before the deadline
+                  it plots the completed weeks only, so it is a real trend
+                  rather than a cliff onto a week nobody has finished. */}
+              {showTrend ? (
+                <Trend
+                  points={trendPoints}
+                  labelLeft={formatWeekStart(trendPoints[0].weekStart)}
+                  labelRight={deadlinePassed ? "This week" : "Last week"}
+                  target={totals.scored ? TARGET : undefined}
+                  showApproved={totals.scored}
+                />
+              ) : (
+                <div />
+              )}
 
               {/* And what it cost. Five figures in a fixed block, so the two
                   houses' numbers sit in the same columns and can be read down
