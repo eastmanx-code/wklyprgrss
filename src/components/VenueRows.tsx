@@ -46,6 +46,8 @@ type Line = {
   filed: number;
   target: number;
   hasBoard: boolean;
+  /** Filed then rejected, so the newest photo is the sent-back one. */
+  sentBack: number;
   /** Sent back, filed short, still in the queue — whatever is outstanding. */
   note: string;
   /**
@@ -107,6 +109,61 @@ function ScoreRow({ line, href }: { line: Line; href: string }) {
           {line.note}
           {line.mine ? (line.note ? " · you" : "you") : ""}
         </span>
+      </Link>
+    </li>
+  );
+}
+
+/**
+ * A filing row: who has put photos in, with the ten drawn as a bar so the room
+ * reads at a glance. Filed in ink, sent back in the one warn, the rest a faint
+ * track. No fail styling — nothing is graded before the deadline.
+ */
+function FilingRow({ line, href }: { line: Line; href: string }) {
+  const filedOk = Math.max(0, line.filed - line.sentBack);
+  const notFiled = Math.max(0, line.target - line.filed);
+  const segments = [
+    { label: "Filed", value: filedOk, fill: "var(--ink)" },
+    { label: "Sent back", value: line.sentBack, fill: "var(--warn)" },
+    { label: "Not filed", value: notFiled, fill: "var(--inset)" },
+  ];
+  return (
+    <li>
+      <Link
+        href={href}
+        title={`${line.code} ${line.house} · ${line.filed} of ${line.target} filed`}
+        className="bg-inset hover:ring-muted/30 block rounded-[4px] px-3 py-3 hover:ring-1 hover:ring-inset"
+      >
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <span className="text-title text-ink w-16 shrink-0 tracking-[0.08em]">
+            {line.code}
+          </span>
+          <span className="label w-8 shrink-0">{line.house}</span>
+          <span className="text-title text-muted w-16 shrink-0 tracking-normal tabular-nums">
+            {line.score}
+          </span>
+          <span className="label ml-auto shrink-0 text-right">
+            {line.note}
+            {line.mine ? (line.note ? " · you" : "you") : ""}
+          </span>
+        </div>
+        {line.hasBoard && line.target > 0 ? (
+          <div className="bg-paper mt-2.5 flex h-2 w-full gap-[2px] overflow-hidden rounded-full">
+            {segments
+              .filter((s) => s.value > 0)
+              .map((s) => (
+                <div
+                  key={s.label}
+                  className="h-full"
+                  style={{
+                    width: `${Math.max((s.value / line.target) * 100, 2)}%`,
+                    background: s.fill,
+                  }}
+                  title={`${s.label}: ${s.value}`}
+                />
+              ))}
+          </div>
+        ) : null}
       </Link>
     </li>
   );
@@ -257,6 +314,7 @@ export function VenueRows({
         filed: house.doneCount,
         target: house.activeCount,
         hasBoard: house.hasBoard,
+        sentBack: house.redoCount,
         score: !deadlinePassed
           ? house.hasBoard
             ? `${house.doneCount}/${house.activeCount}`
@@ -291,11 +349,10 @@ export function VenueRows({
   // filed, least first, with not a word about grades or fails on a day nothing
   // is due. The grade view below returns the moment the deadline passes.
   if (!deadlinePassed) {
-    const filing = [...lines].sort((a, b) => {
-      const progress = (l: Line) =>
-        l.hasBoard ? (l.target > 0 ? l.filed / l.target : 0) : -1;
-      return progress(a) - progress(b) || a.code.localeCompare(b.code);
-    });
+    const progress = (l: Line) =>
+      l.hasBoard ? (l.target > 0 ? l.filed / l.target : 0) : -1;
+    const byLeastFiled = (a: Line, b: Line) =>
+      progress(a) - progress(b) || a.code.localeCompare(b.code);
     const started = lines.filter((l) => l.hasBoard && l.filed > 0).length;
     return (
       <Card
@@ -311,15 +368,31 @@ export function VenueRows({
         <p className="label mt-2">
           Nothing is scored until the deadline. This is who has filed.
         </p>
-        <ul className="-mx-3 mt-4 space-y-[2px]">
-          {filing.map((line) => (
-            <ScoreRow
-              key={`${line.venueId}-${line.house}`}
-              line={line}
-              href={`${hrefPrefix}${line.venueId}`}
-            />
-          ))}
-        </ul>
+
+        {/* Split by house, the way the grade view is, and each board drawn as
+            a bar so the room reads at a glance rather than a column of "0/10". */}
+        {HOUSES.map((house) => {
+          const group = lines
+            .filter((line) => line.house === house)
+            .sort(byLeastFiled);
+          if (group.length === 0) return null;
+          return (
+            <div key={house} className="mt-6">
+              <p className="label border-divider border-t pt-4">
+                {houseName(house)} · {group.length}
+              </p>
+              <ul className="-mx-3 mt-2 space-y-[2px]">
+                {group.map((line) => (
+                  <FilingRow
+                    key={`${line.venueId}-${line.house}`}
+                    line={line}
+                    href={`${hrefPrefix}${line.venueId}`}
+                  />
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </Card>
     );
   }
