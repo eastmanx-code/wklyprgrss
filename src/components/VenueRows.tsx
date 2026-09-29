@@ -42,6 +42,10 @@ type Line = {
   score: string;
   tier: "good" | "neutral" | "fail" | null;
   ratio: number;
+  /** Filed and owed this week, for the filing view before the deadline. */
+  filed: number;
+  target: number;
+  hasBoard: boolean;
   /** Sent back, filed short, still in the queue — whatever is outstanding. */
   note: string;
   /**
@@ -157,6 +161,7 @@ export function VenueRows({
   gradedByHouse,
   audience = "leader",
   deadlinePassed = false,
+  deadlineLabel,
 }: {
   rows: VenueWeekSummary[];
   hrefPrefix: string;
@@ -169,6 +174,8 @@ export function VenueRows({
    * still be finished.
    */
   deadlinePassed?: boolean;
+  /** When the week is due, spelled out — for the filing view's copy. */
+  deadlineLabel?: string;
   /** Whether the reader is the one who has to act. */
   audience?: "admin" | "leader";
   /**
@@ -210,7 +217,7 @@ export function VenueRows({
     return row.scored.map((house) => {
       const graded = Boolean(gradedBy(row.venue.id, house.house));
       const ruled = house.hasBoard && house.scored && house.pendingCount === 0;
-      const note = [
+      const gradeNote = [
         missed(house) ? "missed 4pm" : null,
         !house.hasBoard ? "no board" : null,
         house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
@@ -226,27 +233,96 @@ export function VenueRows({
         .filter(Boolean)
         .join(" · ");
 
+      // Before the deadline nothing is graded, so the note is about filing
+      // only — no "to review", no "not graded", none of the words that name a
+      // verdict that cannot exist yet.
+      const filingNote = [
+        !house.hasBoard ? "no board yet" : null,
+        house.hasBoard && house.doneCount === 0
+          ? "nothing filed"
+          : house.hasBoard && house.doneCount < house.activeCount
+            ? `${house.doneCount} of ${house.activeCount} filed`
+            : house.hasBoard
+              ? "all in"
+              : null,
+        house.redoCount > 0 ? `${house.redoCount} sent back` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ");
+
       return {
         venueId: row.venue.id,
         code: row.venue.code,
         house: house.house,
-        score:
-          house.hasBoard && house.scored
+        filed: house.doneCount,
+        target: house.activeCount,
+        hasBoard: house.hasBoard,
+        score: !deadlinePassed
+          ? house.hasBoard
+            ? `${house.doneCount}/${house.activeCount}`
+            : "—"
+          : house.hasBoard && house.scored
             ? `${house.approvedCount}/${house.activeCount}`
             : "—",
-        tier: missed(house) ? "fail" : graded ? tierFor(house) : null,
+        // No verdict before the deadline, whatever an early grade row says.
+        tier: !deadlinePassed
+          ? null
+          : missed(house)
+            ? "fail"
+            : graded
+              ? tierFor(house)
+              : null,
         ratio:
           ruled && house.activeCount > 0
             ? house.approvedCount / house.activeCount
             : 0,
-        note: fullFail
-          ? [note, "whole venue"].filter(Boolean).join(" · ")
-          : note,
+        note: !deadlinePassed
+          ? filingNote
+          : fullFail
+            ? [gradeNote, "whole venue"].filter(Boolean).join(" · ")
+            : gradeNote,
         worst: fullFail || !house.hasBoard || house.doneCount === 0,
         mine: row.venue.id === ownVenueId,
       };
     });
   });
+
+  // Before the deadline the week is filing, not grading. One list of who has
+  // filed, least first, with not a word about grades or fails on a day nothing
+  // is due. The grade view below returns the moment the deadline passes.
+  if (!deadlinePassed) {
+    const filing = [...lines].sort((a, b) => {
+      const progress = (l: Line) =>
+        l.hasBoard ? (l.target > 0 ? l.filed / l.target : 0) : -1;
+      return progress(a) - progress(b) || a.code.localeCompare(b.code);
+    });
+    const started = lines.filter((l) => l.hasBoard && l.filed > 0).length;
+    return (
+      <Card
+        className="col-span-12"
+        title="This week"
+        hint={`${rows.length} venues · filing is open · scores post after ${
+          deadlineLabel ?? "the deadline"
+        }`}
+      >
+        <p className="text-metric leading-[1.15]">
+          {started} of {lines.length} boards started
+        </p>
+        <p className="label mt-2">
+          Nothing is scored until the deadline. This is who has filed.
+        </p>
+        <ul className="-mx-3 mt-4 space-y-[2px]">
+          {filing.map((line) => (
+            <ScoreRow
+              key={`${line.venueId}-${line.house}`}
+              line={line}
+              href={`${hrefPrefix}${line.venueId}`}
+            />
+          ))}
+        </ul>
+      </Card>
+    );
+  }
 
   // Worst first inside a group, so the top of the fails is the worst half of
   // the week and the reading order is the order of the work.

@@ -37,6 +37,9 @@ export default async function AdminDashboardPage() {
   const gradedIds = await gradersByHouse(gradedWeek);
   // Closed out means closed out in every house that counts. Counted off either
   // grade alone, "21 of 21" would have appeared with half the walks unread.
+  // Before the due time the board reads as filing, not scoring.
+  const deadlinePassed = isDeadlinePassed(weekStart);
+  const deadlineLabel = formatDeadline(weekStart);
 
   return (
     <main>
@@ -66,14 +69,19 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <CompanyHero byHouse={byHouse} />
+        <CompanyHero
+          byHouse={byHouse}
+          deadlinePassed={deadlinePassed}
+          deadlineLabel={deadlineLabel}
+        />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/admin/venue/"
           gradedByHouse={gradedIds}
           audience="admin"
-          deadlinePassed={isDeadlinePassed(weekStart)}
+          deadlinePassed={deadlinePassed}
+          deadlineLabel={deadlineLabel}
         />
       </div>
     </main>

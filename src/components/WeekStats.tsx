@@ -49,9 +49,19 @@ export function WeekStats({
   rows,
   gradedByHouse,
   audience = "leader",
+  deadlinePassed = true,
+  deadlineLabel,
 }: {
   rows: VenueWeekSummary[];
   gradedByHouse?: Map<House, Map<string, string>>;
+  /**
+   * Before the deadline nothing is gradeable, so a review count or a pass
+   * count names a backlog that cannot exist and reads as failure on a day
+   * nothing is owed. Until the deadline the tiles count filing instead.
+   */
+  deadlinePassed?: boolean;
+  /** When the week is due, spelled out — for the pre-deadline hint. */
+  deadlineLabel?: string;
   /**
    * Who is reading.
    *
@@ -65,6 +75,51 @@ export function WeekStats({
 }) {
   const isAdmin = audience === "admin";
   const scoredHouses = rows.flatMap((row) => row.scored);
+
+  // The longest run going, and who is on it. A streak is historical, so it is
+  // the one figure that means the same thing before and after the deadline.
+  const best = rows
+    .map((row) => ({ code: row.venue.code, streak: row.runWeeks }))
+    .sort((a, b) => b.streak - a.streak)[0];
+  const onARun = rows.filter((row) => row.runWeeks >= 2).length;
+  const bestRun = (
+    <Tile
+      label="Best run"
+      value={best && best.streak > 0 ? best.streak : "—"}
+      sub={
+        best && best.streak > 0
+          ? `${best.streak === 1 ? "week" : "weeks"} · ${best.code}${onARun > 1 ? ` · ${onARun} venues going` : ""}`
+          : "nobody on a run yet"
+      }
+    />
+  );
+
+  // Before the deadline the week is filing, not scoring. Count boards started
+  // and photos in; the review queue and the pass count belong after the due
+  // date, when there is something to grade.
+  if (!deadlinePassed) {
+    const boards = scoredHouses.filter((h) => h.hasBoard);
+    const started = boards.filter((h) => h.doneCount > 0).length;
+    const filed = scoredHouses.reduce((n, h) => n + h.doneCount, 0);
+    const target = scoredHouses.reduce((n, h) => n + h.activeCount, 0);
+    return (
+      <Card
+        className="col-span-12"
+        title="The week"
+        hint={`Filing is open · scores post after ${deadlineLabel ?? "the deadline"}`}
+      >
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(132px,1fr))] gap-3">
+          <Tile
+            label="Boards started"
+            value={started}
+            sub={`of ${boards.length}`}
+          />
+          <Tile label="Photos filed" value={filed} sub={`of ${target}`} />
+          {bestRun}
+        </div>
+      </Card>
+    );
+  }
 
   // What is still owed to somebody.
   const toReview = scoredHouses.reduce((n, h) => n + h.pendingCount, 0);
@@ -87,13 +142,6 @@ export function WeekStats({
   const wins = judged.filter(
     (h) => h.status !== "FAIL" && isWin(h.approvedCount, h.activeCount),
   );
-
-  // The longest run going, and who is on it. Named because a streak is the
-  // one number here worth being seen holding.
-  const best = rows
-    .map((row) => ({ code: row.venue.code, streak: row.runWeeks }))
-    .sort((a, b) => b.streak - a.streak)[0];
-  const onARun = rows.filter((row) => row.runWeeks >= 2).length;
 
   const perfect = judged.filter(
     (h) => h.approvedCount >= WEEKLY_ITEM_TARGET,
@@ -137,15 +185,7 @@ export function WeekStats({
           value={wins.length}
           sub={`of ${judged.length}${perfect > 0 ? ` · ${perfect} got all ten` : " · a pass is 8 of 10 signed off"}`}
         />
-        <Tile
-          label="Best run"
-          value={best && best.streak > 0 ? best.streak : "—"}
-          sub={
-            best && best.streak > 0
-              ? `${best.streak === 1 ? "week" : "weeks"} · ${best.code}${onARun > 1 ? ` · ${onARun} venues going` : ""}`
-              : "nobody on a run yet"
-          }
-        />
+        {bestRun}
       </div>
     </Card>
   );
