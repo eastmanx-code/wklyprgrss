@@ -34,13 +34,24 @@ export default async function BoardPage() {
   const deadlinePassed = isDeadlinePassed(weekStart);
   const deadlineLabel = formatDeadline(weekStart);
 
+  // An active title, the way the walkthroughs board reads: the number the week
+  // is about, not the word for it. Before the deadline that number is filing;
+  // after it, what got signed off.
+  const filed = byHouse.reduce((n, h) => n + h.itemsDone, 0);
+  const signed = byHouse.reduce((n, h) => n + h.itemsApproved, 0);
+  const target = byHouse.reduce((n, h) => n + h.itemsTarget, 0);
+
   return (
     <main>
       <header className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="label">Week of {formatWeekStart(weekStart)}</p>
+          <p className="label">
+            Everyone&apos;s progress · week of {formatWeekStart(weekStart)}
+          </p>
           <h1 className="text-metric mt-2 tracking-normal">
-            Everyone&apos;s progress
+            {deadlinePassed
+              ? `${signed} of ${target} signed off`
+              : `${filed} of ${target} filed`}
           </h1>
         </div>
         <Link
