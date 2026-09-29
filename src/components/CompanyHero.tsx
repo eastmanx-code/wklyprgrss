@@ -124,7 +124,13 @@ export function CompanyHero({
             }
             className="col-span-12"
           >
-            <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
+            <div
+              className={`grid gap-6 ${
+                deadlinePassed
+                  ? "lg:grid-cols-[200px_minmax(0,1fr)_auto]"
+                  : "lg:grid-cols-[200px_minmax(0,1fr)] lg:items-center"
+              }`}
+            >
               {/* Where the week landed. */}
               <div>
                 <Dial
@@ -137,28 +143,38 @@ export function CompanyHero({
                   }
                   size={200}
                 />
-                <p className="label mt-1 text-center">
-                  {priorHeadline === undefined
-                    ? "First week"
-                    : `Last week ${priorHeadline}%`}
-                </p>
+                {/* No last-week figure before the deadline: this week is a
+                    day or two in and last week was a finished week, so the
+                    comparison reads as a collapse that did not happen. */}
+                {deadlinePassed ? (
+                  <p className="label mt-1 text-center">
+                    {priorHeadline === undefined
+                      ? "First week"
+                      : `Last week ${priorHeadline}%`}
+                  </p>
+                ) : null}
               </div>
 
               {/* Whether that is the direction of travel. Beside the ring
                   rather than a screen below it: apart, each is half an answer
                   and the reader has to hold one in their head to use the
                   other. */}
-              {hasTrend ? (
-                <Trend
-                  points={totals.history}
-                  labelLeft={formatWeekStart(totals.history[0].weekStart)}
-                  labelRight="This week"
-                  target={showScore ? TARGET : undefined}
-                  showApproved={showScore}
-                />
-              ) : (
-                <div />
-              )}
+              {/* No trend before the deadline: this week is a day or two in,
+                  so plotting it drops a cliff off last week's finished height
+                  and reads as a collapse that has not happened. */}
+              {deadlinePassed ? (
+                hasTrend ? (
+                  <Trend
+                    points={totals.history}
+                    labelLeft={formatWeekStart(totals.history[0].weekStart)}
+                    labelRight="This week"
+                    target={showScore ? TARGET : undefined}
+                    showApproved={showScore}
+                  />
+                ) : (
+                  <div />
+                )
+              ) : null}
 
               {/* And what it cost. Five figures in a fixed block, so the two
                   houses' numbers sit in the same columns and can be read down
@@ -197,19 +213,23 @@ export function CompanyHero({
                   </p>
                 )}
 
-                {/* Always present, with an empty state. Hidden until someone
-                    finished, they looked like they had gone missing on a week
-                    where nobody had. */}
-                <Stat
-                  label="First in"
-                  value={first ? first.code : "—"}
-                  sub={first ? formatFinish(first.at) : "nobody yet"}
-                />
-                <Stat
-                  label="Last in"
-                  value={hasLast ? last.code : "—"}
-                  sub={hasLast ? formatFinish(last.at) : "one board so far"}
-                />
+                {/* First and last in only mean something once boards are
+                    finishing. Before the deadline they read "nobody yet" and
+                    "one board so far", which is filler on a calm filing band. */}
+                {deadlinePassed ? (
+                  <>
+                    <Stat
+                      label="First in"
+                      value={first ? first.code : "—"}
+                      sub={first ? formatFinish(first.at) : "nobody yet"}
+                    />
+                    <Stat
+                      label="Last in"
+                      value={hasLast ? last.code : "—"}
+                      sub={hasLast ? formatFinish(last.at) : "one board so far"}
+                    />
+                  </>
+                ) : null}
                 {/* Filing is the input, and it belongs beside the outcome
                     rather than in place of it.
                 
