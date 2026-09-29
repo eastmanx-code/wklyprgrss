@@ -53,6 +53,79 @@ function Stat({
  */
 const TARGET = Math.round(WIN_RATIO * 100);
 
+/**
+ * What the ring's number is made of, as one bar.
+ *
+ * The ring says a percentage and the trend says which way it is moving; neither
+ * says what the gap under it is. A house at 80% signed off is a different week
+ * depending on whether the other fifth is filed and waiting on a verdict or was
+ * never handed in, and the same three states run under every ring. Same shape
+ * and same order as the walkthroughs board, so the two dashboards read alike:
+ * the ink is signed off, the dimmed ink is filed but not yet passed, the faint
+ * track is never filed. Identity is on the key, never colour alone.
+ */
+function CompositionStrip({
+  signedOff,
+  filedNotSigned,
+  notFiled,
+}: {
+  signedOff: number;
+  filedNotSigned: number;
+  notFiled: number;
+}) {
+  const total = signedOff + filedNotSigned + notFiled;
+  if (total <= 0) return null;
+  const segments = [
+    { label: "Signed off", value: signedOff, fill: "var(--ink)", opacity: 1 },
+    {
+      label: "Filed, not signed off",
+      value: filedNotSigned,
+      fill: "var(--ink)",
+      opacity: 0.4,
+    },
+    { label: "Not filed", value: notFiled, fill: "var(--inset)", opacity: 1 },
+  ];
+  const share = (v: number) => {
+    const p = (v / total) * 100;
+    return p > 0 && p < 1 ? "<1%" : `${Math.round(p)}%`;
+  };
+  return (
+    <div className="border-divider mt-6 border-t pt-5">
+      <div className="bg-paper flex h-2.5 w-full gap-[2px] overflow-hidden rounded-full">
+        {segments
+          .filter((s) => s.value > 0)
+          .map((s) => (
+            <div
+              key={s.label}
+              className="h-full"
+              style={{
+                width: `${Math.max((s.value / total) * 100, 2)}%`,
+                background: s.fill,
+                opacity: s.opacity,
+              }}
+              title={`${s.label}: ${s.value}`}
+            />
+          ))}
+      </div>
+      <ul className="mt-2.5 flex flex-wrap gap-x-5 gap-y-1.5">
+        {segments.map((s) => (
+          <li key={s.label} className="flex items-center gap-2">
+            <span
+              className="inline-block h-2.5 w-2.5 shrink-0 rounded-[2px]"
+              style={{ background: s.fill, opacity: s.opacity }}
+              aria-hidden
+            />
+            <span className="label">
+              {s.label} <span className="text-ink tabular-nums">{s.value}</span>
+              {s.value > 0 ? ` · ${share(s.value)}` : ""}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
   return (
     <>
@@ -208,6 +281,20 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                 )}
               </div>
             </div>
+
+            {/* And what the ring's number is made of. Only once a house is
+                scored — a practice house has nothing signed off, so the bar
+                would be one long track that says less than the words already do. */}
+            {totals.scored ? (
+              <CompositionStrip
+                signedOff={totals.itemsApproved}
+                filedNotSigned={Math.max(
+                  0,
+                  totals.itemsDone - totals.itemsApproved,
+                )}
+                notFiled={Math.max(0, totals.itemsTarget - totals.itemsDone)}
+              />
+            ) : null}
           </Card>
         );
       })}
