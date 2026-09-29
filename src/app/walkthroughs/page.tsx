@@ -356,7 +356,11 @@ function stateSegments(counts: {
       opacity: 0.4,
     },
     { label: "Overdue", value: counts.overdue, fill: "var(--warn)" },
-    { label: "Not started", value: counts.notStarted, fill: "var(--inset)" },
+    // A visible grey, not the faint track tone: "not started" is still part of
+    // the bar and the reader has to be able to see where the bar ends. Ink at a
+    // low weight reads as grey in both themes and stays under the 0.4 waiting
+    // tone above it.
+    { label: "Not started", value: counts.notStarted, fill: "var(--ink)", opacity: 0.18 },
   ];
 }
 
