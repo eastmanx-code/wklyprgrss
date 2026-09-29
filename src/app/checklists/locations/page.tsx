@@ -205,21 +205,31 @@ export default async function LocationsPage({
         <T en="Home" es="Inicio" />
       </BackLink>
 
-      {/* The night being read, and the way to the ones either side of it,
-          in the header where a reader looks first for which night this is. */}
+      {/* An active title, the way the board and the walkthroughs read: the
+          number the night is about, not the word for it. Before the night is
+          over it says "so far", so a low count early in service reads as a
+          night still going rather than a night that failed — the same care the
+          weekly board takes before its deadline. The eyebrow is the night, and
+          "so far" now carries the in-progress mark the eyebrow used to. */}
       <header className="mt-4 mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div>
           <p className="label">
             <T en={formatNightSpan(night)} es={formatNightEs(night)} />
-            {over ? null : (
-              <>
-                {" · "}
-                <T en="in progress" es="en curso" />
-              </>
-            )}
           </p>
           <h1 className="text-metric mt-2 tracking-normal">
-            <T en="Locations" es="Lugares" />
+            {lists === 0 ? (
+              <T en="Nothing running yet" es="Todavía nada corriendo" />
+            ) : over ? (
+              <T
+                en={`${done} of ${lists} signed off`}
+                es={`${done} de ${lists} firmadas`}
+              />
+            ) : (
+              <T
+                en={`${done} of ${lists} signed off so far`}
+                es={`${done} de ${lists} firmadas hasta ahora`}
+              />
+            )}
           </h1>
         </div>
         <NightNav night={night} base="/checklists/locations" />
