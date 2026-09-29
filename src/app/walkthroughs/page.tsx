@@ -90,13 +90,22 @@ export default async function WalkthroughsPage() {
     <main>
       <BackLink href="/home">Home</BackLink>
 
-      <header className="mt-4 mb-6">
+      {/* An active title: the number the page is about, not the word for it.
+          The ring below carries the percentage, so the headline stays the
+          count and the line under it says what is left. */}
+      <header className="mt-4 mb-8">
         <p className="label">
-          {totals.properties}{" "}
-          {totals.properties === 1 ? "property" : "properties"} · signed off with
-          a photo behind it
+          Walkthroughs · {totals.properties}{" "}
+          {totals.properties === 1 ? "property" : "properties"}
         </p>
-        <h1 className="text-metric mt-2 tracking-normal">Walkthroughs</h1>
+        <h1 className="text-metric mt-2 tracking-normal">
+          {totals.signed} of {totals.actionable} signed off
+        </h1>
+        <p className="note text-muted mt-3 leading-relaxed">
+          Signed off with a photo behind it ·{" "}
+          {totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"} ·{" "}
+          {fullySigned} of {totals.properties} fully clear
+        </p>
       </header>
 
       <Turnaround properties={visible} />
@@ -104,13 +113,11 @@ export default async function WalkthroughsPage() {
       <Card
         className="mt-6"
         title="All properties"
-        hint={`${totals.signed} of ${totals.actionable} signed off · ${
-          totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"
-        }`}
+        hint={`What the ${totals.percent}% is made of`}
       >
         {/* Ring and the graph that breaks it down — waiting on a signature is
             a different problem from nobody having started. */}
-        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_1fr] lg:items-center">
+        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
           <div className="mx-auto w-full max-w-[180px] lg:mx-0">
             <Dial
               percent={totals.percent}
