@@ -53,7 +53,19 @@ function Stat({
  */
 const TARGET = Math.round(WIN_RATIO * 100);
 
-export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
+export function CompanyHero({
+  byHouse,
+  deadlinePassed = true,
+  deadlineLabel,
+}: {
+  byHouse: HouseTotals[];
+  /**
+   * Before the deadline nothing is signed off, so the ring shows filing rather
+   * than a score of zero, which on a day nothing is due reads as failure.
+   */
+  deadlinePassed?: boolean;
+  deadlineLabel?: string;
+}) {
   return (
     <>
       {byHouse.map((totals) => {
@@ -82,14 +94,19 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
          * A house in practice has nothing signed off, so it keeps filing as
          * its headline and says so.
          */
-        const headline = totals.scored
+        // The score is the headline only once it can exist. Before the
+        // deadline the ring shows filing, the same as a house still in
+        // practice, so the biggest number on the page is never a zero on a day
+        // nothing was owed.
+        const showScore = totals.scored && deadlinePassed;
+        const headline = showScore
           ? totals.itemsTarget
             ? Math.round((totals.itemsApproved / totals.itemsTarget) * 100)
             : 0
           : totals.percent;
-        const behind = totals.scored && headline < TARGET;
+        const behind = showScore && headline < TARGET;
         const priorHeadline = lastWeek
-          ? totals.scored
+          ? showScore
             ? lastWeek.approvedPercent
             : lastWeek.percent
           : undefined;
@@ -99,9 +116,11 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
             key={totals.house}
             title={houseName(totals.house)}
             hint={
-              totals.scored
+              showScore
                 ? `${venues} venues · share of the week's work signed off · 8 of 10 is good`
-                : `${venues} venues · share of the week's work filed · practice, not scored yet`
+                : totals.scored
+                  ? `${venues} venues · filed so far · scores post after ${deadlineLabel ?? "the deadline"}`
+                  : `${venues} venues · share of the week's work filed · practice, not scored yet`
             }
             className="col-span-12"
           >
@@ -112,7 +131,7 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                   percent={headline}
                   tone={behind ? "var(--warn)" : "var(--ink)"}
                   caption={
-                    totals.scored
+                    showScore
                       ? `${totals.itemsApproved} of ${totals.itemsTarget} signed off`
                       : `${totals.itemsDone} of ${totals.itemsTarget} filed`
                   }
@@ -134,8 +153,8 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                   points={totals.history}
                   labelLeft={formatWeekStart(totals.history[0].weekStart)}
                   labelRight="This week"
-                  target={totals.scored ? TARGET : undefined}
-                  showApproved={totals.scored}
+                  target={showScore ? TARGET : undefined}
+                  showApproved={showScore}
                 />
               ) : (
                 <div />
@@ -148,7 +167,7 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                 {/* A house still in practice has no verdicts to report.
                     Printed anyway, "Missed 11" reads as eleven failures on a
                     board most of them have not finished building. */}
-                {totals.scored ? (
+                {showScore ? (
                   <>
                     {/* The three the weekly report uses, on its bands: eight
                         and up good, six or seven neutral, five and under a
@@ -166,6 +185,11 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                       accent={totals.fail > 0}
                     />
                   </>
+                ) : totals.scored ? (
+                  <p className="text-body text-muted col-span-3 leading-[1.5]">
+                    Filing is open. Scores post after{" "}
+                    {deadlineLabel ?? "the deadline"}.
+                  </p>
                 ) : (
                   <p className="text-body text-muted col-span-3 leading-[1.5]">
                     Crews are building and walking this board. Scores start the
@@ -192,7 +216,7 @@ export function CompanyHero({ byHouse }: { byHouse: HouseTotals[] }) {
                     For a house still in practice the ring is already showing
                     filing, so repeating it here says nothing; what explains
                     the figure is how many venues have written a list at all. */}
-                {totals.scored ? (
+                {showScore ? (
                   <Stat
                     label="Filed"
                     value={`${totals.percent}%`}

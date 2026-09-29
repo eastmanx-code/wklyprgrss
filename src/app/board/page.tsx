@@ -28,6 +28,11 @@ export default async function BoardPage() {
   // Per house, because the grade is per house — one set for both would have
   // marked the kitchen closed out on the strength of the dining room.
   const gradedIds = await gradersByHouse(mostRecentCompletedWeek());
+  // Before the due time nothing is gradeable, so the whole board reads as
+  // filing rather than scoring — no review queue, no fails, no zero-scored
+  // rings on a day nothing was owed.
+  const deadlinePassed = isDeadlinePassed(weekStart);
+  const deadlineLabel = formatDeadline(weekStart);
 
   return (
     <main>
@@ -54,16 +59,26 @@ export default async function BoardPage() {
       />
 
       <div className="grid grid-cols-12 gap-4">
-        <WeekStats rows={rows} gradedByHouse={gradedIds} />
+        <WeekStats
+          rows={rows}
+          gradedByHouse={gradedIds}
+          deadlinePassed={deadlinePassed}
+          deadlineLabel={deadlineLabel}
+        />
 
-        <CompanyHero byHouse={byHouse} />
+        <CompanyHero
+          byHouse={byHouse}
+          deadlinePassed={deadlinePassed}
+          deadlineLabel={deadlineLabel}
+        />
 
         <VenueRows
           rows={rows}
           hrefPrefix="/board/"
           ownVenueId={ownVenueId}
           gradedByHouse={gradedIds}
-          deadlinePassed={isDeadlinePassed(weekStart)}
+          deadlinePassed={deadlinePassed}
+          deadlineLabel={deadlineLabel}
         />
       </div>
     </main>

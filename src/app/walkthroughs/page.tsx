@@ -68,17 +68,44 @@ export default async function WalkthroughsPage() {
   ).length;
   const behindCount = visible.filter((p) => p.overdue > 0).length;
 
+  // The portfolio's own turnaround, weighted by how many signatures each
+  // property's average rests on so a building with a single sign-off does not
+  // swing it. One summary number the per-building race card does not carry.
+  const timedProps = visible.filter(
+    (p) => p.avgDaysToSign != null && p.signedTimed > 0,
+  );
+  const signedTimedTotal = timedProps.reduce((n, p) => n + p.signedTimed, 0);
+  const portfolioAvgDays = signedTimedTotal
+    ? Math.round(
+        (timedProps.reduce(
+          (s, p) => s + (p.avgDaysToSign as number) * p.signedTimed,
+          0,
+        ) /
+          signedTimedTotal) *
+          10,
+      ) / 10
+    : null;
+
   return (
     <main>
       <BackLink href="/home">Home</BackLink>
 
-      <header className="mt-4 mb-6">
+      {/* An active title: the number the page is about, not the word for it.
+          The ring below carries the percentage, so the headline stays the
+          count and the line under it says what is left. */}
+      <header className="mt-4 mb-8">
         <p className="label">
-          {totals.properties}{" "}
-          {totals.properties === 1 ? "property" : "properties"} · signed off with
-          a photo behind it
+          Walkthroughs · {totals.properties}{" "}
+          {totals.properties === 1 ? "property" : "properties"}
         </p>
-        <h1 className="text-metric mt-2 tracking-normal">Walkthroughs</h1>
+        <h1 className="text-metric mt-2 tracking-normal">
+          {totals.signed} of {totals.actionable} signed off
+        </h1>
+        <p className="note text-muted mt-3 leading-relaxed">
+          Signed off with a photo behind it ·{" "}
+          {totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"} ·{" "}
+          {fullySigned} of {totals.properties} fully clear
+        </p>
       </header>
 
       <Turnaround properties={visible} />
@@ -86,13 +113,11 @@ export default async function WalkthroughsPage() {
       <Card
         className="mt-6"
         title="All properties"
-        hint={`${totals.signed} of ${totals.actionable} signed off · ${
-          totals.overdue > 0 ? `${totals.overdue} overdue` : "none overdue"
-        }`}
+        hint={`What the ${totals.percent}% is made of`}
       >
         {/* Ring and the graph that breaks it down — waiting on a signature is
             a different problem from nobody having started. */}
-        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_1fr] lg:items-center">
+        <div className="grid gap-x-8 gap-y-6 lg:grid-cols-[180px_minmax(0,1fr)] lg:items-center">
           <div className="mx-auto w-full max-w-[180px] lg:mx-0">
             <Dial
               percent={totals.percent}
@@ -105,25 +130,12 @@ export default async function WalkthroughsPage() {
           <div className="flex min-w-0 flex-col justify-center">
             <CompositionBar
               total={totals.actionable}
-              segments={[
-                { label: "Signed", value: totals.signed, fill: "var(--ink)" },
-                {
-                  label: "Waiting to sign",
-                  value: totals.submitted,
-                  fill: "var(--ink)",
-                  opacity: 0.4,
-                },
-                {
-                  label: "Overdue",
-                  value: totals.overdue,
-                  fill: "var(--warn)",
-                },
-                {
-                  label: "Not started",
-                  value: notStarted,
-                  fill: "var(--inset)",
-                },
-              ]}
+              segments={stateSegments({
+                signed: totals.signed,
+                waiting: totals.submitted,
+                overdue: totals.overdue,
+                notStarted,
+              })}
             />
           </div>
         </div>
@@ -138,14 +150,18 @@ export default async function WalkthroughsPage() {
             accent={totals.overdue > 0}
           />
           <Stat
-            label="Waiting to sign"
-            value={totals.submitted}
-            sub="photo in not signed"
+            label="Avg to sign-off"
+            value={portfolioAvgDays != null ? `${portfolioAvgDays}d` : "—"}
+            sub={
+              signedTimedTotal
+                ? `across ${signedTimedTotal} sign-offs`
+                : "none yet"
+            }
           />
           <Stat
-            label="Repeats"
+            label="Seen before"
             value={totals.repeats}
-            sub="raised again"
+            sub="found on an earlier walk"
             accent={totals.repeats > 0}
           />
           <Stat
@@ -231,7 +247,13 @@ function Turnaround({ properties }: { properties: PropertySummary[] }) {
               const isSlowest = i === timed.length - 1;
               const lead = i === 0;
               return (
-                <li key={p.id} className="flex items-center gap-3">
+                <li
+                  key={p.id}
+                  title={`${p.name} · ${days}d avg · ${p.signedTimed} sign-${
+                    p.signedTimed === 1 ? "off" : "offs"
+                  }`}
+                  className="flex items-center gap-3"
+                >
                   <span className="label w-5 shrink-0 text-right tabular-nums">
                     {i + 1}
                   </span>
@@ -304,24 +326,104 @@ function Podium({
   );
 }
 
+/** One part of a stacked bar. Fill is the two-tone status colour, never rank. */
+type Segment = {
+  label: string;
+  value: number;
+  fill: string;
+  opacity?: number;
+};
+
 /**
- * One horizontal bar, the whole portfolio's actionable work sorted into where
- * it stands. A stacked bar rather than four numbers because the point is the
- * proportion: how much of the gap under the ring is a signature away versus
- * untouched. Segments carry a floor so a count of one still shows as a tick
- * rather than vanishing, and a zero segment is dropped entirely.
+ * The four disjoint states of an actionable line, in one fixed order, so the
+ * portfolio summary and every property row below it read the same way. Signed
+ * and waiting share the ink hue at two weights; overdue is the one warn call;
+ * not started is the faint track. Identity is carried by the key and the row
+ * labels, never colour alone.
+ */
+function stateSegments(counts: {
+  signed: number;
+  waiting: number;
+  overdue: number;
+  notStarted: number;
+}): Segment[] {
+  return [
+    { label: "Signed", value: counts.signed, fill: "var(--ink)" },
+    {
+      label: "Waiting to sign",
+      value: counts.waiting,
+      fill: "var(--ink)",
+      opacity: 0.4,
+    },
+    { label: "Overdue", value: counts.overdue, fill: "var(--warn)" },
+    // A visible grey, not the faint track tone: "not started" is still part of
+    // the bar and the reader has to be able to see where the bar ends. Ink at a
+    // low weight reads as grey in both themes and stays under the 0.4 waiting
+    // tone above it.
+    { label: "Not started", value: counts.notStarted, fill: "var(--ink)", opacity: 0.18 },
+  ];
+}
+
+/** One property's line broken into the same four states as the portfolio. */
+function propertySegments(p: PropertySummary): Segment[] {
+  return stateSegments({
+    signed: p.signed,
+    waiting: p.submitted,
+    overdue: p.overdue,
+    notStarted: Math.max(0, p.actionable - p.signed - p.submitted - p.overdue),
+  });
+}
+
+/**
+ * The stacked bar itself, no key. One shape used at the top for the whole
+ * portfolio and again per building below — the small multiple that lets eight
+ * boards be compared at a glance because they are all drawn the same way. A 2px
+ * surface gap sits between parts so a part reads as a part rather than a shade
+ * change, a part carries a floor so a count of one still shows, and a zero part
+ * is dropped.
+ */
+function SegmentBar({
+  segments,
+  className = "h-2.5 rounded-full",
+}: {
+  segments: Segment[];
+  className?: string;
+}) {
+  const shown = segments.filter((s) => s.value > 0);
+  return (
+    <div className={`bg-paper flex w-full gap-[2px] overflow-hidden ${className}`}>
+      {shown.map((s) => (
+        <div
+          key={s.label}
+          // Proportional flex rather than a width percentage: the parts always
+          // sum to the track exactly, so a floored small part can never push
+          // the total past 100 and clip the tail. A 3px floor keeps a count of
+          // one visible without adding width the row cannot give back.
+          className="h-full min-w-[3px]"
+          style={{
+            flex: `${s.value} 1 0%`,
+            background: s.fill,
+            opacity: s.opacity ?? 1,
+          }}
+          title={`${s.label}: ${s.value}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The portfolio bar and its key. The bar is the proportion — how much of the
+ * gap under the ring is a signature away versus untouched — and the key names
+ * each part with its count and its share, so the reader gets the number without
+ * hovering and the percentage without doing the division.
  */
 function CompositionBar({
   total,
   segments,
 }: {
   total: number;
-  segments: {
-    label: string;
-    value: number;
-    fill: string;
-    opacity?: number;
-  }[];
+  segments: Segment[];
 }) {
   if (total <= 0) {
     return (
@@ -330,26 +432,17 @@ function CompositionBar({
       </p>
     );
   }
-  const shown = segments.filter((s) => s.value > 0);
+  const share = (v: number) => {
+    const p = (v / total) * 100;
+    return p > 0 && p < 1 ? "<1%" : `${Math.round(p)}%`;
+  };
   return (
     <div>
-      <div className="bg-inset flex h-10 w-full overflow-hidden rounded-[6px]">
-        {shown.map((s) => (
-          <div
-            key={s.label}
-            className="h-full"
-            style={{
-              width: `${Math.max((s.value / total) * 100, 2)}%`,
-              background: s.fill,
-              opacity: s.opacity ?? 1,
-            }}
-            title={`${s.label}: ${s.value}`}
-          />
-        ))}
-      </div>
+      <SegmentBar
+        segments={segments}
+        className="border-divider h-9 rounded-[6px] border"
+      />
 
-      {/* The key, each segment named with its count so the bar is readable
-          without hovering it. */}
       <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
         {segments.map((s) => (
           <li key={s.label} className="flex items-center gap-2">
@@ -360,6 +453,7 @@ function CompositionBar({
             />
             <span className="label">
               {s.label} <span className="text-ink tabular-nums">{s.value}</span>
+              {s.value > 0 ? ` · ${share(s.value)}` : ""}
             </span>
           </li>
         ))}
@@ -406,45 +500,41 @@ function fmtDate(date: string | null): string {
 }
 
 /**
- * One building as a progress bar, and the door into it. The fill is its signed
- * share; the count and any overdue ride the same line, red when late.
+ * One building, and the door into it. The bar is the same four-state stack as
+ * the portfolio above, so a row is read the same way the summary is — the whole
+ * point of a small multiple. A single fill coloured red when anything was late
+ * used to say "this board is bad" when most of it might be signed; the stack
+ * says exactly how much is signed, waiting, overdue and untouched instead.
  */
-function PropertyBar({ property }: { property: PropertySummary }) {
-  const behind = property.overdue > 0;
-  const fill = property.actionable
-    ? Math.round((property.signed / property.actionable) * 100)
-    : 0;
+function PropertyBar({ property: p }: { property: PropertySummary }) {
+  const overdue = p.overdue > 0 ? ` · ${p.overdue} overdue` : "";
+  const waiting = p.submitted > 0 ? ` · ${p.submitted} waiting` : "";
   return (
     <li>
       <Link
-        href={`/walkthroughs/${property.id}`}
+        href={`/walkthroughs/${p.id}`}
+        title={`${p.name} · ${p.signed} of ${p.actionable} signed${overdue}${waiting}`}
         className="bg-inset hover:ring-muted/30 block rounded-[6px] p-4 ring-1 ring-inset ring-transparent"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-          <span className="text-title tracking-normal">{property.name}</span>
+          <span className="text-title tracking-normal">{p.name}</span>
           <span className="label flex items-center gap-2 whitespace-nowrap">
-            {property.overdue > 0 ? (
-              <span className="text-warn">{property.overdue} overdue</span>
+            {p.overdue > 0 ? (
+              <span className="text-warn">{p.overdue} overdue</span>
             ) : null}
             <span className="tabular-nums">
-              {property.signed}/{property.actionable}
+              {p.signed}/{p.actionable}
             </span>
             <span aria-hidden>→</span>
           </span>
         </div>
 
-        {/* The bar. */}
-        <div className="bg-paper mt-3 h-2 w-full overflow-hidden rounded-full">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${Math.max(fill, property.signed > 0 ? 3 : 0)}%`,
-              background: behind ? "var(--warn)" : "var(--ink)",
-            }}
-          />
-        </div>
+        <SegmentBar
+          segments={propertySegments(p)}
+          className="mt-3 h-2.5 rounded-full"
+        />
 
-        <p className="label mt-2">walked {fmtDate(property.lastWalk)}</p>
+        <p className="label mt-2">walked {fmtDate(p.lastWalk)}</p>
       </Link>
     </li>
   );
