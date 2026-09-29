@@ -214,7 +214,7 @@ export function VenueRows({
         missed(house) ? "missed 4pm" : null,
         !house.hasBoard ? "no board" : null,
         house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
-        house.rollingCount > 0 ? `${house.rollingCount} one more cycle` : null,
+        house.rollingCount > 0 ? `${house.rollingCount} needs more time` : null,
         house.hasBoard && !graded ? "not graded" : null,
         house.hasBoard && house.doneCount === 0
           ? "nothing filed"
@@ -280,7 +280,7 @@ export function VenueRows({
       className="col-span-12"
       title="This week"
       hint={[
-        `${rows.length} venues · ${lines.length} halves scored`,
+        `${rows.length} venues · ${lines.length} house boards`,
         "good 8 to 10 · neutral 6 or 7 · fail 5 or under",
       ].join(" · ")}
     >

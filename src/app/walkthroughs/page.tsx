@@ -152,9 +152,9 @@ export default async function WalkthroughsPage() {
             }
           />
           <Stat
-            label="Repeats"
+            label="Seen before"
             value={totals.repeats}
-            sub="raised again"
+            sub="found on an earlier walk"
             accent={totals.repeats > 0}
           />
           <Stat

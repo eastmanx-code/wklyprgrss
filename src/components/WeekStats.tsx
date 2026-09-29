@@ -135,7 +135,7 @@ export function WeekStats({
         <Tile
           label="Boards passed"
           value={wins.length}
-          sub={`of ${judged.length}${perfect > 0 ? ` · ${perfect} got all ten` : " · 8 of 10 signed off passes"}`}
+          sub={`of ${judged.length}${perfect > 0 ? ` · ${perfect} got all ten` : " · a pass is 8 of 10 signed off"}`}
         />
         <Tile
           label="Best run"
