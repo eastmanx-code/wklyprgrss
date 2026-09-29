@@ -40,14 +40,21 @@ export default async function AdminDashboardPage() {
   // Before the due time the board reads as filing, not scoring.
   const deadlinePassed = isDeadlinePassed(weekStart);
   const deadlineLabel = formatDeadline(weekStart);
+  const filed = byHouse.reduce((n, h) => n + h.itemsDone, 0);
+  const signed = byHouse.reduce((n, h) => n + h.itemsApproved, 0);
+  const target = byHouse.reduce((n, h) => n + h.itemsTarget, 0);
 
   return (
     <main>
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="label">Week of {formatWeekStart(weekStart)}</p>
+          <p className="label">
+            Everyone&apos;s progress · week of {formatWeekStart(weekStart)}
+          </p>
           <h1 className="text-metric mt-2 tracking-normal">
-            Everyone&apos;s progress
+            {deadlinePassed
+              ? `${signed} of ${target} signed off`
+              : `${filed} of ${target} filed`}
           </h1>
         </div>
         {/* Wraps under the title on a narrow phone. Held on one line beside

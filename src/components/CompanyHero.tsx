@@ -124,7 +124,7 @@ export function CompanyHero({
             }
             className="col-span-12"
           >
-            <div className="grid gap-6 lg:grid-cols-[200px_1fr_auto]">
+            <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
               {/* Where the week landed. */}
               <div>
                 <Dial

@@ -123,9 +123,10 @@ function FilingRow({ line, href }: { line: Line; href: string }) {
   const filedOk = Math.max(0, line.filed - line.sentBack);
   const notFiled = Math.max(0, line.target - line.filed);
   const segments = [
-    { label: "Filed", value: filedOk, fill: "var(--ink)" },
-    { label: "Sent back", value: line.sentBack, fill: "var(--warn)" },
-    { label: "Not filed", value: notFiled, fill: "var(--inset)" },
+    { label: "Filed", value: filedOk, fill: "var(--ink)", opacity: 1 },
+    { label: "Sent back", value: line.sentBack, fill: "var(--warn)", opacity: 1 },
+    // A visible grey, not the faint track, so the board's end reads.
+    { label: "Not filed", value: notFiled, fill: "var(--ink)", opacity: 0.18 },
   ];
   return (
     <li>
@@ -154,10 +155,13 @@ function FilingRow({ line, href }: { line: Line; href: string }) {
               .map((s) => (
                 <div
                   key={s.label}
-                  className="h-full"
+                  // Proportional flex so the parts always sum to the track and
+                  // never clip, with a 3px floor so a count of one still shows.
+                  className="h-full min-w-[3px]"
                   style={{
-                    width: `${Math.max((s.value / line.target) * 100, 2)}%`,
+                    flex: `${s.value} 1 0%`,
                     background: s.fill,
+                    opacity: s.opacity,
                   }}
                   title={`${s.label}: ${s.value}`}
                 />
