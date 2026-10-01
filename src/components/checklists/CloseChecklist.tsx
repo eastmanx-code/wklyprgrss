@@ -23,6 +23,7 @@ import {
   type TickOp,
 } from "@/lib/outbox";
 import { noteTrouble, flushTrouble, words, type Trouble } from "@/lib/trouble";
+import { shouldCompleteOnBlur } from "@/lib/close-tick";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import { dayOfSection, dueOnNight } from "@/lib/due";
@@ -1968,19 +1969,17 @@ export function CloseChecklist({
                     }}
                     onBlur={() => {
                       const id = item.id ?? "";
-                      // The card itself was tapped: its own click will toggle,
-                      // so completing here too would fire twice and cancel out,
-                      // leaving the box unchecked after one tap.
-                      if (togglingId.current === id) return;
-                      // Tapped first, initialled second: finish what the tap
-                      // started rather than making them tap the card again. But
-                      // only ever complete a pending tick here, never undo a
-                      // done one. Opening the sign sheet blurs this field, and
-                      // a box already checked must not flip off when it does.
+                      // One-way: a blur may only complete a pending tick, never
+                      // undo a done one, and never when the blur is the card's
+                      // own tap. The rule is in close-tick.ts, under test.
                       if (
-                        pending === id &&
-                        !done[id] &&
-                        initialsFor(item).trim()
+                        shouldCompleteOnBlur({
+                          itemId: id,
+                          pendingId: pending,
+                          done: Boolean(done[id]),
+                          hasInitials: initialsFor(item).trim().length > 0,
+                          togglingId: togglingId.current,
+                        })
                       ) {
                         setPending(null);
                         toggle(item);
