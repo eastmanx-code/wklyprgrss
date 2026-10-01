@@ -355,6 +355,16 @@ export function CloseChecklist({
   const initialsRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const objectUrls = useRef<string[]>([]);
   const byPointer = useRef(false);
+  /**
+   * The item whose checkbox is being tapped right now.
+   *
+   * A tap on the card blurs the focused initials field before the card's own
+   * click fires. Both paths complete the tick, so a single tap toggled twice
+   * and cancelled itself out, leaving the box unchecked. The pointer sets this
+   * on the way down; the blur handler sees it and stands aside, leaving the
+   * click to be the one toggle.
+   */
+  const togglingId = useRef<string | null>(null);
   const signatureRef = useRef<string | null>(null);
   /** True for a few seconds after this device does something, so a poll that
       set off before the change landed cannot come back and undo it. A flag on
@@ -1838,6 +1848,7 @@ export function CloseChecklist({
                   type="button"
                   onPointerDown={() => {
                     byPointer.current = true;
+                    togglingId.current = item.id ?? "";
                   }}
                   onClick={(event) => {
                     toggle(item);
@@ -1845,6 +1856,7 @@ export function CloseChecklist({
                     // behind on the card it just acted on.
                     if (byPointer.current) event.currentTarget.blur();
                     byPointer.current = false;
+                    togglingId.current = null;
                   }}
                   aria-pressed={isDone}
                   className="flex w-full items-start gap-3.5 p-4 pb-2 text-left sm:pb-4"
@@ -1955,10 +1967,19 @@ export function CloseChecklist({
                       }
                     }}
                     onBlur={() => {
-                      // Tapped first, initialled second — finish what the tap
-                      // started rather than making them tap the card again.
+                      const id = item.id ?? "";
+                      // The card itself was tapped: its own click will toggle,
+                      // so completing here too would fire twice and cancel out,
+                      // leaving the box unchecked after one tap.
+                      if (togglingId.current === id) return;
+                      // Tapped first, initialled second: finish what the tap
+                      // started rather than making them tap the card again. But
+                      // only ever complete a pending tick here, never undo a
+                      // done one. Opening the sign sheet blurs this field, and
+                      // a box already checked must not flip off when it does.
                       if (
-                        pending === (item.id ?? "") &&
+                        pending === id &&
+                        !done[id] &&
                         initialsFor(item).trim()
                       ) {
                         setPending(null);
