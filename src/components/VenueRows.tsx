@@ -278,12 +278,22 @@ export function VenueRows({
     return row.scored.map((house) => {
       const graded = Boolean(gradedBy(row.venue.id, house.house));
       const ruled = house.hasBoard && house.scored && house.pendingCount === 0;
+      // A board short of its ten when the deadline went has auto-failed on the
+      // count (this is exactly what `missed` tests): its filed cards can never
+      // add up to a pass, so they are not in anyone's queue and nobody is going
+      // to grade them. The note still says it missed and how many came in, but
+      // drops "to review" and "not graded" — those name pending grading work
+      // that no longer exists. A board that filed its full ten is genuinely
+      // awaiting a verdict and keeps both.
+      const autoFailed = missed(house);
       const gradeNote = [
-        missed(house) ? "missed 4pm" : null,
+        autoFailed ? "missed 4pm" : null,
         !house.hasBoard ? "no board" : null,
-        house.pendingCount > 0 ? `${house.pendingCount} to review` : null,
+        !autoFailed && house.pendingCount > 0
+          ? `${house.pendingCount} to review`
+          : null,
         house.rollingCount > 0 ? `${house.rollingCount} needs more time` : null,
-        house.hasBoard && !graded ? "not graded" : null,
+        !autoFailed && house.hasBoard && !graded ? "not graded" : null,
         house.hasBoard && house.doneCount === 0
           ? "nothing filed"
           : house.hasBoard && house.doneCount < house.activeCount

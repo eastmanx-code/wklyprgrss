@@ -7,7 +7,7 @@ import { MAINTENANCE_MESSAGE_MAX, setMaintenance } from "@/lib/maintenance";
 import { findOrphans, removeOrphans } from "@/lib/orphans";
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
-import { ITEM_COLUMNS, awaitingReview } from "@/lib/status";
+import { ITEM_COLUMNS, awaitingReview, boardAutoFailed } from "@/lib/status";
 import { isDeadlinePassed } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
@@ -595,6 +595,14 @@ async function hasUnreviewed(
   }[]) {
     if (!newest.has(row.item_id)) newest.set(row.item_id, row);
   }
+
+  // A board that auto-failed on the count has nothing to rule on: the week is a
+  // locked fail that refiles next week, so its filed cards cannot change the
+  // verdict and must not be able to hold the grade shut. newest.size is the
+  // filed count — one entry per item with a surviving submission this week.
+  // This is the rule behind the grade button the page now leaves enabled; the
+  // courtesy and the rule have to agree, or the button would do nothing.
+  if (boardAutoFailed(newest.size, weekStart, new Date())) return false;
 
   return [...newest.values()].some(
     (row) => row.review === "pending" && row.progress === "done",
