@@ -83,7 +83,7 @@ function scoreWeek(
   weekStart: string,
   now: Date,
   venues: { id: string; code: string; houses: House[] }[],
-  activeIdsByKey: Map<string, Set<string>>,
+  keyByItem: Map<string, string>,
   builtByKey: Map<string, number>,
   subs: SubRow[],
 ): BoardScore[] {
@@ -93,10 +93,16 @@ function scoreWeek(
   for (const venue of venues) {
     for (const house of housesFor(venue, weekStart)) {
       const key = `${venue.id}|${house}`;
-      const activeIds = activeIdsByKey.get(key) ?? new Set<string>();
-      // Filed against the ten live cards on the board now — a photo left on a
-      // card that has since been retired cannot fill one of the ten.
-      const mine = ofWeek.filter((s) => activeIds.has(s.item_id));
+      // Count a board's filings against every item that has ever belonged to
+      // it, active or retired. The report only ever shows completed weeks, and
+      // a board that rebuilds its ten each week retires last week's cards once
+      // the deadline has passed. Filtering to the board's currently-active
+      // items would drop a finished week's filings the moment it was reset for
+      // the next week, reading a week that passed as a fail. That broke the
+      // movement section, and the reported week too once boards reset after the
+      // Thursday deadline. The structural "built" count below still reads the
+      // live board, so a board stripped below ten is still shown as short.
+      const mine = ofWeek.filter((s) => keyByItem.get(s.item_id) === key);
       const latest = latestByItem(mine as unknown as Submission[]);
       const latestRows = [...latest.values()] as unknown as SubRow[];
 
@@ -179,18 +185,17 @@ export async function weeklyReport(
     db().from("items").select("id, venue_id, active, house").range(from, to),
   );
 
-  const activeIdsByKey = new Map<string, Set<string>>();
   const builtByKey = new Map<string, number>();
+  // Every item, active or retired, mapped to its board. A completed week counts
+  // its filings against this, so retiring last week's cards cannot erase last
+  // week's filing. `built` counts the active cards only, so a stripped board
+  // still reads as short.
+  const keyByItem = new Map<string, string>();
   for (const item of items) {
-    if (!item.active) continue;
     const key = `${item.venue_id}|${item.house}`;
+    keyByItem.set(item.id, key);
+    if (!item.active) continue;
     builtByKey.set(key, (builtByKey.get(key) ?? 0) + 1);
-    let ids = activeIdsByKey.get(key);
-    if (!ids) {
-      ids = new Set<string>();
-      activeIdsByKey.set(key, ids);
-    }
-    ids.add(item.id);
   }
 
   const subs = await selectAll<SubRow>(
@@ -210,8 +215,8 @@ export async function weeklyReport(
 
   const input: ReportInput = {
     weekLabel: formatWeekStart(weekStart),
-    thisWeek: scoreWeek(weekStart, now, venues, activeIdsByKey, builtByKey, subs),
-    lastWeek: scoreWeek(lastWeek, now, venues, activeIdsByKey, builtByKey, subs),
+    thisWeek: scoreWeek(weekStart, now, venues, keyByItem, builtByKey, subs),
+    lastWeek: scoreWeek(lastWeek, now, venues, keyByItem, builtByKey, subs),
   };
 
   return {
