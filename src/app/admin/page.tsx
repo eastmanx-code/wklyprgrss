@@ -62,6 +62,9 @@ export default async function AdminDashboardPage() {
             the whole page into a sideways scroll — for two links that are
             perfectly happy on their own row. */}
         <div className="flex flex-wrap gap-2">
+          <Link href="/admin/report" className="btn-ghost">
+            Report
+          </Link>
           <Link href="/admin/codes" className="btn-ghost">
             Codes
           </Link>

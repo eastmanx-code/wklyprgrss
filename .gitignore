@@ -58,6 +58,7 @@ next-env.d.ts
 .role-check
 .outbox-check
 .close-tick-check
+.report-check
 
 # Local Claude Code settings (personal, not committed)
 .claude/settings.local.json

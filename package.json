@@ -28,6 +28,7 @@
     "check-trouble": "tsc src/lib/trouble.ts --outDir .trouble-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-trouble.mjs",
     "check-role": "tsc src/lib/role.ts --outDir .role-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-role.mjs",
     "check-close-tick": "tsc src/lib/close-tick.ts --outDir .close-tick-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-close-tick.mjs",
+    "check-report": "tsc src/lib/report-format.ts --outDir .report-check --module esnext --target es2022 --moduleResolution bundler && node scripts/check-report.mjs",
     "test-venue": "node --env-file=.env.local scripts/test-venue.mjs",
     "cleared": "node --env-file=.env.local scripts/cleared.mjs"
   },
