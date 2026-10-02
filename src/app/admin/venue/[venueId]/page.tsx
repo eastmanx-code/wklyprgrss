@@ -32,6 +32,7 @@ import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import {
   WEEKLY_ITEM_TARGET,
+  boardAutoFailed,
   doneItemIdsFrom,
   getItems,
   getSubmissionsForItems,
@@ -106,12 +107,19 @@ export default async function AdminVenuePage({
       const all = items.filter((item) => item.house === house);
       const active = all.filter((item) => item.active);
       const done = active.filter((item) => doneThisWeek.has(item.id)).length;
+      // Short of the ten when the deadline went is a locked fail that refiles
+      // next week, so there is nothing on it for the owner to rule on — its
+      // filed cards leave the review queue the way a board that filed nothing
+      // never had any. Before the deadline this is always false, so the grid
+      // behaves exactly as it did while filing is still open.
+      const autoFailed = boardAutoFailed(done, weekStart, new Date());
       return {
         house,
         all,
         active,
         done,
-        awaitingReview: active.filter(reviewable).length,
+        autoFailed,
+        awaitingReview: autoFailed ? 0 : active.filter(reviewable).length,
         status: statusFor(done, active.length, weekStart, new Date()),
         scored: houseScored(house, weekStart),
       };
@@ -137,12 +145,23 @@ export default async function AdminVenuePage({
   const gradedWeekSubs = latestByItem(
     submissions.filter((s) => s.week_start === gradedWeek),
   );
-  const pendingFor = (house: House) =>
-    activeItems.filter((item) => {
+  const pendingFor = (house: House) => {
+    // A board that auto-failed the graded week — short of its ten when the
+    // deadline went — has nothing to grade: the owner closes it out as the
+    // fail it already is without ruling on cards that cannot change the
+    // verdict, so it does not hold the grade shut. Keyed off the filed count
+    // (items with a surviving submission that week), the same as the queue and
+    // the venue board.
+    const filed = activeItems.filter(
+      (item) => item.house === house && gradedWeekSubs.has(item.id),
+    ).length;
+    if (boardAutoFailed(filed, gradedWeek, new Date())) return 0;
+    return activeItems.filter((item) => {
       if (item.house !== house) return false;
       const s = gradedWeekSubs.get(item.id);
       return s?.review === "pending" && s.progress === "done";
     }).length;
+  };
 
   const byItem = new Map<string, typeof submissions>();
   for (const submission of submissions) {
@@ -336,8 +355,14 @@ export default async function AdminVenuePage({
                           />
                         ) : null}
 
-                        {/* Can't approve work the leader hasn't called done. */}
-                        {submission.review === "pending" &&
+                        {/* Can't approve work the leader hasn't called done —
+                            and nothing at all on a board that auto-failed the
+                            count, because its week is a locked fail with
+                            nothing left to rule on. Its heading already reads
+                            "0 awaiting review", so an Approve or Send back
+                            button here would contradict it. */}
+                        {!group.autoFailed &&
+                        submission.review === "pending" &&
                         submission.progress === "done" ? (
                           <form action={reviewSubmission}>
                             <input
@@ -361,7 +386,8 @@ export default async function AdminVenuePage({
                           </form>
                         ) : null}
 
-                        {submission.review === "pending" ? (
+                        {!group.autoFailed &&
+                        submission.review === "pending" ? (
                           <SendBack
                             submissionId={submission.id}
                             venueId={venue.id}

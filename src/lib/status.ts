@@ -273,6 +273,33 @@ export function statusFor(
 }
 
 /**
+ * A board that has already failed on the count, and so has nothing left to
+ * grade.
+ *
+ * The owner's rule: fewer than the ten owed, FILED by the Thursday deadline, is
+ * an automatic fail, and the whole board refiles next week. statusFor above
+ * already returns that FAIL on the score side; this is its other half. Once the
+ * deadline has passed, a short board is a locked fail whose filed cards can
+ * never add up to a pass, so they are not the owner's to rule on — they drop
+ * out of the grading queue the same way a board that filed nothing never put
+ * anything in it. A board short at noon on Wednesday is not here: it can still
+ * be finished, so it is still everybody's to grade.
+ *
+ * Keyed off what was FILED — the number of items with a surviving submission
+ * that week — never off what was approved, because approving is the exact work
+ * this short-circuits and so cannot be part of the test. The ten, not whatever
+ * the board happens to hold, for the same reason the score is: a short board is
+ * a venue that has not finished setting up, not a smaller target.
+ */
+export function boardAutoFailed(
+  filedCount: number,
+  weekStart: string,
+  now: Date,
+): boolean {
+  return isDeadlinePassed(weekStart, now) && filedCount < WEEKLY_ITEM_TARGET;
+}
+
+/**
  * The worse of several houses' verdicts — a venue is only as clean as its
  * dirtiest half. FAIL beats PENDING beats PASS.
  */
@@ -307,16 +334,24 @@ export function latestByItem(
 export async function awaitingReview(
   venueId: string,
   house: House,
+  now: Date = new Date(),
 ): Promise<Item[]> {
   const items = await getItems(venueId, { house });
   if (items.length === 0) return [];
 
   const submissions = await getSubmissionsForItems(items.map((i) => i.id));
-  const week = currentWeekStart();
+  const week = currentWeekStart(now);
   const thisWeek = latestByItem(
     submissions.filter((s) => s.week_start === week),
   );
   const ever = latestByItem(submissions);
+
+  // A board that missed the deadline short of its ten has auto-failed on the
+  // count: the week is a locked fail that refiles next week, so nothing filed
+  // to it is the owner's to grade. Its pending cards leave the queue the same
+  // way a board that filed nothing never had any. thisWeek.size is the filed
+  // count — one entry per item with a surviving submission this week.
+  if (boardAutoFailed(thisWeek.size, week, now)) return [];
 
   return items.filter((item) => {
     const s = thisWeek.get(item.id) ?? ever.get(item.id);
