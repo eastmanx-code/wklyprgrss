@@ -209,7 +209,7 @@ export async function getSubmissionsForItems(
     let query = db()
       .from("submissions")
       .select(
-        "id, item_id, week_start, photo_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, review_note, progress, created_at",
+        "id, item_id, week_start, photo_url, doc_url, before_photo_url, photo_purged_at, comment, author, assisted_by, review, reviewed_at, review_note, progress, created_at",
       )
       .in("item_id", itemIds)
       .is("cleared_at", null);
@@ -224,9 +224,10 @@ export async function getSubmissionsForItems(
 }
 
 /**
- * A submission counts towards the week unless it has been sent back. Photo and
- * comment are both NOT NULL at the DB level, so a surviving row is sufficient
- * evidence that both were given.
+ * A submission counts towards the week unless it has been sent back. A comment
+ * is NOT NULL and a DB check guarantees proof of one kind or the other — a
+ * photo or a document — so a surviving row is sufficient evidence that the work
+ * was filed.
  */
 export function countsAsDone(submission: {
   review: Submission["review"];

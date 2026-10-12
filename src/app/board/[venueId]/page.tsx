@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
+import { DocLink, DocThumb } from "@/components/DocProof";
 import { PhotoView } from "@/components/PhotoView";
 
 import {
@@ -112,14 +113,23 @@ export default async function BoardVenuePage({
             {group.items.map((item) => {
               const history = byItem.get(item.id) ?? [];
               const latest = history[0];
-              const latestUrl = latest
-                ? photos.get(latest.photo_url)
-                : undefined;
+              const latestUrl =
+                latest && latest.photo_url
+                  ? photos.get(latest.photo_url)
+                  : undefined;
+              const latestDoc =
+                latest && latest.doc_url
+                  ? photos.get(latest.doc_url)
+                  : undefined;
 
               return (
                 <li key={item.id} className="panel flex flex-col p-3">
                   <div className="relative">
-                    {latestUrl ? (
+                    {latest?.doc_url ? (
+                      <div className="bg-inset aspect-square overflow-hidden rounded-[8px]">
+                        <DocThumb href={latestDoc ?? null} />
+                      </div>
+                    ) : latestUrl ? (
                       <div className="bg-inset aspect-square overflow-hidden rounded-[8px]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -143,8 +153,8 @@ export default async function BoardVenuePage({
                   </p>
                   <p className="label mt-1">
                     {latest
-                      ? `Last photo · ${formatLastUpload(latest.created_at)}`
-                      : "No photo yet"}
+                      ? `Last filed · ${formatLastUpload(latest.created_at)}`
+                      : "Nothing filed yet"}
                   </p>
 
                   {latest ? (
@@ -166,13 +176,22 @@ export default async function BoardVenuePage({
                       </summary>
                       <ul className="mt-3 space-y-3">
                         {history.slice(1).map((submission) => {
-                          const url = photos.get(submission.photo_url);
+                          const url = submission.photo_url
+                            ? photos.get(submission.photo_url)
+                            : undefined;
+                          const docUrl = submission.doc_url
+                            ? (photos.get(submission.doc_url) ?? null)
+                            : undefined;
                           return (
                             <li key={submission.id} className="panel-quiet">
                               <p className="label">
                                 Week of {formatWeekStart(submission.week_start)}
                               </p>
-                              {url ? (
+                              {submission.doc_url ? (
+                                <div className="mt-3">
+                                  <DocLink href={docUrl ?? null} />
+                                </div>
+                              ) : url ? (
                                 <PhotoView
                                   src={url}
                                   className="mt-3 aspect-[4/3] rounded-[8px]"

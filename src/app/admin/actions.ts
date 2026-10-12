@@ -396,12 +396,15 @@ export async function wipeVenue(formData: FormData) {
   if (itemIds.length > 0) {
     const { data: subs } = await db()
       .from("submissions")
-      .select("id, photo_url, before_photo_url")
+      .select("id, photo_url, doc_url, before_photo_url")
       .in("item_id", itemIds)
       .is("photo_purged_at", null);
 
-    const paths = (subs ?? []).flatMap((s) =>
-      s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    const paths = (subs ?? []).flatMap(
+      (s) =>
+        [s.photo_url, s.doc_url, s.before_photo_url].filter(
+          Boolean,
+        ) as string[],
     );
 
     // Chunked: storage rejects very large delete batches.

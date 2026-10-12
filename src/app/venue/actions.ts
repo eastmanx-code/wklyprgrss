@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { photoPath } from "@/lib/photos";
+import { docPath, photoPath } from "@/lib/photos";
 import { getSession, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
@@ -119,6 +119,32 @@ export async function createUploadTargets(
 }
 
 /**
+ * The document equivalent of createUploadTargets: a signed URL the browser PUTs
+ * a PDF straight to, scoped to this item's folder.
+ *
+ * Separate from the photo targets because the two are alternatives — a leader
+ * files a photo or a document, never both — and the path has to end `.pdf` so
+ * the proof reads back as a document rather than an image. The path is minted
+ * here, never taken from the client, exactly as the photo path is.
+ */
+export async function createDocUploadTarget(
+  itemId: string,
+): Promise<{ error: string | null; doc?: UploadTarget }> {
+  if (filingClosedUntil()) return { error: FILING_CLOSED };
+
+  const item = await ownedItem(itemId);
+  if (!item) return { error: "That item is no longer available." };
+
+  const code = await venueCode(item.venue_id);
+  const path = docPath(code, item.id, filingWeekStart());
+  const { data, error } = await db()
+    .storage.from(PHOTO_BUCKET)
+    .createSignedUploadUrl(path);
+  if (error || !data) return { error: "Couldn't start the upload. Try again." };
+  return { error: null, doc: { path, signedUrl: data.signedUrl, token: data.token } };
+}
+
+/**
  * Records the submission. Text only — the photos are already in storage by the
  * time this runs, and the paths are re-derived against this item so a tampered
  * path can't point somewhere else.
@@ -133,7 +159,8 @@ export async function submitItem(
   const assistedRaw = String(formData.get("assistedBy") ?? "").trim();
   const assistedBy = assistedRaw || null;
   const progress = String(formData.get("progress") ?? "");
-  const photoUrl = String(formData.get("photoPath") ?? "");
+  const photoUrl = String(formData.get("photoPath") ?? "").trim();
+  const docUrl = String(formData.get("docPath") ?? "").trim();
   const beforeRaw = String(formData.get("beforePhotoPath") ?? "").trim();
 
   if (progress !== "done" && progress !== "another_cycle") {
@@ -149,7 +176,10 @@ export async function submitItem(
   if (comment.length > MAX_COMMENT_LENGTH) {
     return { error: "That comment is too long." };
   }
-  if (!photoUrl) return { error: "A photo is required." };
+  // Proof of one kind or the other. A photo or a document, never neither.
+  if (!photoUrl && !docUrl) {
+    return { error: "A photo or document is required." };
+  }
   if (filingClosedUntil()) return { error: FILING_CLOSED };
 
   const item = await ownedItem(itemId);
@@ -157,7 +187,10 @@ export async function submitItem(
 
   // A path is only accepted if it sits inside this item's own folder.
   const prefix = `${await venueCode(item.venue_id)}/${item.id}/`;
-  if (!photoUrl.startsWith(prefix)) {
+  if (photoUrl && !photoUrl.startsWith(prefix)) {
+    return { error: "Something went wrong. Try again." };
+  }
+  if (docUrl && !docUrl.startsWith(prefix)) {
     return { error: "Something went wrong. Try again." };
   }
   const beforePhotoUrl = beforeRaw || null;
@@ -174,7 +207,8 @@ export async function submitItem(
   const { error: insertError } = await db().from("submissions").insert({
     item_id: item.id,
     week_start: weekStart,
-    photo_url: photoUrl,
+    photo_url: photoUrl || null,
+    doc_url: docUrl || null,
     before_photo_url: beforePhotoUrl,
     comment,
     author,
@@ -184,9 +218,12 @@ export async function submitItem(
 
   if (insertError) {
     // Don't leave orphaned objects behind in storage.
-    await db()
-      .storage.from(PHOTO_BUCKET)
-      .remove(beforePhotoUrl ? [photoUrl, beforePhotoUrl] : [photoUrl]);
+    const orphans = [photoUrl, docUrl, beforePhotoUrl].filter(
+      (path): path is string => Boolean(path),
+    );
+    if (orphans.length) {
+      await db().storage.from(PHOTO_BUCKET).remove(orphans);
+    }
     return { error: "Could not save that. Try again." };
   }
 
@@ -227,6 +264,7 @@ export async function editSubmission(
   const assistedBy = assistedRaw || null;
   const progress = String(formData.get("progress") ?? "");
   const photoUrl = String(formData.get("photoPath") ?? "").trim();
+  const docUrl = String(formData.get("docPath") ?? "").trim();
   const beforeRaw = String(formData.get("beforePhotoPath") ?? "").trim();
   const dropBefore = String(formData.get("dropBefore") ?? "") === "true";
 
@@ -247,7 +285,9 @@ export async function editSubmission(
 
   const { data: row } = await db()
     .from("submissions")
-    .select("id, item_id, week_start, photo_url, before_photo_url, review")
+    .select(
+      "id, item_id, week_start, photo_url, doc_url, before_photo_url, review",
+    )
     .eq("id", submissionId)
     .maybeSingle();
 
@@ -255,7 +295,8 @@ export async function editSubmission(
     id: string;
     item_id: string;
     week_start: string;
-    photo_url: string;
+    photo_url: string | null;
+    doc_url: string | null;
     before_photo_url: string | null;
     review: string;
   } | null;
@@ -288,6 +329,9 @@ export async function editSubmission(
   if (photoUrl && !photoUrl.startsWith(prefix)) {
     return { error: "Something went wrong. Try again." };
   }
+  if (docUrl && !docUrl.startsWith(prefix)) {
+    return { error: "Something went wrong. Try again." };
+  }
   if (beforeRaw && !beforeRaw.startsWith(prefix)) {
     return { error: "Something went wrong. Try again." };
   }
@@ -302,6 +346,7 @@ export async function editSubmission(
       assisted_by: assistedBy,
       progress,
       photo_url: photoUrl || existing.photo_url,
+      doc_url: docUrl || existing.doc_url,
       before_photo_url: nextBefore,
       // Back to pending only if it had been approved — the admin signed off on
       // what this said before.
@@ -313,16 +358,17 @@ export async function editSubmission(
 
   if (updateError) {
     // The new files are already up; drop them rather than leave them orphaned.
-    const orphans = [photoUrl, beforeRaw].filter(Boolean) as string[];
+    const orphans = [photoUrl, docUrl, beforeRaw].filter(Boolean) as string[];
     if (orphans.length) {
       await db().storage.from(PHOTO_BUCKET).remove(orphans);
     }
     return { error: "Could not save that. Try again." };
   }
 
-  // Replaced photos are dead the moment the row stops pointing at them.
+  // Replaced proof is dead the moment the row stops pointing at it.
   const replaced = [
     photoUrl && existing.photo_url !== photoUrl ? existing.photo_url : null,
+    docUrl && existing.doc_url !== docUrl ? existing.doc_url : null,
     existing.before_photo_url && existing.before_photo_url !== nextBefore
       ? existing.before_photo_url
       : null,

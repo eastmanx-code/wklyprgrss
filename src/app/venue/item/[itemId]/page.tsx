@@ -5,6 +5,7 @@ import { PhotoView, type PhotoFrame } from "@/components/PhotoView";
 
 import { reviewSubmission, setItemActive } from "@/app/admin/actions";
 import { DeleteEntry } from "@/components/DeleteEntry";
+import { DocLink } from "@/components/DocProof";
 import { PhotoSubmitForm } from "@/components/PhotoSubmitForm";
 import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
@@ -86,8 +87,15 @@ export default async function ItemPage({
 
   // On an ongoing item the most recent earlier photo is the before. Uses the
   // last photo rather than strictly last week's, so a gap doesn't blank it.
-  const previous = submissions.find((s) => s.week_start < weekStart);
-  const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
+  // The before reference is a photo from an earlier week, so a document-only
+  // earlier entry is not one — skip past it to the most recent earlier photo.
+  const previous = submissions.find(
+    (s) => s.week_start < weekStart && s.photo_url,
+  );
+  const previousUrl =
+    previous && previous.photo_url
+      ? photos.get(previous.photo_url)
+      : undefined;
 
   if (session.role === "admin") {
     const { data: venue } = await db()
@@ -164,7 +172,16 @@ export default async function ItemPage({
             </p>
           ) : null}
           <div className="mt-3">
-            {photos.get(submissions[0].photo_url) ? (
+            {submissions[0].doc_url ? (
+              <DocLink
+                href={
+                  submissions[0].doc_url
+                    ? (photos.get(submissions[0].doc_url) ?? null)
+                    : null
+                }
+              />
+            ) : submissions[0].photo_url &&
+              photos.get(submissions[0].photo_url) ? (
               <PhotoView
                 src={photos.get(submissions[0].photo_url)!}
                 className="aspect-[4/3] rounded-[8px]"
@@ -251,7 +268,9 @@ export default async function ItemPage({
             key="amend"
             doneHref="/venue"
             itemId={item.id}
-            currentPhotoUrl={photos.get(current.photo_url) ?? null}
+            currentPhotoUrl={
+              current.photo_url ? (photos.get(current.photo_url) ?? null) : null
+            }
             editing={{
               submissionId: current.id,
               comment: current.comment,
@@ -286,7 +305,7 @@ export default async function ItemPage({
             doneHref="/venue"
             itemId={item.id}
             currentPhotoUrl={
-              current && !sentBack
+              current && !sentBack && current.photo_url
                 ? (photos.get(current.photo_url) ?? null)
                 : null
             }
@@ -317,7 +336,12 @@ export default async function ItemPage({
         ) : (
           <ul className="space-y-3">
             {submissions.map((submission) => {
-              const url = photos.get(submission.photo_url);
+              const url = submission.photo_url
+                ? photos.get(submission.photo_url)
+                : undefined;
+              const docUrl = submission.doc_url
+                ? (photos.get(submission.doc_url) ?? null)
+                : undefined;
               const beforeUrl = submission.before_photo_url
                 ? photos.get(submission.before_photo_url)
                 : undefined;
@@ -331,8 +355,13 @@ export default async function ItemPage({
                       {formatTimestamp(submission.created_at)}
                     </p>
                   </div>
-                  {/* A same-week before means the work was executed that week;
-                      show the pair. Otherwise just the one shot. */}
+                  {submission.doc_url ? (
+                    <div className="mt-3">
+                      <DocLink href={docUrl ?? null} />
+                    </div>
+                  ) : (
+                  /* A same-week before means the work was executed that week;
+                      show the pair. Otherwise just the one shot. */
                   <div
                     className={`mt-3 ${
                       submission.before_photo_url
@@ -380,6 +409,7 @@ export default async function ItemPage({
                       ) : null}
                     </figure>
                   </div>
+                  )}
                   {/* Done or not, on every entry, in the leader's own words.
                       The state was only ever printed when the answer was "one
                       more cycle", so a finished card said nothing and read
@@ -455,14 +485,22 @@ function GradeItem({
   /** The last photo from an earlier week, for a before-and-after read. */
   previous: Submission | null;
 }) {
-  const url = current ? photos.get(current.photo_url) : undefined;
+  const url =
+    current && current.photo_url ? photos.get(current.photo_url) : undefined;
+  const docUrl =
+    current && current.doc_url
+      ? (photos.get(current.doc_url) ?? null)
+      : undefined;
   const beforeUrl = current?.before_photo_url
     ? photos.get(current.before_photo_url)
     : undefined;
   // Only one before is worth showing. A same-week shot is the pair the leader
   // filed; without one, the last photo of any earlier week is the comparison.
   const paired = Boolean(current?.before_photo_url);
-  const previousUrl = previous ? photos.get(previous.photo_url) : undefined;
+  const previousUrl =
+    previous && previous.photo_url
+      ? photos.get(previous.photo_url)
+      : undefined;
   // What the overlay pages through: the same-week before and after, or last
   // time beside this week. Either way the reviewer moves side to side
   // without closing one shot to open the other.
@@ -505,9 +543,16 @@ function GradeItem({
               <p className="label">{formatTimestamp(current.created_at)}</p>
             </div>
 
-            {/* Stacked on a phone, side by side from a tablet up. Two 150px
+            {/* A document filed as proof opens in its own viewer; there is no
+                before/after to page through. */}
+            {current.doc_url ? (
+              <div className="mt-3">
+                <DocLink href={docUrl ?? null} />
+              </div>
+            ) : (
+            /* Stacked on a phone, side by side from a tablet up. Two 150px
                 thumbnails is not a comparison — at that size neither shot
-                shows the dust anyone is being judged on. */}
+                shows the dust anyone is being judged on. */
             <div
               className={`mt-3 ${paired ? "grid gap-2 sm:grid-cols-2" : ""}`}
             >
@@ -541,6 +586,7 @@ function GradeItem({
                 ) : null}
               </figure>
             </div>
+            )}
 
             <p className="mt-3 text-body leading-relaxed whitespace-pre-wrap">
               {current.comment}

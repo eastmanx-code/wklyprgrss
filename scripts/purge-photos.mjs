@@ -48,7 +48,7 @@ const cutoff = (() => {
 
 const { data: stale, error } = await db
   .from("submissions")
-  .select("id, photo_url, before_photo_url, week_start")
+  .select("id, photo_url, doc_url, before_photo_url, week_start")
   .lt("week_start", cutoff)
   .is("photo_purged_at", null);
 
@@ -118,7 +118,7 @@ let removed = 0;
 for (let i = 0; i < (stale?.length ?? 0); i += CHUNK) {
   const batch = stale.slice(i, i + CHUNK);
   const paths = batch.flatMap((s) =>
-    s.before_photo_url ? [s.photo_url, s.before_photo_url] : [s.photo_url],
+    [s.photo_url, s.doc_url, s.before_photo_url].filter(Boolean),
   );
   const { error: removeError } = await db.storage.from("photos").remove(paths);
 

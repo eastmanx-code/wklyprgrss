@@ -138,6 +138,46 @@ async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
 }
 
 /**
+ * Decode, and if the browser refuses the file, try reading it as HEIC before
+ * giving up.
+ *
+ * `isHeic` catches the clear cases — a real type or a `.heic` name — but an
+ * iPhone photo picked from the library often arrives with an empty type and a
+ * name that is not `.heic` at all (`image.jpg`, or no extension), so it slips
+ * past detection and reaches here as a file no non-Safari browser can decode.
+ * That is the "won't let me upload, wrong format?" a manager hit on an iPhone.
+ *
+ * The browser decoders are the fast path and stay first, because running the
+ * WASM HEIC reader on every photo would be wasteful and `heic2any` throws on a
+ * real JPEG anyway. Only once both decoders have refused the bytes is it worth
+ * the cost: if the file really was an undetected HEIC this rescues it, and if
+ * it was genuinely unreadable `heic2any` throws and the original decode failure
+ * is what surfaces, unchanged. Skipped when the file was already run through
+ * `heicToJpeg` up front, where a failure to decode the result is real.
+ */
+async function decodeOrHeicFallback(
+  readable: File,
+  alreadyHeic: boolean,
+): Promise<ImageBitmap | HTMLImageElement> {
+  try {
+    return await decode(readable);
+  } catch (firstFailure) {
+    if (alreadyHeic) throw firstFailure;
+    try {
+      const asJpeg = await withTimeout(
+        heicToJpeg(readable),
+        DECODE_TIMEOUT_MS,
+      );
+      return await decode(asJpeg);
+    } catch {
+      // Not HEIC either, or HEIC the reader could not take. The browser's
+      // refusal is the honest error, so surface that rather than the HEIC one.
+      throw firstFailure;
+    }
+  }
+}
+
+/**
  * Re-encode to JPEG at max 1600px on the long edge, stepping quality down until
  * the file is around 300KB. Going through a canvas is also what converts an
  * iPhone HEIC capture into something every browser can render.
@@ -145,10 +185,11 @@ async function decode(file: File): Promise<ImageBitmap | HTMLImageElement> {
 export async function compressToJpeg(file: File): Promise<File> {
   // HEIC first, on any browser but Safari the canvas decoders below cannot read
   // it. This turns it into a JPEG they can, before the sizing pass.
-  const readable = isHeic(file)
+  const detectedHeic = isHeic(file);
+  const readable = detectedHeic
     ? await withTimeout(heicToJpeg(file), DECODE_TIMEOUT_MS)
     : file;
-  const source = await decode(readable);
+  const source = await decodeOrHeicFallback(readable, detectedHeic);
   const sourceWidth =
     source instanceof HTMLImageElement ? source.naturalWidth : source.width;
   const sourceHeight =
