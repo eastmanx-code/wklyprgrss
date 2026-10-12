@@ -9,6 +9,7 @@ import {
   type HouseProgress,
 } from "@/components/VenueHero";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
+import { DocThumb } from "@/components/DocProof";
 import { DonePill, PhotoPlaceholder, emptySlots } from "@/components/ui";
 import { livePhotoPaths, signedUrls } from "@/lib/photos";
 import { getSession, venueOfSession } from "@/lib/session";
@@ -148,7 +149,14 @@ export default async function VenuePage() {
           <ul className="stagger grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {house.items.map((item) => {
               const latest = board.latest.get(item.id);
-              const thumb = latest ? thumbs.get(latest.photo_url) : undefined;
+              const docThumb =
+                latest && latest.doc_url
+                  ? thumbs.get(latest.doc_url)
+                  : undefined;
+              const thumb =
+                latest && latest.photo_url
+                  ? thumbs.get(latest.photo_url)
+                  : undefined;
               const beforeThumb = latest?.before_photo_url
                 ? thumbs.get(latest.before_photo_url)
                 : undefined;
@@ -162,7 +170,11 @@ export default async function VenuePage() {
                     href={`/venue/item/${item.id}`}
                     className="panel panel-link flex h-full flex-col p-3"
                   >
-                    {thumb ? (
+                    {latest?.doc_url ? (
+                      <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
+                        <DocThumb href={docThumb ?? null} />
+                      </div>
+                    ) : thumb ? (
                       <div className="relative aspect-square overflow-hidden rounded-xl bg-panel">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img

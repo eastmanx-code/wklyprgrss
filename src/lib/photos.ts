@@ -98,21 +98,29 @@ export function forgetSignedUrl(path: string): void {
  */
 export function livePhotoPaths(
   entries: {
-    photo_url: string;
+    photo_url: string | null;
+    doc_url: string | null;
     before_photo_url: string | null;
     photo_purged_at: string | null;
   }[],
 ): string[] {
   return entries.flatMap((entry) => {
     if (entry.photo_purged_at) return [];
-    return entry.before_photo_url
-      ? [entry.photo_url, entry.before_photo_url]
-      : [entry.photo_url];
+    // A document is proof too and lives in the same private bucket, so it needs
+    // a signed URL to open just as a photo does. Nulls are filtered out: a
+    // photo submission has no doc path and a document one has no photo path.
+    return [entry.photo_url, entry.doc_url, entry.before_photo_url].filter(
+      (path): path is string => Boolean(path),
+    );
   });
 }
 
 export async function signedUrl(path: string): Promise<string | null> {
   return (await signedUrls([path])).get(path) ?? null;
+}
+
+function uniqueSuffix(): string {
+  return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /** Deterministic, collision-free object path: VENUE/ITEM/WEEK-timestamp.jpg */
@@ -121,8 +129,23 @@ export function photoPath(
   itemId: string,
   weekStart: string,
 ): string {
-  const unique = `${Date.now().toString(36)}${Math.random()
-    .toString(36)
-    .slice(2, 8)}`;
-  return `${venueCode}/${itemId}/${weekStart}-${unique}.jpg`;
+  return `${venueCode}/${itemId}/${weekStart}-${uniqueSuffix()}.jpg`;
+}
+
+/**
+ * The same scheme as photoPath, for a document filed as proof. The `.pdf`
+ * extension is the one thing that tells the two apart on the way back: a proof
+ * path ending `.pdf` renders as a document link, everything else as an image.
+ */
+export function docPath(
+  venueCode: string,
+  itemId: string,
+  weekStart: string,
+): string {
+  return `${venueCode}/${itemId}/${weekStart}-${uniqueSuffix()}.pdf`;
+}
+
+/** True for a proof path that points at a document rather than an image. */
+export function isDocPath(path: string): boolean {
+  return path.toLowerCase().endsWith(".pdf");
 }

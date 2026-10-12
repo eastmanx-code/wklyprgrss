@@ -69,8 +69,18 @@ export type Submission = {
   id: string;
   item_id: string;
   week_start: string;
-  /** Storage object path inside the private `photos` bucket, not a public URL. */
-  photo_url: string;
+  /**
+   * Storage object path inside the private `photos` bucket, not a public URL.
+   * Null when the proof is a document rather than a photo — a submission
+   * carries one or the other.
+   */
+  photo_url: string | null;
+  /**
+   * Document (PDF) filed as proof instead of a photo, as a storage object path
+   * in the same private `photos` bucket. Null when the proof is a photo. Every
+   * submission has exactly one of `photo_url` or `doc_url`.
+   */
+  doc_url: string | null;
   /**
    * Optional same-week "before" shot, for tasks executed inside the week. Null
    * on ongoing items, where the previous week's photo is the before.

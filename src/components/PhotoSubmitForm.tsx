@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 import { compressToJpeg, decodeMessage, formatKb } from "@/lib/compress";
 import {
+  createDocUploadTarget,
   createUploadTargets,
   editSubmission,
   submitItem,
@@ -39,7 +40,7 @@ function listOut(entries: string[]): string {
 type Needed = "photo" | "progress" | "author" | "comment";
 
 const NEEDED_LABEL: Record<Needed, string> = {
-  photo: "a photo",
+  photo: "a photo or document",
   progress: "where this is at",
   author: "your name",
   comment: "a comment",
@@ -102,6 +103,10 @@ export function PhotoSubmitForm({
   const [uploading, setUploading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  // A document (PDF) that stands in for the photo. Mutually exclusive with the
+  // photo wells: picking one clears the other, because a submission carries one
+  // kind of proof, not both.
+  const [doc, setDoc] = useState<File | null>(null);
   const [beforePhoto, setBeforePhoto] = useState<File | null>(null);
   const [beforePreview, setBeforePreview] = useState<string | null>(null);
   const [comment, setComment] = useState(editing?.comment ?? "");
@@ -183,12 +188,48 @@ export function PhotoSubmitForm({
       previewRef.current = url;
       setPhoto(compressed);
       setPreview(url);
+      // A photo and a document are alternatives, so taking a photo drops any
+      // document that was attached.
+      setDoc(null);
     } catch (error) {
       setLocalError(decodeMessage(error));
       setPhoto(null);
       setPreview(null);
     } finally {
       setProcessing(false);
+    }
+  }
+
+  /**
+   * Attach a PDF as the proof instead of a photo.
+   *
+   * No compression pass: a document is uploaded as-is, so this stays
+   * synchronous and never touches the image decoder. Picking one clears the
+   * photo and the before, because the submission then carries a document rather
+   * than a before/after pair.
+   */
+  function handleDocPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const isPdf =
+      file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!isPdf) {
+      setLocalError("That has to be a PDF.");
+      return;
+    }
+    setLocalError(null);
+    setDoc(file);
+    setPhoto(null);
+    setPreview(null);
+    if (previewRef.current) {
+      URL.revokeObjectURL(previewRef.current);
+      previewRef.current = null;
+    }
+    setBeforePhoto(null);
+    setBeforePreview(null);
+    if (beforePreviewRef.current) {
+      URL.revokeObjectURL(beforePreviewRef.current);
+      beforePreviewRef.current = null;
     }
   }
 
@@ -247,10 +288,14 @@ export function PhotoSubmitForm({
         return;
       }
 
-      const put = async (target: { signedUrl: string }, file: File) => {
+      const put = async (
+        target: { signedUrl: string },
+        file: File,
+        contentType = "image/jpeg",
+      ) => {
         const response = await fetch(target.signedUrl, {
           method: "PUT",
-          headers: { "content-type": "image/jpeg" },
+          headers: { "content-type": contentType },
           body: file,
         });
         if (!response.ok) {
@@ -260,6 +305,20 @@ export function PhotoSubmitForm({
 
       if (photo && targets.after) await put(targets.after, photo);
       if (beforePhoto && targets.before) await put(targets.before, beforePhoto);
+
+      // A document is its own upload: a separate signed target scoped to this
+      // item, PUT as a PDF rather than a JPEG. Only when one is attached, and
+      // never alongside a photo, since picking either clears the other.
+      let docPath: string | null = null;
+      if (doc) {
+        const docTarget = await createDocUploadTarget(itemId);
+        if (docTarget.error || !docTarget.doc) {
+          setLocalError(docTarget.error ?? "Couldn't start the upload.");
+          return;
+        }
+        await put(docTarget.doc, doc, "application/pdf");
+        docPath = docTarget.doc.path;
+      }
 
       const data = new FormData();
       if (editing) {
@@ -276,6 +335,7 @@ export function PhotoSubmitForm({
       if (beforePhoto && targets.before) {
         data.set("beforePhotoPath", targets.before.path);
       }
+      if (docPath) data.set("docPath", docPath);
       formAction(data);
     } catch (error) {
       // Surface it in the form rather than throwing to the error screen, which
@@ -291,9 +351,9 @@ export function PhotoSubmitForm({
   }
 
   const unmet: Needed[] = [];
-  // Amending keeps the photo already filed unless a new one is picked, so an
-  // untouched well is not a missing photo.
-  if (!photo && !editing) unmet.push("photo");
+  // Amending keeps the proof already filed unless a new one is picked, so an
+  // untouched well is not missing proof. A document counts as proof too.
+  if (!photo && !doc && !editing) unmet.push("photo");
   if (!progress) unmet.push("progress");
   if (!author.trim()) unmet.push("author");
   if (!comment.trim()) unmet.push("comment");
@@ -438,6 +498,32 @@ export function PhotoSubmitForm({
         {photo ? (
           <p className="label">
             Ready · {formatKb(photo.size)}. Tap to retake.
+          </p>
+        ) : null}
+      </div>
+
+      {/* A document instead of a photo. For an item whose deliverable is a
+          sheet or a checklist rather than a picture: the PDF stands in for the
+          photo, and attaching one clears the photo wells above. */}
+      <div className="space-y-2">
+        <span className="label">Or attach a document (PDF)</span>
+        <label className="block cursor-pointer">
+          <input
+            type="file"
+            accept="application/pdf"
+            className="sr-only"
+            onChange={handleDocPick}
+            disabled={busy}
+          />
+          <div className="dotfield flex items-center justify-center rounded-xl px-4 py-6 text-center">
+            <span className="label text-ink bg-paper rounded-full px-3 py-1.5 shadow-[0_0_0_4px_var(--color-paper)]">
+              {doc ? "Document attached · tap to replace" : "Tap to choose a PDF"}
+            </span>
+          </div>
+        </label>
+        {doc ? (
+          <p className="label">
+            {doc.name} · {formatKb(doc.size)}
           </p>
         ) : null}
       </div>

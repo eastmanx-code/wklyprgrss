@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { DocLink, DocThumb } from "@/components/DocProof";
 import { PhotoView } from "@/components/PhotoView";
 
 import {
@@ -246,9 +247,14 @@ export default async function AdminVenuePage({
               const carried = submission
                 ? submission.week_start !== weekStart
                 : false;
-              const url = submission
-                ? photos.get(submission.photo_url)
-                : undefined;
+              const url =
+                submission && submission.photo_url
+                  ? photos.get(submission.photo_url)
+                  : undefined;
+              const docUrl =
+                submission && submission.doc_url
+                  ? photos.get(submission.doc_url)
+                  : undefined;
               // Falls back to the last-ever upload, so a stale item still says
               // how long it has been neglected rather than just "nothing yet".
               const lastEver = byItem.get(item.id)?.[0];
@@ -260,7 +266,11 @@ export default async function AdminVenuePage({
                     className="flex flex-1 flex-col"
                   >
                     <div className="relative">
-                      {url ? (
+                      {submission?.doc_url ? (
+                        <div className="bg-inset aspect-square overflow-hidden rounded-[8px]">
+                          <DocThumb href={docUrl ?? null} />
+                        </div>
+                      ) : url ? (
                         <div className="bg-inset aspect-square overflow-hidden rounded-[8px]">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -549,7 +559,12 @@ export default async function AdminVenuePage({
                           ) : (
                             <ul className="mt-3 space-y-3">
                               {history.map((submission) => {
-                                const url = photos.get(submission.photo_url);
+                                const url = submission.photo_url
+                                  ? photos.get(submission.photo_url)
+                                  : undefined;
+                                const docUrl = submission.doc_url
+                                  ? (photos.get(submission.doc_url) ?? null)
+                                  : undefined;
                                 return (
                                   <li
                                     key={submission.id}
@@ -564,7 +579,11 @@ export default async function AdminVenuePage({
                                         {formatTimestamp(submission.created_at)}
                                       </p>
                                     </div>
-                                    {url ? (
+                                    {submission.doc_url ? (
+                                      <div className="mt-3">
+                                        <DocLink href={docUrl ?? null} />
+                                      </div>
+                                    ) : url ? (
                                       <PhotoView
                                         src={url}
                                         className="mt-3 aspect-[4/3] rounded-[8px]"
