@@ -14,12 +14,12 @@ import { bumpWalkDrain, sendWalkPhoto } from "@/lib/walk-send";
 import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 
 /** A stable, collision-free object key, with a fallback for old Safari. */
-function newPath(commitmentId: string): string {
+function newPath(commitmentId: string, ext = "jpg"): string {
   const id =
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
       : `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
-  return `walk/${commitmentId}/${id}.jpg`;
+  return `walk/${commitmentId}/${id}.${ext}`;
 }
 
 /**
@@ -46,7 +46,7 @@ export function CommitmentActions({
   id: string;
   signed: boolean;
   canReopen: boolean;
-  initialPhotos: { id: string; url: string }[];
+  initialPhotos: { id: string; url: string; isDoc?: boolean }[];
 }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -54,6 +54,7 @@ export function CommitmentActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const docRef = useRef<HTMLInputElement>(null);
 
   const hasPhoto = initialPhotos.length > 0;
 
@@ -103,6 +104,52 @@ export function CommitmentActions({
     }
   }
 
+  /**
+   * Attach a PDF instead of a photo. For a walkthrough ask whose proof is a
+   * document (the HOH checklist and its kind), which had nowhere to go before.
+   * No compression: a PDF rides the same offline queue as a photo, uploaded
+   * as-is to a `.pdf` path so storage serves it as a document.
+   */
+  async function pickDoc(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const isPdf =
+      file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+    if (!isPdf) {
+      setError("That has to be a PDF.");
+      if (docRef.current) docRef.current.value = "";
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    let sentNow = false;
+    try {
+      const path = newPath(id, "pdf");
+      const op: WalkPhotoOp = {
+        kind: "walkphoto",
+        key: walkPhotoKey(path),
+        commitmentId: id,
+        path,
+        name: name.trim(),
+        bytes: file.size,
+        clientAt: new Date().toISOString(),
+      };
+      const held = await enqueueWalkPhoto(op, file);
+      if (!held.stored) {
+        const r = await sendWalkPhoto(op, file);
+        if (r.error) throw new Error(r.error);
+        sentNow = true;
+      }
+      bumpWalkDrain();
+      if (sentNow) router.refresh();
+    } catch (e) {
+      setError(decodeMessage(e));
+    } finally {
+      setBusy(false);
+      if (docRef.current) docRef.current.value = "";
+    }
+  }
+
   async function remove(photoId: string) {
     setBusy(true);
     setError(null);
@@ -116,7 +163,7 @@ export function CommitmentActions({
 
   async function sign() {
     if (!hasPhoto) {
-      setError("Add a photo first.");
+      setError("Add a photo or document first.");
       return;
     }
     if (name.trim().length < 2) {
@@ -192,6 +239,21 @@ export function CommitmentActions({
           disabled={busy}
         />
         {busy ? "Working…" : hasPhoto ? "Add another photo" : "Add a photo"}
+      </label>
+
+      {/* A document instead of a photo, for an ask whose proof is a checklist
+          or a sheet. It counts as proof the same way a photo does, so it
+          satisfies the sign-off gate. */}
+      <label className="btn-ghost btn-sm ml-2 inline-flex cursor-pointer items-center">
+        <input
+          ref={docRef}
+          type="file"
+          accept="application/pdf"
+          className="sr-only"
+          onChange={pickDoc}
+          disabled={busy}
+        />
+        {busy ? "Working…" : "Attach a PDF"}
       </label>
 
       <input

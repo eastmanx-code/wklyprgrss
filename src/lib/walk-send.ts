@@ -2,6 +2,13 @@ import { attachWalkPhoto, walkPhotoUploadUrl } from "@/app/walkthroughs/actions"
 import type { WalkPhotoOp } from "@/lib/outbox";
 
 /**
+ * Inlined rather than imported from photos.ts: this module is reachable from
+ * client components, and photos.ts is server-only. A proof path ending `.pdf`
+ * is a document, which storage must serve as a PDF, not a JPEG.
+ */
+const isPdfPath = (path: string) => path.toLowerCase().endsWith(".pdf");
+
+/**
  * Getting one walkthrough photo up, and telling everyone who cares to try.
  *
  * The queue in `outbox.ts` holds the photos; this is the send it drains through
@@ -58,7 +65,11 @@ export async function sendWalkPhoto(
 
     const res = await fetch(target.signedUrl, {
       method: "PUT",
-      headers: { "content-type": "image/jpeg" },
+      headers: {
+        "content-type": isPdfPath(target.path)
+          ? "application/pdf"
+          : "image/jpeg",
+      },
       body: blob,
     });
     if (!res.ok) throw new Error(`upload ${res.status}`);

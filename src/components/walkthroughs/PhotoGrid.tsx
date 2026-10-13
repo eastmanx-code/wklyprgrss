@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 import { refreshWalkPhotoUrl } from "@/app/walkthroughs/actions";
 
-export type GridPhoto = { id: string; url: string };
+export type GridPhoto = { id: string; url: string; isDoc?: boolean };
 
 /**
  * The photo strip, everywhere a walkthrough shows photos.
@@ -100,7 +100,40 @@ export function PhotoGrid({
       <div className="flex flex-wrap gap-2">
         {photos.map((p) => (
           <span key={p.id} className="relative inline-block">
-            {failed.has(p.id) ? (
+            {p.isDoc ? (
+              // A document opens in its own viewer, so it is a link, not an
+              // <img> in the lightbox. No auto-resign heal: a lapsed link just
+              // fails on click and a page reload re-signs it.
+              <a
+                href={urlOf(p)}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open document (PDF)"
+                className="bg-inset text-muted ring-card-border hover:text-ink flex h-16 w-16 flex-col items-center justify-center gap-0.5 rounded-[4px] ring-1"
+              >
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M14 2v6h6"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-[10px] leading-none">PDF</span>
+              </a>
+            ) : failed.has(p.id) ? (
               <button
                 type="button"
                 onClick={() => retry(p.id)}
