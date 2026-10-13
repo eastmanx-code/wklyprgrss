@@ -6,7 +6,7 @@ import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
 import { WalkQueue } from "@/components/walkthroughs/WalkQueue";
 import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
 import { QuestionAnswer } from "@/components/walkthroughs/QuestionAnswer";
-import { signedUrls } from "@/lib/photos";
+import { isDocPath, signedUrls } from "@/lib/photos";
 import { getSession, mayManage, mayReachVenue } from "@/lib/session";
 import {
   CATEGORY_BADGE,
@@ -257,8 +257,14 @@ function CommitmentRow({
   const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
   const photos = item.photos
-    .map((p) => ({ id: p.id, url: urls.get(p.path) }))
-    .filter((p): p is { id: string; url: string } => Boolean(p.url));
+    .map((p) => ({
+      id: p.id,
+      url: urls.get(p.path),
+      isDoc: isDocPath(p.path),
+    }))
+    .filter((p): p is { id: string; url: string; isDoc: boolean } =>
+      Boolean(p.url),
+    );
   const photoStrip =
     photos.length > 0 ? (
       <div className="mt-3">
