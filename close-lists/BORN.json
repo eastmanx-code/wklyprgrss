@@ -1,0 +1,712 @@
+{
+  "venue": "BORN",
+  "lists": [
+    {
+      "house": "HOH",
+      "role": "butcher",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE CLEANED THE BANDSAW AND MEAT GRINDER, AND REPLACED ALL PARTS AND SCREWS CORRECTLY."
+        },
+        {
+          "title": "I HAVE CLEANED, SANITIZED, DRIED AND SALTED THE BUTCHER BLOCKS AND CUTTING BOARDS."
+        },
+        {
+          "title": "I HAVE SWEPT AND MOPPED THE FLOORS: INCLUDING THE BUTCHER ROOM, UNDER TABLES, UNDER BANDSAW, AND COOLER."
+        },
+        {
+          "title": "I HAVE CLEANED AND BLEACHED THE HAND SINK AND DRAIN."
+        },
+        {
+          "title": "I HAVE CLEANED THE GLASS, INSIDE AND OUT, INCLUDING COOLER WINDOWS."
+        },
+        {
+          "title": "I HAVE POLISHED THE STEEL WALLS USING SATIN SHINE."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE TILE WALL."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE PLASTIC CURTAIN IN THE COOLER."
+        },
+        {
+          "title": "I HAVE DUSTED THE HANGING LIGHTS AND WOOD PILAR."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL SCALES. (TOP, BOTTOM, AND SIDES)"
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED CRYOVAC MACHINE."
+        },
+        {
+          "title": "OYSTERS IN THE WALK IN ARE HELD IN A DRAINING PAN WITH ICE OVER THEM, NOT SITTING IN STANDING WATER"
+        },
+        {
+          "title": "TAGS ARE FILED IN ORDER IN THE BINDER SO THE 90 DAY MARK IS TRACKABLE"
+        },
+        {
+          "title": "I HAVE ORGANIZED THE DRY AGE COOLER, CONSOLIDATED AND CHANGED OUT PANS AS NEEDED."
+        },
+        {
+          "title": "GLOVE BOXES ARE STORED OUTSIDE OF THE WALK IN, NOT ON A SHELF WITH PRODUCT"
+        },
+        {
+          "title": "VACUUM SEAL BAGS ARE STORED OUT OF SIGHT WITH THE MACHINE NOT LEFT ON THE COUNTER"
+        },
+        {
+          "title": "I HAVE PROPERLY ROTATED AND MAINTAINED QUALITY CONTROL OF ALL PRODUCT IN THE COOLER."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "CLOSER",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE RECORDED ALL COOLER TEMPS IN THE TEMP LOG AND NOTIFIED A MANAGER OF ANY ISSUE"
+        },
+        {
+          "title": "I HAVE CHECKED ALL STATION CHECKLISTS AND THEY ARE COMPLETE."
+        },
+        {
+          "title": "EVERY CONTAINER IS COVERED ANBD THERE ARE NO SCOOPING TOOLS LEFT SITTING IN THE PRODUCT"
+        },
+        {
+          "title": "ANY TORN OR DAMAGED PACKAGING IS PULLED RATHER THAN LEFT FOR THE NEXT SERVICE"
+        },
+        {
+          "title": "I HAVE CHECKED THAT ALL NIGHTLY ORDERS HAVE BEEN COMPLETED. (FISH, LOBSTER, OYSTERS,PRODUCE)"
+        },
+        {
+          "title": "I HAVE CHECKED THAT ALL TRASH HAS BEEN TAKEN OUT AND TRASH CANS HAVE BEEN TAKEN TO THE DISHWASHERS TO BE CLEANED."
+        },
+        {
+          "title": "I HAVE CHECKED FLOORS: THEY HAVE BEEN SWEPT.  I HAVE INSPECTED ALL CORNERS AND UNDER SHELVES FOR GOLD."
+        },
+        {
+          "title": "I HAVE CHECKED ALL FLOOR DRAINS TO ENSURE THEY ARE CLEAN AND BLEACHED."
+        },
+        {
+          "title": "I HAVE CHECKED OUT THE CLOSING FOOD RUNNERS.  I HAVE VERIFIED THEIR CLOSING CHECKLIST IS COMPLETE."
+        },
+        {
+          "title": "I HAVE CHECK THE ORGANIZATION AND THE DEEP CLEANING OF THE WALKIN.  INCLUDING CLEANING THE SPEED RACKS, HERB BINS, THE DOOR AND THRESHOLD, AND THE PLASTIC CURTAIN."
+        },
+        {
+          "title": "I HAVE CLEANED THE WALK IN SHELVES. PLASTIC AND WIRE BOTH"
+        },
+        {
+          "title": "I HAVE. CHECKED THE WALK IN STORAGE ORDER. RAW PROTEINS ARE BELOW ALL READY TO EAT PRODUCT. NOTHING RAW IS STORED ABOVE PASTRY OR PRODUCE."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DISH",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE TAKEN OUT ALL TRASH AND SET UP A FRESH NEW LINEN BAG"
+        },
+        {
+          "title": "I HAVE SWEPT, SCRUBBED, AND MOPPED THE DISH AND PAN STORAGE AREA FLOORS. I HAVE MOPPED UP ALL WATER THAT HAS COLLECTED SO THERE IS NO STANDING WATER."
+        },
+        {
+          "title": "I HAVE CLEANED AND BLEACHED ALL FLOOR DRAINS. I HAVE CLEANED ALL GRATES AND BASKETS FOR THE FLOOR DRAINS."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE DOOR LEADING TO THE JOSPER STATION, BOTH SIDES, INCLUDING THE WINDOW."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL SINKS, INCLUDING THE HANDWASHING SINK."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND SANITIZED THE WALL BEHIND THE DISH MACHINE AND THE WALL UNDER THE PREP TABLE."
+        },
+        {
+          "title": "I HAVE CLEANED THE WALLS AROUND THE FLOOR DRAINS"
+        },
+        {
+          "title": "I HAVE TAKEN THE DIRTY FLOOR MATS TO THE SHED."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL TRASH CANS."
+        },
+        {
+          "title": "I HAVE CLEANED THE INTERIOR OF THE DISHMACHINE. CLEANED ALL SCREENS AND CHECKED FOR BLOCKAGES IN THE SPRAYER ARMS AND DRAINED THE WATER.  I HAVE LEFT THE DOORS OPEN."
+        },
+        {
+          "title": "I HAVE CLEANED THE EXTERIOR OF THE DISH MACHINE (TOP, SIDE, FRONT, LEGS, AND DRAIN PIPES)"
+        },
+        {
+          "title": "I HAVE CLEAN AND SANITIZED THE FOOD CATCHING GRATES FROM THE DISH MACHINE SPAYER SINK. (INSIDE AND OUT)"
+        },
+        {
+          "title": "I HAVE CLEANED AND ORGANIZED ALL SHELVES.  I HAVE CLEANED AND ORGANIZED ALL STORAGE CONTAINERS. NO CONTAINERS UNDER THE SHELVES OR ON THE FLOOR."
+        },
+        {
+          "title": "I HAVE CLEANED THE HAND SINK AND STOCKED UP THE HAND SOAP AND PAPER TOWELS."
+        },
+        {
+          "title": "I HAVE LEFT THE HOOD ON."
+        },
+        {
+          "title": "I HAVE CHECKED OUT WITH THE MOD. (MANAGER INITIALS)"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "GRILL",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE TAKEN BROILER GRATES TO DISHWASHERS TO HAVE CLEANED."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND CLEANED THE BROILER. (FRONT, SIDES, TOP, INSIDE)"
+        },
+        {
+          "title": "I HAVE CHANGED THE BROILER FOIL."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE CUBBY UNDER BROILER AND ORGANIZED MISE EN PLACE THAT REMAINS UNDER THE BOILER."
+        },
+        {
+          "title": "I HAVE COUNTED, FLIPPED, AND LABELED USE FIRST ALL WET AGED STEAKS AND RETURNED ALL PROTEINS TO APPROPRIATE COOLERS."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL REFRIGERATOR DRAWERS, INCLUDING GASKETS.  I HAVE ALSO CLEANED AND SANITIZED THE REFRIGERATOR. (INSIDE, OUTSIDE, TOP)"
+        },
+        {
+          "title": "I HAVE CLEANED, SANITIZED AND ORGANIZED THE CUBBY UNDER THE MEAT EXPO.  I HAVE VERIFIED ALL PRINTER CABLES ARE PLUGGED IN PROPERLY."
+        },
+        {
+          "title": "I HAVE DRAINED, CLEANED AND SANITIZED THE SAUCE WELL."
+        },
+        {
+          "title": "I HAVE CLEANED THE BASEBOARDS INCLUDING BEHIND THE FLOOR DRAIN AND ALTO SHAM."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL COUNTERTOPS."
+        },
+        {
+          "title": "I HAVE RETURNED ALL PLATES TO THE EXPO LINE."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND CLEANED THE JOSPER DOOR AND ALL EXTERIOR SURFACES. (TOP, SIDES, ASH COLLECTION DOORS)"
+        },
+        {
+          "title": "I HAVE PULLED OUT THE ALTO-SHAM AND CLEANED IT INSIDE AND OUT."
+        },
+        {
+          "title": "I HAVE FLIPPED ALL DRY AGED STEAKS ONTO NEW SHEET TRAYS WITH NEW PARCHMENT AND LABELED USE FIRST."
+        },
+        {
+          "title": "CUTTING BOARD: I HAVE CLEANED, SANITIZED, DRIED, AND PLACED ON THE JOSPER SPEED RACK."
+        },
+        {
+          "title": "I HAVE CHECKED OUT WITH CLOSING CHEF. (CHEF INITIALS)"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "HOTLINE",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE STOCKED ALL MISE EN PLACE, FLIPPED AND WRAPPED PROPERLY."
+        },
+        {
+          "title": "STOVE: I HAVE TAKEN BURNERS AND GRATES OUT AND TAKEN TO DISH IN A TIMELY MANNER."
+        },
+        {
+          "title": "STOVETOP: I HAVE SCRUBBED, WIPED, AND RE-FOILED STOVE. I HAVE ALSO REPLACED GRATES."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND SANITIZED ALL COUNTERTOPS, CUBBIES, AND SHELVES."
+        },
+        {
+          "title": "CUTTING BOARDS: I HAVE CLEANED, SANITIZED, DRIED AND PLACED ON THE JOSPER SPEED RACK."
+        },
+        {
+          "title": "BACK WALL: I HAVE SCRUBBED AND SANITIZED THE WALL BEHIND THE STOVE, FRYER AND OVEN."
+        },
+        {
+          "title": "FRYER: I HAVE CLEANED EXTERIOR AND COVERED THE FRYER. I HAVE CLEANED AND ORGANIZED THE CUBBIES UNDER FRYER. I HAVE DEGREASED THE FRYER CUBBY, NOT JUST ORGANIZED IT."
+        },
+        {
+          "title": "FLAT TOP: I HAVE BRICKED, SCRAPPED, AND CLEANED THE FLAT TOP. I HAVE EMPTIED AND CLEANED THE GREASE TRAP."
+        },
+        {
+          "title": "SALAMANDER: I HAVE SCRUBBED AND CLEANED THE SALAMANDER OF ALL GREASE, INCLUDING THE INSIDE AND TOP, AND POLISHED."
+        },
+        {
+          "title": "I HAVE CLEANED THE TOP OF THE RATIONAL"
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL DRAWER SURFACES INCLUDING GASKETS."
+        },
+        {
+          "title": "I HAVE CHECKED THE HOOD AND THE CEILING AND THE VENTS ABOVE JOSPER FOR SOOT AND GREASE BUILDUP AND REPORTED ANYTHING BEYOND A WIPE"
+        },
+        {
+          "title": "I HAVE ORGANIZED THE CABINET BELOW THE DISH SINK"
+        },
+        {
+          "title": "I HAVE WIPED THE TOAST SCREEN AND THE BACK OF THE SCREEN AND THE STAND"
+        },
+        {
+          "title": "I HAVE CHECKED OUT WITH CHEF/MANAGER ON DUTY"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PANTRY",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE STOCKED ALL MISE EN PLACE, FLIPPED AND WRAPPED PROPERLY."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND SANITIZE ALL FOOD CONTACT SURFACES (COUNTERS, SHELVES, WALLS, SINKS)"
+        },
+        {
+          "title": "CUBBIES: I HAVE CLEANED AND SANTIZED ALL SHELVES.  ORGAINIZED WOOD CAVIAR SERVICE WARE, GLASSES AND PLATES. CHANGED OUT CONTAINERS FOR STORAGE."
+        },
+        {
+          "title": "I HAVE PROPERLY STORED ALL PRODUCT ON THE SPEEDRACK."
+        },
+        {
+          "title": "I HAVE SCRUBBED AND BLEACHED BOTH FLOOR DRAINS, INCLUDING DRAIN PIPES, GRATES AND BASKETS."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE SLICER."
+        },
+        {
+          "title": "I HAVE CLEANED UNDER THE CAN HOLDERS"
+        },
+        {
+          "title": "FREEZER: I HAVE ORGANIZED THE FREEZER CONTENTS. PULLED OUT AND WIPED THE TOP, SIDES, WALL BEHIND. SWEEPED THE FLOOR UNDER FREEZER PAYING CLOSE ATTENTION TO THE CORNERS."
+        },
+        {
+          "title": "I HAVE MADE SURE THERE IS NO FOOD PRODUCT LEFT OUT ANYWHERE ON MY SATION"
+        },
+        {
+          "title": "I HAVE WRAPPED OR RESEALED THE CHARCUTERIE"
+        },
+        {
+          "title": "I HAVE CLEANED AND ORGANIZED THE SMALL APPLIANCE SHELVES.  I HAVE ALSO SORTED AND ORGANIZED THE EQUIPMENT BINS."
+        },
+        {
+          "title": "I HAVE PROPERLY WRAPPED AND STORED ALL PASTRY MISE EN PLACE."
+        },
+        {
+          "title": "I HAVE COMPLETED THE PASTRY INVENTORY AND CHECKLIST"
+        },
+        {
+          "title": "I HAVE SWEPT AND MOPPED THE WALK IN"
+        },
+        {
+          "title": "I HAVE WIPED THE TOAST SCREEN AND THE BACK OF THE SCREEN AND THE STAND"
+        },
+        {
+          "title": "I HAVE CHECKED OUT WITH THE CLOSING CHEF. (CHEF INITIALS)"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PASTRY",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE COMPLETED ALL PREP FOR SEVICE AND DISCUSSED ANY COUNTS WITH THE CHEF.",
+          "detail": [
+            "COMPLETION OF ALL PREP NEEDED FOR SERVICE."
+          ]
+        },
+        {
+          "title": "PUT AWAY BREAD ITEMS WITH LABELS AND LIDS",
+          "detail": [
+            "ALL BREAD NEEDED FOR SERVICE IS STORED PROPERLY OR MOVED TO THE FREEZER."
+          ]
+        },
+        {
+          "title": "I HAVE PROPERLY PUT AWAY ALL PREPPED ITEMS AND EQUIPMENT.",
+          "detail": [
+            "STATION IS CLEANED AND SANITIZED FOR PANTRY SET UP."
+          ]
+        },
+        {
+          "title": "I HAVE CHECKED THE DISPLAY DESSERTS TO MAKE SURE THEY ARE DUSTED"
+        },
+        {
+          "title": "I HAVE CLEANED AND ORGANIZED THE PASTRY SHELF IN THE WALKIN. WITH DATES AND FIFO"
+        },
+        {
+          "title": "I HAVE CLEANED AND ORGANIZED THE SPICE SHELVES AND DRY STORAGE SHELVES, WIPING THE RACKS AND BACK WALLS."
+        },
+        {
+          "title": "CLEAN PASTRY WORKSPACE FROM TOP SHELF TO BOTTOM, INCLUDING UNDER THE SHELVES"
+        },
+        {
+          "title": "SWEEP AND MOP WORKSPACE"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PREP",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I HAVE FINISHED ALL PREP ON THE PREP LIST.",
+          "detail": [
+            "EVERY PROJECT HAS BEEN COMPLETED, UNLESS A CHEF APPROVED IT TO BE NOT NECESSARY."
+          ]
+        },
+        {
+          "title": "I HAVE PROPERLY STORED ALL PREP ON PREP TABLE.",
+          "detail": [
+            "HOT PREP ITEMS ARE COOLING IN AN ICE BATH ON THE BACK TABLE."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "ICE BATH"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE PROPERLY STORED ALL PREP FROM THE SPEED RACKS.",
+          "detail": [
+            "ALL PREP IS PUT AWAY, SPEED RACK IS EMPTY."
+          ]
+        },
+        {
+          "title": "I HAVE SWEPT AND MOPPED FLOORS.",
+          "detail": [
+            "HOT LINE/ PREP AREA IS SWEPT AND MOPPED."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "SHOW ACTIVELY MOPPING."
+            }
+          ]
+        },
+        {
+          "title": "I HAVE TAKEN OUT ALL TRASH AND REBAGGED THE CANS.",
+          "detail": [
+            "FRESH TRASHBAGS IN ALL TRASHCANS."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "PHOTO OF TRASHCANS BAGGED AND LINED UP AT THE MOP STATION."
+            }
+          ]
+        },
+        {
+          "title": "I HAVE TAKEN OUT ALL RECYCLING HAD THE CANS WASHED. (BOXES BROKEN DOWN)",
+          "detail": [
+            "RECYCLING ROOM IN ORDER WITH ALL LIDS SHUT."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "RECYCLING ROOM"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE ORGANIZED THE WALK IN.",
+          "detail": [
+            "WALK IN MATCHES THE REFERENCE PHOTOS."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "CLEANED WALK IN"
+            }
+          ]
+        },
+        {
+          "title": "EVERY OYSTER TAG HAS THE DATE RECEIVED AND THE DATE THE LAST ONE WAS SOLD WRITTEN ON IT.",
+          "detail": [
+            "OYSTER TRAYS ARE PROPERLY TAGGED, TAGS ARE DATED, COMPLETED TAGS ARE FILED."
+          ]
+        },
+        {
+          "title": "I HAVE ENSURED ALL ORDERS HAVE BEEN PROPERLY PUT AWAY AND ORGANIZED STORAGE AREAS.",
+          "detail": [
+            "ALL ORDERS ARE PUT AWAY AND ORGANIZED."
+          ]
+        },
+        {
+          "title": "I HAVE CLEANED AND ORGANIZED THE DRY STORAGE PLASTIC SHELVES",
+          "detail": [
+            "SHELVES ARE NEAT AND ORAGANIZED."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "NEAT DRY STORAGE"
+            }
+          ]
+        },
+        {
+          "title": "THE SPACE IN FRONT OF THE TRASH ROOM HAS BEEN DECK SCRUBBED WITH DEGREASER.",
+          "detail": [
+            "DAILY SIDEWALK IS SCRUBBED."
+          ]
+        },
+        {
+          "title": "I HAVE CHECKED OUT WITH THE CHEF.",
+          "detail": [
+            "A CHEF HAS CONFIRMED PREP TO BE COMPLETED."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "butcher",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I HAVE CLEANED THE BANDSAW AND MEAT GRINDER, AND REPLACED ALL PARTS AND SCREWS CORRECTLY."
+        },
+        {
+          "title": "I HAVE CLEANED, SANITIZED, DRIED AND SALTED THE BUTCHER BLOCKS AND CUTTING BOARDS."
+        },
+        {
+          "title": "I HAVE SWEPT AND MOPPED THE FLOORS: INCLUDING THE BUTCHER ROOM, UNDER TABLES, UNDER BANDSAW, AND COOLER."
+        },
+        {
+          "title": "I HAVE CLEANED AND BLEACHED THE HAND SINK AND DRAIN."
+        },
+        {
+          "title": "I HAVE CLEANED THE GLASS, INSIDE AND OUT, INCLUDING COOLER WINDOWS."
+        },
+        {
+          "title": "I HAVE POLISHED THE STEEL WALLS USING SATIN SHINE."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE TILE WALL."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED THE PLASTIC CURTAIN IN THE COOLER."
+        },
+        {
+          "title": "I HAVE DUSTED THE HANGING LIGHTS AND WOOD PILAR."
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL SCALES. (TOP, BOTTOM, AND SIDES)"
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED CRYOVAC MACHINE."
+        },
+        {
+          "title": "OYSTERS IN THE WALK IN ARE HELD IN A DRAINING PAN WITH ICE OVER THEM, NOT SITTING IN STANDING WATER"
+        },
+        {
+          "title": "TAGS ARE FILED IN ORDER IN THE BINDER SO THE 90 DAY MARK IS TRACKABLE"
+        },
+        {
+          "title": "I HAVE ORGANIZED THE DRY AGE COOLER, CONSOLIDATED AND CHANGED OUT PANS AS NEEDED."
+        },
+        {
+          "title": "GLOVE BOXES ARE STORED OUTSIDE OF THE WALK IN, NOT ON A SHELF WITH PRODUCT"
+        },
+        {
+          "title": "VACUUM SEAL BAGS ARE STORED OUT OF SIGHT WITH THE MACHINE NOT LEFT ON THE COUNTER"
+        },
+        {
+          "title": "I HAVE PROPERLY ROTATED AND MAINTAINED QUALITY CONTROL OF ALL PRODUCT IN THE COOLER."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DISH",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I HAVE FILLED THE THREE COMPARTMENT SINK WITH WAS AND RINSE AND SANTITIZER AND I HAVE CONFIRMED THE SANITIZER READS CORRECT ON THE TEST STRIP"
+        },
+        {
+          "title": "I HAVE CHECKED THE SANITIZER TEST STRIPS ARE DRY AND READABLE. ANY STRIPS WITH WATER DAMAGE ARE REPLACED AND THE CONTAINER IS STORED AWAY FROM THE SINK"
+        },
+        {
+          "title": "I HAVE NOT LEFT DIRTY DISHES SITTING IN AN EMPTY SINK AT ANY POINT DURING SERVICE."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "HOTLINE",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I HAVE RECORDED TEMPERATURES FOR ALL COOLERS AND FREEZER IN THE TEMP LOG UNDER MID DAY."
+        },
+        {
+          "title": "I HAVE SET UP THE STEAM WELL AND MADE SURE THE FRYER IS FILLED AND ON."
+        },
+        {
+          "title": "I HAVE UNWRAPPED AND QUALITY CHECKED ALL MISE EN PLACE FOR SAUTE 1, SAUTE 2, AND HOT APPS."
+        },
+        {
+          "title": "I HAVE CHECKED THAT POTATOES ARE ON AND STARTED BUTTER/CREAM MIXTURE. ADJUST TEMPERATURE IF NEEDED"
+        },
+        {
+          "title": "I HAVE MADE BEURRE MONTE, BUERRE BLANC AND HEATED UP APPROPIRATE SAUCES FOR SERVICE."
+        },
+        {
+          "title": "I HAVE ALL HAPPY HOUR ITEMS SET UP FOR SERVICE, AND HAVE PROVIDED A CHEF WITH THE COUNTS."
+        },
+        {
+          "title": "I HAVE MADE THE POTATO PUREE AND HAVE HAD A CHEF TASTE AND APPROVE BEFORE PUTTING INTO THIRD PANS."
+        },
+        {
+          "title": "I HAVE STOCKED STATIONS AS MUCH AS TIME HAS PERMITTED."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PANTRY",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I HAVE SET UP ICE BINS FOR MISE EN PLACE AND SALTED ICE."
+        },
+        {
+          "title": "I HAVE PULLED ALL MISE EN PLACE FROM WALKIN, UNWRAPPED AND ASSESSED FOR QUALITY. I HAVE SEPAREATED ANY ITEMS NOT UPTO THE STANDARD FOR THE CHEFS TO EVALUATE."
+        },
+        {
+          "title": "I HAVE SORTED AND EVALUATED THE LETTUCES FOR SERVICE. WILTED OR OXIDIZED PIECES HAVE BEEN SORTED OUT."
+        },
+        {
+          "title": "I HAVE PORTIONED ROMAINE FOR CEASAR SALADS."
+        },
+        {
+          "title": "I HAVE STOCKED ALL VINAIGRETTES, SAUCES AND OILS."
+        },
+        {
+          "title": "I HAVE PRECRACKED EGGS AND SEPARATED YOLKS."
+        },
+        {
+          "title": "I HAVE DISCUSSED CHARCUTERIE WITH THE CHEF AND WE ARE SET UP FOR SERVICE."
+        },
+        {
+          "title": "I HAVE COMPLETED DAILY KNIFE WORK."
+        },
+        {
+          "title": "I HAVE PORTIONED MEAT FOR TARTARE"
+        },
+        {
+          "title": "I HAVE TEMPERED 5-7 OF EACH DESERT AT THE START OF SERVICE."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PASTRY",
+      "phase": "open",
+      "items": [
+        {
+          "title": "PULL OUT PRODUCTS FROM WALK-IN THAT NEED TO BE USED AT ROOM TEMP",
+          "detail": [
+            "ALL ROOM TEMP MISE NEEDED FOR THE PREP LIST IS PULLED."
+          ]
+        },
+        {
+          "title": "MAKE THE PREP LIST",
+          "detail": [
+            "DIVIDE THE PREP ACCORDINGLY TO COMPLETE ALL PARS FOR SERVICE."
+          ]
+        },
+        {
+          "title": "SET UP STATION",
+          "detail": [
+            "STATION IS FULLY SET WITH SANITATION BUCKET, FOLDED TOWELS, SPEED RACKS, TOOLS."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PREP",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I HAVE RECORDED ALL COOLER TEMPS IN THE TEMP LOG AND NOTIFIED A MANAGER OF ANY ISSUE.",
+          "detail": [
+            "COMPLETED TEMP L0G"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "FILLED OUT TEMP LOG"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE FILLED AND DISPERSED SANITIZER BUCKETS FOR THE TEAM.",
+          "detail": [
+            "SANITIZER ON EVERY STATION"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "4-5 FILLED SANITIZER BUCKETS"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE EMPTIED AND BROUGHT IN THE BLUE RECYCLING CAN. (8am)",
+          "detail": [
+            "RECYCLING BIN IS SET UP NEXT TO THE MIXER."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "RECYCLING BIN"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE CLEANED AND SANITIZED ALL COUNTERS BEFORE BEGINNING PREP.",
+          "detail": [
+            "ALL COUNTERS WIPED AND SANITIZED."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "CLEAN AND CLEAR COUNTERS."
+            }
+          ]
+        },
+        {
+          "title": "I HAVE CHECKED AND VARIFIED THE PREP LIST.",
+          "detail": [
+            "PREP LIST IS VERIFIED AND DIVIDED PER TEAM MEMBER."
+          ]
+        },
+        {
+          "title": "I HAVE INFORMED THE CHEF OF ANY PROBLEMS",
+          "detail": [
+            "A CHEF HAS BEEN NOTIFIED OF ANY ISSUES."
+          ]
+        }
+      ]
+    }
+  ]
+}
