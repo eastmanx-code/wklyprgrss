@@ -1,10 +1,11 @@
 /**
- * Loads a venue's close checklists from a file, so onboarding a location is
- * one file and one command rather than an afternoon of hand-typed rows.
+ * Loads a venue's checklists from a file, so onboarding a location is one
+ * file and one command rather than an afternoon of hand-typed rows. These run
+ * every part of the day, open, mid and close, not only the close.
  *
- *   npm run load-close-lists -- --file close-lists/STAR.json
- *   npm run load-close-lists -- --file close-lists/STAR.json --replace
- *   npm run load-close-lists -- --file close-lists/STAR.json --sql > star.sql
+ *   npm run load-checklists -- --file checklists/STAR.json
+ *   npm run load-checklists -- --file checklists/STAR.json --replace
+ *   npm run load-checklists -- --file checklists/STAR.json --sql > star.sql
  *
  * The file is the shape described in .claude/skills/onboard-close-lists.
  * One list per position and phase (or per room, where a position runs one
@@ -28,7 +29,7 @@ const sqlOnly = args.includes("--sql");
 
 if (fileIndex < 0 || !args[fileIndex + 1]) {
   console.error(
-    "\n  Usage: npm run load-close-lists -- --file close-lists/CODE.json [--replace] [--sql]\n",
+    "\n  Usage: npm run load-checklists -- --file checklists/CODE.json [--replace] [--sql]\n",
   );
   process.exit(1);
 }

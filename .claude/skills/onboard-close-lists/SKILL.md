@@ -1,19 +1,19 @@
 ---
 name: onboard-close-lists
-description: Turn a venue's paper or spreadsheet checklists into live close checklists in the app. Use when a new location is being onboarded to nightly checklists, or an existing venue's lists are being rebuilt from a source document.
+description: Turn a venue's paper or spreadsheet checklists into live checklists in the app, across all parts of the day. Use when a new location is being onboarded to nightly checklists, or an existing venue's lists are being rebuilt from a source document.
 ---
 
-# Onboard a venue's close checklists
+# Onboard a venue's checklists
 
-One file per venue in `close-lists/CODE.json`, loaded with one command. The
+One file per venue in `checklists/CODE.json`, loaded with one command. The
 file is the record of what the venue runs; the loader is idempotent, so the
 file can be corrected and loaded again without losing the nights already
 signed against it.
 
 ## What done looks like
 
-1. `close-lists/CODE.json` exists, reviewed, committed.
-2. Every list is live under the venue: `npm run load-close-lists -- --file close-lists/CODE.json`
+1. `checklists/CODE.json` exists, reviewed, committed.
+2. Every list is live under the venue: `npm run load-checklists -- --file checklists/CODE.json`
    (or `--sql` and run the output through the database when the key is not on this machine).
 3. The venue is switched on for checklists: `venues.close_active = true` (Checklists → Locations → the venue → switch on, or one update).
 4. Manager PINs exist in `admin_pins` with `venue_id` set, one per named manager. Never invent names. Ask for the list of managers if it was not given.
@@ -97,7 +97,7 @@ Fields per item: `title` (required), `title_es`, `section`, `detail` (array of s
 
 ## Loading
 
-- `npm run load-close-lists -- --file close-lists/CODE.json` matches lists on venue + house + role + phase + room and items on title. Existing rows keep their id and history and take the file's position, section, Spanish, detail and proof. New rows are inserted.
+- `npm run load-checklists -- --file checklists/CODE.json` matches lists on venue + house + role + phase + room and items on title. Existing rows keep their id and history and take the file's position, section, Spanish, detail and proof. New rows are inserted.
 - `--replace` retires items the file no longer has (never deletes).
 - `--sql` prints the statements for running elsewhere.
 - The loader refuses a file with a missing prompt, a repeated title, an unknown house or phase, or a list with no items. Fix the file, run again.
