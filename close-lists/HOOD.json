@@ -1,0 +1,1819 @@
+{
+  "venue": "HOOD",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Barback",
+      "role_es": "Barback",
+      "phase": "close",
+      "items": [
+        {
+          "title": "CONSOLIDATE ALL MATCHING DATE JUICES, SYRUPS. SPENT FRUIT FOR NEXT DAY PREP."
+        },
+        {
+          "title": "WIPE DOWN CONSOLIDATED STAGING AREA."
+        },
+        {
+          "title": "TAKE CHEATER BOTTLES FROM HOOD TO NOBLE BAR TOP."
+        },
+        {
+          "title": "TAKE EXTRA DELI'S FROM hood to noble fridge."
+        },
+        {
+          "title": "Dirty dishes:",
+          "detail": [
+            "Run all dirty glassware",
+            "Ran each well's tools",
+            "Run each tray's black mat and wipe down metal tray"
+          ]
+        },
+        {
+          "title": "STOCK ALL REACH IN FREEZERS WITH GLASS WARE."
+        },
+        {
+          "title": "EMPTY AND RUN THE STRAINER & BUCKET THROUGH DISH"
+        },
+        {
+          "title": "DRAIN THE DISHWASHER, REMOVE THE BUNG AND CLEAN OUT THE FILTERS."
+        },
+        {
+          "title": "DETAIL THE DISHWASHER INSIDE and OUT, BACK WALL, DRAINBOARDS, PIPES, AND THE FLOOR UNDERNEATH",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher open: filters out, drainboards and the floor underneath"
+            }
+          ]
+        },
+        {
+          "title": "EMPTY AND CLEAN ALL DUMP BUCKETS."
+        },
+        {
+          "title": "Rags & Towels:",
+          "detail": [
+            "Consolidate all rags,towels, and bar mats",
+            "Place in hamper bags by the kitchen"
+          ]
+        },
+        {
+          "title": "Ice Machines:",
+          "detail": [
+            "With a broom, clear all debris from under ice machines",
+            "Wipe face and front.",
+            "CHECK inside the ice machine for mildew on the door and the interior framing, and cleaned anything found. The current line only covers under the machines.",
+            "Notify MOD if there is anything that was not able to be cleared from underneath"
+          ]
+        },
+        {
+          "title": "Trash Run:",
+          "detail": [
+            "Trash",
+            "Consolidate all trash from the three venues",
+            "Securely tight bags and make sure there are no leakage",
+            "line all trash cans with new trash bags",
+            "Use wagon to take bags to the dumpster in the garage of 8Th & G building",
+            "Make sure there was nothing left behind inside the containers themselves",
+            "Wipe down and clean trash cans",
+            "Empty bottles",
+            "Consolidate and bring down to the recycling area in the the garage of 8Th & G building"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The trash cans wiped and relined, area clear"
+            }
+          ]
+        },
+        {
+          "title": "CLEAN AND RESET ALL BROKEN GLASS 6 & 1/4 PANS"
+        },
+        {
+          "title": "CONNECT WITH A MANAGER ABOUT ANY EMPTY (OR FULL) KEGS THAT NEED TO BE BROUGHT UP OR DOWN FOR STORAGE | PICK UP"
+        },
+        {
+          "title": "ADD ICE COUNTS TO clip board ANY UPDATES IN BARBACK THREAD"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Hood Bartender",
+      "role_es": "Bartender Hood",
+      "phase": "close",
+      "items": [
+        {
+          "title": "BURNED YOUR ICE AND WIPED DOWN THE INSIDE OF THE WELL."
+        },
+        {
+          "title": "WIPED DOWN ALL SERVICE WELL BOTTLES AND MARRIED ALL POSSIBLE BOTTLES. MAKE SURE ALL POUR SPOTS HAVE BEEN COVERED"
+        },
+        {
+          "title": "BROKE DOWN SERVICE WELL. WIPED/ SANITIZED AND RINSED BAR GRATES. RAN ALL BAR TOOLS THROUGH DISH MACHINE, DRIED AND THEN RESET THE WELL.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well reset: grates down, tools back, nothing left in it"
+            }
+          ]
+        },
+        {
+          "title": "MAKE SURE ALL ESPRESSO MARTINI EMPTY BOTTLES HAVE BEEN WASHED, REFILLED AND STORED IN FRIDGE.",
+          "detail": [
+            "MAKE SURE ALL YELLOW WATER BOTTLES HAVE BEEN WASHED, REFILLED AND PLACED IN KEG FRIDGE."
+          ]
+        },
+        {
+          "title": "POUR CITRUS AND SYRUPS BACK IN TO A CLEAN DELI, LABEL/ DATE AND THEN PLACE IN THE FRIDGE. WASH CITRUS & SYRUP POUR BOTTLES / TINS IN DISHWASHER AND TAKE BACK TO NOBLE FOR PREP."
+        },
+        {
+          "title": "DUMP OUT CUCMBER, ORANGES, AND PICKED MINT. SAVE ALL BERRIES, EGGS, AND MINT. RINSE/ DRY GARNISH TINS AND TAKE BACK TO NOBLE FOR PREP."
+        },
+        {
+          "title": "CLEAN AND SANITIZE DRINK PICK UP STATION, INCLUDING WASHING TRAY MATS/ WHIPING DOWN GOLD TRAYS AND TRAY STANDS."
+        },
+        {
+          "title": "RINSE WITH HOT WATER, WIPE AND SANITIZE ALL 3 SINKS AND CLEAN SINK DUMP BUCKET.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All three sinks and the dump bucket, empty and dry"
+            }
+          ]
+        },
+        {
+          "title": "USING ORANGE FORCE, WIPE ALL STAINLESS SURFACES, KEG DOORS, GRANITE TOPS, SIDE OF GLASS CHILLER AND DISHWASHER."
+        },
+        {
+          "title": "PLACED ALL DIRTY TOWELS IN LINEN BAG. PLACED ALL DIRTY MATS BY FRONT DOOR FOR BARBACK."
+        },
+        {
+          "title": "TURNED OFF DISHWASHER."
+        },
+        {
+          "title": "ALL TRASH, RECYCLING, AND BROKEN GLASS BINS HAVE BEEN PULLED OUT FROM BEHIND THE BAR FOR BARBACK."
+        },
+        {
+          "title": "WIPED DOWN TABLES AND BAR TOP, INCLUDING ALL LAMPS ON BAR TOP (WIPE AND POLISH WITH CAPE COD)"
+        },
+        {
+          "title": "ENTERED ANY REMAING TIPS AND CLOSE OUT ANY OPEN TABS. RESET BAR TILL TO $250. RUN CHECKOUT, COMPLETE AND GIVE TO MOD."
+        },
+        {
+          "title": "WIPED ALL CHAIRS AND BOOTHS (REMOVED CRUMBS FROM CREVICES)"
+        },
+        {
+          "title": "RESET THE BACKBAR ENSURING THERE ARE NO GAPS AND ALL BOTTLES HAVE RETURNED TO THEIR DESIGNATED LOCATION",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The backbar straight on: no gaps, every bottle home"
+            }
+          ]
+        },
+        {
+          "title": "CHECK THE KOLD DRAFT AND PEBBLE ICE MACHINES TO ENSURE THEY ARE WORKING PROPERLY.",
+          "detail": [
+            "IF NOT, ALERT MANAGEMENT IMMEDIATELY VIA TEXT."
+          ]
+        },
+        {
+          "title": "REWIND BOTH REEL-TO-REPLACE AND PUT AWAY IN ITS CORRESPONDING CASE. CLEAN EQUIPMENT WITH RUBBING ALCOHOL AND Q-TIP."
+        },
+        {
+          "title": "CHECK IN WITH CLOSERS BEFORE LEAVING AND HAVE THEM SIGN OFF ON MY CHECKLISTS."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Desk:",
+          "detail": [
+            "Detail my desk, paying close attention to cables, cords and such",
+            "Turn off light only after 1:30am"
+          ]
+        },
+        {
+          "title": "Restrooms:",
+          "detail": [
+            "Check all restrooms for cleanliness",
+            "Empty trash",
+            "Stock paper goods AND notify MOD of any low items for YB bathroom shrine"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each restroom clean with the trash emptied"
+            }
+          ]
+        },
+        {
+          "title": "ORGANIZE and clear out above the ice machines, take out any empty boxes."
+        },
+        {
+          "title": "Trash can",
+          "detail": [
+            "Empty trash cans by the host desk and all bathrooms",
+            "Check plants for trash outside"
+          ]
+        },
+        {
+          "title": "iPads:",
+          "detail": [
+            "Retrieve YB + Hood iPads and keep at host desk",
+            "Wipe down both iPads with a microfiber",
+            "Plug in both iPads to charge overnight (I made sure to not screw this up, so that future me won't be dissapointed)",
+            "Chargers should live inside the desk"
+          ]
+        },
+        {
+          "title": "Shift Notes (before you clock off):",
+          "detail": [
+            "Record YB covers number, O&Ds, cancellations, no-shows",
+            "Record NE covers number",
+            "Write down a summary of the shift and make sure to note:",
+            "Guest interactions (awesome and not-so-cool ones)",
+            "Staff interactions",
+            "Success and opportunities in terms of pacing",
+            "Send on WhatsApp"
+          ]
+        },
+        {
+          "title": "ON SUNDAYS POUR 2 GALLONS OF WATER DOWN EACH OF THE BATHROOM FLOOR DRAINS"
+        },
+        {
+          "title": "Clock out and check out with MOD....Pay for my food!"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Noble Bartender",
+      "role_es": "Bartender Noble",
+      "phase": "close",
+      "items": [
+        {
+          "section": "FIRST CUTS",
+          "title": "Glassware:",
+          "detail": [
+            "Buss all empty glassware from tables and bar top",
+            "Run dirty glassware through the dishwasher",
+            "Restock glassware on both sides of the bar"
+          ]
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "Close all open tabs."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "Restock garnish on both wells"
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "Refill waters for tables and bar top"
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "Check in with closers for any additional side work"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "\"PRE-CLOSE\":",
+          "detail": [
+            "[PRO TIP]: Have barbacks start around 12:30am-ish",
+            "Set the fridge: open fridges, remove all delis + place in designated homes OR trash",
+            "Restock all carafes + garnish first",
+            "Citrus & simple – marry + organize in fridge",
+            "Dump garnish (delis) — orange slices, cucumbers, ugly mint, mushy berries",
+            "Ginger, honey, OJ, pina, salvageable berries — move + marry into HOOD",
+            "Bitters - Fill for both WELLS",
+            "Cheaters: Absinthe, Laphroig, Charts,",
+            "Top off (both wells)",
+            "Zesting fruit — move \"burnt fruit\" crate under register"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Last Call - kindly, close guests out & PRE BUSS",
+          "detail": [
+            "Dishes - Stay on top of dishes, keep glass fridges stocked",
+            "IF NO BARBACK IS AVAILABLE, 1 bartender try and focus on it",
+            "Drop Checks - close guests out efficiently and timely",
+            "Consolidate Candles - stack on napkin shelf above server station",
+            "1:45AM - LIGHTS UP, GET EM OUT GET EM OUT <3"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Chairs UP:",
+          "detail": [
+            "Clear + Wipe down - Buss all tables + wipe down (including bases)",
+            "Move all Stools + Chairs and Tables towards benches"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The room reset: chairs and stools up, tables wiped"
+            }
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Server Station (Freezer) - keep clean",
+          "detail": [
+            "YB carafes etc. will start to come in to be kept in Noble over night...",
+            "Remove trash + clean up",
+            "Wash trays - remove rubber + wash, spray + wipe metal",
+            "Wash water pitchers",
+            "[PRO TIP]: Now this area can be used to stack clean items on"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Back Bar - Wipe Down + Marry",
+          "detail": [
+            "[PRO TIP]: Sneak this in with \"pre-closing\"",
+            "Use clean towel to wipe down all back bar bottles",
+            "Marry over to \"Point Well\" side"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "WELL Windows (POS cubby + cubby above) - Wipe Down + Marry",
+          "detail": [
+            "[PRO TIP]: Sneak this in with \"pre-closing\"",
+            "Use clean towel to wipe down all back bar bottles",
+            "Marry over to \"Point Well\" side"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "CONSOLIDATE ALL BAR TOOLS INTO DUMP STRAINER - run in dishwasher",
+          "detail": [
+            "Stack tins, strainers, well tools, jiggers",
+            "Dump - beakers",
+            "Garnish glasses - dump citrus, keep berries/mint (if pretty)"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Break Down \"Garnish Display\" -",
+          "detail": [
+            "[PRO TIP]: break down \"Point Well\" first - run last of service out of \"Service Well\"",
+            "Pull Fortifieds — wipe down and start lining up in Fridge {bottom row}",
+            "Pull Vermouths — wipe down and start lining up in Fridge {top row}",
+            "Pull Syrups — wipe down and start lining up in Fridge {bottom row}",
+            "Pull Passion, Orgeat, Grenadine - wipe down, rinse, wash",
+            "Dump, Rinse, & Wash - OJ, Pina, Grapefruit, Cream (2)",
+            "**Leave out clean cheater bottles stacked on fridge for PREP"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "BURN ALL ICE - WELL + Garnish Display",
+          "detail": [
+            "Wipe WELL dry"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "\"SPEED RAIL\": Wipe down / Restock",
+          "detail": [
+            "Marry bottles <1/8 full into \"Point Well\"",
+            "Restock \"Service Well\" if necessary",
+            "Wipe ALL first pour bottles down with clean towel - place in clean well",
+            "Clean + wipe down RAIL",
+            "Place clean bottles, in correct order, in clean rail"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Reassemble WELL & cubby",
+          "detail": [
+            "Place all TOOLS back in designated homes",
+            "Organize each cubby (service well and point)"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Grates: Wipe down + Reassemble",
+          "detail": [
+            "Remove ALL grates + wipe",
+            "Use squeegee to get gunk into drain",
+            "Spray down with sani/orange spray/ mf bleach water",
+            "Wipe dry",
+            "Reassemble"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "I CLEANED THE EXPOSED FRP NEXT TO THE POINT WELL. NO DIRT OR DEBRIS LEFT."
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Fridges, Freezers, PREP STATION",
+          "detail": [
+            "Clean gaskets, handles, door of each fridge and freezer. (including prep & ice freezer)",
+            "CLEAN PREP FRIDGE INCLUDING THE WORK TOP, UNDERNEATH AND SURFACES BEHIND THE POINT WELL. NO STICKINESS!",
+            "Clean the inside shelves and base of each fridge.",
+            "Check the glass freezers with a flashlight and determine whether to deforst overnight.",
+            "(If you do so, please text the group chat so the opener will know to reset next day. )"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Empty Bottles — Crates under both WELLS",
+          "detail": [
+            "Pull both crates and place towards entrance for barbacks to take to trash"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Trash — Remove ALL bins from behind bar",
+          "detail": [
+            "Consolidate trash bags towards entrance for barbacks",
+            "Replace can liners",
+            "\"Dump Trash\" (lives by dishwasher):",
+            "clean area by water tap - spray with orange spray/sani + wipe dry"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "WRITE RESTOCK LIST FOR STORAGE RUN & LEAVE ON HOST CLIPBOARD"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Dishwasher — drain + clean + turn off",
+          "detail": [
+            "Wash rubber dry decks, cutting board, knives, straws",
+            "Reassemble after wash - leave out to dry for PREP"
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Final Walkthrough aka \"Stick Check\" Behind the Bar",
+          "detail": [
+            "(Have a warm towel, polishing rag and Orange Force ready to go)",
+            "Start at your well and check under the bar, ice bin, speed rail, etc."
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Walk behind the bar and record it. Say out loud anything left open or needing repair."
+            }
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Final Walkthrough on Guest side",
+          "detail": [
+            "Check under the bar and tables for stickiness and gum."
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Walk the guest side and record it: tables, floor, lights, nothing left behind."
+            }
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Check floor drains, clean out and ensure there is no blockage.",
+          "detail": [
+            "If there is a problem yoou cannot resolve, text Drew immediately."
+          ]
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "PLUG IN ALL POS HANDHELD SO WE ARE JUICED FOR TOMORROW'S SERVICE"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "Run check out and combine with the other rooms (use a rubber band)."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "YB Barback",
+      "role_es": "Barback YB",
+      "phase": "close",
+      "items": [
+        {
+          "title": "CONSOLIDATE ALL MATCHING DATE JUICES, SYRUPS. SPENT FRUIT FOR NEXT DAY PREP."
+        },
+        {
+          "title": "WIPE DOWN CONSOLIDATED STAGING AREA."
+        },
+        {
+          "title": "TAKE CHEATER BOTTLES FROM YB TO NOBLE BAR TOP."
+        },
+        {
+          "title": "MOVE GELATO TO HOOD FREEZER."
+        },
+        {
+          "title": "Dirty dishes:",
+          "detail": [
+            "Run all dirty glassware",
+            "Ran each well's tools",
+            "Run each tray's black mat and wipe down metal tray"
+          ]
+        },
+        {
+          "title": "STOCK ALL REACH IN FREEZERS WITH GLASS WARE."
+        },
+        {
+          "title": "SCRAPE DRIPPED WAX, CLEAR AND WIPE DOWN BAR TOP USING GRANITE CLEANER."
+        },
+        {
+          "title": "WIPE DOWN GLASS TABLES WITH FRESH MICRO FIBER AND GLASS CLEANER."
+        },
+        {
+          "title": "POLISH T5-7 WITH BRASSO AND BUFF SHINY."
+        },
+        {
+          "title": "EMPTY AND RUN THE STRAINER & BUCKET THROUGH DISH"
+        },
+        {
+          "title": "SHUT OFF WATER TO DISHWASHER AND CLEAN OUT THE FILTERS."
+        },
+        {
+          "title": "DETAIL THE DISHWASHER INSIDE and OUT, BACK WALL, DRAINBOARDS, PIPES, AND THE FLOOR UNDERNEATH"
+        },
+        {
+          "title": "GRAB THE BLUE FAN FROM KITCHEN AND SET UP BEHIND THE BAR."
+        },
+        {
+          "title": "Rags & Towels:",
+          "detail": [
+            "Consolidate all rags,towels, and bar mats",
+            "Place in hamper bags by the kitchen"
+          ]
+        },
+        {
+          "title": "Ice Machines:",
+          "detail": [
+            "With a broom, clear all debris from under ice machines",
+            "Wipe face and front.",
+            "CHECK inside the ice machine for mildew on the door and the interior framing, and cleaned anything found. The current line only covers under the machines.",
+            "Notify MOD if there is anything that was not able to be cleared from underneath"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the ice machines, cleared"
+            }
+          ]
+        },
+        {
+          "title": "Trash Run:",
+          "detail": [
+            "Trash",
+            "Consolidate all trash from the three venues",
+            "Securely tight bags and make sure there are no leakage",
+            "line all trash cans with new trash bags",
+            "Use wagon to take bags to the dumpster in the garage of 8Th & G building",
+            "Make sure there was nothing left behind inside the containers themselves",
+            "Wipe down and clean trash cans",
+            "Empty bottles",
+            "Consolidate and bring down to the recycling area in the the garage of 8Th & G building"
+          ]
+        },
+        {
+          "title": "CLEAN AND RESET ALL BROKEN GLASS 6 & 1/4 PANS"
+        },
+        {
+          "title": "CONSOLIDATE any MILK PUNCHES INTO RETAIL FRIDGE."
+        },
+        {
+          "title": "CONNECT WITH A MANAGER ABOUT ANY EMPTY KEGS THAT NEED TO BE BROUGHT UP OR DOWN FOR STORAGE | PICK UP"
+        },
+        {
+          "title": "ADD ICE COUNTS TO clip board in noble"
+        },
+        {
+          "title": "CHANGE PINK NAPKIN AND DUST THE WATER STATION SHELF."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "YB Bartender",
+      "role_es": "Bartender YB",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Wipe down all bottles on the Point Well side (backbar included)",
+          "detail": [
+            "Consolidate well and move ice over to the Service well",
+            "Clean Point Well freezer drawers and organize glassware/stock fridge."
+          ]
+        },
+        {
+          "title": "Input all checks",
+          "detail": [
+            "Wipe down Handheld and polish check presenters"
+          ]
+        },
+        {
+          "title": "WHILE COMPLETING THESE TASKS IT IS OF THE UTMOST IMPORTANCE TO BUS AND WIPE DOWN TABLES AS THEY LEAVE. NO TASK SUPERSEDES MAINTAINING A CLEAN AND TIDY SPACE FOR OUR LAST GUESTS."
+        },
+        {
+          "title": "When the LAST GUEST walks out the door:",
+          "detail": [
+            "Lights — \"YB Close\" on light panel",
+            "Music — stop reel-to-reel + McIntosh \"off\", Rewind and put away Reel. Wipe with Alcohol"
+          ]
+        },
+        {
+          "title": "[PRO TIP]: Start around 12:30am-ish",
+          "detail": [
+            "Set the fridge: open fridges, remove all delis + place in designated homes OR trash",
+            "Restock all carafes + garnish first",
+            "Citrus & simple – move + marry into NOBLE",
+            "Dump garnish (delis) — orange slices, cucumbers, ugly mint, mushy berries",
+            "Ginger, honey, simple, salvageable berries — move + marry into HOOD"
+          ]
+        },
+        {
+          "title": "\"PRE-CLOSE\":",
+          "detail": [
+            "[PRO TIP]: break down \"Well 1\" first - run last of service out of \"Main Well\"",
+            "Break 1/2 Well - Work with 1 Bartender",
+            "Marry ALL JUICES/SYRUPS/FORTIFIED into \"Main-Well\"",
+            "Dump, Rinse, & Wash: OJ, Pina, Grapefruit, Cream [put aside to move to NOBLE]",
+            "Pull Passion, Orgeat, Grenadine - wipe down [put aside to move to NOBLE]",
+            "FORTIFIED WINE CHEATERS = FRIDGE 1",
+            "[Back to Front] px, amontillado, fino, cocchi, blanc, dry",
+            "SINGLE FILE LINE IN, IN ORDER",
+            "Empty trash cup server cubby + wash",
+            "Wash (1/2) Tools:",
+            "Consolidate ALL TOOLS into XT silver pan (underneath back up long candles)",
+            "Wash silver carafes for \"Well 1\" [put aside to move to NOBLE] / Leave out enough tools for 1 bartender - if drinks are still working / Server Station Garnish: Flowers/ Lime/ Sprigs -> Move on top of McIntosh / Wipe down (Server Side) Back Bar: countertop + bottles / Use Clean microfiber: ran thru dish OR soaked with Orange Force / Zesting fruit — consolidate \"burnt fruit\" in tin (server cabinet)-m"
+          ]
+        },
+        {
+          "title": "Take all empty Cheaters from fridge, wipe down and move to table 4"
+        },
+        {
+          "title": "Move Gelato to Hood Freezer"
+        },
+        {
+          "title": "AMUSE ORGANIZATION:",
+          "detail": [
+            "Consolidate and organize amuse stations (chip cabinet, jelly molds)",
+            "Discard open chip bags",
+            "Stack bowls neatly on top shelf"
+          ]
+        },
+        {
+          "title": "Collect/Dump candles and consolidate at T4"
+        },
+        {
+          "title": "Stock / refill:",
+          "detail": [
+            "Bitters — both sides (full bitters bottles live in server cabinet)",
+            "Wipe down bitters bottles. Scrub bar top underneath bitters bottles."
+          ]
+        },
+        {
+          "title": "CLEAN THE MARBLE ON TOP AND UNDERNEATH THE BACK BAR TOP & THE MARBLE NEXT TO THE PRESS RINSER. NO STICKINESS."
+        },
+        {
+          "title": "Break Down WELL -",
+          "detail": [
+            "[PRO TIP]: should only have 1/2 Well to break down",
+            "Pull Fortifieds — wipe down and start lining up in Fridge 1",
+            "Pull Passion, Orgeat, Grenadine - wipe down, leave out to move to NOBLE",
+            "Dump, Rinse, & Wash OJ, Pina, Grapefruit, Cream [(2 sets) to move to NOBLE]"
+          ]
+        },
+        {
+          "title": "Stock bubbles (Cava and Moscato) in right fridge — 5 Bottles",
+          "detail": [
+            "(Backups in Retail Area of Hood)"
+          ]
+        },
+        {
+          "title": "Ice — Clean out Freezer drawers, empty all loose and broken Ice from pans, Include bottom drawer AND HANDLES in wipe down"
+        },
+        {
+          "title": "Move cheaters from Ice freezer to glass fridges to prevent freezing (Strawberry, Dirty, Lush)"
+        },
+        {
+          "title": "Empty water decanters and leave by T4",
+          "detail": [
+            "{WASH WITH SCRUB BRUSH EVERY M, W, F}"
+          ]
+        },
+        {
+          "title": "Tables (including legs and bases):",
+          "detail": [
+            "Gold tables: BUFF!",
+            "Just use the MAGIC CAN",
+            "Mirror tables",
+            "Windex + wipe with dry microfiber"
+          ]
+        },
+        {
+          "title": "Garnishes:",
+          "detail": [
+            "Dump all citrus garnish",
+            "Keep berries/mint springs (if pretty) - Place berries in DELIS - move to HOOD",
+            "Wash glassware - Stack on clean tray to move to NOBLE"
+          ]
+        },
+        {
+          "title": "Wash all TOOLS & TINS:",
+          "detail": [
+            "Stack clean ones on clean bar rag on Table"
+          ]
+        },
+        {
+          "title": "Wash trays:",
+          "detail": [
+            "Remove Rubber layer - run in dishwasher",
+            "Metal part - Spray with Orange Spray + wipe"
+          ]
+        },
+        {
+          "title": "Disassemble WELL:",
+          "detail": [
+            "Spirits",
+            "Wipe down all ([PRO TIP]: stack clean bottles on \"L\" side back bar)",
+            "Marry over bottles into NOBLE",
+            "Gold Dividers - Pull + wipe down",
+            "Burn Ice - Use bar sink to burn ice",
+            "Dry Well",
+            "Use squeegee (in cleaning cabinet)",
+            "clean with fresh sanitizer"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well stripped and dry before you reset it"
+            }
+          ]
+        },
+        {
+          "title": "Grates:",
+          "detail": [
+            "Pull 4 pieces _ wash in kitchen dishwasher",
+            "Use bar rag + squeegee to drag gunk under grates to the drain",
+            "Clean under spritzer",
+            "Run hot water down the drain",
+            "Use orange spray and sanitizer to clean",
+            "Plug drain",
+            "Retrieve grates and reassemble"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The grates back in and the drain clear"
+            }
+          ]
+        },
+        {
+          "title": "Reassemble WELL:",
+          "detail": [
+            "Place all TOOLS back in designated homes"
+          ]
+        },
+        {
+          "title": "Dump sink cubby",
+          "detail": [
+            "Remove silver tin + wash",
+            "Remove strainer and empty remains",
+            "Wash",
+            "Clean out sink cubby area with napkin/towel",
+            "Wipe with orange spray and fresh sanitizer"
+          ]
+        },
+        {
+          "title": "Right side ice chest + Glass Chillers (EVERY NIGHT)",
+          "detail": [
+            "Pull out ice cooler",
+            "Use bleach spary and fresh towel to clean the area (sink, floor, wall, pipes)",
+            "Clean out floor drain of all debris run both drain screens in dish washer",
+            "Make sure there is no debris on floor and everything is clean and reset"
+          ]
+        },
+        {
+          "title": "Dungeon Cove (EVERY NIGHT)",
+          "detail": [
+            "Pull out ice cooler",
+            "Use bleach spary and fresh towel to clean the area (sink, floor, wall, pipes)",
+            "Clean out floor drain of all debris and wipe down with a bleached cloth",
+            "Make sure there is no puddled water in the area",
+            "Leave cooler out to air dry and plug in fan from kitchen"
+          ]
+        },
+        {
+          "title": "Wipe down all the bases of the tables and bar stools"
+        },
+        {
+          "title": "Dishwasher — drain + clean + turn off"
+        },
+        {
+          "title": "Weekly side work (see other checklist)"
+        },
+        {
+          "title": "Trash — Pull trash + replace bag. Place trash into consolidated pile in NOBLE"
+        },
+        {
+          "title": "RESET THE BEADS TO THE INSIDE OF THE FOOTREST ON EACH STOOL"
+        },
+        {
+          "title": "Run checkout aND COMBINE WITH OTHER ROOMS (USE RUBBERBAND). CHECK IN WITH CLOSERS BEFORE LEAVING AND HAVE THEM SIGN OFF ON MY CHECKLIST."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Hood",
+      "items": [
+        {
+          "section": "MONDAY",
+          "title": "DUST AND CLEAN 1/3 BOTTLES AND SHELVES OF THE RETAIL SHELVES (ROTATE LEFT, MIDDLE, RIGHT SIDE)",
+          "detail": [
+            "along with the bottles and shelves, cleaned the retail glass, the lights, the fridge glass, and removed any old stickers."
+          ]
+        },
+        {
+          "section": "TUESDAY",
+          "title": "WASH MATS & CLEAN SHELVES UNDER BEER TAPS WHERE ROCKS & BEER GLASSES LIVE"
+        },
+        {
+          "section": "WEDNESDAY",
+          "title": "WIPE DOWN AND CLEAN RESTOCK/SODA FRIDGE. CLEAN GASKETS, EMPTY OUT ITEMS (ESPECIALLY ON THE BOTTOM) AND THOROUGHLY CLEAN."
+        },
+        {
+          "section": "THURSDAY",
+          "title": "DUST AND CLEAN MUSIC MOTHERSHIP STATION TOP TO BOTTOM, INCLUDING TURNTABLES and all speakers throughout the space."
+        },
+        {
+          "section": "FRIDAY",
+          "title": "WASH AND REFILL ALL OLIVE AND CHERRY JARS. WASH ALL BEER PLUGS IN THE DISHWASHER"
+        },
+        {
+          "section": "SATURDAY",
+          "title": "WASH ALL OF THE CANDLE HOLDERS INCLUDING RETAIL and WASH TRASH CAN IN THE FRONT BY MUSIC AREA"
+        },
+        {
+          "section": "SUNDAY",
+          "title": "POUR 2 GALLONS OF WARM WATER DOWN EACH HOOD DRAIN"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Noble",
+      "items": [
+        {
+          "section": "MONDAY",
+          "title": "PULL OUT ALL EQUIPMENT (DISHWASHER ETC) BEHIND THE BAR AND WIPE DOWN THE WALLS + FLOORS"
+        },
+        {
+          "section": "TUESDAY",
+          "title": "POLISH ALL BOTTLES AND CLEAN THE TOP ROWS OF BACK BAR"
+        },
+        {
+          "section": "WEDNESDAY",
+          "title": "CLEAN GLASS CHILLERS AND DELI FRIDGE AND TOSS OUT ANYTHING THAT DIDN'T BELONG"
+        },
+        {
+          "section": "THURSDAY",
+          "title": "REMOVE ALL ITEMS IN FRIDGE, WIPE 'EM DOWN",
+          "detail": [
+            "CLEAN, SANITIZE AND ORGANIZE FRIDGE"
+          ]
+        },
+        {
+          "section": "FRIDAY",
+          "title": "CLEAN AND POLISH THE GARNISH BOXES"
+        },
+        {
+          "section": "SATURDAY",
+          "title": "POLISH ALL BOTTLES AND CLEAN THE BOTTOM TWO ROWS OF BACK BAR",
+          "detail": [
+            "DUST, CLEAN, SANITIZE AND ORGANIZE"
+          ]
+        },
+        {
+          "section": "SUNDAY",
+          "title": "CLEAN AND POLISH THE BACKBAR ACCENTS AND DETAILS"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Youngblood",
+      "items": [
+        {
+          "section": "MONDAY",
+          "title": "Dust bottle shelves (pick 3 sections each week)"
+        },
+        {
+          "section": "TUESDAY",
+          "title": "Detail back bar:",
+          "detail": [
+            "Remove bottles and glassware + wipe down",
+            "Side corners",
+            "Place bottles and glassware back"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar detailed, bottles and glassware back"
+            }
+          ]
+        },
+        {
+          "section": "WEDNESDAY",
+          "title": "Dust the top of booths (where the lamps are) and lower rows of the walls that showcase spirits."
+        },
+        {
+          "section": "THURSDAY",
+          "title": "Bubbles-flute/O.F. glass shelf:",
+          "detail": [
+            "Remove all glassware",
+            "Use Windex to clean"
+          ]
+        },
+        {
+          "section": "FRIDAY",
+          "title": "Detail water decanters and brush the inside"
+        },
+        {
+          "section": "SATURDAY",
+          "title": "Clean McIntosh area:",
+          "detail": [
+            "Remove wax from wood casing and wipe down",
+            "Dest behind and around that area"
+          ]
+        },
+        {
+          "section": "SUNDAY",
+          "title": "Clean and polish the stools (sets of 3). Rotate each week."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Hood Bartender",
+      "role_es": "Bartender Hood",
+      "phase": "mid",
+      "items": [
+        {
+          "section": "FIRST CUTS",
+          "title": "IF THERE IS ONLY ONE MID SCHEDULED YOU ARE RESPONSIBLE FOR COMPLETING ALL MID BARTENDER DUTIES. YOU ARE A TEAM IF THERE IS TWO OF YOU COMMUNICATE AND HELP ONE ANOTHER :)"
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "WASHED / SANI'D AND DRIED THE ENTIRE BEER TAP AREA (grates and backsplash)."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "WIPED ALL BEER TAP HANDLES AND SPOUTS AS WELL AS ENTIRE BEERTAP BRASS AREA."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "MAKE SURE THERE ARE BACKUP PINK NAPKINS FOLDED AND RESTOKED."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "CLEAN GASKETS AND BASES OF BEER FRIDGE."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "UPDATE '86D/RESTOCK LIST ON WHITEBOARD FOR OPENER, TAKE PICTURE AND POST IN Watsapp.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 86 and restock board, readable end to end"
+            }
+          ]
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "WASH DUMP AND REFILL CHEATER BOTTLES (1 OJ, 1 PINAPPLE , 1 GRAPEFRUIT, 1 PASSIONFRUIT, 1 ORGEAT, 1 GRENADINE)"
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "DATED ALL OPEN WINE (DUMP OLD ONES) AND RESTOCKED WINE AND PROSECCO FROM RETAIL AREA."
+        },
+        {
+          "section": "FIRST CUTS",
+          "title": "RE-SET BACK BAR. ALL BOTTLES RESET AND FACED> GAPS FILLED."
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "PLUGGED ALL TAP HEADS"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "WIPED DOWN POINT WELL, AND GRATES (rinse grates off in kitchen). WASHED ALL BAR TOOLS IN DISHMACHINE (tins, strainers, etc.) THEN RESET WELL"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "MARRY ANY FRUIT (limes, cucumbers, berries, mint, oranges) GARNISHES WITH SERVICE WELLS IF POSSIBLE , THROW OUT THE REST (except eggs, put those back in the fridge)."
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "REFILLED ALL BITTERS, ABSINTHE, AND LAPHROIG IN BOTH WELLS. ALSO REFILL ALL DRY GARNISHES (sugar cubes, candied ginger, straws and picks)"
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "WIPED DOWN/SANITIZED ALL POS AREA INCLUDING THE TERMINALS, POS SHELF, PRINTERS, AND HANDHELDS."
+        },
+        {
+          "section": "CLOSING SQUAD",
+          "title": "COMPLETE ANY TASKS FRIST MID COULD NOT COMPLETE (if there is one). HELP BARBACK WITH GLASSWARE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Hood Bartender",
+      "role_es": "Bartender Hood",
+      "phase": "open",
+      "items": [
+        {
+          "title": "CLOCK IN & GREET COLLEAGUES :)"
+        },
+        {
+          "title": "TURN ON DISHWASHER."
+        },
+        {
+          "title": "RESET WELLS, FILL ORANGES AND LEMONS IN CITRUS BOWLS, SET UP CITRUS/SYRUPS IN WELLS AND GARNISH BINS. TAKE OFF POUR SPOUT COVERS, AND SET UP BLACK FLOOR MATS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wells set: citrus, garnish bins and mats ready for service"
+            }
+          ]
+        },
+        {
+          "title": "TAKE OUT ALL FORTIFIED WINE AND DIRTY SUE FOR EACH WELL"
+        },
+        {
+          "title": "STOCK BOTH WELLS WITH 7 SODA H20, 1 TONIC, 1 PROSECCO, 1 ESPRESSO MIX, 1 MIXED BERRY AND 1 TIN OF HEAVY CREAM. PRO TIP: place in wells before your ice"
+        },
+        {
+          "title": "FILL BOTH WELLS WITH PEBBLE AND KD ICE. FILL GLASS CHILLER WITH TWO TINS OF NORANDIE ICE"
+        },
+        {
+          "title": "CHECK THE FOLLOWING SUPPLIES AND RESTOCK AS NEEDED:",
+          "detail": [
+            "PAPER GOODS (to-go boxes, bags, and silverware, CH straws, coasters and thermal paper)",
+            "ALL SODA (soda water,tonic, coke products)",
+            "ALL DAIRY (eggs & heavy cream/in kitchen)",
+            "ALL LINEN (dinner napkins, white towels and micro fibers/at j&tonys)",
+            "ALL CHEMICALS (orange force, dish supplies/in kitchen/ask Jimmy)"
+          ]
+        },
+        {
+          "title": "exterior sweep",
+          "detail": [
+            "-Sweep the sidewalk to the curb on 8th & G",
+            "-clear all planters on both sides of any trash or debris.",
+            "-check planters and electrical boxes for any graffiti & report to mod"
+          ]
+        },
+        {
+          "title": "CHECK RESTOCK LIST AND COMPLETE RESTOCK.",
+          "detail": [
+            "CHECKED WHATSAPP FOR BEER UPDATES>"
+          ]
+        },
+        {
+          "title": "SET UP TRASH CANS, BROKEN GLASS BIN, PEELED FRUIT BIN, EMPTY BOTTLE CRATES AND DUMP BUCKETS IN THEIR HOMES."
+        },
+        {
+          "title": "CHECK ESSPRESSO BATCH CAMBRO. IF LOW OR OUT MAKE A NEW BATCH. RECIPE: 3L MR BLACK / 3L VODKA / 3L WATER / 1L SIMPLE SYRUP"
+        },
+        {
+          "title": "ENSURE THERE IS MARG BATCH IN FRIDGE. (IF NOT RESTOCK)",
+          "detail": [
+            "RECIPE: 2:1 2PARTS COINTREAU / 1PART AGAVE"
+          ]
+        },
+        {
+          "title": "CHECK MAI TAI BATCH",
+          "detail": [
+            "RECIPE: 1L WORTHY PARK OVERPROOF / 1L LOFI GENTIAN / 500ML COINTREAU"
+          ]
+        },
+        {
+          "title": "WIPE DOWN BAR TOP, TABLES, AND RETAIL AREA."
+        },
+        {
+          "title": "PUT OUT TOWELS: WHITE AS WELL AS 2 MICRO FIBERS BEHIND BAR",
+          "detail": [
+            "(1 for dishes, 1 for polishing silverware) AND RESTOCK THE BACKUP WHITE TOWELS BEHIND BAR."
+          ]
+        },
+        {
+          "title": "FILL WATER PITCHERS AND SET UP WATER STATIONS."
+        },
+        {
+          "title": "McIntosh / Reel-to-reel (music) — have it set up to just push play.",
+          "detail": [
+            "Adjust volume during service"
+          ]
+        },
+        {
+          "title": "5 MINS BEFORE OPEN DO A FINAL WALK THRU, LET MOD KNOW IF ANYTHING NEED REPAIRS. AT 4 O'CLOCK UNLOCK THE FRONT DOOR."
+        },
+        {
+          "title": "TAKE A DEEP BREATH AND BE PREPARED TO TAKE GUESTS TO HOSPITALITY ISLAND."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Clock in and greet the team"
+        },
+        {
+          "title": "CHECKED WAX CHANDELIER FOR ANY BULBS OUT AND REPORTED TO MOD AND NOBLE BARTENDER."
+        },
+        {
+          "title": "Call all reservations to confirm and/or edit as needed"
+        },
+        {
+          "title": "Check the \"TRC RESO HOTLINE\" thread on WhatsApp for any requests related the Neighborhood Complex. Resolve the request and confirm via a reply in the thread with all required information. (Date, time, party size)"
+        },
+        {
+          "title": "Plot reservations for the night"
+        },
+        {
+          "title": "hallway organization and candles",
+          "detail": [
+            "Organize candles, TP, Ch Naps, Pink Naps are neatly organized and identifiable in Hall Closet.",
+            "Refill all candles holders with new candles and light (tables 1-9/beer retail area).",
+            "Make sure there are back up candles for thoughout the shift."
+          ]
+        },
+        {
+          "title": "Bathrooms:",
+          "detail": [
+            "Restock ice closet with toilet paper, CH hand towels, and soap (back-ups in Dover)",
+            "Refill soap dispensers if less than 1/2 full.",
+            "REFILL THE YB BATHROOM SHRINE (TAMPONS, CONDOMS, MINTS, MOUTHWASH, DIXIE CUPS)",
+            "Check all bathrooms for overall cleanliness"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The shrine stocked and the paper goods restocked"
+            }
+          ]
+        },
+        {
+          "title": "Mirrored hallway",
+          "detail": [
+            "Use a microfiber and glass cleaner (inside desk)",
+            "Wipe down all mirror surfaces",
+            "Wipe down finger prints from the YB fridge door"
+          ]
+        },
+        {
+          "title": "YB vestibule (use a rag and sanitizer)",
+          "detail": [
+            "Wipe down floor and wall behind fridge door",
+            "Wipe down YB and bathroom's door handles"
+          ]
+        },
+        {
+          "title": "checked the scent machine above the host stand is filled and running and the scent is noticeable at the door."
+        },
+        {
+          "title": "Desk:",
+          "detail": [
+            "Turn on light",
+            "Make sure iPad and iPhone are charged",
+            "Make sure chit printer is connected",
+            "Stock with: 5 pens, 10 votive candles, incense, and a lighter",
+            "Detail the tiled block and make sure there are no footprints"
+          ]
+        },
+        {
+          "title": "Focus my chi and prepare to enter Thunderdome"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Noble Bartender",
+      "role_es": "Bartender Noble",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Clock in and greet the team"
+        },
+        {
+          "title": "Turn on A/C and set to 72 degrees"
+        },
+        {
+          "title": "Liquor Orders:",
+          "detail": [
+            "Put away bottles in the benches",
+            "Make sure to keep everything tidy and organized as per labels",
+            "Check with Hood and bring extra bottles that don't fit in the benches",
+            "Collect invoices and put on CLIPBOARD in kitchen window."
+          ]
+        },
+        {
+          "title": "Set up Garnish Displays + WELLs",
+          "detail": [
+            "PREP will have most cheaters set - RESET PEBBLE ICE IN GARNISH DISPLAYS + ORGANZIZE",
+            "Citrus, honey, ginger beakers",
+            "Cheater bottles:",
+            "Orgeat, passion, grenadine, OJ, pina, grapefruit, cream,",
+            "Fortified wines:",
+            "Cocchi Americano, Dry, Blanc, Cocchi Torino, Antica, Fino, Amontillado, PX,",
+            "Garnishes:",
+            "lime wheel & wedge, cucs, oranges, mint sprigs/leaf, strawbs, rasps, blackberries",
+            "eggs, olives, cherries",
+            "cup of: nutmeg + cinnamon",
+            "shot glass of toothpicks"
+          ]
+        },
+        {
+          "title": "Stock Mineragua/Topo Chico (8 each well). Back up on shelf to look \"full\"."
+        },
+        {
+          "title": "Ice WELLS - pebble + KD"
+        },
+        {
+          "title": "Ice Pans - Place in Glass Fridges at both WELLS",
+          "detail": [
+            "2 - Normandie"
+          ]
+        },
+        {
+          "title": "Stock fridge - [PRO TIP]:",
+          "detail": [
+            "Back ups: (top row)",
+            "2 delis each of lime, simple, and lemon",
+            "1 deli ea.: Mint springs/leaf, oranges, strawberries, cucs",
+            "1 clam: raspberries, blackberries",
+            "1 deli ea.: Pina, orgeat, passion",
+            "2 delis: Eggs",
+            "XT Fortifieds/Bubbles (bottom row)",
+            "Dry, Blanc, Fino, Amontillado, PX",
+            "QuinaQuin, Port (ruby & white), Madeira",
+            "CAVA",
+            "Tonic"
+          ]
+        },
+        {
+          "title": "Towels: 5 bar rags and 4 microfibers",
+          "detail": [
+            "Microfiber: 1 for dishwasher, 1 for server san",
+            "Bar rags: 1 for each WELL, 1 by dishwasher for bar top",
+            "Remainders: folded and stacked in area under Bitters (for CLOSE)"
+          ]
+        },
+        {
+          "title": "Check dishwasher chemicals - Switch solution if too low"
+        },
+        {
+          "title": "Candles:",
+          "detail": [
+            "Empty from the night before",
+            "Run candle holders through dish and dry with a rag",
+            "Refill with new votives",
+            "Restock backup candles by the server station",
+            "Keep backup case of candles on top of the ice machine (far right side)"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The candles lit and the holders clean"
+            }
+          ]
+        },
+        {
+          "title": "Sanitizer bottles — Refill if below half"
+        },
+        {
+          "title": "Back up bottles - Pull bottles from Noble benches and then HOOD bar",
+          "detail": [
+            "Make sure your rails are FULL",
+            "Back-up First pours (2 of each)",
+            "ALL OF BACK BAR - scan for any bottles you think will need to be backed up",
+            "FRIDGE Fortifieds - check you have enought to refill throughout service (fino, cocchi)",
+            "Cheater Re-fills - Big Licor 43, Charts, Antica",
+            "Make sure we have enough to refill for service and CLOSE",
+            "Remove all plastic foil on all back up bottles"
+          ]
+        },
+        {
+          "title": "Double check + Restock:",
+          "detail": [
+            "Ginger Candy, Dem/White Sugar Cubes",
+            "Cherries, Olives",
+            "Toothpicks, Tasting straws"
+          ]
+        },
+        {
+          "title": "Restock:",
+          "detail": [
+            "Thermal paper — Make sure to have 3 backups on each POS station",
+            "Pens — 10 on each POS station",
+            "Lighter — 1 on each POS station"
+          ]
+        },
+        {
+          "title": "Tables:",
+          "detail": [
+            "Close the benches",
+            "Assemble tables and space evenly",
+            "Wipe down tables with sani and a microfiber cloth (including the legs)",
+            "Make sure to leave one spare chair by the curtain"
+          ]
+        },
+        {
+          "title": "Wipe down bar top and make sure nothing is sticky"
+        },
+        {
+          "title": "Candles — light 5 minutes before service",
+          "detail": [
+            "1 votive on each table and 5 on the bar top",
+            "Stock 20 in metal pan in cabinet below server station",
+            "Light candles 5 minutes before service"
+          ]
+        },
+        {
+          "title": "Restock coasters for service — Fill 1 stack CH napkins on each side of bar."
+        },
+        {
+          "title": "Wipe down all check presenters and make sure to have 5 on each POS station"
+        },
+        {
+          "title": "WIPE AND POLISH 1 BACKBAR SHELF OR CUBBY"
+        },
+        {
+          "title": "Lights:",
+          "detail": [
+            "Above NE curtain: turn dial all the way down",
+            "Above benches: all the way down",
+            "Picture frames: turn dial 90% down",
+            "Back bar: turn dial 95% down",
+            "Make sure light underneath the bar (guest side) is on"
+          ]
+        },
+        {
+          "title": "Walkthrough — 5 mins before service, perform a final walkthrough"
+        },
+        {
+          "title": "Let MOD know if anything needs repairing"
+        },
+        {
+          "title": "Take a deep breath, kick ass, and make that money!"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Prep",
+      "role_es": "Preparación",
+      "phase": "open",
+      "items": [
+        {
+          "section": "DAILY",
+          "title": "AT THE BEGINNING OF MY SHIFT I MADE A SANITIZER BUCKET WITH FRESH SOLUTION AND KEPT IT AT MY STATION ALL SHIFT.",
+          "title_es": "Revisa que las máquinas de hielo Kold-Draft y Scotsman estén funcionando bien y que estén botando hielo"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT AWAY ANY RELEVANT ORDERS, COLLECT INVOICES AND GIVE THEM TO THE MOD",
+          "title_es": "Guarda los pedidos que lleguen, junta las facturas y entrégaselas al MOD (gerente de turno)"
+        },
+        {
+          "section": "DAILY",
+          "title": "RUN PAR LIST TOP TO BOTTOM, DETERMINE PRODUCTION FOR THE DAY AND EXECUTE. NOTE ANY WASTE",
+          "title_es": "Revisa la lista de par de arriba a abajo, decide qué hay que producir hoy y hazlo. Anota lo que se desperdicie"
+        },
+        {
+          "section": "DAILY",
+          "title": "PLACE PRODUCE ORDER",
+          "title_es": "Haz el pedido de fruta y verdura"
+        },
+        {
+          "section": "DAILY",
+          "title": "MAKE SURE EVERYTHING MADE IS PROPERLY LABELED AND DATED",
+          "title_es": "Asegúrate de que todo lo que prepares quede etiquetado y con la fecha"
+        },
+        {
+          "section": "DAILY",
+          "title": "Fill up cheaters with 4 pineapple, 4 orange juice, 4 grapefruit, 4 cream, 4 orgeat, 4 grenadine, 4 passionfruit , 4 Fino, 4 amontillado, 4 PX Sherry",
+          "title_es": "Llena los cheaters: 4 piña, 4 jugo de naranja, 4 toronja, 4 crema, 4 orgeat, 4 granadina, 4 maracuyá, 4 Fino, 4 Amontillado, 4 PX Sherry"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT specified quantities of each garnish cup in HOOD: 2 strawberries, 2 lime wedges, 2 lime wheels, 2 orange half moons, 2 cucumber slices, 2 mint sprigs, 2 loose mints",
+          "title_es": "Pon estas cantidades de cada vaso de garnish en HOOD: 2 fresas, 2 gajos de limón, 2 rodajas de limón, 2 medias lunas de naranja, 2 rodajas de pepino, 2 ramitas de menta, 2 hojas de menta sueltas"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT specified quantities of each garnish cup in NOBLE: 2 strawberries, 2 lime wedges, 2 lime wheels, 2 orange half moons, 2 cucumber slices, 2 mint sprigs, 2 loose mints, 2 raspberries, and 2 blackberries.",
+          "title_es": "Pon estas cantidades de cada vaso de garnish en NOBLE: 2 fresas, 2 gajos de limón, 2 rodajas de limón, 2 medias lunas de naranja, 2 rodajas de pepino, 2 ramitas de menta, 2 hojas de menta sueltas, 2 frambuesas y 2 zarzamoras"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT specified quantities of each cheater in NOBLE: 2 pineapple, 2 orange juice, 2 grapefruit, 2 cream, 2 orgeat, 2 grenadine, 2 passionfruit , 2 Fino, 2 amontillado, 2 PX Sherry",
+          "title_es": "Pon estas cantidades de cada cheater en NOBLE: 2 piña, 2 jugo de naranja, 2 toronja, 2 crema, 2 orgeat, 2 granadina, 2 maracuyá, 2 Fino, 2 Amontillado, 2 PX Sherry"
+        },
+        {
+          "section": "DAILY",
+          "title": "SET UP GARNISH DISPLAY IN NOBLE. Fill each display well in Noble with 2 1/2 Pebble Ice. And set up per garnish and cheater photo (refer to Noble Binder)",
+          "title_es": "Arma el display de garnish en NOBLE. Llena cada hueco del display con 2 1/2 de hielo pebble y acomódalo igual que la foto de garnish y cheaters (mira la carpeta de Noble)"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT specified quantities of each garnish cup in YOUNGBLOOD: 2 strawberries, 1 lime wheels, 1 orange half moons, 1 cucumber slices, 1 mint sprigs, 1 loose mints, 1 cucumber ribbon, 2 raspberries, and 2 blackberries.",
+          "title_es": "Pon estas cantidades de cada vaso de garnish en YOUNGBLOOD: 2 fresas, 1 rodajas de limón, 1 medias lunas de naranja, 1 rodajas de pepino, 1 ramitas de menta, 1 hojas de menta sueltas, 1 tira de pepino, 2 frambuesas y 2 zarzamoras"
+        },
+        {
+          "section": "DAILY",
+          "title": "PUT specified quantities of each cheater in YOUNGBLOOD: 2 pineapple, 2 orange juice, 2 grapefruit, 2 cream, 2 orgeat, 2 grenadine, 2 passionfruit , 2 Fino, 2 amontillado, 2 PX Sherry",
+          "title_es": "Pon estas cantidades de cada cheater en YOUNGBLOOD: 2 piña, 2 jugo de naranja, 2 toronja, 2 crema, 2 orgeat, 2 granadina, 2 maracuyá, 2 Fino, 2 Amontillado, 2 PX Sherry"
+        },
+        {
+          "section": "DAILY",
+          "title": "PLACE CITRUS/GARNISH BACK UP IN FRIDGES IN EACH VENUE",
+          "title_es": "Deja el respaldo de cítricos y garnish en los refrigeradores de cada venue"
+        },
+        {
+          "section": "DAILY",
+          "title": "TAKE OUT ALL CARDBOARD AND TRASH",
+          "title_es": "Saca todo el cartón y la basura"
+        },
+        {
+          "section": "DAILY",
+          "title": "WALK THE SPACE AND NOTE ANY CLEANING OR REPAIR NEEDS",
+          "title_es": "Recorre el espacio y anota lo que haga falta limpiar o reparar",
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Walk the space and record it. Say out loud anything that needs cleaning or repair."
+            }
+          ]
+        },
+        {
+          "section": "WEEKLY",
+          "title": "REORGANIZE PREP ROOM, WALK IN, & DRY GOODS AREA COMPLETELY, AND PREPARE FOR TUESDAY DELIVERIES",
+          "title_es": "Reorganiza por completo el cuarto de prep, el walk-in y el área de secos, y déjalo listo para las entregas del martes",
+          "detail": [
+            "I DETAILED THE FLOORS (INCLUDING UNDER THE FREEZER, ICE MACHINES, AND ALL FLOOR GRATES AND DRAINS)"
+          ]
+        },
+        {
+          "section": "WEEKLY",
+          "title": "DETAIL BOTH CARTS",
+          "title_es": "Detalla los dos carritos"
+        },
+        {
+          "section": "WEEKLY",
+          "title": "DETAIL WALK-IN WALLS AND FAN HOUSINGS, AND DEEP CLEAN PREP & 3COMP SINKS",
+          "title_es": "Detalla las paredes y las carcasas de los ventiladores del walk-in, y lava a fondo el fregadero de prep y el de 3 compartimentos"
+        },
+        {
+          "section": "WEEKLY",
+          "title": "DEEP CLEAN & ORGANIZE DEEP FREEZER at j&T's FOR nice ice delivery on tuesday",
+          "title_es": "Limpia a fondo y organiza el congelador para la entrega de Penny Pound del sábado"
+        },
+        {
+          "section": "WEEKLY",
+          "title": "DETAIL ALL kd and pebble ice machines",
+          "title_es": "Detalla todas las máquinas de hielo"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "YB Bartender",
+      "role_es": "Bartender YB",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I ENSURED THE RIPPLE PRINTER IS ON AND WORKING. I UNDERSTAND HOW TO USE IT. I WILL USE IT AS MUCH AS POSSIBLE ON SHIFT AND ON ALL FAREWELL COCKTAILS AND ON EVERY SPECIAL OCCASION WITH THE NAME OF THE CELEBRANT."
+        },
+        {
+          "title": "Clock in and greet the team"
+        },
+        {
+          "title": "Turn on A/C and set to 71 degrees"
+        },
+        {
+          "title": "Pull out + set up: Caramel Squirt Bottles - Backups from Kitchen",
+          "detail": [
+            "Coconut squirt bottle (1 sets) - Place on backbar on left side",
+            "Cheater bottles - (2 sets) - Check if bottles are in correct squares in well",
+            "[IN wells] Orgeat, Passion, Grenadine, OJ, pina, grapefruit, cream",
+            "[YB FRIDGE-1] PX, Amontillado, Fino, Dry, Blanc, Cocchi Americano"
+          ]
+        },
+        {
+          "title": "Check for backup mascarpone, marshmallow, coco red wine."
+        },
+        {
+          "title": "Bring all items back: Along with: White chocolate gelato (hood freezer), 8 delis of frozen Cucumber ice (noble freezer) Bar towels, eggs"
+        },
+        {
+          "title": "Stock reach in ice freezers with batch bottles",
+          "detail": [
+            "Front row closest to bartender in order L-R",
+            "Caribbean, Lush, Floral, herbaceous",
+            "Row behind- Coffee, Budino, strawberry"
+          ]
+        },
+        {
+          "title": "Charge isi with Marshmallow foam: 2 egg white, 1/2 canister with marshmallow batch + 2 charges with Isi whippper"
+        },
+        {
+          "title": "Refill powder garnishes. Strawberry, Li Hing, spirulina, sakura."
+        },
+        {
+          "title": "Stock Mineragua (4) - Well",
+          "detail": [
+            "Stock (4) back up in server cabinet"
+          ]
+        },
+        {
+          "title": "Ice outside 1/2s of well (2-3 buckets) - Pebble Ice"
+        },
+        {
+          "title": "Zesting Fruit:",
+          "detail": [
+            "Fill bowl - lemons, oranges, 2 - limes, 1 - grapefruit",
+            "Fill back up tin with (^)fruit - in server cabinet",
+            "Garnish Station —",
+            "Replenish garnishes, Crackers, iso malt, toffee, honey comb, daisies",
+            "Refill powders: strawberry, ling hi, spirulina, sakura, sugar trigger, sea salt, cornichons",
+            "Check/refill: Ginger candy, cherries, toothpicks, nutmeg, cinnamon, tasting straws"
+          ]
+        },
+        {
+          "title": "Stock fridges (1&2) - Backups:",
+          "detail": [
+            "FRIDGES =",
+            "Glassware (top 2 rows | L to R)",
+            "TOP ROW = Shell glasses, DBL rocks",
+            "MIDDLE ROW = Collins, Sours, Coupes",
+            "\"Back ups\" / Fortifieds (bottom row)",
+            "Dessert batch backups on left fridge, Appetiser backups on right fridge"
+          ]
+        },
+        {
+          "title": "Towels: 5 bar rags and 5 microfibers",
+          "detail": [
+            "Microfiber: 1 for dishwasher, 2 on each ice fridge for tables",
+            "Bar rags: 2 per bartender, 2 by trash can for the floor",
+            "Remainders: folded and stacked in dishwasher cubby"
+          ]
+        },
+        {
+          "title": "Stack of CH napkins for service and back up in cabinet."
+        },
+        {
+          "title": "Check dishwasher chemicals. Refill if below half"
+        },
+        {
+          "title": "Sanitizer bottle (2) — Refill if below half"
+        },
+        {
+          "title": "Back up bottles:",
+          "detail": [
+            "Make sure your well is FULL (**REFER TO WELL PHOTO**)",
+            "List of every back up bottle needed. (Closers should leave list) Check:",
+            "First pours, back bar, amari, liqueur",
+            "Pull bottles from Noble benches and then Hood bar",
+            "Stock in designated areas:",
+            "Under reel 2 reel at T4",
+            "Refill fortifieds and sherrys in well",
+            "Remove all plastic/foil on all back up bottles - Must be ready to GRAB N GO"
+          ]
+        },
+        {
+          "title": "Ice MIDDLE of well (1 bucket) — Kold draft ice"
+        },
+        {
+          "title": "Tables — Assemble room and wipe down tables (including the legs),WIPE DOWN BAR STOOL BASES"
+        },
+        {
+          "title": "Candles — light 5 minutes before service",
+          "detail": [
+            "TABLE CANDLES",
+            "Throw out yesterday's tea lights (placed on TBL 4 over night)",
+            "Acquire new lights from ice machine closet (or NOBLE)",
+            "Place on clean tables",
+            "BAR TOP/BACK BAR CANDLES",
+            "LONG BOIS (kept in cabinet by TBL 3)"
+          ]
+        },
+        {
+          "title": "Make sure all shelves have a minimum of 4 bottles on each. Reorganize if needed"
+        },
+        {
+          "title": "Water- Fill all water decanters"
+        },
+        {
+          "title": "McIntosh / Reel-to-reel (music) — have it set up to just push play.",
+          "detail": [
+            "Adjust volume during service"
+          ]
+        },
+        {
+          "title": "Lights — Set to \"YB OPEN\" + \"Island\" on"
+        },
+        {
+          "title": "ENSURE THAT THE BEADS HAVE BEEN TUCKED INSIDE THE FOOTREST OF EACH STOOL."
+        },
+        {
+          "title": "Order if needed from specialty: Bananas, micro daisies, honey maid biscuits, honeycomb, isi canisters."
+        },
+        {
+          "title": "Let MOD know if anything needs repairing"
+        },
+        {
+          "title": "Walkthrough — 5 mins before service, perform a final walkthrough, Take a look at Opentable and see what the night looks like",
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Walk the room before service and record it. Say out loud anything not ready."
+            }
+          ]
+        },
+        {
+          "title": "Take a deep breath, kick ass, and make that money!"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dishwasher",
+      "role_es": "Lavaplatos",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I clocked in, said hello to co-workers, turned on dish machine, and filled it with water.",
+          "title_es": "Marqué entrada, saludé a mis compañeros, encendí la máquina de lavar y la llené de agua."
+        },
+        {
+          "title": "I filled up one container with pre soak for silverware, and another with pre soak for ramekins",
+          "title_es": "Llené un recipiente con remojo para cubiertos y otro con remojo para ramekins"
+        },
+        {
+          "title": "I will bring clean plates back to the hot line and restock.",
+          "title_es": "Llevé los platos limpios a la línea caliente y los reabastecí."
+        },
+        {
+          "title": "I ask the chefs if there is any prep that needs to be done.",
+          "title_es": "Pregunté a los chefs si hay algún prep que hacer."
+        },
+        {
+          "title": "I cleaned and wiped down all line cutting boards and stored them properly.",
+          "title_es": "Limpié todas las tablas de cortar de la línea y las guardé en su lugar.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All the line cutting boards clean and put away"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned and detailed the handsink to the right of the dish area with a metal scrubbie and bleach solution.",
+          "title_es": "Limpié y detallé el lavamanos a la derecha del área de dish con fibra de metal y solución de cloro.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The handsink by the dish area, detailed"
+            }
+          ]
+        },
+        {
+          "title": "Took out cardboard and trash when needed throughout the shift.",
+          "title_es": "Saqué el cartón y la basura cuando hizo falta durante el turno."
+        },
+        {
+          "title": "I drained the machine, turned the machine off, and lifted the door and left it open overnight.",
+          "title_es": "Vacié la máquina, la apagué, levanté la puerta y la dejé abierta toda la noche.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish machine drained, off, with the door up"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Line cook",
+      "role_es": "Cocinero de línea",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I clocked in, said hello, put my things away, got my knives out, and checked in with Chef and team",
+          "title_es": "Marqué entrada, saludé, guardé mis cosas, saqué mis cuchillos y me reporté con el Chef y el equipo"
+        },
+        {
+          "title": "I turned on or verified that the following equipment was turned on: The oven, the left and right fryer, the salamander, the flattop.",
+          "title_es": "Encendí o verifiqué que estuviera encendido el siguiente equipo: el horno, las freidoras izquierda y derecha, la salamandra y la plancha."
+        },
+        {
+          "title": "I restocked my station and made back ups easily accessible in the reach in and walk in.",
+          "title_es": "Reabastecí mi estación y dejé los respaldos a la mano en el reach in y el walk in."
+        },
+        {
+          "title": "At the beginning of my shift, I made a red sani bucket filled with cold sani solution. Placed it on the line.",
+          "title_es": "Al inicio de mi turno preparé una cubeta roja de sanitizante con solución fría y la puse en la línea."
+        },
+        {
+          "title": "I filled out the temp logs and preplists for all stations.",
+          "title_es": "Llené los registros de temperatura y las listas de prep de todas las estaciones."
+        },
+        {
+          "title": "I restocked my station fully and took inventory of mise en place to create a prep list for the next day",
+          "title_es": "Reabastecí mi estación por completo y tomé inventario del mise en place para hacer la lista de prep de mañana"
+        },
+        {
+          "title": "Cleaned flatop including side, with grill brick and degreaser.",
+          "title_es": "Limpié la plancha, incluyendo los lados, con piedra para plancha y desengrasante.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The flat top clean, sides included"
+            }
+          ]
+        },
+        {
+          "title": "Wiped down line, lowboys and pantry station with soap and water. Including doors and gaskets.",
+          "title_es": "Limpié la línea, los lowboys y la estación de pantry con agua y jabón, incluyendo puertas y empaques.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The line and lowboys wiped down, doors and gaskets in the shot"
+            }
+          ]
+        },
+        {
+          "title": "Scanned speedracks to make sure prepped items are put away and speedracks are wiped down and cleaned.",
+          "title_es": "Revisé los speedracks para asegurar que lo preparado esté guardado y que los speedracks estén limpios.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speedracks wiped down and cleared"
+            }
+          ]
+        },
+        {
+          "title": "Write down prep items on white board for next day and include which items are 911.",
+          "title_es": "Anoté en el pizarrón los items de prep para mañana e indiqué cuáles son 911.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The whiteboard with tomorrow's prep list and the 911 items"
+            }
+          ]
+        },
+        {
+          "title": "Make sure all equipment is turned off before you clock out.",
+          "title_es": "Me aseguré de que todo el equipo esté apagado antes de marcar salida.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The line with every piece of equipment off"
+            }
+          ]
+        },
+        {
+          "title": "Checked in with the dishwasher to make sure he didnt need any help before you clock out and leave.",
+          "title_es": "Me reporté con el lavaplatos para ver si necesitaba ayuda antes de marcar salida e irme."
+        }
+      ]
+    }
+  ]
+}

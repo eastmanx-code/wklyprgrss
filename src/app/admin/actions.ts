@@ -1,5 +1,7 @@
 "use server";
 
+import crypto from "node:crypto";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -526,6 +528,44 @@ export async function sweepOrphans(
   } catch {
     return { error: "Could not read storage. Try again." };
   }
+}
+
+/**
+ * Open or close a venue's self-serve signup.
+ *
+ * Closed by default, and closed again once a venue's managers are all in, so
+ * the public door is only answering while somebody is meant to be walking
+ * through it. The link keeps working the moment it is reopened.
+ */
+export async function setSignupOpen(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const open = String(formData.get("open") ?? "") === "yes";
+  if (!venueId) return;
+
+  await db().from("venues").update({ signup_open: open }).eq("id", venueId);
+  revalidatePath("/admin/codes");
+}
+
+/**
+ * Mint a fresh signup link for a venue, retiring the old one.
+ *
+ * For when a link has been somewhere it should not have. The codes already
+ * made from the old link keep working; only the door stops answering at the
+ * old address.
+ */
+export async function rotateSignupToken(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  if (!venueId) return;
+
+  await db()
+    .from("venues")
+    .update({ signup_token: crypto.randomUUID() })
+    .eq("id", venueId);
+  revalidatePath("/admin/codes");
 }
 
 /** Revokes a code. The env master key isn't in this table, so it stays. */

@@ -1,9 +1,11 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AdminPins, type CodeVenue } from "@/components/admin/AdminPins";
 import { MaintenanceToggle } from "@/components/admin/MaintenanceToggle";
 import { OrphanSweep } from "@/components/admin/OrphanSweep";
+import { SignupLinks } from "@/components/admin/SignupLinks";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
 import { notAdminGoesTo } from "@/lib/app";
 import { getMaintenance } from "@/lib/maintenance";
@@ -31,11 +33,19 @@ export default async function AdminCodesPage() {
 
   // The only screen that reads venue PINs. getVenues() deliberately never
   // selects them, so this query is deliberate and lives behind the admin
-  // guard above.
+  // guard above. The signup token rides along for the same reason: it is a
+  // credential the GM hands out, so it shows only here.
   const { data: venues } = await db()
     .from("venues")
-    .select("id, code, pin")
+    .select("id, code, pin, signup_token, signup_open")
     .order("code");
+
+  // The host the admin reached this page on, so the signup links are whole and
+  // copyable rather than a bare path to prepend a domain to by hand.
+  const h = await headers();
+  const host = h.get("host") ?? "";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const origin = host ? `${proto}://${host}` : "";
 
   const maintenance = await getMaintenance();
 
@@ -103,6 +113,30 @@ export default async function AdminCodesPage() {
             ),
           )}
         </ul>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="card-title">Signup links</h2>
+        <p className="label text-muted mt-1.5">
+          One link per venue · managers add themselves and set their own code ·
+          open it only while onboarding
+        </p>
+        <hr className="border-divider my-4 border-0 border-t" />
+        <SignupLinks
+          venues={(
+            (venues ?? []) as {
+              id: string;
+              code: string;
+              signup_token: string;
+              signup_open: boolean;
+            }[]
+          ).map((venue) => ({
+            id: venue.id,
+            code: venue.code,
+            url: `${origin}/checklists/signup/${venue.signup_token}`,
+            open: venue.signup_open,
+          }))}
+        />
       </section>
 
       {/* Housekeeping, on the screen that already holds the things only an
