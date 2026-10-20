@@ -1,0 +1,292 @@
+{
+  "venue": "JNTS",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Cafe",
+      "role_es": "Café",
+      "phase": "open",
+      "items": [
+        { "title": "Turn on the lights under the bar and the disco ball (kitchen switch)." },
+        { "title": "Open all the doors." },
+        { "title": "Check for packages and deliveries. Open them, stock what you can, and break down the boxes." },
+        {
+          "title": "Patio setup.",
+          "detail": [
+            "Red bench cushions out",
+            "Umbrellas out and secured to the base",
+            "Sweep and wipe the green marble in the courtyard",
+            "Outdoor speaker out, plugged in, cable tucked"
+          ],
+          "proof": [{ "kind": "photo", "prompt": "The patio set and courtyard clean: cushions out, umbrellas up and secured, marble swept, speaker out and plugged in" }]
+        },
+        { "title": "Music on the outside speaker. Wipe down the stereo and speakers." },
+        {
+          "title": "Count the register. It should be $210.",
+          "proof": [{ "kind": "note", "prompt": "The opening drawer count. It should be $210." }]
+        },
+        { "title": "Dial in the Spro." },
+        {
+          "title": "Set up the cafe bar: syrups, pitchers, scales, rags for the knock box, steam wand and cleaning.",
+          "proof": [{ "kind": "photo", "prompt": "The cafe bar set: syrups, pitchers, scales and rags in place" }]
+        },
+        { "title": "Brew the freshest half-batch of drip coffee." },
+        { "title": "Ice run to the hood. Fill the ice well." },
+        {
+          "title": "Iced tea.",
+          "detail": [
+            "Pull any prepped iced tea that is ready",
+            "Strain it through a wet drip filter",
+            "Store it in the fridge"
+          ]
+        },
+        { "title": "Pull the tap covers off the cold brew lines, soak in warm water, store behind the draft menu." },
+        { "title": "Sanitize and wipe the bar, coffee counter and tables." },
+        {
+          "title": "Hard clean, brush not rag.",
+          "detail": [
+            "Degrease every table base and pedestal, floor side included",
+            "Scrub every chair base, chair leg and barstool foot ring",
+            "Scrub all bench bases and legs, back side against the wall too",
+            "If the brush comes up black, go again"
+          ],
+          "proof": [{ "kind": "photo", "prompt": "Table bases, chair legs and bench bases scrubbed, nothing black left on the brush" }]
+        },
+        {
+          "title": "Restroom: clean, sanitize, stock towels, TP and rum hand soap.",
+          "proof": [{ "kind": "photo", "prompt": "The restroom clean and stocked: towels, TP and rum hand soap" }]
+        },
+        {
+          "title": "Perimeter sweep.",
+          "detail": [
+            "Patio corner to corner, under every table and bench",
+            "Front sidewalk across the whole building, curb line included",
+            "Street side of the patio, all the way around",
+            "Lot side of the patio, all the way around"
+          ],
+          "proof": [{ "kind": "video", "prompt": "A 30 second walk of the full perimeter loop: patio, sidewalk, street side, lot side" }]
+        },
+        {
+          "title": "Call in any dirty outside conditions to Clean & Safe: graffiti, spills, broken glass, biohazard.",
+          "proof": [{ "kind": "note", "prompt": "What you called in to Clean & Safe, or nothing to report" }]
+        },
+        {
+          "title": "Flag anything broken or not working to the MOD.",
+          "proof": [{ "kind": "note", "prompt": "Anything broken or not working, or none" }]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Cafe",
+      "role_es": "Café",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Spray and wipe the black shelves along the side of HQ.",
+          "proof": [{ "kind": "photo", "prompt": "The black shelves along HQ wiped down" }]
+        },
+        {
+          "title": "Fill tea bags. Pre-dose the morning coffee batches at 200 g.",
+          "proof": [{ "kind": "note", "prompt": "Morning batches pre-dosed at 200 g" }]
+        },
+        {
+          "title": "Stock syrups, milks, iced tea containers, cups, lids, straws, sugars and napkins.",
+          "proof": [{ "kind": "photo", "prompt": "Cafe restocked: syrups, milks, cups, lids, straws, sugars, napkins" }]
+        },
+        {
+          "title": "Deep clean the Curtis brewer with tablets and a clean water run. Dump the water and reset.",
+          "proof": [{ "kind": "photo", "prompt": "The Curtis brewer cleaned and reset, water dumped" }]
+        },
+        {
+          "title": "Restroom: clean, sanitize, stock towels, TP and rum hand soap.",
+          "proof": [{ "kind": "photo", "prompt": "The restroom clean and stocked: towels, TP and rum hand soap" }]
+        },
+        {
+          "title": "Empty every trash bin into the dumpsters, Space Ship included. New liners.",
+          "proof": [{ "kind": "photo", "prompt": "Every bin emptied and relined, Space Ship included" }]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Cafe",
+      "role_es": "Café",
+      "phase": "close",
+      "items": [
+        { "title": "Put up the Order At Bar sign." },
+        {
+          "title": "Tell the bartenders anything they need to know.",
+          "proof": [{ "kind": "note", "prompt": "Anything the bartenders need to know, or none" }]
+        },
+        {
+          "title": "Beer tray: run hot water down it, then clean and reset.",
+          "proof": [{ "kind": "photo", "prompt": "The beer tray cleaned and reset" }]
+        },
+        { "title": "Check for packages and orders, including the IFS order. Open them, put away and stock what you can, then tidy the space." },
+        { "title": "Pull empty boxes from upstairs." },
+        {
+          "title": "Iced tea under the 1 L par? Prep more.",
+          "proof": [{ "kind": "note", "prompt": "Iced tea on hand, prepped if under the 1 L par" }]
+        },
+        {
+          "title": "Polish all glassware and silverware.",
+          "proof": [{ "kind": "photo", "prompt": "Glassware and silverware polished" }]
+        },
+        { "title": "Run all ceramics and smallwares through the sanitizer. Dry and reset." },
+        {
+          "title": "Spro: backflush the groupheads, break down and clean the machine and the area under it.",
+          "proof": [{ "kind": "photo", "prompt": "The Spro broken down and cleaned, area underneath wiped" }]
+        },
+        { "title": "Check for printed J&T menus." },
+        {
+          "title": "Consolidate cash tips.",
+          "proof": [{ "kind": "note", "prompt": "Cash tips consolidated" }]
+        },
+        { "title": "Charge the scales, whisk, tablet and vacuum." },
+        {
+          "title": "Final wipe down: behind the cafe, the cage slush area, the back ledge.",
+          "proof": [{ "kind": "photo", "prompt": "Behind the cafe, the cage slush area and the back ledge wiped down" }]
+        },
+        {
+          "title": "Call out any low stock.",
+          "proof": [{ "kind": "note", "prompt": "Anything low on stock, or none" }]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar",
+      "role_es": "Bar",
+      "phase": "open",
+      "items": [
+        { "title": "Clock in." },
+        { "title": "Spot sweep the bar. Bus and spot clean every table, floor and stool." },
+        { "title": "Check in with Cafe Close before they leave. Make sure their list is done." },
+        { "title": "Check for packages and deliveries, including the milk order (whole milk and heavy cream). Open them, put away and stock what you can." },
+        { "title": "Fill the sanitizer bottle." },
+        {
+          "title": "Prep.",
+          "detail": [
+            "Well, polishing and sanitizing towels",
+            "Bar garnish and garnish bowls",
+            "Pacman of orange with backup",
+            "Lime wedges and wheels",
+            "Grapefruit quarters",
+            "Trim and shock mint",
+            "Cucumber wheels"
+          ],
+          "proof": [{ "kind": "photo", "prompt": "Garnish prepped and in bowls: orange pacman, limes, grapefruit quarters, mint, cucumber" }]
+        },
+        {
+          "title": "Set up the well with citrus, simple and coffee amaro. Fill cheater bottles and keep them in the fridge until night service.",
+          "proof": [{ "kind": "photo", "prompt": "The well set: citrus, simple and coffee amaro; cheater bottles filled" }]
+        },
+        {
+          "title": "Refill and reset the menu cocktail batch bottles. Check batches and make what is needed.",
+          "proof": [{ "kind": "note", "prompt": "Which batches you made or topped off" }]
+        },
+        { "title": "Stock sparkling and garnish: sparkling water, prosecco, tonics, olives and cherries." },
+        {
+          "title": "Ice: 8+ pans trimmed Big Rocks, 2 pans Kold-Draft, 1 full pan spears.",
+          "proof": [{ "kind": "photo", "prompt": "The ice pans stocked to par: Big Rocks, Kold-Draft and spears" }]
+        },
+        { "title": "Restock backup spirits and the bottle wall from upstairs. Take out recycling." },
+        { "title": "Stock dry goods: gloves, napkins, to-go boxes." },
+        {
+          "title": "Meats: sanitize the slicer, set and cover the meat with cheesecloth, line the tray with parchment.",
+          "proof": [{ "kind": "photo", "prompt": "The meat set and covered with cheesecloth, tray lined, slicer sanitized" }]
+        },
+        { "title": "Set up the snack bar with salt and the Tajin plate." },
+        { "title": "Scrub the guest-facing stuff, gold sink and cutting board. Put away extra bottles and junk." },
+        {
+          "title": "Restroom: stock paper towels, TP and rum hand soap. Flag anything broken.",
+          "proof": [{ "kind": "photo", "prompt": "The restroom stocked: paper towels, TP and rum hand soap" }]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar",
+      "role_es": "Bar",
+      "phase": "close",
+      "items": [
+        { "title": "Check in with Bar Open before they leave. Make sure their list is done." },
+        { "title": "Last call. Yell it, then check in with guests on last orders." },
+        { "title": "Drop remaining checks and collect glassware." },
+        { "title": "Pre-close: pull cleaning tins, organize the back bar, get rid of mats." },
+        {
+          "title": "Review batches and prep. Place a specialty produce order if under par. Note low or 86'd items in day notes.",
+          "proof": [{ "kind": "note", "prompt": "Batches and prep reviewed; low or 86'd items for the day notes" }]
+        },
+        {
+          "title": "Bring in all outside furniture, neatly.",
+          "proof": [{ "kind": "photo", "prompt": "All outside furniture brought in and stacked neatly, patio clear" }]
+        },
+        { "title": "Wash the pacman, jiggers, citrus bowls and anything left." },
+        {
+          "title": "Lights on, well off. Empty and clean the well.",
+          "proof": [{ "kind": "photo", "prompt": "The well emptied and clean" }]
+        },
+        { "title": "Clean the meat slicer." },
+        {
+          "title": "Scrape sticky residue and sanitize the tables and bar top. Reset the bar top with mats and trays.",
+          "proof": [{ "kind": "photo", "prompt": "The bar top scraped, sanitized and reset with mats and trays" }]
+        },
+        {
+          "title": "Tables and dishes.",
+          "detail": [
+            "Double check every table for missed items",
+            "Run a final load of dishes if needed",
+            "Wash the drip tray under the dirty glass rack",
+            "Clear the dump sink and ice cutting area",
+            "Wipe every barstool base and foot ring",
+            "Wipe every table base and pedestal, foot ring too",
+            "Broom out the sliding door track and cracks, both sides"
+          ],
+          "proof": [{ "kind": "photo", "prompt": "Every barstool and table base wiped, door track broomed, dump sink and ice area clear" }]
+        },
+        { "title": "Clean and replace the mats on the back bar and right of the dip sink." },
+        { "title": "Clean dishwasher areas 1 and 2." },
+        { "title": "Reset the beer tap inserts. Fill the water bottles." },
+        { "title": "Empty the red sani bucket. Soiled rags in the laundry bag." },
+        {
+          "title": "Trash: bar, kitchen and rocket (toss citrus first). Break down recycling, compact, clean cans as needed.",
+          "proof": [{ "kind": "photo", "prompt": "All trash out, recycling broken down and compacted, cans clean" }]
+        },
+        {
+          "title": "Add anything to the waste log.",
+          "proof": [{ "kind": "note", "prompt": "Anything added to the waste log, or none" }]
+        },
+        { "title": "Charge the Toast handhelds and iPad." },
+        { "title": "Unplug the speaker and wrap the cord." },
+        { "title": "Power down: stereo, disco ball, Post-It wall flood lights, upstairs lights, office lights, all AC." },
+        {
+          "title": "Cash out.",
+          "detail": [
+            "Mode > Shift Review. Note the cash in hand amount",
+            "Pull exactly that amount from the drawer",
+            "Drawer should hold $210. If not, write the total on receipt paper and photo it",
+            "Trade cash tips for large bills in the drawer. Note the tip total",
+            "Cash Drawers > Close Drawer > gray number button > Close Drawer again",
+            "Stow cash with day reports, separate from cash sales, under the register"
+          ],
+          "proof": [{ "kind": "photo", "prompt": "The closed drawer. It should hold $210; if it is off, the total written on receipt paper" }]
+        },
+        { "title": "Close any open tabs. Wipe the POS screen with a microfiber." },
+        {
+          "title": "Lock the main door, courtyard door and large euro door.",
+          "proof": [{ "kind": "photo", "prompt": "The main, courtyard and large euro doors locked" }]
+        },
+        {
+          "title": "Final walkthrough. Everything reset for the opener.",
+          "proof": [{ "kind": "video", "prompt": "Walk the room and record it: tables and bases, floor, bar reset, nothing left out" }]
+        },
+        {
+          "title": "Leave shift notes. Clock out, live the dream.",
+          "proof": [{ "kind": "note", "prompt": "Shift notes for the next crew" }]
+        }
+      ]
+    }
+  ]
+}
