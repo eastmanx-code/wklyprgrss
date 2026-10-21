@@ -435,22 +435,6 @@
           "title_es": "SANITIZA Y LIMPIA LA BARRA, EL COUNTER DEL CAFÉ Y LAS MESAS."
         },
         {
-          "title": "HARD CLEAN, BRUSH NOT RAG.",
-          "title_es": "LIMPIEZA A FONDO, CON CEPILLO NO CON TRAPO.",
-          "detail": [
-            "Degrease every table base and pedestal, floor side included",
-            "Scrub every chair base, chair leg and barstool foot ring",
-            "Scrub all bench bases and legs, back side against the wall too",
-            "If the brush comes up black, go again"
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Table bases, chair legs and bench bases scrubbed, nothing black left on the brush"
-            }
-          ]
-        },
-        {
           "title": "RESTROOM: CLEAN, SANITIZE, STOCK TOWELS, TP AND RUM HAND SOAP.",
           "title_es": "BAÑO: LIMPIA, SANITIZA Y SURTE TOALLAS, PAPEL Y EL JABÓN DE MANOS DE RON.",
           "proof": [
@@ -673,6 +657,180 @@
             {
               "kind": "note",
               "prompt": "Anything low on stock, or none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "CAFE",
+      "items": [
+        {
+          "title": "DRAINS: SCRUB, WIPE DOWN AND SANITIZE THE DRAIN AND LID.",
+          "title_es": "COLADERAS: TALLA, LIMPIA Y SANITIZA LA COLADERA Y LA TAPA.",
+          "detail": [
+            "Night crew tend to skip these"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The drain and lid scrubbed and sanitized, no buildup"
+            }
+          ]
+        },
+        {
+          "title": "WIPE AND DUST THE CUBBY SPACES AND THE FRONT OF THE BAR.",
+          "title_es": "LIMPIA Y SACUDE LOS CUBBIES Y EL FRENTE DE LA BARRA.",
+          "detail": [
+            "Clean under the cafe bar",
+            "Remove the sections, wipe down, sanitize and reorganize",
+            "Fully wipe the face of the cafe bar",
+            "Get around all the wooden slats"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under and the face of the cafe bar wiped, sections back in order"
+            }
+          ]
+        },
+        {
+          "title": "WIPE AND DUST THE BACK BAR IN THE CAFE.",
+          "title_es": "LIMPIA Y SACUDE EL BACK BAR DEL CAFÉ.",
+          "detail": [
+            "Clear the space around dino",
+            "Fully wipe it down"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cafe back bar cleared around dino and wiped down"
+            }
+          ]
+        },
+        {
+          "title": "CLEAN THE TABLE BASES AND BENCHES.",
+          "title_es": "LIMPIA LAS BASES DE LAS MESAS Y LAS BANCAS.",
+          "detail": [
+            "Scrub and wipe the table bases and benches until clean"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Table bases and benches scrubbed clean"
+            }
+          ]
+        },
+        {
+          "title": "DEEP CLEAN THE CAFE FRIDGES.",
+          "title_es": "LIMPIA A FONDO LOS REFRIS DEL CAFÉ.",
+          "detail": [
+            "Empty them out",
+            "Spray down and sanitize the cafe fridge, the tap fridge and the little black fridge in the brewer station"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cafe fridges emptied, sanitized and restocked"
+            }
+          ]
+        },
+        {
+          "title": "HARD CLEAN, BRUSH NOT RAG.",
+          "title_es": "LIMPIEZA A FONDO, CON CEPILLO NO CON TRAPO.",
+          "detail": [
+            "Degrease every table base and pedestal, floor side included",
+            "Scrub every chair base, chair leg and barstool foot ring",
+            "Scrub all bench bases and legs, back side against the wall too",
+            "If the brush comes up black, go again"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Table bases, chair legs and bench bases scrubbed, nothing black left on the brush"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "BAR",
+      "items": [
+        {
+          "title": "FRIDGES: FULLY CLEAN OUT AND REORGANIZE.",
+          "title_es": "REFRIS: VACÍALOS POR COMPLETO Y REORGANÍZALOS.",
+          "detail": [
+            "Well fridge, wine fridge, back bar fridge and freezer"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well, wine and back bar fridges and the freezer cleaned out and reorganized"
+            }
+          ]
+        },
+        {
+          "title": "BAR TOP AND STOOLS: CLEAN AND SCRUB.",
+          "title_es": "BARRA Y BANCOS: LIMPIA Y TALLA.",
+          "detail": [
+            "Scrub the edges of the bar",
+            "Get between the molding and the top surface",
+            "Scrub and wipe down all the stools and bases"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar edges and molding scrubbed, stools and bases wiped down"
+            }
+          ]
+        },
+        {
+          "title": "DUST AND REORGANIZE THE HONEY COMB WALL.",
+          "title_es": "SACUDE Y REORGANIZA EL MURO DE PANAL (HONEY COMB).",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The honey comb wall dusted and reorganized"
+            }
+          ]
+        },
+        {
+          "title": "BACK BAR: REMOVE THE BOTTLES, WIPE DOWN AND REORGANIZE.",
+          "title_es": "BACK BAR: QUITA LAS BOTELLAS, LIMPIA Y REORGANIZA.",
+          "detail": [
+            "Remove the bottles",
+            "Wipe down the counters",
+            "Wipe the bottles down",
+            "Reorganize"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar counters wiped, bottles cleaned and reorganized"
+            }
+          ]
+        },
+        {
+          "title": "CAFE BATCHED SECTION: CLEAN UNDER THE CURTIS BREWER.",
+          "title_es": "SECCIÓN DE BATCH DEL CAFÉ: LIMPIA DEBAJO DE LA CURTIS.",
+          "detail": [
+            "Remove the batched cocktail cambros",
+            "Remove and clean the mats",
+            "Wipe down the stainless steel",
+            "Let it dry, then put everything back in order"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the Curtis brewer cleaned, stainless wiped, everything back in order"
             }
           ]
         }
