@@ -1868,6 +1868,85 @@
           "section": "SUNDAY"
         }
       ]
+    },
+    {
+      "house": "HOH",
+      "role": "MONTHLY DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA MENSUAL",
+      "phase": "mid",
+      "room": "Kitchen",
+      "items": [
+        {
+          "title": "I PULLED OUT THE OVEN AND FLAT TOP AND CLEANED BEHIND THEM.",
+          "title_es": "SAQUÉ EL HORNO Y LA PLANCHA Y LIMPIÉ POR DETRÁS.",
+          "section": "FIRST WEDNESDAY",
+          "detail": [
+            "Done the first Wednesday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the oven and flat top, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I PULLED OUT THE CANDY BURNERS AND CLEANED BEHIND THEM.",
+          "title_es": "SAQUÉ LOS CANDY BURNERS Y LIMPIÉ POR DETRÁS.",
+          "section": "FIRST THURSDAY",
+          "detail": [
+            "Done the first Thursday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the candy burners, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I PULLED OUT THE FRYER AND CLEANED BEHIND IT.",
+          "title_es": "SAQUÉ LA FREIDORA Y LIMPIÉ POR DETRÁS.",
+          "section": "SECOND TUESDAY",
+          "detail": [
+            "Done the second Tuesday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the fryer, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I MOVED EVERYTHING OFF THE WALK-IN SHELVES, DEEP CLEANED THE SHELVES AND THE WALK-IN, AND BURNED OFF ALL THE GREASE AND DEBRIS FROM THE BURNERS.",
+          "title_es": "SAQUÉ TODO DE LOS ESTANTES DEL WALK-IN, LIMPIÉ A FONDO LOS ESTANTES Y EL WALK-IN, Y QUEMÉ TODA LA GRASA Y SUCIEDAD DE LOS QUEMADORES.",
+          "section": "THIRD MONDAY",
+          "detail": [
+            "AM team. Done the third Monday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in shelves emptied and deep cleaned, the burners burned off"
+            }
+          ]
+        },
+        {
+          "title": "I BURNED OFF ALL THE GREASE AND DEBRIS FROM THE CANDY BURNERS.",
+          "title_es": "QUEMÉ TODA LA GRASA Y SUCIEDAD DE LOS CANDY BURNERS.",
+          "section": "FOURTH FRIDAY",
+          "detail": [
+            "Done the fourth Friday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The candy burners burned off, grease and debris gone"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -160,6 +160,32 @@
         { "section": "HOT LINE EQUIPMENT", "title": "I WIPED DOWN THE SHELF ABOVE EXPO.", "title_es": "LIMPIÉ LA REPISA ARRIBA DEL EXPO." },
         { "section": "HOT LINE EQUIPMENT", "title": "I PUT THE LEFTOVER BROTH AND MEAT IN THE WALK-IN TO COOL.", "title_es": "PUSE EL CALDO Y LA CARNE SOBRANTES EN EL WALK-IN PARA QUE SE ENFRIARAN." }
       ]
+    },
+    {
+      "house": "FOH",
+      "role": "BAR PREP",
+      "role_es": "PREP DE BARRA",
+      "phase": "open",
+      "room": null,
+      "items": [
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH HONEYDEW." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH GINGER." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH MANGO." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH PASSION." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH KOJI DEMARARA HONEY." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH SIMPLE SYRUP." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH RICH SIMPLE SYRUP." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH CALPIKACHU." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH UBE COLADA." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH SHISO SENCHA." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH COCO NOPEZ." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH SAKURA COCONUT CREAM." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH YUZU CITRUS." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH LEMONADE." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH ICED TEAS (SENCHA AND OOLONG)." },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH CUT GARNISH: LEMONS, LIMES, AND CUCUMBERS.", "proof": [{ "kind": "photo", "prompt": "The cut garnish prepped: lemons, limes, and cucumbers" }] },
+        { "title": "I PREPPED AND CHECKED WE HAD ENOUGH ICE SPEARS." }
+      ]
     }
   ]
 }
