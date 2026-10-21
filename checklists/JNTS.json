@@ -3,16 +3,16 @@
   "lists": [
     {
       "house": "FOH",
-      "role": "Cafe",
-      "role_es": "Café",
+      "role": "CAFE",
+      "role_es": "CAFÉ",
       "phase": "open",
       "items": [
-        { "title": "Turn on the lights under the bar and the disco ball (kitchen switch).", "title_es": "Prende las luces de abajo de la barra y la bola disco (el switch de la cocina)." },
-        { "title": "Open all the doors.", "title_es": "Abre todas las puertas." },
-        { "title": "Check for packages and deliveries. Open them, stock what you can, and break down the boxes.", "title_es": "Revisa si llegaron paquetes o entregas. Ábrelos, acomoda lo que puedas y desarma las cajas." },
+        { "title": "TURN ON THE LIGHTS UNDER THE BAR AND THE DISCO BALL (KITCHEN SWITCH).", "title_es": "PRENDE LAS LUCES DE ABAJO DE LA BARRA Y LA BOLA DISCO (EL SWITCH DE LA COCINA)." },
+        { "title": "OPEN ALL THE DOORS.", "title_es": "ABRE TODAS LAS PUERTAS." },
+        { "title": "CHECK FOR PACKAGES AND DELIVERIES. OPEN THEM, STOCK WHAT YOU CAN, AND BREAK DOWN THE BOXES.", "title_es": "REVISA SI LLEGARON PAQUETES O ENTREGAS. ÁBRELOS, ACOMODA LO QUE PUEDAS Y DESARMA LAS CAJAS." },
         {
-          "title": "Patio setup.",
-          "title_es": "Prepara el patio.",
+          "title": "PATIO SETUP.",
+          "title_es": "PREPARA EL PATIO.",
           "detail": [
             "Red bench cushions out",
             "Umbrellas out and secured to the base",
@@ -21,34 +21,34 @@
           ],
           "proof": [{ "kind": "photo", "prompt": "The patio set and courtyard clean: cushions out, umbrellas up and secured, marble swept, speaker out and plugged in" }]
         },
-        { "title": "Music on the outside speaker. Wipe down the stereo and speakers.", "title_es": "Pon música en la bocina de afuera. Limpia el estéreo y las bocinas." },
+        { "title": "MUSIC ON THE OUTSIDE SPEAKER. WIPE DOWN THE STEREO AND SPEAKERS.", "title_es": "PON MÚSICA EN LA BOCINA DE AFUERA. LIMPIA EL ESTÉREO Y LAS BOCINAS." },
         {
-          "title": "Count the register. It should be $210.",
-          "title_es": "Cuenta la caja. Debe tener $210.",
+          "title": "COUNT THE REGISTER. IT SHOULD BE $210.",
+          "title_es": "CUENTA LA CAJA. DEBE TENER $210.",
           "proof": [{ "kind": "note", "prompt": "The opening drawer count. It should be $210." }]
         },
-        { "title": "Dial in the Spro.", "title_es": "Calibra la Spro." },
+        { "title": "DIAL IN THE SPRO.", "title_es": "CALIBRA LA SPRO." },
         {
-          "title": "Set up the cafe bar: syrups, pitchers, scales, rags for the knock box, steam wand and cleaning.",
-          "title_es": "Prepara la barra del café: jarabes, jarras, básculas, trapos para el knock box, el vaporizador y la limpieza.",
+          "title": "SET UP THE CAFE BAR: SYRUPS, PITCHERS, SCALES, RAGS FOR THE KNOCK BOX, STEAM WAND AND CLEANING.",
+          "title_es": "PREPARA LA BARRA DEL CAFÉ: JARABES, JARRAS, BÁSCULAS, TRAPOS PARA EL KNOCK BOX, EL VAPORIZADOR Y LA LIMPIEZA.",
           "proof": [{ "kind": "photo", "prompt": "The cafe bar set: syrups, pitchers, scales and rags in place" }]
         },
-        { "title": "Brew the freshest half-batch of drip coffee.", "title_es": "Prepara medio lote de café de filtro bien fresco." },
-        { "title": "Ice run to the hood. Fill the ice well.", "title_es": "Trae hielo del hood. Llena la hielera." },
+        { "title": "BREW THE FRESHEST HALF-BATCH OF DRIP COFFEE.", "title_es": "PREPARA MEDIO LOTE DE CAFÉ DE FILTRO BIEN FRESCO." },
+        { "title": "ICE RUN TO THE HOOD. FILL THE ICE WELL.", "title_es": "TRAE HIELO DEL HOOD. LLENA LA HIELERA." },
         {
-          "title": "Iced tea.",
-          "title_es": "Té helado.",
+          "title": "ICED TEA.",
+          "title_es": "TÉ HELADO.",
           "detail": [
             "Pull any prepped iced tea that is ready",
             "Strain it through a wet drip filter",
             "Store it in the fridge"
           ]
         },
-        { "title": "Pull the tap covers off the cold brew lines, soak in warm water, store behind the draft menu.", "title_es": "Quita las tapas de las llaves del cold brew, remójalas en agua tibia y guárdalas detrás del menú de draft." },
-        { "title": "Sanitize and wipe the bar, coffee counter and tables.", "title_es": "Sanitiza y limpia la barra, el counter del café y las mesas." },
+        { "title": "PULL THE TAP COVERS OFF THE COLD BREW LINES, SOAK IN WARM WATER, STORE BEHIND THE DRAFT MENU.", "title_es": "QUITA LAS TAPAS DE LAS LLAVES DEL COLD BREW, REMÓJALAS EN AGUA TIBIA Y GUÁRDALAS DETRÁS DEL MENÚ DE DRAFT." },
+        { "title": "SANITIZE AND WIPE THE BAR, COFFEE COUNTER AND TABLES.", "title_es": "SANITIZA Y LIMPIA LA BARRA, EL COUNTER DEL CAFÉ Y LAS MESAS." },
         {
-          "title": "Hard clean, brush not rag.",
-          "title_es": "Limpieza a fondo, con cepillo no con trapo.",
+          "title": "HARD CLEAN, BRUSH NOT RAG.",
+          "title_es": "LIMPIEZA A FONDO, CON CEPILLO NO CON TRAPO.",
           "detail": [
             "Degrease every table base and pedestal, floor side included",
             "Scrub every chair base, chair leg and barstool foot ring",
@@ -58,13 +58,13 @@
           "proof": [{ "kind": "photo", "prompt": "Table bases, chair legs and bench bases scrubbed, nothing black left on the brush" }]
         },
         {
-          "title": "Restroom: clean, sanitize, stock towels, TP and rum hand soap.",
-          "title_es": "Baño: limpia, sanitiza y surte toallas, papel y el jabón de manos de ron.",
+          "title": "RESTROOM: CLEAN, SANITIZE, STOCK TOWELS, TP AND RUM HAND SOAP.",
+          "title_es": "BAÑO: LIMPIA, SANITIZA Y SURTE TOALLAS, PAPEL Y EL JABÓN DE MANOS DE RON.",
           "proof": [{ "kind": "photo", "prompt": "The restroom clean and stocked: towels, TP and rum hand soap" }]
         },
         {
-          "title": "Perimeter sweep.",
-          "title_es": "Barre el perímetro.",
+          "title": "PERIMETER SWEEP.",
+          "title_es": "BARRE EL PERÍMETRO.",
           "detail": [
             "Patio corner to corner, under every table and bench",
             "Front sidewalk across the whole building, curb line included",
@@ -74,123 +74,123 @@
           "proof": [{ "kind": "video", "prompt": "A 30 second walk of the full perimeter loop: patio, sidewalk, street side, lot side" }]
         },
         {
-          "title": "Call in any dirty outside conditions to Clean & Safe: graffiti, spills, broken glass, biohazard.",
-          "title_es": "Reporta a Clean & Safe cualquier cosa sucia afuera: grafiti, derrames, vidrio roto o riesgo biológico.",
+          "title": "CALL IN ANY DIRTY OUTSIDE CONDITIONS TO CLEAN & SAFE: GRAFFITI, SPILLS, BROKEN GLASS, BIOHAZARD.",
+          "title_es": "REPORTA A CLEAN & SAFE CUALQUIER COSA SUCIA AFUERA: GRAFITI, DERRAMES, VIDRIO ROTO O RIESGO BIOLÓGICO.",
           "proof": [{ "kind": "note", "prompt": "What you called in to Clean & Safe, or nothing to report" }]
         },
         {
-          "title": "Flag anything broken or not working to the MOD.",
-          "title_es": "Avísale al MOD de cualquier cosa rota o que no sirva.",
+          "title": "FLAG ANYTHING BROKEN OR NOT WORKING TO THE MOD.",
+          "title_es": "AVÍSALE AL MOD DE CUALQUIER COSA ROTA O QUE NO SIRVA.",
           "proof": [{ "kind": "note", "prompt": "Anything broken or not working, or none" }]
         }
       ]
     },
     {
       "house": "FOH",
-      "role": "Cafe",
-      "role_es": "Café",
+      "role": "CAFE",
+      "role_es": "CAFÉ",
       "phase": "mid",
       "items": [
         {
-          "title": "Spray and wipe the black shelves along the side of HQ.",
-          "title_es": "Rocía y limpia los estantes negros del lado de HQ.",
+          "title": "SPRAY AND WIPE THE BLACK SHELVES ALONG THE SIDE OF HQ.",
+          "title_es": "ROCÍA Y LIMPIA LOS ESTANTES NEGROS DEL LADO DE HQ.",
           "proof": [{ "kind": "photo", "prompt": "The black shelves along HQ wiped down" }]
         },
         {
-          "title": "Fill tea bags. Pre-dose the morning coffee batches at 200 g.",
-          "title_es": "Llena las bolsas de té. Pre-dosifica los lotes de café de la mañana a 200 g.",
+          "title": "FILL TEA BAGS. PRE-DOSE THE MORNING COFFEE BATCHES AT 200 G.",
+          "title_es": "LLENA LAS BOLSAS DE TÉ. PRE-DOSIFICA LOS LOTES DE CAFÉ DE LA MAÑANA A 200 G.",
           "proof": [{ "kind": "note", "prompt": "Morning batches pre-dosed at 200 g" }]
         },
         {
-          "title": "Stock syrups, milks, iced tea containers, cups, lids, straws, sugars and napkins.",
-          "title_es": "Surte jarabes, leches, los recipientes de té helado, vasos, tapas, popotes, azúcares y servilletas.",
+          "title": "STOCK SYRUPS, MILKS, ICED TEA CONTAINERS, CUPS, LIDS, STRAWS, SUGARS AND NAPKINS.",
+          "title_es": "SURTE JARABES, LECHES, LOS RECIPIENTES DE TÉ HELADO, VASOS, TAPAS, POPOTES, AZÚCARES Y SERVILLETAS.",
           "proof": [{ "kind": "photo", "prompt": "Cafe restocked: syrups, milks, cups, lids, straws, sugars, napkins" }]
         },
         {
-          "title": "Deep clean the Curtis brewer with tablets and a clean water run. Dump the water and reset.",
-          "title_es": "Limpia a fondo la cafetera Curtis con pastillas y un ciclo de agua limpia. Tira el agua y déjala lista.",
+          "title": "DEEP CLEAN THE CURTIS BREWER WITH TABLETS AND A CLEAN WATER RUN. DUMP THE WATER AND RESET.",
+          "title_es": "LIMPIA A FONDO LA CAFETERA CURTIS CON PASTILLAS Y UN CICLO DE AGUA LIMPIA. TIRA EL AGUA Y DÉJALA LISTA.",
           "proof": [{ "kind": "photo", "prompt": "The Curtis brewer cleaned and reset, water dumped" }]
         },
         {
-          "title": "Restroom: clean, sanitize, stock towels, TP and rum hand soap.",
-          "title_es": "Baño: limpia, sanitiza y surte toallas, papel y el jabón de manos de ron.",
+          "title": "RESTROOM: CLEAN, SANITIZE, STOCK TOWELS, TP AND RUM HAND SOAP.",
+          "title_es": "BAÑO: LIMPIA, SANITIZA Y SURTE TOALLAS, PAPEL Y EL JABÓN DE MANOS DE RON.",
           "proof": [{ "kind": "photo", "prompt": "The restroom clean and stocked: towels, TP and rum hand soap" }]
         },
         {
-          "title": "Empty every trash bin into the dumpsters, Space Ship included. New liners.",
-          "title_es": "Vacía todos los botes de basura en los dumpsters, incluido el Space Ship. Pon bolsas nuevas.",
+          "title": "EMPTY EVERY TRASH BIN INTO THE DUMPSTERS, SPACE SHIP INCLUDED. NEW LINERS.",
+          "title_es": "VACÍA TODOS LOS BOTES DE BASURA EN LOS DUMPSTERS, INCLUIDO EL SPACE SHIP. PON BOLSAS NUEVAS.",
           "proof": [{ "kind": "photo", "prompt": "Every bin emptied and relined, Space Ship included" }]
         }
       ]
     },
     {
       "house": "FOH",
-      "role": "Cafe",
-      "role_es": "Café",
+      "role": "CAFE",
+      "role_es": "CAFÉ",
       "phase": "close",
       "items": [
-        { "title": "Put up the Order At Bar sign.", "title_es": "Pon el letrero de Order At Bar." },
+        { "title": "PUT UP THE ORDER AT BAR SIGN.", "title_es": "PON EL LETRERO DE ORDER AT BAR." },
         {
-          "title": "Tell the bartenders anything they need to know.",
-          "title_es": "Dile a los bartenders lo que necesiten saber.",
+          "title": "TELL THE BARTENDERS ANYTHING THEY NEED TO KNOW.",
+          "title_es": "DILE A LOS BARTENDERS LO QUE NECESITEN SABER.",
           "proof": [{ "kind": "note", "prompt": "Anything the bartenders need to know, or none" }]
         },
         {
-          "title": "Beer tray: run hot water down it, then clean and reset.",
-          "title_es": "Charola de cerveza: pásale agua caliente, luego límpiala y déjala lista.",
+          "title": "BEER TRAY: RUN HOT WATER DOWN IT, THEN CLEAN AND RESET.",
+          "title_es": "CHAROLA DE CERVEZA: PÁSALE AGUA CALIENTE, LUEGO LÍMPIALA Y DÉJALA LISTA.",
           "proof": [{ "kind": "photo", "prompt": "The beer tray cleaned and reset" }]
         },
-        { "title": "Check for packages and orders, including the IFS order. Open them, put away and stock what you can, then tidy the space.", "title_es": "Revisa paquetes y pedidos, incluido el de IFS. Ábrelos, guárdalos y acomoda lo que puedas, luego ordena el área." },
-        { "title": "Pull empty boxes from upstairs.", "title_es": "Baja las cajas vacías de arriba." },
+        { "title": "CHECK FOR PACKAGES AND ORDERS, INCLUDING THE IFS ORDER. OPEN THEM, PUT AWAY AND STOCK WHAT YOU CAN, THEN TIDY THE SPACE.", "title_es": "REVISA PAQUETES Y PEDIDOS, INCLUIDO EL DE IFS. ÁBRELOS, GUÁRDALOS Y ACOMODA LO QUE PUEDAS, LUEGO ORDENA EL ÁREA." },
+        { "title": "PULL EMPTY BOXES FROM UPSTAIRS.", "title_es": "BAJA LAS CAJAS VACÍAS DE ARRIBA." },
         {
-          "title": "Iced tea under the 1 L par? Prep more.",
-          "title_es": "¿El té helado está abajo del par de 1 L? Prepara más.",
+          "title": "ICED TEA UNDER THE 1 L PAR? PREP MORE.",
+          "title_es": "¿EL TÉ HELADO ESTÁ ABAJO DEL PAR DE 1 L? PREPARA MÁS.",
           "proof": [{ "kind": "note", "prompt": "Iced tea on hand, prepped if under the 1 L par" }]
         },
         {
-          "title": "Polish all glassware and silverware.",
-          "title_es": "Pule toda la cristalería y los cubiertos.",
+          "title": "POLISH ALL GLASSWARE AND SILVERWARE.",
+          "title_es": "PULE TODA LA CRISTALERÍA Y LOS CUBIERTOS.",
           "proof": [{ "kind": "photo", "prompt": "Glassware and silverware polished" }]
         },
-        { "title": "Run all ceramics and smallwares through the sanitizer. Dry and reset.", "title_es": "Pasa toda la loza y los utensilios chicos por el sanitizer. Sécalos y acomódalos." },
+        { "title": "RUN ALL CERAMICS AND SMALLWARES THROUGH THE SANITIZER. DRY AND RESET.", "title_es": "PASA TODA LA LOZA Y LOS UTENSILIOS CHICOS POR EL SANITIZER. SÉCALOS Y ACOMÓDALOS." },
         {
-          "title": "Spro: backflush the groupheads, break down and clean the machine and the area under it.",
-          "title_es": "Spro: haz backflush a los grupos, desarma y limpia la máquina y el área de abajo.",
+          "title": "SPRO: BACKFLUSH THE GROUPHEADS, BREAK DOWN AND CLEAN THE MACHINE AND THE AREA UNDER IT.",
+          "title_es": "SPRO: HAZ BACKFLUSH A LOS GRUPOS, DESARMA Y LIMPIA LA MÁQUINA Y EL ÁREA DE ABAJO.",
           "proof": [{ "kind": "photo", "prompt": "The Spro broken down and cleaned, area underneath wiped" }]
         },
-        { "title": "Check for printed J&T menus.", "title_es": "Revisa que haya menús de J&T impresos." },
+        { "title": "CHECK FOR PRINTED J&T MENUS.", "title_es": "REVISA QUE HAYA MENÚS DE J&T IMPRESOS." },
         {
-          "title": "Consolidate cash tips.",
-          "title_es": "Junta las propinas en efectivo.",
+          "title": "CONSOLIDATE CASH TIPS.",
+          "title_es": "JUNTA LAS PROPINAS EN EFECTIVO.",
           "proof": [{ "kind": "note", "prompt": "Cash tips consolidated" }]
         },
-        { "title": "Charge the scales, whisk, tablet and vacuum.", "title_es": "Pon a cargar las básculas, el batidor, la tablet y la aspiradora." },
+        { "title": "CHARGE THE SCALES, WHISK, TABLET AND VACUUM.", "title_es": "PON A CARGAR LAS BÁSCULAS, EL BATIDOR, LA TABLET Y LA ASPIRADORA." },
         {
-          "title": "Final wipe down: behind the cafe, the cage slush area, the back ledge.",
-          "title_es": "Limpieza final: detrás del café, el área de la slush en la jaula y la repisa de atrás.",
+          "title": "FINAL WIPE DOWN: BEHIND THE CAFE, THE CAGE SLUSH AREA, THE BACK LEDGE.",
+          "title_es": "LIMPIEZA FINAL: DETRÁS DEL CAFÉ, EL ÁREA DE LA SLUSH EN LA JAULA Y LA REPISA DE ATRÁS.",
           "proof": [{ "kind": "photo", "prompt": "Behind the cafe, the cage slush area and the back ledge wiped down" }]
         },
         {
-          "title": "Call out any low stock.",
-          "title_es": "Avisa de cualquier producto que esté bajo.",
+          "title": "CALL OUT ANY LOW STOCK.",
+          "title_es": "AVISA DE CUALQUIER PRODUCTO QUE ESTÉ BAJO.",
           "proof": [{ "kind": "note", "prompt": "Anything low on stock, or none" }]
         }
       ]
     },
     {
       "house": "FOH",
-      "role": "Bar",
-      "role_es": "Bar",
+      "role": "BAR",
+      "role_es": "BAR",
       "phase": "open",
       "items": [
-        { "title": "Clock in.", "title_es": "Marca tu entrada." },
-        { "title": "Spot sweep the bar. Bus and spot clean every table, floor and stool.", "title_es": "Barre los puntos de la barra. Levanta y limpia cada mesa, el piso y los bancos." },
-        { "title": "Check in with Cafe Close before they leave. Make sure their list is done.", "title_es": "Confirma con Cafe Close antes de que se vayan. Asegúrate de que terminaron su lista." },
-        { "title": "Check for packages and deliveries, including the milk order (whole milk and heavy cream). Open them, put away and stock what you can.", "title_es": "Revisa paquetes y entregas, incluido el pedido de leche (leche entera y crema para batir). Ábrelos, guárdalos y acomoda lo que puedas." },
-        { "title": "Fill the sanitizer bottle.", "title_es": "Llena la botella de sanitizer." },
+        { "title": "CLOCK IN.", "title_es": "MARCA TU ENTRADA." },
+        { "title": "SPOT SWEEP THE BAR. BUS AND SPOT CLEAN EVERY TABLE, FLOOR AND STOOL.", "title_es": "BARRE LOS PUNTOS DE LA BARRA. LEVANTA Y LIMPIA CADA MESA, EL PISO Y LOS BANCOS." },
+        { "title": "CHECK IN WITH CAFE CLOSE BEFORE THEY LEAVE. MAKE SURE THEIR LIST IS DONE.", "title_es": "CONFIRMA CON CAFE CLOSE ANTES DE QUE SE VAYAN. ASEGÚRATE DE QUE TERMINARON SU LISTA." },
+        { "title": "CHECK FOR PACKAGES AND DELIVERIES, INCLUDING THE MILK ORDER (WHOLE MILK AND HEAVY CREAM). OPEN THEM, PUT AWAY AND STOCK WHAT YOU CAN.", "title_es": "REVISA PAQUETES Y ENTREGAS, INCLUIDO EL PEDIDO DE LECHE (LECHE ENTERA Y CREMA PARA BATIR). ÁBRELOS, GUÁRDALOS Y ACOMODA LO QUE PUEDAS." },
+        { "title": "FILL THE SANITIZER BOTTLE.", "title_es": "LLENA LA BOTELLA DE SANITIZER." },
         {
-          "title": "Prep.",
-          "title_es": "Preparación.",
+          "title": "PREP.",
+          "title_es": "PREPARACIÓN.",
           "detail": [
             "Well, polishing and sanitizing towels",
             "Bar garnish and garnish bowls",
@@ -203,72 +203,72 @@
           "proof": [{ "kind": "photo", "prompt": "Garnish prepped and in bowls: orange pacman, limes, grapefruit quarters, mint, cucumber" }]
         },
         {
-          "title": "Set up the well with citrus, simple and coffee amaro. Fill cheater bottles and keep them in the fridge until night service.",
-          "title_es": "Prepara el well con cítricos, simple y coffee amaro. Llena las cheater bottles y guárdalas en el refri hasta el servicio de la noche.",
+          "title": "SET UP THE WELL WITH CITRUS, SIMPLE AND COFFEE AMARO. FILL CHEATER BOTTLES AND KEEP THEM IN THE FRIDGE UNTIL NIGHT SERVICE.",
+          "title_es": "PREPARA EL WELL CON CÍTRICOS, SIMPLE Y COFFEE AMARO. LLENA LAS CHEATER BOTTLES Y GUÁRDALAS EN EL REFRI HASTA EL SERVICIO DE LA NOCHE.",
           "proof": [{ "kind": "photo", "prompt": "The well set: citrus, simple and coffee amaro; cheater bottles filled" }]
         },
         {
-          "title": "Refill and reset the menu cocktail batch bottles. Check batches and make what is needed.",
-          "title_es": "Rellena y resetea las botellas de batch de los cócteles del menú. Revisa los batches y haz los que falten.",
+          "title": "REFILL AND RESET THE MENU COCKTAIL BATCH BOTTLES. CHECK BATCHES AND MAKE WHAT IS NEEDED.",
+          "title_es": "RELLENA Y RESETEA LAS BOTELLAS DE BATCH DE LOS CÓCTELES DEL MENÚ. REVISA LOS BATCHES Y HAZ LOS QUE FALTEN.",
           "proof": [{ "kind": "note", "prompt": "Which batches you made or topped off" }]
         },
-        { "title": "Stock sparkling and garnish: sparkling water, prosecco, tonics, olives and cherries.", "title_es": "Surte lo burbujeante y la garnish: agua mineral, prosecco, tónicos, aceitunas y cerezas." },
+        { "title": "STOCK SPARKLING AND GARNISH: SPARKLING WATER, PROSECCO, TONICS, OLIVES AND CHERRIES.", "title_es": "SURTE LO BURBUJEANTE Y LA GARNISH: AGUA MINERAL, PROSECCO, TÓNICOS, ACEITUNAS Y CEREZAS." },
         {
-          "title": "Ice: 8+ pans trimmed Big Rocks, 2 pans Kold-Draft, 1 full pan spears.",
-          "title_es": "Hielo: 8+ charolas de Big Rocks cortados, 2 charolas de Kold-Draft, 1 charola llena de spears.",
+          "title": "ICE: 8+ PANS TRIMMED BIG ROCKS, 2 PANS KOLD-DRAFT, 1 FULL PAN SPEARS.",
+          "title_es": "HIELO: 8+ CHAROLAS DE BIG ROCKS CORTADOS, 2 CHAROLAS DE KOLD-DRAFT, 1 CHAROLA LLENA DE SPEARS.",
           "proof": [{ "kind": "photo", "prompt": "The ice pans stocked to par: Big Rocks, Kold-Draft and spears" }]
         },
-        { "title": "Restock backup spirits and the bottle wall from upstairs. Take out recycling.", "title_es": "Resurte los destilados de respaldo y el muro de botellas de arriba. Saca el reciclaje." },
-        { "title": "Stock dry goods: gloves, napkins, to-go boxes.", "title_es": "Surte los secos: guantes, servilletas, cajas para llevar." },
+        { "title": "RESTOCK BACKUP SPIRITS AND THE BOTTLE WALL FROM UPSTAIRS. TAKE OUT RECYCLING.", "title_es": "RESURTE LOS DESTILADOS DE RESPALDO Y EL MURO DE BOTELLAS DE ARRIBA. SACA EL RECICLAJE." },
+        { "title": "STOCK DRY GOODS: GLOVES, NAPKINS, TO-GO BOXES.", "title_es": "SURTE LOS SECOS: GUANTES, SERVILLETAS, CAJAS PARA LLEVAR." },
         {
-          "title": "Meats: sanitize the slicer, set and cover the meat with cheesecloth, line the tray with parchment.",
-          "title_es": "Carnes: sanitiza la rebanadora, acomoda y cubre la carne con manta de cielo, forra la charola con papel encerado.",
+          "title": "MEATS: SANITIZE THE SLICER, SET AND COVER THE MEAT WITH CHEESECLOTH, LINE THE TRAY WITH PARCHMENT.",
+          "title_es": "CARNES: SANITIZA LA REBANADORA, ACOMODA Y CUBRE LA CARNE CON MANTA DE CIELO, FORRA LA CHAROLA CON PAPEL ENCERADO.",
           "proof": [{ "kind": "photo", "prompt": "The meat set and covered with cheesecloth, tray lined, slicer sanitized" }]
         },
-        { "title": "Set up the snack bar with salt and the Tajin plate.", "title_es": "Prepara el snack bar con sal y el plato de Tajín." },
-        { "title": "Scrub the guest-facing stuff, gold sink and cutting board. Put away extra bottles and junk.", "title_es": "Talla lo que ve el cliente, el fregadero dorado y la tabla de cortar. Guarda las botellas de más y el tiradero." },
+        { "title": "SET UP THE SNACK BAR WITH SALT AND THE TAJIN PLATE.", "title_es": "PREPARA EL SNACK BAR CON SAL Y EL PLATO DE TAJÍN." },
+        { "title": "SCRUB THE GUEST-FACING STUFF, GOLD SINK AND CUTTING BOARD. PUT AWAY EXTRA BOTTLES AND JUNK.", "title_es": "TALLA LO QUE VE EL CLIENTE, EL FREGADERO DORADO Y LA TABLA DE CORTAR. GUARDA LAS BOTELLAS DE MÁS Y EL TIRADERO." },
         {
-          "title": "Restroom: stock paper towels, TP and rum hand soap. Flag anything broken.",
-          "title_es": "Baño: surte toallas de papel, papel y el jabón de manos de ron. Avisa si algo está roto.",
+          "title": "RESTROOM: STOCK PAPER TOWELS, TP AND RUM HAND SOAP. FLAG ANYTHING BROKEN.",
+          "title_es": "BAÑO: SURTE TOALLAS DE PAPEL, PAPEL Y EL JABÓN DE MANOS DE RON. AVISA SI ALGO ESTÁ ROTO.",
           "proof": [{ "kind": "photo", "prompt": "The restroom stocked: paper towels, TP and rum hand soap" }]
         }
       ]
     },
     {
       "house": "FOH",
-      "role": "Bar",
-      "role_es": "Bar",
+      "role": "BAR",
+      "role_es": "BAR",
       "phase": "close",
       "items": [
-        { "title": "Check in with Bar Open before they leave. Make sure their list is done.", "title_es": "Confirma con Bar Open antes de que se vayan. Asegúrate de que terminaron su lista." },
-        { "title": "Last call. Yell it, then check in with guests on last orders.", "title_es": "Last call. Grítalo, luego pregúntale a los clientes sus últimas órdenes." },
-        { "title": "Drop remaining checks and collect glassware.", "title_es": "Entrega las cuentas que falten y junta la cristalería." },
-        { "title": "Pre-close: pull cleaning tins, organize the back bar, get rid of mats.", "title_es": "Pre-cierre: saca los tins de limpieza, organiza el back bar y quita los tapetes." },
+        { "title": "CHECK IN WITH BAR OPEN BEFORE THEY LEAVE. MAKE SURE THEIR LIST IS DONE.", "title_es": "CONFIRMA CON BAR OPEN ANTES DE QUE SE VAYAN. ASEGÚRATE DE QUE TERMINARON SU LISTA." },
+        { "title": "LAST CALL. YELL IT, THEN CHECK IN WITH GUESTS ON LAST ORDERS.", "title_es": "LAST CALL. GRÍTALO, LUEGO PREGÚNTALE A LOS CLIENTES SUS ÚLTIMAS ÓRDENES." },
+        { "title": "DROP REMAINING CHECKS AND COLLECT GLASSWARE.", "title_es": "ENTREGA LAS CUENTAS QUE FALTEN Y JUNTA LA CRISTALERÍA." },
+        { "title": "PRE-CLOSE: PULL CLEANING TINS, ORGANIZE THE BACK BAR, GET RID OF MATS.", "title_es": "PRE-CIERRE: SACA LOS TINS DE LIMPIEZA, ORGANIZA EL BACK BAR Y QUITA LOS TAPETES." },
         {
-          "title": "Review batches and prep. Place a specialty produce order if under par. Note low or 86'd items in day notes.",
-          "title_es": "Revisa los batches y el prep. Haz un pedido de producto especial si está abajo del par. Anota lo que esté bajo o en 86 en las notas del día.",
+          "title": "REVIEW BATCHES AND PREP. PLACE A SPECIALTY PRODUCE ORDER IF UNDER PAR. NOTE LOW OR 86'D ITEMS IN DAY NOTES.",
+          "title_es": "REVISA LOS BATCHES Y EL PREP. HAZ UN PEDIDO DE PRODUCTO ESPECIAL SI ESTÁ ABAJO DEL PAR. ANOTA LO QUE ESTÉ BAJO O EN 86 EN LAS NOTAS DEL DÍA.",
           "proof": [{ "kind": "note", "prompt": "Batches and prep reviewed; low or 86'd items for the day notes" }]
         },
         {
-          "title": "Bring in all outside furniture, neatly.",
-          "title_es": "Mete todos los muebles de afuera, acomodados.",
+          "title": "BRING IN ALL OUTSIDE FURNITURE, NEATLY.",
+          "title_es": "METE TODOS LOS MUEBLES DE AFUERA, ACOMODADOS.",
           "proof": [{ "kind": "photo", "prompt": "All outside furniture brought in and stacked neatly, patio clear" }]
         },
-        { "title": "Wash the pacman, jiggers, citrus bowls and anything left.", "title_es": "Lava el pacman, los jiggers, los tazones de cítricos y lo que quede." },
+        { "title": "WASH THE PACMAN, JIGGERS, CITRUS BOWLS AND ANYTHING LEFT.", "title_es": "LAVA EL PACMAN, LOS JIGGERS, LOS TAZONES DE CÍTRICOS Y LO QUE QUEDE." },
         {
-          "title": "Lights on, well off. Empty and clean the well.",
-          "title_es": "Luces prendidas, well apagado. Vacía y limpia el well.",
+          "title": "LIGHTS ON, WELL OFF. EMPTY AND CLEAN THE WELL.",
+          "title_es": "LUCES PRENDIDAS, WELL APAGADO. VACÍA Y LIMPIA EL WELL.",
           "proof": [{ "kind": "photo", "prompt": "The well emptied and clean" }]
         },
-        { "title": "Clean the meat slicer.", "title_es": "Limpia la rebanadora de carne." },
+        { "title": "CLEAN THE MEAT SLICER.", "title_es": "LIMPIA LA REBANADORA DE CARNE." },
         {
-          "title": "Scrape sticky residue and sanitize the tables and bar top. Reset the bar top with mats and trays.",
-          "title_es": "Raspa lo pegajoso y sanitiza las mesas y la barra. Deja la barra lista con tapetes y charolas.",
+          "title": "SCRAPE STICKY RESIDUE AND SANITIZE THE TABLES AND BAR TOP. RESET THE BAR TOP WITH MATS AND TRAYS.",
+          "title_es": "RASPA LO PEGAJOSO Y SANITIZA LAS MESAS Y LA BARRA. DEJA LA BARRA LISTA CON TAPETES Y CHAROLAS.",
           "proof": [{ "kind": "photo", "prompt": "The bar top scraped, sanitized and reset with mats and trays" }]
         },
         {
-          "title": "Tables and dishes.",
-          "title_es": "Mesas y trastes.",
+          "title": "TABLES AND DISHES.",
+          "title_es": "MESAS Y TRASTES.",
           "detail": [
             "Double check every table for missed items",
             "Run a final load of dishes if needed",
@@ -280,26 +280,26 @@
           ],
           "proof": [{ "kind": "photo", "prompt": "Every barstool and table base wiped, door track broomed, dump sink and ice area clear" }]
         },
-        { "title": "Clean and replace the mats on the back bar and right of the dip sink.", "title_es": "Limpia y vuelve a poner los tapetes del back bar y a la derecha del dip sink." },
-        { "title": "Clean dishwasher areas 1 and 2.", "title_es": "Limpia las áreas 1 y 2 del lavaloza." },
-        { "title": "Reset the beer tap inserts. Fill the water bottles.", "title_es": "Resetea los insertos de las llaves de cerveza. Llena las botellas de agua." },
-        { "title": "Empty the red sani bucket. Soiled rags in the laundry bag.", "title_es": "Vacía la cubeta roja de sani. Los trapos sucios a la bolsa de lavandería." },
+        { "title": "CLEAN AND REPLACE THE MATS ON THE BACK BAR AND RIGHT OF THE DIP SINK.", "title_es": "LIMPIA Y VUELVE A PONER LOS TAPETES DEL BACK BAR Y A LA DERECHA DEL DIP SINK." },
+        { "title": "CLEAN DISHWASHER AREAS 1 AND 2.", "title_es": "LIMPIA LAS ÁREAS 1 Y 2 DEL LAVALOZA." },
+        { "title": "RESET THE BEER TAP INSERTS. FILL THE WATER BOTTLES.", "title_es": "RESETEA LOS INSERTOS DE LAS LLAVES DE CERVEZA. LLENA LAS BOTELLAS DE AGUA." },
+        { "title": "EMPTY THE RED SANI BUCKET. SOILED RAGS IN THE LAUNDRY BAG.", "title_es": "VACÍA LA CUBETA ROJA DE SANI. LOS TRAPOS SUCIOS A LA BOLSA DE LAVANDERÍA." },
         {
-          "title": "Trash: bar, kitchen and rocket (toss citrus first). Break down recycling, compact, clean cans as needed.",
-          "title_es": "Basura: barra, cocina y rocket (tira primero los cítricos). Desarma el reciclaje, compáctalo y limpia los botes según se necesite.",
+          "title": "TRASH: BAR, KITCHEN AND ROCKET (TOSS CITRUS FIRST). BREAK DOWN RECYCLING, COMPACT, CLEAN CANS AS NEEDED.",
+          "title_es": "BASURA: BARRA, COCINA Y ROCKET (TIRA PRIMERO LOS CÍTRICOS). DESARMA EL RECICLAJE, COMPÁCTALO Y LIMPIA LOS BOTES SEGÚN SE NECESITE.",
           "proof": [{ "kind": "photo", "prompt": "All trash out, recycling broken down and compacted, cans clean" }]
         },
         {
-          "title": "Add anything to the waste log.",
-          "title_es": "Anota lo que vaya en el waste log.",
+          "title": "ADD ANYTHING TO THE WASTE LOG.",
+          "title_es": "ANOTA LO QUE VAYA EN EL WASTE LOG.",
           "proof": [{ "kind": "note", "prompt": "Anything added to the waste log, or none" }]
         },
-        { "title": "Charge the Toast handhelds and iPad.", "title_es": "Pon a cargar los handhelds de Toast y el iPad." },
-        { "title": "Unplug the speaker and wrap the cord.", "title_es": "Desconecta la bocina y enrolla el cable." },
-        { "title": "Power down: stereo, disco ball, Post-It wall flood lights, upstairs lights, office lights, all AC.", "title_es": "Apaga todo: estéreo, bola disco, las luces del muro de Post-It, las luces de arriba, las de la oficina y todo el aire." },
+        { "title": "CHARGE THE TOAST HANDHELDS AND IPAD.", "title_es": "PON A CARGAR LOS HANDHELDS DE TOAST Y EL IPAD." },
+        { "title": "UNPLUG THE SPEAKER AND WRAP THE CORD.", "title_es": "DESCONECTA LA BOCINA Y ENROLLA EL CABLE." },
+        { "title": "POWER DOWN: STEREO, DISCO BALL, POST-IT WALL FLOOD LIGHTS, UPSTAIRS LIGHTS, OFFICE LIGHTS, ALL AC.", "title_es": "APAGA TODO: ESTÉREO, BOLA DISCO, LAS LUCES DEL MURO DE POST-IT, LAS LUCES DE ARRIBA, LAS DE LA OFICINA Y TODO EL AIRE." },
         {
-          "title": "Cash out.",
-          "title_es": "Corte de caja.",
+          "title": "CASH OUT.",
+          "title_es": "CORTE DE CAJA.",
           "detail": [
             "Mode > Shift Review. Note the cash in hand amount",
             "Pull exactly that amount from the drawer",
@@ -310,20 +310,20 @@
           ],
           "proof": [{ "kind": "photo", "prompt": "The closed drawer. It should hold $210; if it is off, the total written on receipt paper" }]
         },
-        { "title": "Close any open tabs. Wipe the POS screen with a microfiber.", "title_es": "Cierra las cuentas abiertas. Limpia la pantalla del POS con una microfibra." },
+        { "title": "CLOSE ANY OPEN TABS. WIPE THE POS SCREEN WITH A MICROFIBER.", "title_es": "CIERRA LAS CUENTAS ABIERTAS. LIMPIA LA PANTALLA DEL POS CON UNA MICROFIBRA." },
         {
-          "title": "Lock the main door, courtyard door and large euro door.",
-          "title_es": "Cierra con llave la puerta principal, la del patio y la puerta euro grande.",
+          "title": "LOCK THE MAIN DOOR, COURTYARD DOOR AND LARGE EURO DOOR.",
+          "title_es": "CIERRA CON LLAVE LA PUERTA PRINCIPAL, LA DEL PATIO Y LA PUERTA EURO GRANDE.",
           "proof": [{ "kind": "photo", "prompt": "The main, courtyard and large euro doors locked" }]
         },
         {
-          "title": "Final walkthrough. Everything reset for the opener.",
-          "title_es": "Recorrido final. Todo listo para el que abre.",
+          "title": "FINAL WALKTHROUGH. EVERYTHING RESET FOR THE OPENER.",
+          "title_es": "RECORRIDO FINAL. TODO LISTO PARA EL QUE ABRE.",
           "proof": [{ "kind": "video", "prompt": "Walk the room and record it: tables and bases, floor, bar reset, nothing left out" }]
         },
         {
-          "title": "Leave shift notes. Clock out, live the dream.",
-          "title_es": "Deja las notas del turno. Marca tu salida y vive el sueño.",
+          "title": "LEAVE SHIFT NOTES. CLOCK OUT, LIVE THE DREAM.",
+          "title_es": "DEJA LAS NOTAS DEL TURNO. MARCA TU SALIDA Y VIVE EL SUEÑO.",
           "proof": [{ "kind": "note", "prompt": "Shift notes for the next crew" }]
         }
       ]

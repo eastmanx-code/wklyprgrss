@@ -3,8 +3,8 @@
   "lists": [
     {
       "house": "FOH",
-      "role": "Lead",
-      "role_es": "Encargado",
+      "role": "LEAD",
+      "role_es": "ENCARGADO",
       "phase": "open",
       "items": [
         {
@@ -107,8 +107,8 @@
     },
     {
       "house": "FOH",
-      "role": "Lead",
-      "role_es": "Encargado",
+      "role": "LEAD",
+      "role_es": "ENCARGADO",
       "phase": "close",
       "items": [
         {
@@ -160,8 +160,8 @@
     },
     {
       "house": "FOH",
-      "role": "Host",
-      "role_es": "Anfitrión",
+      "role": "HOST",
+      "role_es": "ANFITRIÓN",
       "phase": "open",
       "items": [
         {
@@ -273,8 +273,8 @@
     },
     {
       "house": "FOH",
-      "role": "Host",
-      "role_es": "Anfitrión",
+      "role": "HOST",
+      "role_es": "ANFITRIÓN",
       "phase": "close",
       "items": [
         {
@@ -389,8 +389,8 @@
     },
     {
       "house": "FOH",
-      "role": "Support",
-      "role_es": "Apoyo",
+      "role": "SUPPORT",
+      "role_es": "APOYO",
       "phase": "open",
       "items": [
         {
@@ -484,8 +484,8 @@
     },
     {
       "house": "FOH",
-      "role": "Support",
-      "role_es": "Apoyo",
+      "role": "SUPPORT",
+      "role_es": "APOYO",
       "phase": "close",
       "items": [
         {
@@ -606,8 +606,8 @@
     },
     {
       "house": "FOH",
-      "role": "Patio server",
-      "role_es": "Mesero patio",
+      "role": "PATIO SERVER",
+      "role_es": "MESERO PATIO",
       "phase": "open",
       "items": [
         {
@@ -707,8 +707,8 @@
     },
     {
       "house": "FOH",
-      "role": "Patio server",
-      "role_es": "Mesero patio",
+      "role": "PATIO SERVER",
+      "role_es": "MESERO PATIO",
       "phase": "close",
       "items": [
         {
@@ -799,8 +799,8 @@
     },
     {
       "house": "FOH",
-      "role": "MDR server",
-      "role_es": "Mesero salón",
+      "role": "MDR SERVER",
+      "role_es": "MESERO SALÓN",
       "phase": "open",
       "items": [
         {
@@ -882,8 +882,8 @@
     },
     {
       "house": "FOH",
-      "role": "MDR server",
-      "role_es": "Mesero salón",
+      "role": "MDR SERVER",
+      "role_es": "MESERO SALÓN",
       "phase": "close",
       "items": [
         {
@@ -998,8 +998,8 @@
     },
     {
       "house": "FOH",
-      "role": "Bartender",
-      "role_es": "Bartender",
+      "role": "BARTENDER",
+      "role_es": "BARTENDER",
       "phase": "open",
       "items": [
         {
@@ -1115,8 +1115,8 @@
     },
     {
       "house": "FOH",
-      "role": "Cave bartender",
-      "role_es": "Bartender Cave",
+      "role": "CAVE BARTENDER",
+      "role_es": "BARTENDER CAVE",
       "phase": "open",
       "items": [
         {
@@ -1177,8 +1177,8 @@
     },
     {
       "house": "FOH",
-      "role": "Cave bartender",
-      "role_es": "Bartender Cave",
+      "role": "CAVE BARTENDER",
+      "role_es": "BARTENDER CAVE",
       "phase": "close",
       "items": [
         {
@@ -1291,8 +1291,8 @@
     },
     {
       "house": "FOH",
-      "role": "Well bartender",
-      "role_es": "Bartender de wells",
+      "role": "WELL BARTENDER",
+      "role_es": "BARTENDER DE WELLS",
       "phase": "close",
       "items": [
         {
@@ -1359,8 +1359,8 @@
     },
     {
       "house": "FOH",
-      "role": "Service well bartender",
-      "role_es": "Bartender service well",
+      "role": "SERVICE WELL BARTENDER",
+      "role_es": "BARTENDER SERVICE WELL",
       "phase": "close",
       "items": [
         {
@@ -1467,8 +1467,8 @@
     },
     {
       "house": "FOH",
-      "role": "Barback",
-      "role_es": "Barback",
+      "role": "BARBACK",
+      "role_es": "BARBACK",
       "phase": "close",
       "items": [
         {
@@ -1589,8 +1589,8 @@
     },
     {
       "house": "FOH",
-      "role": "Bar prep",
-      "role_es": "Prep de bar",
+      "role": "BAR PREP",
+      "role_es": "PREP DE BAR",
       "phase": "open",
       "items": [
         {
@@ -1678,8 +1678,8 @@
     },
     {
       "house": "FOH",
-      "role": "Deep clean",
-      "role_es": "Limpieza profunda",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
       "phase": "mid",
       "items": [
         {
@@ -1737,8 +1737,8 @@
     },
     {
       "house": "FOH",
-      "role": "Deep clean",
-      "role_es": "Limpieza profunda",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
       "phase": "mid",
       "items": [
         {
@@ -1796,8 +1796,8 @@
     },
     {
       "house": "FOH",
-      "role": "Deep clean",
-      "role_es": "Limpieza profunda",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
       "phase": "mid",
       "items": [
         {
@@ -1855,401 +1855,401 @@
     },
     {
       "house": "HOH",
-      "role": "Saute",
-      "role_es": "Salteado",
+      "role": "SAUTE",
+      "role_es": "SALTEADO",
       "phase": "close",
       "items": [
         {
-          "title": "Restock your station. Flip “use first” items on the line into clean pans and containers, cover with plastic. Double check everything has labels.",
-          "title_es": "Reabastece tu estación. Pasa los productos de “usar primero” de la línea a recipientes limpios y cúbrelos con plástico. Revisa que todo tenga etiqueta."
+          "title": "RESTOCK YOUR STATION. FLIP “USE FIRST” ITEMS ON THE LINE INTO CLEAN PANS AND CONTAINERS, COVER WITH PLASTIC. DOUBLE CHECK EVERYTHING HAS LABELS.",
+          "title_es": "REABASTECE TU ESTACIÓN. PASA LOS PRODUCTOS DE “USAR PRIMERO” DE LA LÍNEA A RECIPIENTES LIMPIOS Y CÚBRELOS CON PLÁSTICO. REVISA QUE TODO TENGA ETIQUETA."
         },
         {
-          "title": "Wipe toast KDS screen with 409 and green microfiber cloth, including back of terminal, hardware and wires.",
-          "title_es": "Limpia la pantalla KDS de Toast con 409 y microfibra verde, incluyendo la parte trasera, el hardware y los cables."
+          "title": "WIPE TOAST KDS SCREEN WITH 409 AND GREEN MICROFIBER CLOTH, INCLUDING BACK OF TERMINAL, HARDWARE AND WIRES.",
+          "title_es": "LIMPIA LA PANTALLA KDS DE TOAST CON 409 Y MICROFIBRA VERDE, INCLUYENDO LA PARTE TRASERA, EL HARDWARE Y LOS CABLES."
         },
         {
-          "title": "Clean the bottom of the shelf above the refrigerator top.",
+          "title": "CLEAN THE BOTTOM OF THE SHELF ABOVE THE REFRIGERATOR TOP.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The underside of the shelf above the fridge top"
             }
           ],
-          "title_es": "Limpia la parte de abajo de la repisa que está sobre el refrigerador."
+          "title_es": "LIMPIA LA PARTE DE ABAJO DE LA REPISA QUE ESTÁ SOBRE EL REFRIGERADOR."
         },
         {
-          "title": "Clean all refrigeration, inside and outside, including door handles and door seals. Remove drawers and clean out the bottom of the refrigerator.",
-          "title_es": "Limpia toda la refrigeración por dentro y por fuera, incluyendo manijas y empaques. Saca los cajones y limpia el fondo del refrigerador."
+          "title": "CLEAN ALL REFRIGERATION, INSIDE AND OUTSIDE, INCLUDING DOOR HANDLES AND DOOR SEALS. REMOVE DRAWERS AND CLEAN OUT THE BOTTOM OF THE REFRIGERATOR.",
+          "title_es": "LIMPIA TODA LA REFRIGERACIÓN POR DENTRO Y POR FUERA, INCLUYENDO MANIJAS Y EMPAQUES. SACA LOS CAJONES Y LIMPIA EL FONDO DEL REFRIGERADOR."
         },
         {
-          "title": "Turn off ovens. Remove any items from service. Clean the inside of the door and bottom with degreaser. Clean the fronts of the ovens, door handles, and knobs. Leave ovens in the pilot position.",
-          "title_es": "Apaga los hornos. Saca lo que haya quedado del servicio. Limpia el interior de la puerta y el fondo con desengrasante. Limpia el frente de los hornos, manijas y perillas. Deja los hornos en piloto."
+          "title": "TURN OFF OVENS. REMOVE ANY ITEMS FROM SERVICE. CLEAN THE INSIDE OF THE DOOR AND BOTTOM WITH DEGREASER. CLEAN THE FRONTS OF THE OVENS, DOOR HANDLES, AND KNOBS. LEAVE OVENS IN THE PILOT POSITION.",
+          "title_es": "APAGA LOS HORNOS. SACA LO QUE HAYA QUEDADO DEL SERVICIO. LIMPIA EL INTERIOR DE LA PUERTA Y EL FONDO CON DESENGRASANTE. LIMPIA EL FRENTE DE LOS HORNOS, MANIJAS Y PERILLAS. DEJA LOS HORNOS EN PILOTO."
         },
         {
-          "title": "Clean the stove top. Remove all grates, bruners, bars, and removable surrounding steel. Clean and replace. Replace the stove foil everyday.",
+          "title": "CLEAN THE STOVE TOP. REMOVE ALL GRATES, BRUNERS, BARS, AND REMOVABLE SURROUNDING STEEL. CLEAN AND REPLACE. REPLACE THE STOVE FOIL EVERYDAY.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The stove top with the grates and burners back, new foil"
             }
           ],
-          "title_es": "Limpia la estufa. Quita todas las parrillas, quemadores, barras y el acero desmontable. Límpialos y vuelve a colocarlos. Cambia el papel aluminio de la estufa todos los días."
+          "title_es": "LIMPIA LA ESTUFA. QUITA TODAS LAS PARRILLAS, QUEMADORES, BARRAS Y EL ACERO DESMONTABLE. LÍMPIALOS Y VUELVE A COLOCARLOS. CAMBIA EL PAPEL ALUMINIO DE LA ESTUFA TODOS LOS DÍAS."
         },
         {
-          "title": "Change foil in both ovens and under the frech top daily.",
-          "title_es": "Cambia el aluminio de los dos hornos y debajo del french top todos los días."
+          "title": "CHANGE FOIL IN BOTH OVENS AND UNDER THE FRECH TOP DAILY.",
+          "title_es": "CAMBIA EL ALUMINIO DE LOS DOS HORNOS Y DEBAJO DEL FRENCH TOP TODOS LOS DÍAS."
         },
         {
-          "title": "Clean crevice between the fryer and ovens. Clean all the way back to and including the wall and exposed pipes.",
-          "title_es": "Limpia la ranura entre la freidora y los hornos, hasta el fondo, incluyendo la pared y los tubos expuestos."
+          "title": "CLEAN CREVICE BETWEEN THE FRYER AND OVENS. CLEAN ALL THE WAY BACK TO AND INCLUDING THE WALL AND EXPOSED PIPES.",
+          "title_es": "LIMPIA LA RANURA ENTRE LA FREIDORA Y LOS HORNOS, HASTA EL FONDO, INCLUYENDO LA PARED Y LOS TUBOS EXPUESTOS."
         },
         {
-          "title": "Wipe down Rational Ovens. Top, sides, in between, back including pipes, hoses and cords.",
-          "title_es": "Limpia los hornos Rational: arriba, los lados, en medio y atrás, incluyendo tubos, mangueras y cables."
+          "title": "WIPE DOWN RATIONAL OVENS. TOP, SIDES, IN BETWEEN, BACK INCLUDING PIPES, HOSES AND CORDS.",
+          "title_es": "LIMPIA LOS HORNOS RATIONAL: ARRIBA, LOS LADOS, EN MEDIO Y ATRÁS, INCLUYENDO TUBOS, MANGUERAS Y CABLES."
         },
         {
-          "title": "Turn off the fryer. Clean all sides and inside of fryer door. Remove splash shields and basket hanger. Put these pieces into the oven on the clean cycle. Skim oil with spider and cover.",
+          "title": "TURN OFF THE FRYER. CLEAN ALL SIDES AND INSIDE OF FRYER DOOR. REMOVE SPLASH SHIELDS AND BASKET HANGER. PUT THESE PIECES INTO THE OVEN ON THE CLEAN CYCLE. SKIM OIL WITH SPIDER AND COVER.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The fryer off and clean, oil skimmed and covered"
             }
           ],
-          "title_es": "Apaga la freidora. Limpia todos los lados y el interior de la puerta. Quita los protectores de salpicaduras y el colgador de canastas y mételos al horno en ciclo de limpieza. Cuela el aceite con la araña y tápalo."
+          "title_es": "APAGA LA FREIDORA. LIMPIA TODOS LOS LADOS Y EL INTERIOR DE LA PUERTA. QUITA LOS PROTECTORES DE SALPICADURAS Y EL COLGADOR DE CANASTAS Y MÉTELOS AL HORNO EN CICLO DE LIMPIEZA. CUELA EL ACEITE CON LA ARAÑA Y TÁPALO."
         },
         {
-          "title": "Clean the wall behind the range and fryer.",
-          "title_es": "Limpia la pared detrás de la estufa y la freidora."
+          "title": "CLEAN THE WALL BEHIND THE RANGE AND FRYER.",
+          "title_es": "LIMPIA LA PARED DETRÁS DE LA ESTUFA Y LA FREIDORA."
         },
         {
-          "title": "Clean the hoods. Spray with degreaser and wipe clean. Remove grease traps and replace with clean ones. Clean hood fronts with stainless steel polish.",
+          "title": "CLEAN THE HOODS. SPRAY WITH DEGREASER AND WIPE CLEAN. REMOVE GREASE TRAPS AND REPLACE WITH CLEAN ONES. CLEAN HOOD FRONTS WITH STAINLESS STEEL POLISH.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The hoods degreased, clean grease traps in"
             }
           ],
-          "title_es": "Limpia las campanas. Rocía desengrasante y limpia. Quita las trampas de grasa y pon unas limpias. Limpia el frente de las campanas con pulidor de acero inoxidable."
+          "title_es": "LIMPIA LAS CAMPANAS. ROCÍA DESENGRASANTE Y LIMPIA. QUITA LAS TRAMPAS DE GRASA Y PON UNAS LIMPIAS. LIMPIA EL FRENTE DE LAS CAMPANAS CON PULIDOR DE ACERO INOXIDABLE."
         },
         {
-          "title": "Remove and clean the left most hood filter. Move hood filters to the left and replace on the right.",
-          "title_es": "Quita y limpia el filtro de campana de la izquierda. Recorre los filtros hacia la izquierda y coloca el limpio a la derecha."
+          "title": "REMOVE AND CLEAN THE LEFT MOST HOOD FILTER. MOVE HOOD FILTERS TO THE LEFT AND REPLACE ON THE RIGHT.",
+          "title_es": "QUITA Y LIMPIA EL FILTRO DE CAMPANA DE LA IZQUIERDA. RECORRE LOS FILTROS HACIA LA IZQUIERDA Y COLOCA EL LIMPIO A LA DERECHA."
         },
         {
-          "title": "Go into the walk-in to make sure everything is consolidated and properly labeled/dated. All mise en place is stored in plastic containers. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
-          "title_es": "Entra al walk-in y revisa que todo esté consolidado, etiquetado y con fecha. Todo el mise en place en recipientes de plástico. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
+          "title": "GO INTO THE WALK-IN TO MAKE SURE EVERYTHING IS CONSOLIDATED AND PROPERLY LABELED/DATED. ALL MISE EN PLACE IS STORED IN PLASTIC CONTAINERS. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
+          "title_es": "ENTRA AL WALK-IN Y REVISA QUE TODO ESTÉ CONSOLIDADO, ETIQUETADO Y CON FECHA. TODO EL MISE EN PLACE EN RECIPIENTES DE PLÁSTICO. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
         },
         {
-          "title": "Check the bottom oven for any pans left from service and remove them.",
-          "title_es": "Revisa el horno de abajo y saca las charolas que hayan quedado del servicio."
+          "title": "CHECK THE BOTTOM OVEN FOR ANY PANS LEFT FROM SERVICE AND REMOVE THEM.",
+          "title_es": "REVISA EL HORNO DE ABAJO Y SACA LAS CHAROLAS QUE HAYAN QUEDADO DEL SERVICIO."
         },
         {
-          "title": "Start the Rational ovens on a cleaning cycle before leaving.",
-          "title_es": "Pon los hornos Rational en ciclo de limpieza antes de irte."
+          "title": "START THE RATIONAL OVENS ON A CLEANING CYCLE BEFORE LEAVING.",
+          "title_es": "PON LOS HORNOS RATIONAL EN CICLO DE LIMPIEZA ANTES DE IRTE."
         }
       ]
     },
     {
       "house": "HOH",
-      "role": "Grill",
-      "role_es": "Parrilla",
+      "role": "GRILL",
+      "role_es": "PARRILLA",
       "phase": "close",
       "items": [
         {
-          "title": "Restock your station. Flip “use first” items on the line into clean pans and containers, cover with plastic. Double check everything has labels.",
-          "title_es": "Reabastece tu estación. Pasa los productos de “usar primero” de la línea a recipientes limpios y cúbrelos con plástico. Revisa que todo tenga etiqueta."
+          "title": "RESTOCK YOUR STATION. FLIP “USE FIRST” ITEMS ON THE LINE INTO CLEAN PANS AND CONTAINERS, COVER WITH PLASTIC. DOUBLE CHECK EVERYTHING HAS LABELS.",
+          "title_es": "REABASTECE TU ESTACIÓN. PASA LOS PRODUCTOS DE “USAR PRIMERO” DE LA LÍNEA A RECIPIENTES LIMPIOS Y CÚBRELOS CON PLÁSTICO. REVISA QUE TODO TENGA ETIQUETA."
         },
         {
-          "title": "Wipe toast KDS screen with 409 and green microfiber cloth, including back of terminal, hardware and wires.",
-          "title_es": "Limpia la pantalla KDS de Toast con 409 y microfibra verde, incluyendo la parte trasera, el hardware y los cables."
+          "title": "WIPE TOAST KDS SCREEN WITH 409 AND GREEN MICROFIBER CLOTH, INCLUDING BACK OF TERMINAL, HARDWARE AND WIRES.",
+          "title_es": "LIMPIA LA PANTALLA KDS DE TOAST CON 409 Y MICROFIBRA VERDE, INCLUYENDO LA PARTE TRASERA, EL HARDWARE Y LOS CABLES."
         },
         {
-          "title": "Clean all refrigeration, inside and outside, including door handles and door seals.",
-          "title_es": "Limpia toda la refrigeración por dentro y por fuera, incluyendo manijas y empaques."
+          "title": "CLEAN ALL REFRIGERATION, INSIDE AND OUTSIDE, INCLUDING DOOR HANDLES AND DOOR SEALS.",
+          "title_es": "LIMPIA TODA LA REFRIGERACIÓN POR DENTRO Y POR FUERA, INCLUYENDO MANIJAS Y EMPAQUES."
         },
         {
-          "title": "Clean the salamander and its pipes including the top and inside. Remove and clean the shelf from the salamander. Replace foil in salamander daily.",
+          "title": "CLEAN THE SALAMANDER AND ITS PIPES INCLUDING THE TOP AND INSIDE. REMOVE AND CLEAN THE SHELF FROM THE SALAMANDER. REPLACE FOIL IN SALAMANDER DAILY.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The top of the salamander, clean"
             }
           ],
-          "title_es": "Limpia la salamandra y sus tubos, incluyendo arriba y adentro. Saca y limpia la rejilla de la salamandra. Cambia el aluminio de la salamandra todos los días."
+          "title_es": "LIMPIA LA SALAMANDRA Y SUS TUBOS, INCLUYENDO ARRIBA Y ADENTRO. SACA Y LIMPIA LA REJILLA DE LA SALAMANDRA. CAMBIA EL ALUMINIO DE LA SALAMANDRA TODOS LOS DÍAS."
         },
         {
-          "title": "Clean the tile wall behind and next to the grill. This should be done all the way to the doorway to the ice room, including the edge on top of the base board.",
+          "title": "CLEAN THE TILE WALL BEHIND AND NEXT TO THE GRILL. THIS SHOULD BE DONE ALL THE WAY TO THE DOORWAY TO THE ICE ROOM, INCLUDING THE EDGE ON TOP OF THE BASE BOARD.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The tile wall behind and beside the grill, clean"
             }
           ],
-          "title_es": "Limpia la pared de azulejo detrás y al lado de la parrilla, hasta la puerta del cuarto de hielo, incluyendo el borde encima del zoclo."
+          "title_es": "LIMPIA LA PARED DE AZULEJO DETRÁS Y AL LADO DE LA PARRILLA, HASTA LA PUERTA DEL CUARTO DE HIELO, INCLUYENDO EL BORDE ENCIMA DEL ZOCLO."
         },
         {
-          "title": "Clean the grill, inside and out. Remove and clean grill grates and all supporting removable parts. Replace grill foil daily.",
+          "title": "CLEAN THE GRILL, INSIDE AND OUT. REMOVE AND CLEAN GRILL GRATES AND ALL SUPPORTING REMOVABLE PARTS. REPLACE GRILL FOIL DAILY.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The grill with the grates cleaned, new foil"
             }
           ],
-          "title_es": "Limpia la parrilla por dentro y por fuera. Quita y limpia las rejillas y todas las piezas desmontables. Cambia el aluminio de la parrilla todos los días."
+          "title_es": "LIMPIA LA PARRILLA POR DENTRO Y POR FUERA. QUITA Y LIMPIA LAS REJILLAS Y TODAS LAS PIEZAS DESMONTABLES. CAMBIA EL ALUMINIO DE LA PARRILLA TODOS LOS DÍAS."
         },
         {
-          "title": "Clean and organize grill cubby. Bread and brushes should organized and clean.",
-          "title_es": "Limpia y organiza el cubby de la parrilla. El pan y las brochas limpios y en orden."
+          "title": "CLEAN AND ORGANIZE GRILL CUBBY. BREAD AND BRUSHES SHOULD ORGANIZED AND CLEAN.",
+          "title_es": "LIMPIA Y ORGANIZA EL CUBBY DE LA PARRILLA. EL PAN Y LAS BROCHAS LIMPIOS Y EN ORDEN."
         },
         {
-          "title": "Wipe down Ansul pipes above the grill station.",
-          "title_es": "Limpia los tubos del Ansul arriba de la estación de parrilla."
+          "title": "WIPE DOWN ANSUL PIPES ABOVE THE GRILL STATION.",
+          "title_es": "LIMPIA LOS TUBOS DEL ANSUL ARRIBA DE LA ESTACIÓN DE PARRILLA."
         },
         {
-          "title": "Clean the hoods. Spray with degreaser and wipe clean. Remove grease traps and replace with clean ones. Clean hood fronts with stainless steel polish.",
+          "title": "CLEAN THE HOODS. SPRAY WITH DEGREASER AND WIPE CLEAN. REMOVE GREASE TRAPS AND REPLACE WITH CLEAN ONES. CLEAN HOOD FRONTS WITH STAINLESS STEEL POLISH.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The hoods degreased, clean grease traps in"
             }
           ],
-          "title_es": "Limpia las campanas. Rocía desengrasante y limpia. Quita las trampas de grasa y pon unas limpias. Limpia el frente de las campanas con pulidor de acero inoxidable."
+          "title_es": "LIMPIA LAS CAMPANAS. ROCÍA DESENGRASANTE Y LIMPIA. QUITA LAS TRAMPAS DE GRASA Y PON UNAS LIMPIAS. LIMPIA EL FRENTE DE LAS CAMPANAS CON PULIDOR DE ACERO INOXIDABLE."
         },
         {
-          "title": "Remove and clean the left most hood filter. Move hood filters to the left and replace on the right.",
-          "title_es": "Quita y limpia el filtro de campana de la izquierda. Recorre los filtros hacia la izquierda y coloca el limpio a la derecha."
+          "title": "REMOVE AND CLEAN THE LEFT MOST HOOD FILTER. MOVE HOOD FILTERS TO THE LEFT AND REPLACE ON THE RIGHT.",
+          "title_es": "QUITA Y LIMPIA EL FILTRO DE CAMPANA DE LA IZQUIERDA. RECORRE LOS FILTROS HACIA LA IZQUIERDA Y COLOCA EL LIMPIO A LA DERECHA."
         },
         {
-          "title": "Remove all of the pre heated plates from the bottom oven and put them back on the pass.",
-          "title_es": "Saca todos los platos precalentados del horno de abajo y regrésalos al pase."
+          "title": "REMOVE ALL OF THE PRE HEATED PLATES FROM THE BOTTOM OVEN AND PUT THEM BACK ON THE PASS.",
+          "title_es": "SACA TODOS LOS PLATOS PRECALENTADOS DEL HORNO DE ABAJO Y REGRÉSALOS AL PASE."
         },
         {
-          "title": "Clean the crevice between the grill and the wall. Return the oven rack to the oven.",
-          "title_es": "Limpia la ranura entre la parrilla y la pared. Regresa la rejilla al horno."
+          "title": "CLEAN THE CREVICE BETWEEN THE GRILL AND THE WALL. RETURN THE OVEN RACK TO THE OVEN.",
+          "title_es": "LIMPIA LA RANURA ENTRE LA PARRILLA Y LA PARED. REGRESA LA REJILLA AL HORNO."
         },
         {
-          "title": "Go into the walk-in to make sure everything is consolidated and properly labeled/dated. All mise en place is stored in plastic containers. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
-          "title_es": "Entra al walk-in y revisa que todo esté consolidado, etiquetado y con fecha. Todo el mise en place en recipientes de plástico. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
+          "title": "GO INTO THE WALK-IN TO MAKE SURE EVERYTHING IS CONSOLIDATED AND PROPERLY LABELED/DATED. ALL MISE EN PLACE IS STORED IN PLASTIC CONTAINERS. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
+          "title_es": "ENTRA AL WALK-IN Y REVISA QUE TODO ESTÉ CONSOLIDADO, ETIQUETADO Y CON FECHA. TODO EL MISE EN PLACE EN RECIPIENTES DE PLÁSTICO. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
         }
       ]
     },
     {
       "house": "HOH",
-      "role": "Pantry",
-      "role_es": "Pantry",
+      "role": "PANTRY",
+      "role_es": "PANTRY",
       "phase": "close",
       "items": [
         {
-          "title": "Restock your station. Flip “use first” items on the line into clean pans and containers, cover with plastic. Double check everything has labels.",
-          "title_es": "Reabastece tu estación. Pasa los productos de “usar primero” de la línea a recipientes limpios y cúbrelos con plástico. Revisa que todo tenga etiqueta."
+          "title": "RESTOCK YOUR STATION. FLIP “USE FIRST” ITEMS ON THE LINE INTO CLEAN PANS AND CONTAINERS, COVER WITH PLASTIC. DOUBLE CHECK EVERYTHING HAS LABELS.",
+          "title_es": "REABASTECE TU ESTACIÓN. PASA LOS PRODUCTOS DE “USAR PRIMERO” DE LA LÍNEA A RECIPIENTES LIMPIOS Y CÚBRELOS CON PLÁSTICO. REVISA QUE TODO TENGA ETIQUETA."
         },
         {
-          "title": "Wipe toast KDS screen with 409 and green microfiber cloth, including back of terminal, hardware and wires.",
-          "title_es": "Limpia la pantalla KDS de Toast con 409 y microfibra verde, incluyendo la parte trasera, el hardware y los cables."
+          "title": "WIPE TOAST KDS SCREEN WITH 409 AND GREEN MICROFIBER CLOTH, INCLUDING BACK OF TERMINAL, HARDWARE AND WIRES.",
+          "title_es": "LIMPIA LA PANTALLA KDS DE TOAST CON 409 Y MICROFIBRA VERDE, INCLUYENDO LA PARTE TRASERA, EL HARDWARE Y LOS CABLES."
         },
         {
-          "title": "Clean all refrigeration, inside and outside, including door handles and door seals. Remove drawers and clean out the bottom of the refrigerator.",
+          "title": "CLEAN ALL REFRIGERATION, INSIDE AND OUTSIDE, INCLUDING DOOR HANDLES AND DOOR SEALS. REMOVE DRAWERS AND CLEAN OUT THE BOTTOM OF THE REFRIGERATOR.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "Inside the fridge with the drawers out, bottom clean"
             }
           ],
-          "title_es": "Limpia toda la refrigeración por dentro y por fuera, incluyendo manijas y empaques. Saca los cajones y limpia el fondo del refrigerador."
+          "title_es": "LIMPIA TODA LA REFRIGERACIÓN POR DENTRO Y POR FUERA, INCLUYENDO MANIJAS Y EMPAQUES. SACA LOS CAJONES Y LIMPIA EL FONDO DEL REFRIGERADOR."
         },
         {
-          "title": "Clean the bottom of the shelf above the refrigerator top.",
+          "title": "CLEAN THE BOTTOM OF THE SHELF ABOVE THE REFRIGERATOR TOP.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The underside of the shelf above the fridge top"
             }
           ],
-          "title_es": "Limpia la parte de abajo de la repisa que está sobre el refrigerador."
+          "title_es": "LIMPIA LA PARTE DE ABAJO DE LA REPISA QUE ESTÁ SOBRE EL REFRIGERADOR."
         },
         {
-          "title": "Pull out freezer and refrigerator to clean the walls behind.",
-          "title_es": "Jala el congelador y el refrigerador para limpiar las paredes de atrás."
+          "title": "PULL OUT FREEZER AND REFRIGERATOR TO CLEAN THE WALLS BEHIND.",
+          "title_es": "JALA EL CONGELADOR Y EL REFRIGERADOR PARA LIMPIAR LAS PAREDES DE ATRÁS."
         },
         {
-          "title": "Clean and organize the spice shelf. Properly store oyster tags in the deli container of the month.",
-          "title_es": "Limpia y organiza la repisa de especias. Guarda las etiquetas de ostiones en el deli del mes."
+          "title": "CLEAN AND ORGANIZE THE SPICE SHELF. PROPERLY STORE OYSTER TAGS IN THE DELI CONTAINER OF THE MONTH.",
+          "title_es": "LIMPIA Y ORGANIZA LA REPISA DE ESPECIAS. GUARDA LAS ETIQUETAS DE OSTIONES EN EL DELI DEL MES."
         },
         {
-          "title": "Clean out the prep sinks and make sure there is not food debris in the drain. Clean sink drain pipes.",
-          "title_es": "Limpia los fregaderos de prep y revisa que no haya restos de comida en el drenaje. Limpia los tubos de desagüe."
+          "title": "CLEAN OUT THE PREP SINKS AND MAKE SURE THERE IS NOT FOOD DEBRIS IN THE DRAIN. CLEAN SINK DRAIN PIPES.",
+          "title_es": "LIMPIA LOS FREGADEROS DE PREP Y REVISA QUE NO HAYA RESTOS DE COMIDA EN EL DRENAJE. LIMPIA LOS TUBOS DE DESAGÜE."
         },
         {
-          "title": "Cleans and sanitize both prep tables.",
+          "title": "CLEANS AND SANITIZE BOTH PREP TABLES.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "Both prep tables, clean"
             }
           ],
-          "title_es": "Limpia y sanitiza las dos mesas de prep."
+          "title_es": "LIMPIA Y SANITIZA LAS DOS MESAS DE PREP."
         },
         {
-          "title": "Pantry Freezer: Wrap ice creams, close lids on ice cream sandos, and organize frozen items.",
-          "title_es": "Congelador de pantry: envuelve los helados, cierra las tapas de los sándwiches de helado y organiza lo congelado."
+          "title": "PANTRY FREEZER: WRAP ICE CREAMS, CLOSE LIDS ON ICE CREAM SANDOS, AND ORGANIZE FROZEN ITEMS.",
+          "title_es": "CONGELADOR DE PANTRY: ENVUELVE LOS HELADOS, CIERRA LAS TAPAS DE LOS SÁNDWICHES DE HELADO Y ORGANIZA LO CONGELADO."
         },
         {
-          "title": "Check speed rack for any food items and store properly. Wipe down speed rack shelves.",
+          "title": "CHECK SPEED RACK FOR ANY FOOD ITEMS AND STORE PROPERLY. WIPE DOWN SPEED RACK SHELVES.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The speed rack, wiped and cleared"
             }
           ],
-          "title_es": "Revisa el speed rack, guarda bien cualquier alimento y limpia sus repisas."
+          "title_es": "REVISA EL SPEED RACK, GUARDA BIEN CUALQUIER ALIMENTO Y LIMPIA SUS REPISAS."
         },
         {
-          "title": "Clean the shelves under the prep tables. There should be no food debris and all items should be organized.",
-          "title_es": "Limpia las repisas debajo de las mesas de prep. Sin restos de comida y todo en orden."
+          "title": "CLEAN THE SHELVES UNDER THE PREP TABLES. THERE SHOULD BE NO FOOD DEBRIS AND ALL ITEMS SHOULD BE ORGANIZED.",
+          "title_es": "LIMPIA LAS REPISAS DEBAJO DE LAS MESAS DE PREP. SIN RESTOS DE COMIDA Y TODO EN ORDEN."
         },
         {
-          "title": "Clean and organize the window. Clean the top shelf of the window.",
-          "title_es": "Limpia y organiza la ventana. Limpia la repisa de arriba de la ventana."
+          "title": "CLEAN AND ORGANIZE THE WINDOW. CLEAN THE TOP SHELF OF THE WINDOW.",
+          "title_es": "LIMPIA Y ORGANIZA LA VENTANA. LIMPIA LA REPISA DE ARRIBA DE LA VENTANA."
         },
         {
-          "title": "Go into the walk-in to make sure everything is consolidated and properly labeled/dated. All mise en place is stored in plastic containers. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
-          "title_es": "Entra al walk-in y revisa que todo esté consolidado, etiquetado y con fecha. Todo el mise en place en recipientes de plástico. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
+          "title": "GO INTO THE WALK-IN TO MAKE SURE EVERYTHING IS CONSOLIDATED AND PROPERLY LABELED/DATED. ALL MISE EN PLACE IS STORED IN PLASTIC CONTAINERS. NO METAL PANS OR CARDBOARD IN THE WALK-IN.",
+          "title_es": "ENTRA AL WALK-IN Y REVISA QUE TODO ESTÉ CONSOLIDADO, ETIQUETADO Y CON FECHA. TODO EL MISE EN PLACE EN RECIPIENTES DE PLÁSTICO. NADA DE CHAROLAS DE METAL NI CARTÓN EN EL WALK-IN."
         }
       ]
     },
     {
       "house": "HOH",
-      "role": "Dish",
-      "role_es": "Lavaplatos",
+      "role": "DISH",
+      "role_es": "LAVAPLATOS",
       "phase": "close",
       "items": [
         {
-          "title": "All Plates and silverware have been cleaned and put away.",
-          "title_es": "Todos los platos y cubiertos lavados y guardados."
+          "title": "ALL PLATES AND SILVERWARE HAVE BEEN CLEANED AND PUT AWAY.",
+          "title_es": "TODOS LOS PLATOS Y CUBIERTOS LAVADOS Y GUARDADOS."
         },
         {
-          "title": "Buss tubs have been washed and put away.",
-          "title_es": "Las tinas de bus lavadas y guardadas."
+          "title": "BUSS TUBS HAVE BEEN WASHED AND PUT AWAY.",
+          "title_es": "LAS TINAS DE BUS LAVADAS Y GUARDADAS."
         },
         {
-          "title": "All kitchen pans are cleaned and put away.",
-          "title_es": "Todas las charolas y sartenes de cocina limpias y guardadas."
+          "title": "ALL KITCHEN PANS ARE CLEANED AND PUT AWAY.",
+          "title_es": "TODAS LAS CHAROLAS Y SARTENES DE COCINA LIMPIAS Y GUARDADAS."
         },
         {
-          "title": "All clean cambros are stored on the shleves. None should be left on the linen bins. Stock all linen bins.",
-          "title_es": "Todos los cambros limpios en las repisas. Ninguno sobre los botes de ropa. Surte todos los botes de ropa."
+          "title": "ALL CLEAN CAMBROS ARE STORED ON THE SHLEVES. NONE SHOULD BE LEFT ON THE LINEN BINS. STOCK ALL LINEN BINS.",
+          "title_es": "TODOS LOS CAMBROS LIMPIOS EN LAS REPISAS. NINGUNO SOBRE LOS BOTES DE ROPA. SURTE TODOS LOS BOTES DE ROPA."
         },
         {
-          "title": "All kitchen utensils are clean and put in their bins.",
-          "title_es": "Todos los utensilios de cocina limpios y en sus contenedores."
+          "title": "ALL KITCHEN UTENSILS ARE CLEAN AND PUT IN THEIR BINS.",
+          "title_es": "TODOS LOS UTENSILIOS DE COCINA LIMPIOS Y EN SUS CONTENEDORES."
         },
         {
-          "title": "3 Compartment sink is clean of all food debris. Clean sink drain lines and wall under the 3 compartment sink.",
+          "title": "3 COMPARTMENT SINK IS CLEAN OF ALL FOOD DEBRIS. CLEAN SINK DRAIN LINES AND WALL UNDER THE 3 COMPARTMENT SINK.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The 3 compartment sink clean, drain lines and wall included"
             }
           ],
-          "title_es": "El fregadero de 3 compartimentos sin restos de comida. Limpia los tubos de desagüe y la pared debajo del fregadero."
+          "title_es": "EL FREGADERO DE 3 COMPARTIMENTOS SIN RESTOS DE COMIDA. LIMPIA LOS TUBOS DE DESAGÜE Y LA PARED DEBAJO DEL FREGADERO."
         },
         {
-          "title": "Outside of dish machine is cleaned. Top is clean and free of debris. Doors are clean and free of debris.",
-          "title_es": "El exterior de la máquina de lavar limpio. Arriba y las puertas limpias y sin residuos."
+          "title": "OUTSIDE OF DISH MACHINE IS CLEANED. TOP IS CLEAN AND FREE OF DEBRIS. DOORS ARE CLEAN AND FREE OF DEBRIS.",
+          "title_es": "EL EXTERIOR DE LA MÁQUINA DE LAVAR LIMPIO. ARRIBA Y LAS PUERTAS LIMPIAS Y SIN RESIDUOS."
         },
         {
-          "title": "Dish machine left open and water drained. Dish machine racks are stacked neatly.",
+          "title": "DISH MACHINE LEFT OPEN AND WATER DRAINED. DISH MACHINE RACKS ARE STACKED NEATLY.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The dish machine open and drained, racks stacked"
             }
           ],
-          "title_es": "La máquina de lavar abierta y sin agua. Las rejillas apiladas en orden."
+          "title_es": "LA MÁQUINA DE LAVAR ABIERTA Y SIN AGUA. LAS REJILLAS APILADAS EN ORDEN."
         },
         {
-          "title": "Dish machine strainers are clean.",
-          "title_es": "Los coladores de la máquina limpios."
+          "title": "DISH MACHINE STRAINERS ARE CLEAN.",
+          "title_es": "LOS COLADORES DE LA MÁQUINA LIMPIOS."
         },
         {
-          "title": "Check kitchen to ensure all trash is taken out.",
-          "title_es": "Revisa la cocina y saca toda la basura."
+          "title": "CHECK KITCHEN TO ENSURE ALL TRASH IS TAKEN OUT.",
+          "title_es": "REVISA LA COCINA Y SACA TODA LA BASURA."
         },
         {
-          "title": "Clean and organize purple sanitizer buckets and blue detergent buckets. Discard old or worn out scrubbies.",
+          "title": "CLEAN AND ORGANIZE PURPLE SANITIZER BUCKETS AND BLUE DETERGENT BUCKETS. DISCARD OLD OR WORN OUT SCRUBBIES.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The sanitizer and detergent buckets, clean and organized"
             }
           ],
-          "title_es": "Limpia y organiza las cubetas moradas de sanitizante y las azules de detergente. Tira las fibras viejas o gastadas."
+          "title_es": "LIMPIA Y ORGANIZA LAS CUBETAS MORADAS DE SANITIZANTE Y LAS AZULES DE DETERGENTE. TIRA LAS FIBRAS VIEJAS O GASTADAS."
         },
         {
-          "title": "Take out dirty linen and replace linen bag with a clean one.",
-          "title_es": "Saca la ropa sucia y pon una bolsa limpia."
+          "title": "TAKE OUT DIRTY LINEN AND REPLACE LINEN BAG WITH A CLEAN ONE.",
+          "title_es": "SACA LA ROPA SUCIA Y PON UNA BOLSA LIMPIA."
         },
         {
-          "title": "Clean all purple dust pans and return to stations.",
-          "title_es": "Limpia todos los recogedores morados y regrésalos a sus estaciones."
+          "title": "CLEAN ALL PURPLE DUST PANS AND RETURN TO STATIONS.",
+          "title_es": "LIMPIA TODOS LOS RECOGEDORES MORADOS Y REGRÉSALOS A SUS ESTACIONES."
         },
         {
-          "title": "Clean the mop sink area including all the surrounding walls and shelf.",
-          "title_es": "Limpia el área del lavadero de trapeadores, incluyendo las paredes alrededor y la repisa."
+          "title": "CLEAN THE MOP SINK AREA INCLUDING ALL THE SURROUNDING WALLS AND SHELF.",
+          "title_es": "LIMPIA EL ÁREA DEL LAVADERO DE TRAPEADORES, INCLUYENDO LAS PAREDES ALREDEDOR Y LA REPISA."
         },
         {
-          "title": "Clean all trash cans inside and out.",
+          "title": "CLEAN ALL TRASH CANS INSIDE AND OUT.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The trash cans drying, inside and out"
             }
           ],
-          "title_es": "Limpia todos los botes de basura por dentro y por fuera."
+          "title_es": "LIMPIA TODOS LOS BOTES DE BASURA POR DENTRO Y POR FUERA."
         },
         {
-          "title": "Clean the walls in the dish station. Make sure to get under and around the dish machine including all pipes and drain lines.",
-          "title_es": "Limpia las paredes de la estación de dish. Llega debajo y alrededor de la máquina, incluyendo tubos y desagües."
+          "title": "CLEAN THE WALLS IN THE DISH STATION. MAKE SURE TO GET UNDER AND AROUND THE DISH MACHINE INCLUDING ALL PIPES AND DRAIN LINES.",
+          "title_es": "LIMPIA LAS PAREDES DE LA ESTACIÓN DE DISH. LLEGA DEBAJO Y ALREDEDOR DE LA MÁQUINA, INCLUYENDO TUBOS Y DESAGÜES."
         },
         {
-          "title": "Let closer know when you're finished and leaving.",
-          "title_es": "Avísale al cerrador cuando termines y te vayas."
+          "title": "LET CLOSER KNOW WHEN YOU'RE FINISHED AND LEAVING.",
+          "title_es": "AVÍSALE AL CERRADOR CUANDO TERMINES Y TE VAYAS."
         }
       ]
     },
     {
       "house": "HOH",
-      "role": "Kitchen manager",
-      "role_es": "Encargado de cocina",
+      "role": "KITCHEN MANAGER",
+      "role_es": "ENCARGADO DE COCINA",
       "phase": "close",
       "items": [
         {
-          "title": "Check all tasks on all closing checklists have been completed.",
-          "title_es": "Revisa que todas las tareas de todas las listas de cierre estén completas."
+          "title": "CHECK ALL TASKS ON ALL CLOSING CHECKLISTS HAVE BEEN COMPLETED.",
+          "title_es": "REVISA QUE TODAS LAS TAREAS DE TODAS LAS LISTAS DE CIERRE ESTÉN COMPLETAS."
         },
         {
-          "title": "Closing temperature log is complete.",
+          "title": "CLOSING TEMPERATURE LOG IS COMPLETE.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The closing temperature log, complete"
             }
           ],
-          "title_es": "El registro de temperaturas de cierre está completo."
+          "title_es": "EL REGISTRO DE TEMPERATURAS DE CIERRE ESTÁ COMPLETO."
         },
         {
-          "title": "All food on speed racks(walk-in and prep kitchen) is wrapped or covered and labeled.",
+          "title": "ALL FOOD ON SPEED RACKS(WALK-IN AND PREP KITCHEN) IS WRAPPED OR COVERED AND LABELED.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The speed racks, everything wrapped and labeled"
             }
           ],
-          "title_es": "Toda la comida en los speed racks (walk-in y cocina de prep) envuelta o tapada y etiquetada."
+          "title_es": "TODA LA COMIDA EN LOS SPEED RACKS (WALK-IN Y COCINA DE PREP) ENVUELTA O TAPADA Y ETIQUETADA."
         },
         {
-          "title": "There is no food items left out on prep tables.",
-          "title_es": "No queda comida afuera en las mesas de prep."
+          "title": "THERE IS NO FOOD ITEMS LEFT OUT ON PREP TABLES.",
+          "title_es": "NO QUEDA COMIDA AFUERA EN LAS MESAS DE PREP."
         }
       ]
     }
