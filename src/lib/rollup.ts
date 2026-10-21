@@ -70,7 +70,7 @@ async function load(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id, title, title_es, section")
+      .select("id, checklist_id, title, title_es, section, days")
       .in("checklist_id", checklistIds)
       .eq("active", true),
     db()
@@ -102,12 +102,14 @@ async function load(
             item_id: string;
             title?: string | null;
             section?: string | null;
+            days?: string[] | null;
             ticked?: boolean;
           }[]
         ).map((s) => ({
           item_id: s.item_id,
           title: s.title ?? null,
           section: s.section ?? null,
+          days: s.days ?? null,
           ticked: Boolean(s.ticked),
         }))
       : null,
@@ -138,7 +140,7 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
   if (!data || data.nights.length === 0) return null;
   // The rota rule, handed to a module that keeps itself import free.
   return computeRollup(data, window, (item, night) =>
-    dueOnNight(item.section, night),
+    dueOnNight(item.section, night, item.days),
   );
 }
 
@@ -160,6 +162,6 @@ export async function groupRollup(): Promise<GroupRow[] | null> {
   );
 
   return computeGroup(data, window, codeOf, (item, night) =>
-    dueOnNight(item.section, night),
+    dueOnNight(item.section, night, item.days),
   );
 }

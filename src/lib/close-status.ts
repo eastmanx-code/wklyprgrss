@@ -99,6 +99,9 @@ export type SignedItem = {
   title: string;
   proof: { kind: string }[] | null;
   section: string | null;
+  /** The weekdays this item was owed. Absent on nights signed before day
+      scheduling existed, which read as owed every night. */
+  days?: string[] | null;
   ticked: boolean;
   initials: string | null;
   ticked_at: string | null;
@@ -152,7 +155,7 @@ export async function closeStatus(
       db().from("venues").select("id, code").eq("close_active", true),
       db()
         .from("close_items")
-        .select("id, checklist_id, section, title, proof")
+        .select("id, checklist_id, section, days, title, proof")
         .in("checklist_id", ids)
         .eq("active", true),
       db()
@@ -174,6 +177,7 @@ export async function closeStatus(
     id: string;
     checklist_id: string;
     section: string | null;
+    days: string[] | null;
     title: string;
     proof: { kind: string }[] | null;
   }[];
@@ -276,7 +280,7 @@ export async function closeStatus(
         tickedHere: boolean;
       }[] = frozen
         ? frozen
-            .filter((i) => dueOnNight(i.section, night) || i.ticked)
+            .filter((i) => dueOnNight(i.section, night, i.days) || i.ticked)
             .map((i) => ({
               id: i.item_id,
               title: i.title,
@@ -287,7 +291,7 @@ export async function closeStatus(
             .filter(
               (i) =>
                 i.checklist_id === list.id &&
-                (dueOnNight(i.section, night) ||
+                (dueOnNight(i.section, night, i.days) ||
                   (row ? tickOf.has(`${row.id}:${i.id}`) : false)),
             )
             .map((i) => ({

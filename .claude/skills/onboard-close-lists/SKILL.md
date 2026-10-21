@@ -93,7 +93,20 @@ Photos are not optional and are not something to add later.
 }
 ```
 
-Fields per item: `title` (required), `title_es`, `section`, `detail` (array of strings), `proof` (array of `{kind, prompt}`; kinds are `photo`, `video`, `note`).
+Fields per item: `title` (required), `title_es`, `section`, `days` (array of weekday names), `detail` (array of strings), `proof` (array of `{kind, prompt}`; kinds are `photo`, `video`, `note`).
+
+Fields per list: `house`, `role`, `role_es`, `phase`, `room`, `phase_label`, `items`.
+
+## Day scheduling
+
+Two ways to tie work to particular nights:
+
+- **`section` as a weekday** (`MONDAY` … `SUNDAY`) is the deep clean rota: one item a night, the app asks for that day's and greys the rest. One day per item, and the heading shows on the wall.
+- **`days`** is an explicit set of weekdays an item is owed, and it can name several. Empty or absent means every night, which is almost every item. Use it where the same job runs on a fixed few nights: a `SERVER` list that only fires Friday and Saturday (`"days": ["FRIDAY", "SATURDAY"]`), and the bar-close jobs it takes over on those nights, which carry `"days": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"]` so they drop off the bar the two nights a server covers them. `days` takes precedence over a weekday heading. The phase stays `open`/`mid`/`close` — `days` does not change it.
+
+## Phase label
+
+`phase_label` on a list is the venue's own word for it, shown to the crew in place of the phase name on the clipboard and the list header, e.g. a cafe `mid` list the crew knows as `"PRE CLOSE"`. The phase itself is unchanged — the night roll, the attestation and the scoring all still read `mid`. Null shows the phase name, which is every list that has not asked for its own word. Shown verbatim in both languages, like a room.
 
 ## Loading
 

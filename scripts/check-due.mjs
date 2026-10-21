@@ -97,6 +97,41 @@ is("an unreadable night shows everything", dueOnNight("MONDAY", "garbage"), true
 is("1am Tuesday still owes Monday", dueOnNight("MONDAY", "2026-09-07"), true);
 is("1am Tuesday does not owe Tuesday", dueOnNight("TUESDAY", "2026-09-07"), false);
 
+// ------------------------------------------------------ an explicit day set
+
+// 2026-09-07 is a Monday, -11 a Friday, -12 a Saturday, -13 a Sunday.
+const WEEKEND = ["FRIDAY", "SATURDAY"];
+const WEEKNIGHTS = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY"];
+
+// A SERVER list that only fires on the weekend.
+is("weekend set is due Friday", dueOnNight(null, "2026-09-11", WEEKEND), true);
+is("weekend set is due Saturday", dueOnNight(null, "2026-09-12", WEEKEND), true);
+is("weekend set is not due Monday", dueOnNight(null, "2026-09-07", WEEKEND), false);
+is("weekend set is not due Sunday", dueOnNight(null, "2026-09-13", WEEKEND), false);
+
+// The four bar-close jobs the server takes over, owed the other five nights.
+is("weeknights are due Monday", dueOnNight(null, "2026-09-07", WEEKNIGHTS), true);
+is("weeknights are due Sunday", dueOnNight(null, "2026-09-13", WEEKNIGHTS), true);
+is("weeknights are not due Friday", dueOnNight(null, "2026-09-11", WEEKNIGHTS), false);
+is("weeknights are not due Saturday", dueOnNight(null, "2026-09-12", WEEKNIGHTS), false);
+
+// A day set wins over a heading. The heading is a label here, not the schedule.
+is("a day set beats a weekday heading", dueOnNight("MONDAY", "2026-09-11", WEEKEND), true);
+is("and hides it on the heading's own day", dueOnNight("MONDAY", "2026-09-07", WEEKEND), false);
+
+// Read as forgivingly as a heading.
+is("a day set is case-insensitive", dueOnNight(null, "2026-09-11", ["friday"]), true);
+is("a day set ignores spacing", dueOnNight(null, "2026-09-11", ["  Friday  "]), true);
+
+// An empty set is "every night", so the heading, or nothing, decides.
+is("an empty set falls back to the heading", dueOnNight("MONDAY", "2026-09-07", []), true);
+is("an empty set with no heading is always due", dueOnNight(null, "2026-09-11", []), true);
+
+// Too much is recoverable; hiding tonight's job is not.
+is("an unreadable night with a day set shows it", dueOnNight(null, "garbage", WEEKEND), true);
+// An entry that is not a weekday is no night and matches nothing.
+is("a non-day entry matches nothing", dueOnNight(null, "2026-09-11", ["PAYDAY"]), false);
+
 // --------------------------------------------------------- does a list schedule
 
 is(

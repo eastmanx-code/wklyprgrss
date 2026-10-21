@@ -41,6 +41,15 @@ export type CloseItem = {
    * heading is one edit and a heading with no items left stops existing.
    */
   section?: string | null;
+  /**
+   * The weekdays this item is owed, when it runs only on some of them.
+   *
+   * Empty or absent means every night, which is almost every item. A set names
+   * the nights and can name several: a SERVER list that only fires Friday and
+   * Saturday, or a bar-close job that runs the other five. Takes precedence
+   * over a weekday heading — see dueOnNight.
+   */
+  days?: string[] | null;
   title: string;
   /** The same item in Spanish, where a venue has needed it. */
   titleEs?: string | null;
