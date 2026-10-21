@@ -1,0 +1,165 @@
+{
+  "venue": "UBLI",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "FLOOR",
+      "role_es": "PISO",
+      "phase": "open",
+      "items": [
+        { "title": "I TURNED OFF THE SIDE PATIO LIGHT (LEFT SWITCH ABOVE THE DOOR IN THE BATHROOM)." },
+        { "title": "I LEAF-BLEW THE SIDE PATIOS AND FRONT AND PICKED UP THE TRASH.", "proof": [{ "kind": "photo", "prompt": "The side patios and front, clear of trash and debris" }] },
+        { "title": "I UNLOCKED THE SIDEWALK TABLE AND CHAIRS AND SET THEM UP IN FRONT OF THE RESTAURANT.", "detail": ["Lock code: 0000"] },
+        { "title": "I WIPED DOWN ALL THE PATIO RAILINGS WITH A LITTLE FURNITURE POLISH SO THERE ARE NO SPIDERWEBS ANYWHERE.", "detail": ["Furniture polish is under the dish sink"] },
+        { "title": "I CLEANED THE UNDERBELLY SIGN, DUMPED SANITIZER ON THE GROUND WHERE DOGS PEE, AND CLEANED OUT THE PLANT NEXT TO THE SIGN." },
+        { "title": "I WIPED DOWN ALL THE EATING SURFACES, INSIDE AND OUT.", "proof": [{ "kind": "photo", "prompt": "The eating surfaces wiped clean, inside and out" }] },
+        { "title": "I SET UP UPSTAIRS: TURNED ON THE A/C, WIPED DOWN THE GLASS WALL AND WINDOW, AND ORGANIZED THE CHAIRS AND TABLES.", "proof": [{ "kind": "photo", "prompt": "Upstairs set: glass wiped, chairs and tables organized" }] },
+        { "title": "I FILLED ALL THE SAUCES THAT WERE DUMPED THE NIGHT BEFORE (IF A SAUCE WAS BUBBLY I THREW IT AWAY AND STARTED NEW)." },
+        { "title": "I PUT THE SAUCE TRAYS OUT: 4 ON THE FRONT WINDOWS, 3 TO 4 UPSTAIRS, 3 AT THE BAR AND THE REST OUTSIDE." },
+        { "title": "I REPLACED ALL THE EMPTY CANDLES AND PLACED THEM OUTSIDE AND ON THE FRONT WINDOWS." },
+        { "title": "I BROUGHT UP THE WEDDING BAG AND 7 MICROFIBER TOWELS AND RESTOCKED THE EXPO AS NEEDED." },
+        { "title": "I MADE SURE THE BATHROOM IS CLEAN AND STOCKED WITH TOILET PAPER AND HAND SOAP.", "proof": [{ "kind": "photo", "prompt": "The bathroom clean and stocked with toilet paper and hand soap" }] },
+        { "title": "I DOUBLE-CHECKED THE CLEANING CREW DID A PROPER JOB AND TEXTED THE LEADS OR CHRIS IF IT WAS NOT DONE." },
+        { "title": "I TURNED ON THE SET PLAYLIST AND SET THE VOLUME TO 75, PLAYING NOTHING BUT THE APPROVED PLAYLISTS." },
+        { "title": "I BROKE DOWN ALL THE BOXES AND MADE SURE THE TRASH WAS PICKED UP FROM THE DAY BEFORE, TEXTING CHRIS IF IT WAS NOT DONE." },
+        { "title": "I TOOK MY BREAK." }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BAR",
+      "role_es": "BAR",
+      "phase": "open",
+      "items": [
+        { "title": "I TURNED ON THE SLUSH MACHINES RIGHT AWAY." },
+        { "title": "I MADE THE BOBA.", "detail": ["Prep guide is in WhatsApp"] },
+        { "title": "I COUNTED THE TILL AND MADE SURE THE TOTAL IS EXACTLY $420, TEXTING CHRIS THE AMOUNT IF IT WAS OVER OR UNDER.", "proof": [{ "kind": "note", "prompt": "The till total, and any amount over or under $420" }] },
+        { "title": "I SET UP THE GARNISH BIN: ICE IN THE BOTTOM, ALL 3 FLOWERS (ORCHIDS, MARIGOLDS, CARNATIONS), LEMONS AND LIMES.", "proof": [{ "kind": "photo", "prompt": "The garnish bin set: ice, all three flowers, lemons and limes" }] },
+        { "title": "I TOOK THE CHEATERS OUT OF THE FRIDGE, SET THEM UP IN THE METAL BIN, AND TASTE-TESTED AS NEEDED.", "detail": ["In summer months keep cream, egg whites, coco lopez and sakura coco in the fridge"], "proof": [{ "kind": "photo", "prompt": "The cheaters set up in the metal bin" }] },
+        { "title": "I PUT THE DISHWASHER TRAYS BACK IN THEIR PLACES AND FILLED THE DISHWASHER.", "detail": ["18 second count"] },
+        { "title": "I PUT THE LIQUOR NIPPLES IN THE METAL CAGE AND RAN THEM THROUGH THE DISH." },
+        { "title": "I STOCKED THE LIQUOR WELL WITH BACKUPS FOR EVERYTHING AND MADE SURE ALL THE DISHWASHER CHEMICALS ARE FULL.", "proof": [{ "kind": "photo", "prompt": "The liquor well stocked with backups" }] },
+        { "title": "I PUT AWAY ANY ORDERS (SPECIALTY, IFS, MUTUAL)." },
+        { "title": "I TURNED ON THE NEONS, BAR LIGHTS, LIQUOR TOWER LIGHTS, FLOOR BAR LIGHTS, AND THE LIGHT ABOVE THE DISHWASHER." },
+        { "title": "I BROUGHT UP 2 BUCKETS OF CRUSHED ICE, ICE SPEARS, AND ROCK ICE." },
+        { "title": "I STARTED PREP.", "detail": ["Follow the bar prep checklist"] }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BAR",
+      "role_es": "BAR",
+      "phase": "mid",
+      "items": [
+        { "title": "I TOOK THE BAR TRASH OUT." },
+        { "title": "I STOCKED THE FRIDGE.", "proof": [{ "kind": "photo", "prompt": "The fridge stocked" }] },
+        { "title": "I BROUGHT UP SODAS, LIQUOR, WINE AND SAKE AS NEEDED." },
+        { "title": "I EMPTIED AND REFILLED THE DISHWASHER AND REPLENISHED THE GARNISH STATION, ICE INCLUDED.", "proof": [{ "kind": "photo", "prompt": "The garnish station replenished, ice included" }] },
+        { "title": "I STOCKED THE EXPO." },
+        { "title": "I STOCKED THE BATHROOM WITH TOILET PAPER AND SOAP." },
+        { "title": "I RESTOCKED THE COASTERS AND STRAWS." },
+        { "title": "I LIT THE CANDLES." },
+        { "title": "I BROUGHT UP PEBBLE ICE, ROCKS AND SPEARS.", "detail": ["If out of rock ice, ask Born for some"] },
+        { "title": "I CHECKED IN WITH THE MOD BEFORE CLOCKING OUT." }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "FLOOR",
+      "role_es": "PISO",
+      "phase": "close",
+      "items": [
+        { "title": "I BUSSED EVERYTHING AND BROUGHT THE SAUCE TRAYS, CUSHIONS AND PROPANE TANKS INSIDE." },
+        { "title": "I EMPTIED THE HABANERO SAUCES INTO CLEAN DELIS AND STORED THEM IN THE FRIDGE (IF BUBBLY, I TOSSED THEM AT THE END OF THE NIGHT)." },
+        { "title": "I BROUGHT ALL THE STACKED CUSHIONS INSIDE." },
+        { "section": "MONDAY", "title": "I EMPTIED THE SOY SAUCE INTO CLEAN DELIS." },
+        { "section": "TUESDAY", "title": "I EMPTIED THE SESAME INTO CLEAN DELIS." },
+        { "section": "WEDNESDAY", "title": "I EMPTIED THE TOGARASHI INTO CLEAN DELIS." },
+        { "title": "I WIPED DOWN ALL THE SAUCE TRAYS AND CONTAINERS THAT ARE NOT BEING DUMPED AND RESET EACH TRAY WITH ITS SAUCES." },
+        { "title": "I WIPED DOWN ALL THE TABLES, WINDOWS, BAR TOP, SERVER STATION, AND EXPO.", "proof": [{ "kind": "photo", "prompt": "The tables, windows, bar top and server station wiped down" }] },
+        { "title": "I PLACED THE TO-GO HABANEROS IN THE FRIDGE." },
+        { "title": "I CLOSED ALL THE WINDOWS AND PUT THE PINS IN THEM.", "proof": [{ "kind": "photo", "prompt": "The windows closed with the pins in" }] },
+        { "title": "I STACKED THE METAL CHAIRS ON TOP OF THE INSIDE WINDOW STOOLS." },
+        { "title": "I PUT THE BLINDS DOWN." },
+        { "title": "I PUT THE UPSTAIRS CHAIRS OFF THE FLOOR AND TURNED THE A/C OFF.", "proof": [{ "kind": "photo", "prompt": "Upstairs reset: chairs off the floor, A/C off" }] },
+        { "title": "I TOOK OUT ALL 4 TRASH CANS (2 BAR, EXPO, AND BATHROOM) AND RELINED THEM ALL." },
+        { "title": "I TOOK THE WEDDING BAG DOWN TO THE BIN." },
+        { "title": "I PUT THE PHONE ON THE HOOK." },
+        { "title": "I LOCKED UP ALL THE STOOLS IN FRONT OF THE BUILDING.", "proof": [{ "kind": "photo", "prompt": "The stools out front locked up" }] },
+        { "title": "I PLUGGED IN THE HANDHELDS." },
+        { "title": "I TURNED ON THE SIDE PATIO LIGHT (LEFT SWITCH ABOVE THE DOOR IN THE BATHROOM)." },
+        { "title": "I MADE SURE ALL THE LIGHTS ARE OFF AND THE DUMPSTER IS NOT OVERFLOWING." }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BAR",
+      "role_es": "BAR",
+      "phase": "close",
+      "items": [
+        { "title": "I WASHED ALL THE GLASSWARE, BOTTLES, BAR TOOLS, BAR MATS, AND DUMPED SAUCE CONTAINERS, LEAVING THE SAUCE CONTAINERS UPSIDE DOWN ON TOP OF THE DISHWASHER TO DRY OVERNIGHT." },
+        { "title": "I REFILLED AND WIPED ALL THE WATER BOTTLES." },
+        { "title": "I REFILLED ALL THE CHEATERS." },
+        { "title": "I CLEANED BOTH SINKS WITH SANI AND THE METAL SCRUBBY UNTIL NO GUNK IS VISIBLE, RINSED WITH HOT WATER, SQUEEGEED THE EXCESS, AND WIPED THEM DRY.", "proof": [{ "kind": "photo", "prompt": "Both sinks clean and dry, no gunk visible" }] },
+        { "title": "I TURNED THE SLUSHEE MACHINES TO COLD 3 (WATER DROPLETS)." },
+        { "title": "I TOOK THE CLEAN, STOCKED GARNISH BIN TO THE WALK-IN." },
+        { "title": "I TOOK THE BAR GRATES TO THE BACK AND SPRAYED THEM WITH THE SINK HOSE, DUMPED WASH N WALK DOWN ALL THE DRAINS INCLUDING THE SINKS, AND SQUEEGEED THE EXCESS TO THE MIDDLE DRAIN WITHOUT RINSING.", "detail": ["Wash N Walk is the green chemical in the mop closet"] },
+        { "title": "I RESTOCKED THE FRIDGE AND STRAWS." },
+        { "title": "I TURNED THE FRIDGE LIGHT OFF." },
+        { "title": "I MADE SURE THE MUSIC IS OFF." },
+        { "title": "I BURNED THE ICE WELL WITH HOT WATER." },
+        { "title": "I WIPED ALL THE LIQUOR BOTTLES WITH A SANI RAG AND WIPED OUT THE SPEED WELLS.", "proof": [{ "kind": "photo", "prompt": "The speed wells wiped out and the liquor bottles clean" }] },
+        { "title": "I WIPED UNDER THE BAR LEDGE WITH A DAMP BAR TOWEL AND RAN MY FINGERS UNDERNEATH TO CHECK FOR NO STICKINESS." },
+        { "title": "I TOPPED ALL THE OPEN LIQUOR BOTTLES AND BITTERS WITH NIPPLES AND TAP PLUGS FOR THE BEER SPOUTS." },
+        { "title": "I PUT THE YELLOW BAR FANS ON TOP OF THE CLEAN GRATES WITH THE FAN SPEED ON HIGH.", "proof": [{ "kind": "photo", "prompt": "The clean grates with the yellow fans on top, set to high" }] },
+        { "title": "I MADE SURE ALL THE LIGHTS ARE OFF AND THE DUMPSTER IS NOT OVERFLOWING." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "LINE COOK",
+      "role_es": "COCINERO DE LÍNEA",
+      "phase": "open",
+      "items": [
+        { "title": "I MADE SURE THE NIGHT CLEANERS DID A PROPER JOB.", "title_es": "ME ASEGURÉ DE QUE LOS LIMPIADORES DE LA NOCHE HICIERAN UN BUEN TRABAJO." },
+        { "title": "I MADE SURE ALL THE ORDERS ARE PUT AWAY.", "title_es": "ME ASEGURÉ DE QUE TODOS LOS PEDIDOS ESTUVIERAN GUARDADOS." },
+        { "title": "I ORGANIZED THE WALK-IN, MADE A PREP LIST, AND LET THE TEAM KNOW WHAT TO PREP.", "title_es": "ORGANICÉ EL WALK-IN, HICE UNA LISTA DE PREP Y LE DIJE AL EQUIPO QUÉ PREPARAR.", "proof": [{ "kind": "photo", "prompt": "The walk-in organized" }] },
+        { "title": "I MADE SURE ALL THE EGGS, MEAT, AND CHICKEN ARE COVERED IN THE WALK-IN.", "title_es": "ME ASEGURÉ DE QUE TODOS LOS HUEVOS, LA CARNE Y EL POLLO ESTUVIERAN TAPADOS EN EL WALK-IN.", "proof": [{ "kind": "photo", "prompt": "The eggs, meat and chicken covered in the walk-in" }] },
+        { "title": "I MADE SURE THE CHEMICALS FOR THE DISHWASHER ARE FULL.", "title_es": "ME ASEGURÉ DE QUE LOS QUÍMICOS DEL LAVAPLATOS ESTUVIERAN LLENOS." },
+        { "title": "I MADE SURE ALL FOOD IS DATED PROPERLY AND USED FIFO TO ENSURE NO SPOILAGE.", "title_es": "ME ASEGURÉ DE QUE TODA LA COMIDA ESTUVIERA ETIQUETADA CON LA FECHA Y USÉ FIFO PARA EVITAR QUE SE ECHARA A PERDER." },
+        { "title": "I MADE SURE ALL CREW MEMBERS ARE USING THE PROPER TOOLS AND WEARING GLOVES.", "title_es": "ME ASEGURÉ DE QUE TODO EL EQUIPO USARA LAS HERRAMIENTAS CORRECTAS Y GUANTES." },
+        { "title": "I PLACED ALL NECESSARY ORDERS BY 11:30 AM.", "title_es": "HICE TODOS LOS PEDIDOS NECESARIOS ANTES DE LAS 11:30 AM." },
+        { "title": "I USED THE RECIPE BOOK PROPERLY.", "title_es": "USÉ EL RECETARIO CORRECTAMENTE." },
+        { "title": "I TASTED ALL FOOD TO MAKE SURE IT WAS GOOD AND THREW OUT WHAT WAS BAD.", "title_es": "PROBÉ TODA LA COMIDA PARA ASEGURARME DE QUE ESTUVIERA BUENA Y TIRÉ LO QUE ESTABA MAL." },
+        { "title": "I THREW AWAY ALL THE TRASH BEFORE OPENING.", "title_es": "TIRÉ TODA LA BASURA ANTES DE ABRIR." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "LINE COOK",
+      "role_es": "COCINERO DE LÍNEA",
+      "phase": "close",
+      "items": [
+        { "section": "LOW BOY STATION", "title": "I REFILLED AND STOCKED MY STATION COMPLETELY AND MADE A NOTE OF ANYTHING WE NEED TO ORDER.", "title_es": "REABASTECÍ Y SURTÍ MI ESTACIÓN POR COMPLETO Y ANOTÉ CUALQUIER COSA QUE NECESITEMOS ORDENAR.", "proof": [{ "kind": "note", "prompt": "Anything the station needs ordered" }] },
+        { "section": "LOW BOY STATION", "title": "I WIPED THE INSIDE AND GASKETS OF THE LOW BOY WITH SANITIZER AND SWITCHED OUT ALL THE PANS.", "title_es": "LIMPIÉ EL INTERIOR Y LOS EMPAQUES DEL LOW BOY CON SANITIZANTE Y CAMBIÉ TODAS LAS BANDEJAS." },
+        { "section": "LOW BOY STATION", "title": "I WRAPPED THE STATION WITH PLASTIC AND PUT THE HOOD DOWN.", "title_es": "ENVOLVÍ LA ESTACIÓN CON PLÁSTICO Y BAJÉ LA CAMPANA.", "proof": [{ "kind": "photo", "prompt": "The low boy station wrapped in plastic, hood down" }] },
+        { "section": "LOW BOY STATION", "title": "I REMOVED EVERYTHING AND WIPED OUT THE INSIDE WITH SANITIZER.", "title_es": "SAQUÉ TODO Y LIMPIÉ EL INTERIOR CON SANITIZANTE." },
+        { "section": "LOW BOY STATION", "title": "I SCRUBBED THE OUTSIDE WITH SOAPY WATER, SPONGE, AND TOWEL.", "title_es": "TALLÉ EL EXTERIOR CON AGUA JABONOSA, ESPONJA Y TOALLA." },
+        { "section": "LOW BOY STATION", "title": "I SCRUBBED THE CUTTING BOARD, CLEANED BELOW IT, AND PLACED IT BACK ON TOP.", "title_es": "TALLÉ LA TABLA DE CORTAR, LIMPIÉ DEBAJO Y LA VOLVÍ A PONER ENCIMA." },
+        { "section": "LOW BOY STATION", "title": "I WIPED ALL SIDES OF THE DISHWASHER AND FIRE BOX.", "title_es": "LIMPIÉ TODOS LOS LADOS DEL LAVAPLATOS Y LA CAJA DE FUEGO." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I TURNED OFF THE FRYER, REMOVED ALL FOOD DEBRIS, AND WIPED THE LANDING CLEAN.", "title_es": "APAGUÉ LA FREIDORA, QUITÉ TODOS LOS RESIDUOS DE COMIDA Y LIMPIÉ EL LANDING." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I RAN THE FRYER BASKETS THROUGH DISH AND REPLACED THEM.", "title_es": "PASÉ LAS CANASTAS DE LA FREIDORA POR EL LAVAPLATOS Y LAS VOLVÍ A PONER." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I SCRUBBED THE OUTSIDE AND FRONT COVER OF THE FRYER WITH SOAPY WATER.", "title_es": "TALLÉ EL EXTERIOR Y LA CUBIERTA FRONTAL DE LA FREIDORA CON AGUA JABONOSA." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I TURNED OFF THE PASTA COOKER, DRAINED THE WATER, AND RAN THE BASKETS THROUGH DISH.", "title_es": "APAGUÉ EL COCEDOR DE PASTA, DRENÉ EL AGUA Y PASÉ LAS CANASTAS POR EL LAVAPLATOS." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I USED LIME-A-WAY TO SCRUB THE INSIDE OF THE PASTA COOKER AND THE SMALL AND LARGE PIECES.", "title_es": "USÉ LIME-A-WAY PARA TALLAR EL INTERIOR DEL COCEDOR DE PASTA Y LAS PIEZAS CHICAS Y GRANDES." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I RINSED THE PASTA COOKER, PLUGGED THE DRAIN, REFILLED IT, AND REPLACED THE BASKETS.", "title_es": "ENJUAGUÉ EL COCEDOR DE PASTA, TAPÉ EL DRENAJE, LO RELLENÉ Y VOLVÍ A PONER LAS CANASTAS." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I CLEANED THE SIDES OF THE CANDY BURNER AND THE WALL BEHIND IT.", "title_es": "LIMPIÉ LOS LADOS DEL QUEMADOR DE DULCE Y LA PARED DETRÁS." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I TURNED THE BURNERS OFF, SCRUBBED THEM, REPLACED THE FOIL, AND SCRUBBED THE OUTSIDE.", "title_es": "APAGUÉ LOS QUEMADORES, LOS TALLÉ, CAMBIÉ EL PAPEL ALUMINIO Y TALLÉ EL EXTERIOR.", "proof": [{ "kind": "photo", "prompt": "The burners scrubbed with fresh foil" }] },
+        { "section": "HOT LINE EQUIPMENT", "title": "I SCRUBBED THE INSIDE OF THE OVEN WITH SOAPY WATER AND GREASE LIFT.", "title_es": "TALLÉ EL INTERIOR DEL HORNO CON AGUA JABONOSA Y GREASE LIFT." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I CLEANED ALL SIDES OF THE HOOD AND HOOD COVER WITH SOAPY WATER AND GREASE LIFT.", "title_es": "LIMPIÉ TODOS LOS LADOS DE LA CAMPANA Y LA CUBIERTA CON AGUA JABONOSA Y GREASE LIFT.", "proof": [{ "kind": "photo", "prompt": "The hood and hood cover cleaned on all sides" }] },
+        { "section": "HOT LINE EQUIPMENT", "title": "I WIPED DOWN THE SHELF ABOVE EXPO.", "title_es": "LIMPIÉ LA REPISA ARRIBA DEL EXPO." },
+        { "section": "HOT LINE EQUIPMENT", "title": "I PUT THE LEFTOVER BROTH AND MEAT IN THE WALK-IN TO COOL.", "title_es": "PUSE EL CALDO Y LA CARNE SOBRANTES EN EL WALK-IN PARA QUE SE ENFRIARAN." }
+      ]
+    }
+  ]
+}
