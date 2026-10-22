@@ -86,6 +86,10 @@ function check() {
         if (!shot.prompt?.trim() || shot.prompt === "TODO")
           throw new Error(`${where}: item ${i + 1} proof needs a prompt saying what it has to show`);
       }
+      for (const ref of item.reference ?? []) {
+        if (!ref.caption?.trim())
+          throw new Error(`${where}: item ${i + 1} reference needs a caption saying what right looks like`);
+      }
     });
   }
 }
@@ -122,12 +126,12 @@ where not exists (select 1 from close_checklists where ${match});`,
       days: (item.days ?? []).map((d) => String(d).trim().toUpperCase()),
     };
     out.push(
-      `update close_items set position = ${cols.position}, section = ${qn(cols.section)}, title_es = ${qn(cols.title_es)}, detail = ${textArray(item.detail)}, days = ${textArray(cols.days)}, proof = ${jsonb(item.proof ?? [])}, active = true
+      `update close_items set position = ${cols.position}, section = ${qn(cols.section)}, title_es = ${qn(cols.title_es)}, detail = ${textArray(item.detail)}, days = ${textArray(cols.days)}, proof = ${jsonb(item.proof ?? [])}, reference = ${jsonb(item.reference ?? [])}, active = true
 where checklist_id = (select id from close_checklists where ${match}) and lower(title) = lower(${q(title)});`,
     );
     out.push(
-      `insert into close_items (checklist_id, position, title, title_es, section, detail, days, proof)
-select (select id from close_checklists where ${match}), ${cols.position}, ${q(title)}, ${qn(cols.title_es)}, ${qn(cols.section)}, ${textArray(item.detail)}, ${textArray(cols.days)}, ${jsonb(item.proof ?? [])}
+      `insert into close_items (checklist_id, position, title, title_es, section, detail, days, proof, reference)
+select (select id from close_checklists where ${match}), ${cols.position}, ${q(title)}, ${qn(cols.title_es)}, ${qn(cols.section)}, ${textArray(item.detail)}, ${textArray(cols.days)}, ${jsonb(item.proof ?? [])}, ${jsonb(item.reference ?? [])}
 where not exists (select 1 from close_items where checklist_id = (select id from close_checklists where ${match}) and lower(title) = lower(${q(title)}));`,
     );
   });
@@ -234,6 +238,7 @@ for (const list of doc.lists) {
       detail: item.detail ?? [],
       days: (item.days ?? []).map((d) => String(d).trim().toUpperCase()),
       proof: item.proof ?? [],
+      reference: item.reference ?? [],
       active: true,
     };
     const id = byTitle.get(title.toLowerCase());
