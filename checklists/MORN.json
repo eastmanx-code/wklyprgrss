@@ -1,0 +1,340 @@
+{
+  "venue": "MORN",
+  "lists": [
+    {
+      "house": "HOH",
+      "role": "AM Prep",
+      "role_es": "Preparación AM",
+      "phase": "open",
+      "items": [
+        { "section": "TEMPS & LOGS", "title": "Record the temperature of every walk-in cooler.", "title_es": "Anota la temperatura de cada cámara fría.", "proof": [{ "kind": "note", "prompt": "The reading for each walk-in" }] },
+        { "section": "TEMPS & LOGS", "title": "Record the temperature of every freezer.", "title_es": "Anota la temperatura de cada congelador.", "proof": [{ "kind": "note", "prompt": "The reading for each freezer" }] },
+        { "section": "TEMPS & LOGS", "title": "Record the temperature of every lowboy and reach-in on the line.", "title_es": "Anota la temperatura de cada lowboy y refri de la línea.", "proof": [{ "kind": "note", "prompt": "The reading for each lowboy and reach-in" }] },
+        { "section": "TEMPS & LOGS", "title": "Any unit reading out of range, note the unit and tell the manager before you continue.", "title_es": "Si una unidad marca fuera de rango, anota cuál y avisa al manager antes de seguir.", "proof": [{ "kind": "note", "prompt": "The unit and what it read" }] },
+        { "section": "TEMPS & LOGS", "title": "Test sanitizer concentration at each station with a test strip. Record the ppm.", "title_es": "Prueba la concentración del sanitizante en cada estación con una tira. Anota las ppm.", "proof": [{ "kind": "note", "prompt": "The ppm at each station" }] },
+        { "section": "TEMPS & LOGS", "title": "Photograph the sanitizer test strip against the chart.", "title_es": "Toma foto de la tira de sanitizante contra la carta de colores.", "proof": [{ "kind": "photo", "prompt": "The test strip held against the color chart" }] },
+        { "section": "WALK-IN & STORAGE", "title": "Pull and discard anything past its discard date in the walk-in.", "title_es": "Saca y tira todo lo que pasó su fecha de descarte en la cámara fría.", "detail": ["Standard: cold-held prepped food keeps 7 days, counting the prep day as day 1, at 41F or below. First in, first out."] },
+        { "section": "WALK-IN & STORAGE", "title": "Pull and discard anything past its discard date in the freezers and lowboys.", "title_es": "Saca y tira todo lo que pasó su fecha de descarte en los congeladores y lowboys.", "detail": ["Standard: cold-held prepped food keeps 7 days, counting the prep day as day 1, at 41F or below. First in, first out."] },
+        { "section": "WALK-IN & STORAGE", "title": "Confirm every open or prepped container is labeled and dated. Label anything that is not.", "title_es": "Confirma que cada recipiente abierto o preparado tenga etiqueta y fecha. Etiqueta lo que falte.", "detail": ["Label with prep date and discard date."] },
+        { "section": "WALK-IN & STORAGE", "title": "Confirm raw proteins are stored below ready-to-eat product. No exceptions.", "title_es": "Confirma que las proteínas crudas estén guardadas debajo del producto listo para comer. Sin excepciones." },
+        { "section": "WALK-IN & STORAGE", "title": "Confirm nothing is sitting directly on the walk-in or dry storage floor.", "title_es": "Confirma que no haya nada directamente sobre el piso de la cámara fría ni del almacén seco." },
+        { "section": "WALK-IN & STORAGE", "title": "Photograph the walk-in, doors open, shelves visible.", "title_es": "Toma foto de la cámara fría, puertas abiertas, estantes a la vista.", "proof": [{ "kind": "photo", "prompt": "The walk-in with doors open and shelves visible" }] },
+        { "section": "PREP REVIEW", "title": "Count on-hand product for every item on the prep sheet. Enter AM inventory.", "title_es": "Cuenta el producto que hay de cada cosa en la hoja de prep. Anota el inventario AM.", "proof": [{ "kind": "note", "prompt": "The AM inventory counts" }], "detail": ["Master Prep 3.0 stays on paper. This confirms the sheet got filled out."] },
+        { "section": "PREP REVIEW", "title": "Prep the difference between on-hand and par. Do not prep the full par.", "title_es": "Prepara la diferencia entre lo que hay y el par. No prepares el par completo." },
+        { "section": "PREP REVIEW", "title": "Post today's prep list where the line can see it.", "title_es": "Pon la lista de prep de hoy donde la línea la pueda ver." },
+        { "section": "PREP REVIEW", "title": "Report any item you cannot hit par on to the manager before service.", "title_es": "Avisa al manager de cualquier cosa que no llegue al par antes del servicio." },
+        { "section": "PREP REVIEW", "title": "Photograph the completed prep sheet.", "title_es": "Toma foto de la hoja de prep ya llenada.", "proof": [{ "kind": "photo", "prompt": "The completed prep sheet" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Egg Station",
+      "role_es": "Estación de Huevos",
+      "phase": "open",
+      "phase_label": "STATION SETUP",
+      "items": [
+        { "title": "Set the Egg station to its standard layout. Tools and containers in assigned spots.", "title_es": "Acomoda la Estación de Huevos a su orden estándar. Herramientas y recipientes en su lugar.", "reference": [{ "caption": "The Egg station set to standard, tools and containers in place", "path": null }], "proof": [{ "kind": "photo", "prompt": "The Egg station set to standard" }] },
+        { "title": "Stock all backups and smallwares for Egg for the shift.", "title_es": "Surte todos los backups y utensilios de Huevos para el turno." },
+        { "title": "Wipe and sanitize all Egg food-contact surfaces before product hits them.", "title_es": "Limpia y sanitiza todas las superficies de contacto con comida de Huevos antes de poner producto." },
+        { "title": "Confirm the hand sink nearest Egg is stocked and not blocked.", "title_es": "Confirma que el lavamanos más cercano a Huevos esté surtido y sin estorbos." },
+        { "title": "Confirm all Egg equipment powers on and holds temperature.", "title_es": "Confirma que todo el equipo de Huevos encienda y mantenga temperatura." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Oven Station",
+      "role_es": "Estación de Horno",
+      "phase": "open",
+      "phase_label": "STATION SETUP",
+      "items": [
+        { "title": "Set the Oven station to its standard layout. Tools and containers in assigned spots.", "title_es": "Acomoda la Estación de Horno a su orden estándar. Herramientas y recipientes en su lugar.", "reference": [{ "caption": "The Oven station set to standard, tools and containers in place", "path": null }], "proof": [{ "kind": "photo", "prompt": "The Oven station set to standard" }] },
+        { "title": "Stock all backups and smallwares for Oven for the shift.", "title_es": "Surte todos los backups y utensilios de Horno para el turno." },
+        { "title": "Wipe and sanitize all Oven food-contact surfaces before product hits them.", "title_es": "Limpia y sanitiza todas las superficies de contacto con comida de Horno antes de poner producto." },
+        { "title": "Confirm the hand sink nearest Oven is stocked and not blocked.", "title_es": "Confirma que el lavamanos más cercano a Horno esté surtido y sin estorbos." },
+        { "title": "Confirm all Oven equipment powers on and holds temperature.", "title_es": "Confirma que todo el equipo de Horno encienda y mantenga temperatura." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Souffle Station",
+      "role_es": "Estación de Soufflé",
+      "phase": "open",
+      "phase_label": "STATION SETUP",
+      "items": [
+        { "title": "Set the Souffle station to its standard layout. Tools and containers in assigned spots.", "title_es": "Acomoda la Estación de Soufflé a su orden estándar. Herramientas y recipientes en su lugar.", "reference": [{ "caption": "The Souffle station set to standard, tools and containers in place", "path": null }], "proof": [{ "kind": "photo", "prompt": "The Souffle station set to standard" }] },
+        { "title": "Stock all backups and smallwares for Souffle for the shift.", "title_es": "Surte todos los backups y utensilios de Soufflé para el turno." },
+        { "title": "Wipe and sanitize all Souffle food-contact surfaces before product hits them.", "title_es": "Limpia y sanitiza todas las superficies de contacto con comida de Soufflé antes de poner producto." },
+        { "title": "Confirm the hand sink nearest Souffle is stocked and not blocked.", "title_es": "Confirma que el lavamanos más cercano a Soufflé esté surtido y sin estorbos." },
+        { "title": "Confirm all Souffle equipment powers on and holds temperature.", "title_es": "Confirma que todo el equipo de Soufflé encienda y mantenga temperatura." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Griddle Station",
+      "role_es": "Estación de Plancha",
+      "phase": "open",
+      "phase_label": "STATION SETUP",
+      "items": [
+        { "title": "Set the Griddle station to its standard layout. Tools and containers in assigned spots.", "title_es": "Acomoda la Estación de Plancha a su orden estándar. Herramientas y recipientes en su lugar.", "reference": [{ "caption": "The Griddle station set to standard, tools and containers in place", "path": null }], "proof": [{ "kind": "photo", "prompt": "The Griddle station set to standard" }] },
+        { "title": "Stock all backups and smallwares for Griddle for the shift.", "title_es": "Surte todos los backups y utensilios de Plancha para el turno." },
+        { "title": "Wipe and sanitize all Griddle food-contact surfaces before product hits them.", "title_es": "Limpia y sanitiza todas las superficies de contacto con comida de Plancha antes de poner producto." },
+        { "title": "Confirm the hand sink nearest Griddle is stocked and not blocked.", "title_es": "Confirma que el lavamanos más cercano a Plancha esté surtido y sin estorbos." },
+        { "title": "Confirm all Griddle equipment powers on and holds temperature.", "title_es": "Confirma que todo el equipo de Plancha encienda y mantenga temperatura." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Line check",
+      "role_es": "Chequeo de Línea",
+      "phase": "open",
+      "items": [
+        { "title": "Taste every sauce, dressing and component on the line.", "title_es": "Prueba cada salsa, aderezo y componente de la línea." },
+        { "title": "Confirm all four stations are at par and set to standard.", "title_es": "Confirma que las cuatro estaciones estén en par y acomodadas al estándar." },
+        { "title": "Confirm the 86 list is current and the line knows it.", "title_es": "Confirma que la lista de 86 esté al día y que la línea la sepa.", "proof": [{ "kind": "note", "prompt": "Tonight's 86 list" }] },
+        { "title": "Confirm today's temp and sanitizer logs are filled in, not blank.", "title_es": "Confirma que los registros de temperatura y sanitizante de hoy estén llenos, no en blanco." },
+        { "title": "Hold pre-shift. Priorities, 86s, menu changes.", "title_es": "Haz el pre-shift. Prioridades, 86s, cambios de menú." },
+        { "title": "Sign off that the kitchen is service-ready. Doors do not open before this closes.", "title_es": "Firma que la cocina está lista para servicio. No se abren puertas antes de cerrar esto." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Receiving",
+      "role_es": "Recibo",
+      "phase": "mid",
+      "items": [
+        { "title": "Temp every cold and frozen item at the door. Record the number.", "title_es": "Toma temperatura de cada producto frío y congelado en la puerta. Anota el número.", "proof": [{ "kind": "note", "prompt": "The readings at the door" }] },
+        { "title": "Check quantity and quality against the invoice before the driver leaves.", "title_es": "Revisa cantidad y calidad contra la factura antes de que se vaya el chofer." },
+        { "title": "Note any short, damaged or out-of-temp product on the invoice itself.", "title_es": "Anota en la misma factura cualquier producto faltante, dañado o fuera de temperatura." },
+        { "title": "Label and date everything before it goes into storage.", "title_es": "Etiqueta y pon fecha a todo antes de guardarlo." },
+        { "title": "Put product away FIFO. New behind old.", "title_es": "Guarda el producto FIFO. Lo nuevo detrás de lo viejo." },
+        { "title": "Photograph the signed invoice.", "title_es": "Toma foto de la factura firmada.", "proof": [{ "kind": "photo", "prompt": "The signed invoice" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Egg Station",
+      "role_es": "Estación de Huevos",
+      "phase": "close",
+      "phase_label": "STATION BREAKDOWN",
+      "items": [
+        { "title": "Break down the Egg station. All product into proper storage.", "title_es": "Desarma la Estación de Huevos. Todo el producto a su lugar de guardado." },
+        { "title": "Wash, rinse and sanitize all Egg food-contact surfaces.", "title_es": "Lava, enjuaga y sanitiza todas las superficies de contacto con comida de Huevos." },
+        { "title": "Clean under and behind all Egg equipment, not just the visible faces.", "title_es": "Limpia debajo y detrás de todo el equipo de Huevos, no solo lo que se ve." },
+        { "title": "Clean and stow all Egg smallwares, boards and containers.", "title_es": "Limpia y guarda todos los utensilios, tablas y recipientes de Huevos." },
+        { "title": "Sweep and mop the Egg floor including under the line.", "title_es": "Barre y trapea el piso de Huevos incluyendo debajo de la línea.", "proof": [{ "kind": "photo", "prompt": "The Egg station broken down and clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Oven Station",
+      "role_es": "Estación de Horno",
+      "phase": "close",
+      "phase_label": "STATION BREAKDOWN",
+      "items": [
+        { "title": "Break down the Oven station. All product into proper storage.", "title_es": "Desarma la Estación de Horno. Todo el producto a su lugar de guardado." },
+        { "title": "Wash, rinse and sanitize all Oven food-contact surfaces.", "title_es": "Lava, enjuaga y sanitiza todas las superficies de contacto con comida de Horno." },
+        { "title": "Clean under and behind all Oven equipment, not just the visible faces.", "title_es": "Limpia debajo y detrás de todo el equipo de Horno, no solo lo que se ve." },
+        { "title": "Clean and stow all Oven smallwares, boards and containers.", "title_es": "Limpia y guarda todos los utensilios, tablas y recipientes de Horno." },
+        { "title": "Sweep and mop the Oven floor including under the line.", "title_es": "Barre y trapea el piso de Horno incluyendo debajo de la línea.", "proof": [{ "kind": "photo", "prompt": "The Oven station broken down and clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Souffle Station",
+      "role_es": "Estación de Soufflé",
+      "phase": "close",
+      "phase_label": "STATION BREAKDOWN",
+      "items": [
+        { "title": "Break down the Souffle station. All product into proper storage.", "title_es": "Desarma la Estación de Soufflé. Todo el producto a su lugar de guardado." },
+        { "title": "Wash, rinse and sanitize all Souffle food-contact surfaces.", "title_es": "Lava, enjuaga y sanitiza todas las superficies de contacto con comida de Soufflé." },
+        { "title": "Clean under and behind all Souffle equipment, not just the visible faces.", "title_es": "Limpia debajo y detrás de todo el equipo de Soufflé, no solo lo que se ve." },
+        { "title": "Clean and stow all Souffle smallwares, boards and containers.", "title_es": "Limpia y guarda todos los utensilios, tablas y recipientes de Soufflé." },
+        { "title": "Sweep and mop the Souffle floor including under the line.", "title_es": "Barre y trapea el piso de Soufflé incluyendo debajo de la línea.", "proof": [{ "kind": "photo", "prompt": "The Souffle station broken down and clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Griddle Station",
+      "role_es": "Estación de Plancha",
+      "phase": "close",
+      "phase_label": "STATION BREAKDOWN",
+      "items": [
+        { "title": "Break down the Griddle station. All product into proper storage.", "title_es": "Desarma la Estación de Plancha. Todo el producto a su lugar de guardado." },
+        { "title": "Wash, rinse and sanitize all Griddle food-contact surfaces.", "title_es": "Lava, enjuaga y sanitiza todas las superficies de contacto con comida de Plancha." },
+        { "title": "Clean under and behind all Griddle equipment, not just the visible faces.", "title_es": "Limpia debajo y detrás de todo el equipo de Plancha, no solo lo que se ve." },
+        { "title": "Clean and stow all Griddle smallwares, boards and containers.", "title_es": "Limpia y guarda todos los utensilios, tablas y recipientes de Plancha." },
+        { "title": "Sweep and mop the Griddle floor including under the line.", "title_es": "Barre y trapea el piso de Plancha incluyendo debajo de la línea.", "proof": [{ "kind": "photo", "prompt": "The Griddle station broken down and clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PM Prep",
+      "role_es": "Preparación PM",
+      "phase": "close",
+      "items": [
+        { "section": "LABELING & STORAGE", "title": "Everything going into storage is labeled, dated and covered. No exceptions.", "title_es": "Todo lo que se guarda va etiquetado, con fecha y tapado. Sin excepciones." },
+        { "section": "LABELING & STORAGE", "title": "Apply discard dates per the shelf life standard, not by guess.", "title_es": "Pon fechas de descarte según el estándar de vida útil, no al tanteo.", "detail": ["Standard: cold-held prepped food keeps 7 days, counting the prep day as day 1, at 41F or below."] },
+        { "section": "LABELING & STORAGE", "title": "Rotate FIFO as you put product away.", "title_es": "Rota FIFO mientras guardas el producto." },
+        { "section": "LABELING & STORAGE", "title": "Pull anything that will not survive to tomorrow and log it as waste.", "title_es": "Saca lo que no aguante hasta mañana y regístralo como merma." },
+        { "section": "LABELING & STORAGE", "title": "Photograph the walk-in shelves after everything is put away.", "title_es": "Toma foto de los estantes de la cámara fría ya con todo guardado.", "proof": [{ "kind": "photo", "prompt": "The walk-in shelves with everything put away" }] },
+        { "section": "EQUIPMENT SHUTDOWN", "title": "Shut down and clean every piece of production equipment per its procedure.", "title_es": "Apaga y limpia cada equipo de producción según su procedimiento." },
+        { "section": "EQUIPMENT SHUTDOWN", "title": "Vitamix and Robot Coupe cleaned, reassembled and stowed in their assigned spot.", "title_es": "Vitamix y Robot Coupe limpios, armados de nuevo y guardados en su lugar." },
+        { "section": "EQUIPMENT SHUTDOWN", "title": "All ovens, flat tops and fryers off.", "title_es": "Todos los hornos, planchas y freidoras apagados." },
+        { "section": "EQUIPMENT SHUTDOWN", "title": "All coolers and freezers closed and sealed.", "title_es": "Todos los refris y congeladores cerrados y sellados." },
+        { "section": "EQUIPMENT SHUTDOWN", "title": "Report any equipment that failed or ran wrong today. Name the unit.", "title_es": "Reporta cualquier equipo que falló o trabajó mal hoy. Di cuál unidad.", "proof": [{ "kind": "note", "prompt": "The unit and what went wrong" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PM Dish",
+      "role_es": "Lavaplatos PM",
+      "phase": "close",
+      "phase_label": "CLEANING",
+      "items": [
+        { "title": "Break down, clean and sanitize the dish and prep sinks.", "title_es": "Desarma, limpia y sanitiza los lavaderos de trastes y de prep." },
+        { "title": "Empty, clean and reline all trash and recycling. Take it out.", "title_es": "Vacía, limpia y pon bolsa nueva a toda la basura y reciclaje. Sácalos." },
+        { "title": "Clean the hood filters or confirm they are on the current rotation.", "title_es": "Limpia los filtros de la campana o confirma que están en la rotación actual." },
+        { "title": "Sweep and mop the entire kitchen floor including corners and under racks.", "title_es": "Barre y trapea todo el piso de la cocina incluyendo esquinas y debajo de los racks." },
+        { "title": "Confirm all chemicals are back in chemical storage, labeled, away from food.", "title_es": "Confirma que todos los químicos estén de vuelta en su almacén, etiquetados, lejos de la comida." },
+        { "title": "Photograph the kitchen floor, wide shot, lights on.", "title_es": "Toma foto del piso de la cocina, toma amplia, con las luces prendidas.", "proof": [{ "kind": "photo", "prompt": "The kitchen floor, wide shot, lights on" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Final check",
+      "role_es": "Chequeo Final",
+      "phase": "close",
+      "items": [
+        { "title": "Walk every station physically. Not from the office.", "title_es": "Camina cada estación en persona. No desde la oficina." },
+        { "title": "Spot check five random containers for correct labeling and dating.", "title_es": "Revisa al azar cinco recipientes para ver etiqueta y fecha correctas." },
+        { "title": "Record closing temps on all coolers and freezers.", "title_es": "Anota las temperaturas de cierre de todos los refris y congeladores.", "proof": [{ "kind": "note", "prompt": "The closing readings" }] },
+        { "title": "Note any missed task and who is correcting it tomorrow.", "title_es": "Anota cualquier tarea que faltó y quién la corrige mañana.", "proof": [{ "kind": "note", "prompt": "The missed task and who owns it tomorrow" }] },
+        { "title": "Sign off on the close.", "title_es": "Firma el cierre." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Egg Station",
+      "items": [
+        { "section": "MONDAY", "title": "Deep clean and detail drawers on egg station. Pull drawers and have them washed. Scrub inside fridge unit, sanitize, and dry before reassembling drawers.", "title_es": "Limpieza profunda y detalle de los cajones de la estación de huevos. Saca los cajones y que los laven. Talla el interior del refri, sanitiza y seca antes de volver a armar.", "proof": [{ "kind": "photo", "prompt": "The egg station drawers back in, fridge unit clean inside" }] },
+        { "section": "TUESDAY", "title": "Detail toaster. Wipe down cord, soak and scrub all removable parts, and detail outside of the toaster to remove any buildup and debris.", "title_es": "Detalla el tostador. Limpia el cable, remoja y talla todas las partes que se quitan, y detalla el exterior para quitar mugre y residuos.", "proof": [{ "kind": "photo", "prompt": "The toaster clean, parts back in place" }] },
+        { "section": "WEDNESDAY", "title": "Detail salamander inside and out. Degrease top of the salamander and soak racks and trays in degreaser overnight to remove buildup.", "title_es": "Detalla la salamandra por dentro y por fuera. Desengrasa la parte de arriba y remoja las parrillas y charolas en desengrasante toda la noche.", "proof": [{ "kind": "photo", "prompt": "The salamander clean inside and out" }] },
+        { "section": "THURSDAY", "title": "Detail handwashing sink on the line and make sure it is stocked with paper towels and hand soap.", "title_es": "Detalla el lavamanos de la línea y asegúrate de que tenga toallas de papel y jabón.", "proof": [{ "kind": "photo", "prompt": "The hand sink clean and stocked" }] },
+        { "section": "FRIDAY", "title": "Detail all cubby storage on the line, both trash cubbies and all cubby shelving. Wipe down with bleach solution and dry.", "title_es": "Detalla todas las cajoneras de la línea, las de basura y toda la estantería. Limpia con solución de cloro y seca.", "proof": [{ "kind": "photo", "prompt": "The cubby storage wiped down and dry" }] },
+        { "section": "SATURDAY", "title": "Detail station walls top to bottom and just to the right of the station to remove all grease, dust, and debris.", "title_es": "Detalla las paredes de la estación de arriba a abajo y a la derecha de la estación para quitar grasa, polvo y residuos.", "proof": [{ "kind": "photo", "prompt": "The station walls clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Oven Station",
+      "items": [
+        { "section": "MONDAY", "title": "Detail KitchenAid, waffle iron, and toaster. Remove all debris and buildup, soak parts as needed, and sanitize machines.", "title_es": "Detalla la KitchenAid, la wafflera y el tostador. Quita residuos y mugre, remoja las partes que haga falta y sanitiza las máquinas.", "proof": [{ "kind": "photo", "prompt": "The KitchenAid, waffle iron and toaster clean" }] },
+        { "section": "TUESDAY", "title": "Detail lowboy drawers. Pull drawers and have them washed. Scrub inside of the fridge unit, sanitize, and dry before reassembling drawers.", "title_es": "Detalla los cajones del lowboy. Saca los cajones y que los laven. Talla el interior del refri, sanitiza y seca antes de volver a armar.", "proof": [{ "kind": "photo", "prompt": "The lowboy drawers back in, fridge clean inside" }] },
+        { "section": "WEDNESDAY", "title": "Detail fryer and oven cabinets. Remove all items, wipe out with bleach solution, and reorganize items to station setup standard.", "title_es": "Detalla los gabinetes de la freidora y el horno. Saca todo, limpia con solución de cloro y reacomoda según el estándar de la estación.", "proof": [{ "kind": "photo", "prompt": "The fryer and oven cabinets clean and reorganized" }] },
+        { "section": "THURSDAY", "title": "Detail outside of the oven top to bottom. Degrease top of the oven to remove grease and dust buildup, wipe down outside of oven.", "title_es": "Detalla el exterior del horno de arriba a abajo. Desengrasa la parte de arriba para quitar grasa y polvo, limpia todo el exterior.", "proof": [{ "kind": "photo", "prompt": "The outside of the oven clean" }] },
+        { "section": "SATURDAY", "title": "Detail station walls and the tiles above the hoods to remove all grease, dust, and debris.", "title_es": "Detalla las paredes de la estación y los azulejos arriba de las campanas para quitar grasa, polvo y residuos.", "proof": [{ "kind": "photo", "prompt": "The station walls and tiles above the hood clean" }] },
+        { "section": "SUNDAY", "title": "Detail station shelving. Remove trays, plates, etc. Scrub down shelving and replace with new trays. Organize plates and other items according to station setup standard.", "title_es": "Detalla la estantería de la estación. Saca charolas, platos, etc. Talla la estantería y pon charolas nuevas. Organiza según el estándar de la estación.", "proof": [{ "kind": "photo", "prompt": "The station shelving clean and organized" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Souffle Station",
+      "items": [
+        { "section": "MONDAY", "title": "Detail copper coverings above the line to remove splatter and buildup.", "title_es": "Detalla las cubiertas de cobre arriba de la línea para quitar salpicaduras y mugre.", "proof": [{ "kind": "photo", "prompt": "The copper coverings clean" }] },
+        { "section": "WEDNESDAY", "title": "Detail lowboy drawers. Pull drawers and have them washed. Scrub inside of the fridge unit, sanitize, and dry before reassembling drawers.", "title_es": "Detalla los cajones del lowboy. Saca los cajones y que los laven. Talla el interior del refri, sanitiza y seca antes de volver a armar.", "proof": [{ "kind": "photo", "prompt": "The lowboy drawers back in, fridge clean inside" }] },
+        { "section": "THURSDAY", "title": "Detail walk-in doors, display doors inside and outside, main walk-in door inside and outside to remove any buildup.", "title_es": "Detalla las puertas de la cámara fría, las de display por dentro y fuera, y la puerta principal por dentro y fuera para quitar mugre.", "proof": [{ "kind": "photo", "prompt": "The walk-in doors clean inside and out" }] },
+        { "section": "FRIDAY", "title": "Detail expo cabinets inside and out. Organize as needed.", "title_es": "Detalla los gabinetes del expo por dentro y fuera. Organiza lo que haga falta.", "proof": [{ "kind": "photo", "prompt": "The expo cabinets clean and organized" }] },
+        { "section": "SATURDAY", "title": "Detail station walls and the tiles above the hoods to remove all grease, dust, and debris.", "title_es": "Detalla las paredes de la estación y los azulejos arriba de las campanas para quitar grasa, polvo y residuos.", "proof": [{ "kind": "photo", "prompt": "The station walls and tiles above the hood clean" }] },
+        { "section": "SUNDAY", "title": "Change out drip pans for the hoods. Empty drip pans, wash, and replace.", "title_es": "Cambia las charolas de goteo de las campanas. Vacíalas, lávalas y vuélvelas a poner.", "proof": [{ "kind": "photo", "prompt": "The hood drip pans clean and back in place" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Griddle Station",
+      "items": [
+        { "section": "TUESDAY", "title": "Detail and polish lights on expo pass.", "title_es": "Detalla y pule las luces del pase de expo.", "proof": [{ "kind": "photo", "prompt": "The expo pass lights clean and polished" }] },
+        { "section": "WEDNESDAY", "title": "Scrub floor drains on the line with bleach.", "title_es": "Talla las coladeras del piso de la línea con cloro.", "proof": [{ "kind": "photo", "prompt": "The line floor drains clean" }] },
+        { "section": "THURSDAY", "title": "Detail lowboy drawers. Pull drawers and have them washed. Scrub inside of the fridge unit, sanitize, and dry before reassembling drawers.", "title_es": "Detalla los cajones del lowboy. Saca los cajones y que los laven. Talla el interior del refri, sanitiza y seca antes de volver a armar.", "proof": [{ "kind": "photo", "prompt": "The lowboy drawers back in, fridge clean inside" }] },
+        { "section": "FRIDAY", "title": "Detail walk-in curtain. Wipe down each panel with sanitizer and dry to remove any buildup.", "title_es": "Detalla la cortina de la cámara fría. Limpia cada tira con sanitizante y seca para quitar mugre.", "proof": [{ "kind": "photo", "prompt": "The walk-in curtain panels clean" }] },
+        { "section": "SATURDAY", "title": "Detail station walls and the walls near the walk-in to remove all grease, dust, and debris.", "title_es": "Detalla las paredes de la estación y las paredes cerca de la cámara fría para quitar grasa, polvo y residuos.", "proof": [{ "kind": "photo", "prompt": "The station walls near the walk-in clean" }] },
+        { "section": "SUNDAY", "title": "Detail station shelving. Remove trays, plates, etc. Scrub down shelving and replace with new trays. Organize plates and other items according to station setup standard.", "title_es": "Detalla la estantería de la estación. Saca charolas, platos, etc. Talla la estantería y pon charolas nuevas. Organiza según el estándar de la estación.", "proof": [{ "kind": "photo", "prompt": "The station shelving clean and organized" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "AM Prep",
+      "items": [
+        { "section": "MONDAY", "title": "Detail small appliances: Vitamix, Robot Coupe, and immersion blender. Remove all food debris and buildup and sanitize all sides and parts.", "title_es": "Detalla los aparatos chicos: Vitamix, Robot Coupe y la licuadora de inmersión. Quita residuos y mugre y sanitiza todos los lados y partes.", "proof": [{ "kind": "photo", "prompt": "The small appliances clean and reassembled" }] },
+        { "section": "TUESDAY", "title": "Detail shelving across prep and the back line. Remove all items, scrub and sanitize shelves, and reorganize and consolidate items according to storage standard photos.", "title_es": "Detalla la estantería de prep y la línea de atrás. Saca todo, talla y sanitiza los estantes, y reorganiza según las fotos del estándar de guardado.", "proof": [{ "kind": "photo", "prompt": "The prep and back line shelving clean and organized" }] },
+        { "section": "WEDNESDAY", "title": "Detail flour bins. Lids and scoops washed and dried, outside of bins scrubbed and sanitized to remove buildup.", "title_es": "Detalla los botes de harina. Lava y seca tapas y cucharones, talla y sanitiza el exterior de los botes.", "proof": [{ "kind": "photo", "prompt": "The flour bins clean inside and out" }] },
+        { "section": "THURSDAY", "title": "Detail walls in prep area to remove all grease, dust, and debris.", "title_es": "Detalla las paredes del área de prep para quitar grasa, polvo y residuos.", "proof": [{ "kind": "photo", "prompt": "The prep area walls clean" }] },
+        { "section": "FRIDAY", "title": "Detail speed rack in prep area.", "title_es": "Detalla el speed rack del área de prep.", "proof": [{ "kind": "photo", "prompt": "The prep speed rack clean" }] },
+        { "section": "SATURDAY", "title": "Detail ice machine. Clean filters, wipe and polish outside, and clean walls.", "title_es": "Detalla la máquina de hielo. Limpia filtros, limpia y pule el exterior, y limpia las paredes.", "proof": [{ "kind": "photo", "prompt": "The ice machine clean, filters done" }] },
+        { "section": "SUNDAY", "title": "Detail dry storage. Remove items, run shelving through dish and dry before putting back together. Wipe down walls. Reorganize dry storage according to storage standards.", "title_es": "Detalla el almacén seco. Saca todo, pasa la estantería por el lavado y sécala antes de armar. Limpia las paredes. Reorganiza según los estándares de guardado.", "proof": [{ "kind": "photo", "prompt": "Dry storage shelves cleared then restocked" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "PM Prep",
+      "items": [
+        { "section": "MONDAY", "title": "Oven detail, inside. Degrease and scrub inside of ovens to remove buildup. Soak oven racks in degreaser overnight.", "title_es": "Detalle del horno por dentro. Desengrasa y talla el interior de los hornos para quitar mugre. Remoja las parrillas en desengrasante toda la noche.", "proof": [{ "kind": "photo", "prompt": "The inside of the ovens clean" }] },
+        { "section": "TUESDAY", "title": "Detail floor drains throughout back kitchen. Scrub all parts and bleach.", "title_es": "Detalla las coladeras del piso por toda la cocina de atrás. Talla todas las partes y echa cloro.", "proof": [{ "kind": "photo", "prompt": "The back kitchen floor drains clean" }] },
+        { "section": "WEDNESDAY", "title": "Detail 3 compartment sink. Scrub and sanitize inside and outside of the 3 compartment sink including legs and pipes.", "title_es": "Detalla el lavadero de 3 compartimentos. Talla y sanitiza por dentro y por fuera, incluyendo patas y tuberías.", "proof": [{ "kind": "photo", "prompt": "The 3 compartment sink clean, legs and pipes" }] },
+        { "section": "THURSDAY", "title": "Detail walk-in floors. Sweep, squeegee, and mop corner to corner to remove all food debris and staining.", "title_es": "Detalla el piso de la cámara fría. Barre, pasa el jalador y trapea de esquina a esquina para quitar residuos y manchas.", "proof": [{ "kind": "photo", "prompt": "The walk-in floor clean corner to corner" }] },
+        { "section": "FRIDAY", "title": "Detail front wire rack display in the walk-in. Scrub down shelves and organize product. Detail doors and frame.", "title_es": "Detalla el rack de alambre del frente en la cámara fría. Talla los estantes y organiza el producto. Detalla puertas y marco.", "proof": [{ "kind": "photo", "prompt": "The walk-in wire rack clean and organized" }] },
+        { "section": "SATURDAY", "title": "Detail mop sink and organize.", "title_es": "Detalla el lavadero de trapeadores y organiza.", "proof": [{ "kind": "photo", "prompt": "The mop sink clean and organized" }] },
+        { "section": "SUNDAY", "title": "Detail speed rack in walk-in.", "title_es": "Detalla el speed rack de la cámara fría.", "proof": [{ "kind": "photo", "prompt": "The walk-in speed rack clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "AM Dish",
+      "items": [
+        { "section": "MONDAY", "title": "Detail handwashing sink in back kitchen and make sure it is stocked with hand soap and paper towels.", "title_es": "Detalla el lavamanos de la cocina de atrás y asegúrate de que tenga jabón y toallas de papel.", "proof": [{ "kind": "photo", "prompt": "The back kitchen hand sink clean and stocked" }] },
+        { "section": "TUESDAY", "title": "Detail dishpit shelving. Remove all items, scrub and sanitize shelves, and reorganize items according to storage standards.", "title_es": "Detalla la estantería del lavaloza. Saca todo, talla y sanitiza los estantes, y reorganiza según los estándares de guardado.", "proof": [{ "kind": "photo", "prompt": "The dishpit shelving clean and organized" }] },
+        { "section": "WEDNESDAY", "title": "Organize and consolidate chemicals and cleaning supplies on storage rack. Organize chemicals in storage downstairs, remove from boxes, organize by type, and ensure proper storage.", "title_es": "Organiza y consolida los químicos y artículos de limpieza en el rack. Organiza los químicos del almacén de abajo, sácalos de las cajas, ordénalos por tipo y guárdalos bien.", "proof": [{ "kind": "photo", "prompt": "The chemical storage organized by type" }] },
+        { "section": "THURSDAY", "title": "Wash milk crates being used for lid storage, organize lids according to size. Organize lexans and hotel pans.", "title_es": "Lava las cajas de leche que se usan para guardar tapas, ordena las tapas por tamaño. Organiza los lexans y las charolas hotel.", "proof": [{ "kind": "photo", "prompt": "The lids and lexans organized" }] },
+        { "section": "FRIDAY", "title": "Organize downstairs storage. Sweep up floor debris, move pallets to the dumpster area.", "title_es": "Organiza el almacén de abajo. Barre los residuos del piso, lleva las tarimas al área del contenedor.", "proof": [{ "kind": "photo", "prompt": "Downstairs storage swept and organized" }] },
+        { "section": "SUNDAY", "title": "Detail table legs under dish pit to remove any buildup and debris.", "title_es": "Detalla las patas de las mesas debajo del lavaloza para quitar mugre y residuos.", "proof": [{ "kind": "photo", "prompt": "The dishpit table legs clean" }] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "PM Dish",
+      "items": [
+        { "section": "MONDAY", "title": "De-lime steam wells, bring to a simmer, remove liquid, and wipe out buildup. Detail outside of units to remove any food debris.", "title_es": "Quita el sarro de los baños María, hazlos hervir suave, saca el líquido y limpia la mugre. Detalla el exterior para quitar residuos.", "proof": [{ "kind": "photo", "prompt": "The steam wells de-limed and clean" }] },
+        { "section": "TUESDAY", "title": "Detail dishpit. Wipe down all chemical dispensers, walls, and counters top to bottom.", "title_es": "Detalla el lavaloza. Limpia todos los dispensadores de químicos, paredes y mesas de arriba a abajo.", "proof": [{ "kind": "photo", "prompt": "The dishpit dispensers, walls and counters clean" }] },
+        { "section": "WEDNESDAY", "title": "Detail dishwasher inside and out. Scrub and sanitize exterior top to bottom. Degrease and scrub top of the machine to remove debris and dust buildup. Clean all filters and traps.", "title_es": "Detalla la lavalozas por dentro y por fuera. Talla y sanitiza el exterior de arriba a abajo. Desengrasa la parte de arriba. Limpia todos los filtros y trampas.", "proof": [{ "kind": "photo", "prompt": "The dish machine clean, filters and traps done" }] },
+        { "section": "THURSDAY", "title": "Wash walk-in shelving to remove food debris and buildup. Reassemble shelving and organize according to walk-in organization standard.", "title_es": "Lava la estantería de la cámara fría para quitar residuos y mugre. Arma de nuevo y organiza según el estándar de la cámara.", "proof": [{ "kind": "photo", "prompt": "The walk-in shelving clean and organized" }] },
+        { "section": "FRIDAY", "title": "Wash all trash cans, leave to dry overnight.", "title_es": "Lava todos los botes de basura, déjalos secar toda la noche.", "proof": [{ "kind": "photo", "prompt": "The trash cans washed and drying" }] },
+        { "section": "SATURDAY", "title": "Detail walk-in walls. Scrub, sanitize, and dry walls to remove food debris and buildup.", "title_es": "Detalla las paredes de la cámara fría. Talla, sanitiza y seca para quitar residuos y mugre.", "proof": [{ "kind": "photo", "prompt": "The walk-in walls clean" }] },
+        { "section": "SUNDAY", "title": "Bleach cutting boards overnight.", "title_es": "Deja las tablas de cortar en cloro toda la noche.", "proof": [{ "kind": "photo", "prompt": "The cutting boards soaking in bleach" }] },
+        { "section": "SUNDAY", "title": "Detail dunnage racks and equipment shelves. Remove all items, wash racks, scrub and sanitize shelves, and reorganize equipment according to storage standards.", "title_es": "Detalla las tarimas y los estantes de equipo. Saca todo, lava las tarimas, talla y sanitiza los estantes y reorganiza el equipo según los estándares.", "proof": [{ "kind": "photo", "prompt": "The dunnage racks and equipment shelves clean and organized" }] }
+      ]
+    }
+  ]
+}

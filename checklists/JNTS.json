@@ -680,6 +680,9 @@
               "kind": "photo",
               "prompt": "The drain and lid scrubbed and sanitized, no buildup"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         },
         {
@@ -696,6 +699,9 @@
               "kind": "photo",
               "prompt": "Under and the face of the cafe bar wiped, sections back in order"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         },
         {
@@ -710,6 +716,9 @@
               "kind": "photo",
               "prompt": "The cafe back bar cleared around dino and wiped down"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         },
         {
@@ -723,6 +732,9 @@
               "kind": "photo",
               "prompt": "Table bases and benches scrubbed clean"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         },
         {
@@ -737,6 +749,9 @@
               "kind": "photo",
               "prompt": "The cafe fridges emptied, sanitized and restocked"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         },
         {
@@ -753,6 +768,9 @@
               "kind": "photo",
               "prompt": "Table bases, chair legs and bench bases scrubbed, nothing black left on the brush"
             }
+          ],
+          "days": [
+            "TUESDAY"
           ]
         }
       ]
@@ -775,6 +793,9 @@
               "kind": "photo",
               "prompt": "The well, wine and back bar fridges and the freezer cleaned out and reorganized"
             }
+          ],
+          "days": [
+            "WEDNESDAY"
           ]
         },
         {
@@ -790,6 +811,9 @@
               "kind": "photo",
               "prompt": "The bar edges and molding scrubbed, stools and bases wiped down"
             }
+          ],
+          "days": [
+            "WEDNESDAY"
           ]
         },
         {
@@ -800,6 +824,9 @@
               "kind": "photo",
               "prompt": "The honey comb wall dusted and reorganized"
             }
+          ],
+          "days": [
+            "WEDNESDAY"
           ]
         },
         {
@@ -816,6 +843,9 @@
               "kind": "photo",
               "prompt": "The back bar counters wiped, bottles cleaned and reorganized"
             }
+          ],
+          "days": [
+            "WEDNESDAY"
           ]
         },
         {
@@ -832,6 +862,9 @@
               "kind": "photo",
               "prompt": "Under the Curtis brewer cleaned, stainless wiped, everything back in order"
             }
+          ],
+          "days": [
+            "WEDNESDAY"
           ]
         }
       ]

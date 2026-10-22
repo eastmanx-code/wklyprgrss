@@ -93,7 +93,7 @@ Photos are not optional and are not something to add later.
 }
 ```
 
-Fields per item: `title` (required), `title_es`, `section`, `days` (array of weekday names), `detail` (array of strings), `proof` (array of `{kind, prompt}`; kinds are `photo`, `video`, `note`).
+Fields per item: `title` (required), `title_es`, `section`, `days` (array of weekday names), `detail` (array of strings), `proof` (array of `{kind, prompt}`; kinds are `photo`, `video`, `note`), `reference` (array of `{caption, path}` showing what right looks like; a slot with `path: null` is a placeholder a manager fills in later, the way a station layout photo gets taped up once it exists).
 
 Fields per list: `house`, `role`, `role_es`, `phase`, `room`, `phase_label`, `items`.
 
