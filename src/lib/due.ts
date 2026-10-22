@@ -65,17 +65,35 @@ export function weekdayOfNight(night: string): number | null {
 }
 
 /**
- * Is an item with this heading due on this night?
+ * Is this item due on this night?
  *
- * True for everything that is not filed under a weekday, which is almost
- * everything. An unreadable night is treated as "due", because a list that
- * shows too much is recoverable and a list that quietly hides tonight's job
- * is not.
+ * Two ways an item can be tied to particular nights, checked in order:
+ *
+ * 1. An explicit `days` set. This names the weekdays the item is owed, and it
+ *    can name more than one — a SERVER list that only runs Friday and Saturday,
+ *    or the four bar-close jobs handed to that server, which stay on bar close
+ *    the other five nights. A heading on the item is ignored while a day set is
+ *    present; the set is the schedule.
+ * 2. A heading that is itself a weekday (the deep clean rota). One item a night,
+ *    the heading names which.
+ *
+ * True for everything with neither, which is almost everything. An unreadable
+ * night is treated as "due", because a list that shows too much is recoverable
+ * and a list that quietly hides tonight's job is not.
  */
 export function dueOnNight(
   section: string | null | undefined,
   night: string,
+  days?: readonly (string | null | undefined)[] | null,
 ): boolean {
+  if (days && days.length > 0) {
+    const tonight = weekdayOfNight(night);
+    if (tonight === null) return true;
+    // Each entry is read the same forgiving way as a heading, so FRIDAY,
+    // Friday and "friday" all land. An entry that is not a weekday name is no
+    // night and matches nothing.
+    return days.some((d) => dayOfSection(d) === tonight);
+  }
   const day = dayOfSection(section);
   if (day === null) return true;
   const tonight = weekdayOfNight(night);

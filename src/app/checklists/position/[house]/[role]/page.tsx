@@ -28,6 +28,8 @@ type Row = {
   role: string;
   role_es: string | null;
   phase: Phase;
+  /** A venue's own word for this list in place of the phase, e.g. PRE CLOSE. */
+  phase_label: string | null;
   /** Set where this position runs one list per room rather than per phase. */
   room: string | null;
 };
@@ -56,7 +58,7 @@ export default async function PositionPage({
 
   const { data } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, room")
+    .select("id, house, role, role_es, phase, phase_label, room")
     .eq("venue_id", venue)
     .eq("house", house)
     .eq("active", true);
@@ -192,9 +194,12 @@ export default async function PositionPage({
               }`}
             >
               <span className="text-body tracking-[0.08em]">
-                {/* A room is a place and reads the same in both languages. */}
+                {/* A room, or a venue's own label, reads the same in both
+                    languages; the phase name is the one that translates. */}
                 {list.room?.trim() ? (
                   list.room
+                ) : list.phase_label?.trim() ? (
+                  list.phase_label
                 ) : (
                   <T en={phaseName(list.phase)} es={PHASE_ES[list.phase]} />
                 )}

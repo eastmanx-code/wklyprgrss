@@ -442,7 +442,7 @@ export async function listDetail(
   const [{ data: itemRows }, { data: nightRow }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, position, title, section, proof")
+      .select("id, position, title, section, days, proof")
       .eq("checklist_id", checklistId)
       .eq("active", true)
       .order("position"),
@@ -461,6 +461,7 @@ export async function listDetail(
     position: number;
     title: string;
     section: string | null;
+    days: string[] | null;
     proof: { kind: "photo" | "video" | "note" }[] | null;
   }[];
 
@@ -529,6 +530,7 @@ export async function listDetail(
     id: string;
     title: string;
     section: string | null;
+    days: string[] | null;
     proof: { kind: "photo" | "video" | "note" }[] | null;
     ticked: boolean;
     initials: string | null;
@@ -538,6 +540,7 @@ export async function listDetail(
         id: i.item_id,
         title: i.title,
         section: i.section,
+        days: i.days ?? null,
         proof: (i.proof ?? null) as
           | { kind: "photo" | "video" | "note" }[]
           | null,
@@ -551,6 +554,7 @@ export async function listDetail(
           id: item.id,
           title: item.title,
           section: item.section,
+          days: item.days,
           proof: item.proof,
           ticked: Boolean(tick),
           initials: tick?.initials?.trim() || null,
@@ -571,7 +575,7 @@ export async function listDetail(
      * getting ahead is still credited. Only the ones nobody was asked for and
      * nobody did drop out.
      */
-    .filter((item) => dueOnNight(item.section, night) || item.ticked)
+    .filter((item) => dueOnNight(item.section, night, item.days) || item.ticked)
     .map((item) => ({
       id: item.id,
       title: item.title,
@@ -677,7 +681,7 @@ export async function nightTrend(
   const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
     db()
       .from("close_items")
-      .select("id, checklist_id, section")
+      .select("id, checklist_id, section, days")
       .in("checklist_id", ids)
       .eq("active", true),
     db()
@@ -692,6 +696,7 @@ export async function nightTrend(
     id: string;
     checklist_id: string;
     section: string | null;
+    days: string[] | null;
   }[];
   const nights = (nightRows ?? []) as {
     id: string;
@@ -736,7 +741,7 @@ export async function nightTrend(
     Array.isArray(row.open_at_signing)
       ? row.open_at_signing.length === 0
       : (itemsOf.get(row.checklist_id) ?? [])
-          .filter((item) => dueOnNight(item.section, row.night))
+          .filter((item) => dueOnNight(item.section, row.night, item.days))
           .every((item) => ticked.has(`${row.id}:${item.id}`));
 
   // Every list that exists is owed every night in the window. A night nobody

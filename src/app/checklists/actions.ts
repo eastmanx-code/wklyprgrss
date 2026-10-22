@@ -350,7 +350,7 @@ export async function recordCapture(
 async function listAtSigning(checklistId: string, nightRow: string) {
   const { data: items } = await db()
     .from("close_items")
-    .select("id, position, title, detail, proof, section")
+    .select("id, position, title, detail, proof, section, days")
     .eq("checklist_id", checklistId)
     .eq("active", true)
     .order("position");
@@ -378,6 +378,7 @@ async function listAtSigning(checklistId: string, nightRow: string) {
       detail: string[];
       proof: unknown;
       section: string | null;
+      days: string[] | null;
     }[]
   ).map((item) => {
     const t = tick.get(item.id);
@@ -388,6 +389,7 @@ async function listAtSigning(checklistId: string, nightRow: string) {
       detail: item.detail,
       proof: item.proof,
       section: item.section,
+      days: item.days,
       ticked: Boolean(t),
       initials: t?.initials ?? null,
       ticked_at: t?.created_at ?? null,
@@ -450,7 +452,9 @@ export async function certifyNight(
   // Judged on what is actually due tonight, not the whole list: a weekday
   // deep clean owes one day's item, and the rest are not failures.
   const nightDate = await activeNight(list.id);
-  const dueFrozen = frozen.filter((i) => dueOnNight(i.section, nightDate));
+  const dueFrozen = frozen.filter((i) =>
+    dueOnNight(i.section, nightDate, i.days),
+  );
   const tickedDue = dueFrozen.filter((i) => i.ticked).length;
   const leftOpenCount = Array.isArray(leftOpen) ? leftOpen.length : 0;
   if (dueFrozen.length === 0) {

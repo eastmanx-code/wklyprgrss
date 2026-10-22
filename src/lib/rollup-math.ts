@@ -146,18 +146,22 @@ export type ItemRow = {
    * whole score down for running the list correctly.
    */
   section?: string | null;
+  /** The weekdays this item is owed, when it runs only on some. Empty or
+      absent means every night. Takes precedence over a weekday heading. */
+  days?: string[] | null;
 };
 /**
  * One line of a night's frozen list, as much of it as the rollup needs.
  *
  * certifyNight snapshots the whole list at the signature; the loader hands
- * over just the id, the name it went by that night, its rota heading, and
- * whether it was ticked.
+ * over just the id, the name it went by that night, its rota heading, the
+ * days it was owed, and whether it was ticked.
  */
 export type SignedItem = {
   item_id: string;
   title?: string | null;
   section?: string | null;
+  days?: string[] | null;
   ticked: boolean;
 };
 export type NightRow = {
@@ -222,6 +226,7 @@ function presentOn(
           checklist_id: list.id,
           title: s.title ?? "",
           section: s.section ?? null,
+          days: s.days ?? null,
         },
         night,
       ),
