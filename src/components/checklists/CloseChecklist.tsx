@@ -172,7 +172,8 @@ export function CloseChecklist({
    * one place a person can see what is coming, and somebody who gets ahead on
    * tomorrow's should be able to tick it.
    */
-  const isDue = (item: CloseItem) => dueOnNight(item.section, night);
+  const isDue = (item: CloseItem) =>
+    dueOnNight(item.section, night, item.days);
   const dueItems = items.filter(isDue);
   const CLOSE_TOTAL = dueItems.length;
   // The list arrived with no rows on it. On a phone that means the page did
@@ -1814,7 +1815,13 @@ export function CloseChecklist({
            * six things left undone.
            */
           const sectionDay = dayOfSection(item.section);
-          const notTonight = sectionDay !== null && !isDue(item);
+          // Scheduled to specific nights either way — by a weekday heading, or
+          // by an explicit day set (the server list, the handed-off bar jobs).
+          // A scheduled item that is not tonight's greys out rather than
+          // reading as undone, the same as the deep clean rota always has.
+          const dayScoped =
+            sectionDay !== null || Boolean(item.days && item.days.length > 0);
+          const notTonight = dayScoped && !isDue(item);
 
           return (
             <li

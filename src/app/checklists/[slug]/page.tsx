@@ -31,6 +31,7 @@ type Row = {
   proof: Shot[] | null;
   reference: Reference[] | null;
   section: string | null;
+  days: string[] | null;
 };
 
 /** One checklist, off the clipboard — read from the table, night and all. */
@@ -54,7 +55,7 @@ export default async function ChecklistPage({
   // back first. A venue has a handful of lists.
   const { data: listRows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, room, carry_initials")
+    .select("id, house, role, role_es, phase, phase_label, room, carry_initials")
     .eq("venue_id", venue)
     .eq("active", true);
 
@@ -68,6 +69,7 @@ export default async function ChecklistPage({
       role: string;
       role_es: string | null;
       phase: Phase;
+      phase_label: string | null;
       room: string | null;
       carry_initials: boolean;
     }[],
@@ -77,7 +79,9 @@ export default async function ChecklistPage({
 
   const { data: itemRows } = await db()
     .from("close_items")
-    .select("id, position, title, title_es, detail, proof, reference, section")
+    .select(
+      "id, position, title, title_es, detail, proof, reference, section, days",
+    )
     .eq("checklist_id", list.id)
     .eq("active", true)
     .order("position");
@@ -88,6 +92,7 @@ export default async function ChecklistPage({
     id: row.id,
     number: row.position,
     section: row.section,
+    days: row.days,
     title: row.title,
     titleEs: row.title_es,
     detail: row.detail ?? [],
@@ -188,6 +193,11 @@ export default async function ChecklistPage({
         <h1 className="text-metric mt-2 font-medium">
           {list.room?.trim() ? (
             list.room
+          ) : list.phase_label?.trim() ? (
+            // A venue's own word for this list in place of the phase, e.g. a
+            // cafe mid list the crew knows as PRE CLOSE. Shown as written in
+            // both languages, the same as a room.
+            list.phase_label
           ) : (
             <T
               en={`${phaseName(list.phase)} checklist`}

@@ -44,6 +44,15 @@ if (!code || !Array.isArray(doc.lists) || doc.lists.length === 0) {
 const HOUSES = new Set(["FOH", "HOH"]);
 const PHASES = new Set(["open", "mid", "close"]);
 const KINDS = new Set(["photo", "video", "note"]);
+const WEEKDAYS = new Set([
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+]);
 
 /** Refuse a file that would load half and then fail. */
 function check() {
@@ -53,6 +62,8 @@ function check() {
     if (!HOUSES.has(list.house)) throw new Error(`${where}: house must be FOH or HOH`);
     if (!PHASES.has(list.phase)) throw new Error(`${where}: phase must be open, mid or close`);
     if (!list.role?.trim()) throw new Error(`${where}: role is required`);
+    if (list.phase_label !== undefined && list.phase_label !== null && !String(list.phase_label).trim())
+      throw new Error(`${where}: phase_label is set but empty`);
     const key = `${list.house}|${list.role.trim().toLowerCase()}|${list.phase}|${(list.room ?? "").trim().toLowerCase()}`;
     if (seen.has(key)) throw new Error(`${where}: listed twice`);
     seen.add(key);
@@ -64,10 +75,20 @@ function check() {
       const t = item.title.trim().toLowerCase();
       if (titles.has(t)) throw new Error(`${where}: item ${i + 1} repeats a title, and titles are how items are matched`);
       titles.add(t);
+      for (const day of item.days ?? []) {
+        if (!WEEKDAYS.has(String(day).trim().toUpperCase()))
+          throw new Error(
+            `${where}: item ${i + 1} has an unknown day "${day}" — use MONDAY through SUNDAY`,
+          );
+      }
       for (const shot of item.proof ?? []) {
         if (!KINDS.has(shot.kind)) throw new Error(`${where}: item ${i + 1} proof kind must be photo, video or note`);
         if (!shot.prompt?.trim() || shot.prompt === "TODO")
           throw new Error(`${where}: item ${i + 1} proof needs a prompt saying what it has to show`);
+      }
+      for (const ref of item.reference ?? []) {
+        if (!ref.caption?.trim())
+          throw new Error(`${where}: item ${i + 1} reference needs a caption saying what right looks like`);
       }
     });
   }
@@ -87,13 +108,14 @@ function listSql(list) {
   const room = list.room?.trim() || null;
   const match = `venue_id = (select id from venues where code = ${q(code)}) and house = ${q(list.house)} and lower(role) = lower(${q(list.role.trim())}) and phase = ${q(list.phase)} and coalesce(lower(room), '') = ${q((room ?? "").toLowerCase())}`;
   const out = [];
+  const phaseLabel = list.phase_label?.trim() || null;
   out.push(
-    `insert into close_checklists (venue_id, house, role, role_es, phase, room)
-select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(room)}
+    `insert into close_checklists (venue_id, house, role, role_es, phase, phase_label, room)
+select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(phaseLabel)}, ${qn(room)}
 where not exists (select 1 from close_checklists where ${match});`,
   );
   out.push(
-    `update close_checklists set role_es = ${qn(list.role_es)}, active = true where ${match};`,
+    `update close_checklists set role_es = ${qn(list.role_es)}, phase_label = ${qn(phaseLabel)}, active = true where ${match};`,
   );
   list.items.forEach((item, i) => {
     const title = item.title.trim();
@@ -101,14 +123,15 @@ where not exists (select 1 from close_checklists where ${match});`,
       position: i + 1,
       section: item.section?.trim() || null,
       title_es: item.title_es?.trim() || null,
+      days: (item.days ?? []).map((d) => String(d).trim().toUpperCase()),
     };
     out.push(
-      `update close_items set position = ${cols.position}, section = ${qn(cols.section)}, title_es = ${qn(cols.title_es)}, detail = ${textArray(item.detail)}, proof = ${jsonb(item.proof ?? [])}, active = true
+      `update close_items set position = ${cols.position}, section = ${qn(cols.section)}, title_es = ${qn(cols.title_es)}, detail = ${textArray(item.detail)}, days = ${textArray(cols.days)}, proof = ${jsonb(item.proof ?? [])}, reference = ${jsonb(item.reference ?? [])}, active = true
 where checklist_id = (select id from close_checklists where ${match}) and lower(title) = lower(${q(title)});`,
     );
     out.push(
-      `insert into close_items (checklist_id, position, title, title_es, section, detail, proof)
-select (select id from close_checklists where ${match}), ${cols.position}, ${q(title)}, ${qn(cols.title_es)}, ${qn(cols.section)}, ${textArray(item.detail)}, ${jsonb(item.proof ?? [])}
+      `insert into close_items (checklist_id, position, title, title_es, section, detail, days, proof, reference)
+select (select id from close_checklists where ${match}), ${cols.position}, ${q(title)}, ${qn(cols.title_es)}, ${qn(cols.section)}, ${textArray(item.detail)}, ${textArray(cols.days)}, ${jsonb(item.proof ?? [])}, ${jsonb(item.reference ?? [])}
 where not exists (select 1 from close_items where checklist_id = (select id from close_checklists where ${match}) and lower(title) = lower(${q(title)}));`,
     );
   });
@@ -171,10 +194,11 @@ for (const list of doc.lists) {
   let found = (lists ?? []).find(
     (row) => (row.room ?? "").trim().toLowerCase() === (room ?? "").toLowerCase(),
   );
+  const phaseLabel = list.phase_label?.trim() || null;
   if (found) {
     const { error } = await db
       .from("close_checklists")
-      .update({ role_es: list.role_es ?? null, active: true })
+      .update({ role_es: list.role_es ?? null, phase_label: phaseLabel, active: true })
       .eq("id", found.id);
     if (error) fail(where, error);
   } else {
@@ -186,6 +210,7 @@ for (const list of doc.lists) {
         role: list.role.trim(),
         role_es: list.role_es ?? null,
         phase: list.phase,
+        phase_label: phaseLabel,
         room,
       })
       .select("id")
@@ -211,7 +236,9 @@ for (const list of doc.lists) {
       section: item.section?.trim() || null,
       title_es: item.title_es?.trim() || null,
       detail: item.detail ?? [],
+      days: (item.days ?? []).map((d) => String(d).trim().toUpperCase()),
       proof: item.proof ?? [],
+      reference: item.reference ?? [],
       active: true,
     };
     const id = byTitle.get(title.toLowerCase());

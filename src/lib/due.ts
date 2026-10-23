@@ -30,6 +30,10 @@
  * A heading may name more than one weekday and may pin them to weeks of the
  * month. With no ordinal it is every one of those weekdays; with an ordinal it
  * is only those occurrences.
+ *
+ * A caller may also hand dueOnNight an explicit list of weekdays instead of
+ * leaning on the heading, for a list or an item that runs only on named
+ * nights. That list wins over any heading when it is given.
  */
 
 /** Weekday words, long and short, singular and plural, to a day index. */
@@ -152,21 +156,35 @@ function occurrenceInMonth(night: string): { nth: number; isLast: boolean } | nu
 }
 
 /**
- * Is an item with this heading due on this night?
+ * Is an item due on this night?
  *
- * True for everything that is not a schedule, which is almost everything. A
- * scheduled item is due only on a weekday it names, and when the heading pins
- * weeks of the month, only on those occurrences. An unreadable night is
- * treated as "due", because a list that shows too much is recoverable and a
- * list that quietly hides tonight's job is not.
+ * Two ways an item can be tied to particular nights, checked in order:
+ *
+ * 1. An explicit `days` list handed in by the caller. It names every weekday
+ *    the item is owed and can name more than one, for a list or item that runs
+ *    only on certain nights. A heading on the item is ignored while the list is
+ *    present; the list is the schedule. Each entry reads the same forgiving way
+ *    as a heading, so FRIDAY, Friday and "friday" all land, and an entry that
+ *    is not a weekday matches nothing.
+ * 2. The item's heading. A weekday, several weekdays, or weekdays pinned to
+ *    weeks of the month, parsed above.
+ *
+ * True for everything with neither, which is almost everything. An unreadable
+ * night is treated as "due", because a list that shows too much is recoverable
+ * and a list that quietly hides tonight's job is not.
  */
 export function dueOnNight(
   section: string | null | undefined,
   night: string,
+  days?: readonly (string | null | undefined)[] | null,
 ): boolean {
+  const tonight = weekdayOfNight(night);
+  if (days && days.length > 0) {
+    if (tonight === null) return true;
+    return days.some((d) => dayOfSection(d) === tonight);
+  }
   const schedule = parseSchedule(section);
   if (!schedule) return true;
-  const tonight = weekdayOfNight(night);
   if (tonight === null) return true;
   if (!schedule.days.has(tonight)) return false;
   if (schedule.ordinals.size === 0) return true;
