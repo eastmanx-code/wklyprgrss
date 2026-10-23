@@ -114,5 +114,50 @@ is("an empty list does not", hasDayScheduling([]), false);
 // which days those belong to, it behaves like every other list.
 is("YB sidework does not schedule", hasDayScheduling([null, null, null]), false);
 
+// ------------------------------------------ more than one day, weeks of month
+
+// Multi-day, every week. The to-go condiments run Tuesday, Friday, Saturday.
+is("multi-day due Tuesday", dueOnNight("TUESDAY AND FRIDAY AND SATURDAY", "2026-10-06"), true);
+is("multi-day due Friday", dueOnNight("TUESDAY AND FRIDAY AND SATURDAY", "2026-10-09"), true);
+is("multi-day due Saturday", dueOnNight("TUESDAY AND FRIDAY AND SATURDAY", "2026-10-10"), true);
+is("multi-day skips Monday", dueOnNight("TUESDAY AND FRIDAY AND SATURDAY", "2026-10-05"), false);
+is("multi-day skips Wednesday", dueOnNight("TUESDAY AND FRIDAY AND SATURDAY", "2026-10-07"), false);
+
+// Short day words and a slash delimiter read the same.
+is("WED AND SUN due Wednesday", dueOnNight("WED AND SUN", "2026-10-07"), true);
+is("WED/SUN due Sunday", dueOnNight("WED/SUN", "2026-10-11"), true);
+is("WED/SUN skips Monday", dueOnNight("WED/SUN", "2026-10-05"), false);
+
+// Monthly. The bar's compartment clean is the first and third Mondays only.
+// October 2026 Mondays: 5th is the 1st, 12th the 2nd, 19th the 3rd, 26th the 4th.
+is("first and third due 1st Monday", dueOnNight("FIRST AND THIRD MONDAYS", "2026-10-05"), true);
+is("first and third due 3rd Monday", dueOnNight("FIRST AND THIRD MONDAYS", "2026-10-19"), true);
+is("first and third skips 2nd Monday", dueOnNight("FIRST AND THIRD MONDAYS", "2026-10-12"), false);
+is("first and third skips 4th Monday", dueOnNight("FIRST AND THIRD MONDAYS", "2026-10-26"), false);
+is("first and third skips Tuesday", dueOnNight("FIRST AND THIRD MONDAYS", "2026-10-06"), false);
+is("of the month is just a connector", dueOnNight("FIRST AND THIRD MONDAYS OF THE MONTH", "2026-10-05"), true);
+
+// The last occurrence, where a fifth one exists. October 2026 Fridays run to
+// the 30th, which is the fifth and the last.
+is("last Friday due on the fifth", dueOnNight("LAST FRIDAY", "2026-10-30"), true);
+is("last Friday skips the fourth", dueOnNight("LAST FRIDAY", "2026-10-23"), false);
+
+// A single ordinal. October 2026 second Tuesday is the 13th.
+is("second Tuesday due", dueOnNight("SECOND TUESDAY", "2026-10-13"), true);
+is("second Tuesday skips the first", dueOnNight("SECOND TUESDAY", "2026-10-06"), false);
+
+// A grouping that merely contains an ordinal word is still a grouping.
+is("WELL 2 is not a schedule", dueOnNight("WELL 2", "2026-10-05"), true);
+is("SECOND SEATING is not a schedule", dueOnNight("SECOND SEATING", "2026-10-05"), true);
+
+// The carry grouping follows a lone weekday only, never a multi or monthly row.
+is("a plain weekday still reads as its day", dayOfSection("MONDAY"), 1);
+is("a multi-day heading is not one day", dayOfSection("TUESDAY AND FRIDAY"), null);
+is("a monthly heading is not one day", dayOfSection("FIRST AND THIRD MONDAYS"), null);
+
+// The richer headings still count as scheduling for the screen hint.
+is("a monthly list schedules", hasDayScheduling(["FIRST AND THIRD MONDAYS"]), true);
+is("a multi-day list schedules", hasDayScheduling(["WED AND SUN"]), true);
+
 console.log(`\n  ${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
