@@ -163,6 +163,30 @@ export async function getVenues(): Promise<VenueSummary[]> {
 }
 
 /**
+ * Venues to show at the sign-in door.
+ *
+ * A venue reaches the door if it runs either product: the weekly board
+ * (`active`) or the nightly checklists (`close_active`). getVenues above is
+ * the weekly list and stays `active`-only, so a checklist-only venue never
+ * lands on the board, in the report or in the weekly count. But its close
+ * crew still has to get in, and this door is the one screen in front of them.
+ *
+ * A venue stood down from the weekly board with `active=false` while it runs
+ * checklists was vanishing from this dropdown too, which locked its crew out
+ * of the app entirely. JNTS hit exactly that: live on nightly lists, off the
+ * weekly board, and so unselectable at the door.
+ */
+export async function getSignInVenues(): Promise<VenueSummary[]> {
+  const { data, error } = await db()
+    .from("venues")
+    .select("id, code, name, houses")
+    .or("active.eq.true,close_active.eq.true")
+    .order("code");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as VenueSummary[];
+}
+
+/**
  * Includes the PIN. Only the login check and the admin venue screen call this.
  */
 export async function getVenue(venueId: string): Promise<Venue | null> {
