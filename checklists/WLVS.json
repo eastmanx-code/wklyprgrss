@@ -1,0 +1,1683 @@
+{
+  "venue": "WLVS",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "LEAD",
+      "role_es": "LÍDER",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I MADE SURE NO LIGHTBULBS WERE OUT ANYWHERE IN THE SPACE."
+        },
+        {
+          "title": "I VERIFIED THE LIGHTING LEVEL WAS RIGHT FOR THE TIME OF DAY. I RECHECK IT EVERY TWO HOURS."
+        },
+        {
+          "title": "I CONFIRMED THE VOLUME WAS RIGHT FOR THE TIME OF DAY AND THE R.B.A.T. PLAYLIST WAS PLAYING."
+        },
+        {
+          "title": "I CHECKED THAT THERE WAS NO DEBRIS ON THE FLOOR THROUGHOUT THE SPACE."
+        },
+        {
+          "title": "I MADE SURE THERE WAS NO TRASH OR DEBRIS AROUND THE SPACE AND THE FACADE WAS CLEAN.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The facade and the area out front, clean and clear of trash"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE THE TEMPERATURE IN THE SPACE WAS SPOT ON, NOT TOO HOT OR TOO COLD."
+        },
+        {
+          "title": "I MADE SURE THE SCENT AIR BEHIND THE HOST STAND WAS WORKING."
+        },
+        {
+          "title": "I VERIFIED THE ENTIRE CREW WAS IN PROPER UNIFORM."
+        },
+        {
+          "title": "I CHECKED THAT THERE WAS NO DEBRIS UNDER THE EQUIPMENT."
+        },
+        {
+          "title": "I CONFIRMED THE BATHROOM WALLS, FIXTURES AND FLOORS WERE CLEAN, SUPPLIES FULLY STOCKED, AND THE CANDLES LIT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each bathroom clean and fully stocked, candle lit"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE NO CREW MEMBER ITEMS WERE VISIBLE ANYWHERE IN THE SPACE."
+        },
+        {
+          "title": "I MADE SURE THE POS SCREENS WERE DIM ENOUGH NOT TO BE NOTICEABLE."
+        },
+        {
+          "title": "I MADE SURE THE BACK BAR WAS TIDY AND FULL, WITH NO OBVIOUS GAPS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar tidy and full, no gaps"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE NO CANDLES OR LANTERNS WERE OUT OR MISSING FROM THE TABLES."
+        },
+        {
+          "title": "I MADE SURE THE PLANTS OUTSIDE LOOKED HEALTHY."
+        },
+        {
+          "title": "I MADE SURE THE LANTERNS OUTSIDE WERE LIT."
+        },
+        {
+          "title": "I MADE SURE ALL RETAIL DISPLAY CASES WERE AT FULL BRIGHTNESS."
+        },
+        {
+          "title": "I TRIPLE CHECKED THAT ALL LAMPS AND LANTERNS FACE THE SAME DIRECTION, EVERY DRAWER IS CLOSED, AND NO VELCRO IS LEFT OPEN ON THE FRONT DISPLAY CASES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front display cases: lamps and lanterns facing the same way, drawers closed, no open velcro"
+            }
+          ]
+        },
+        {
+          "title": "I VERIFIED THAT ALL CHECKLISTS FROM THE DAY PRIOR WERE FILLED OUT CORRECTLY."
+        },
+        {
+          "title": "I MADE SURE ALL MENUS WERE CLEAN, TIDY AND DRY."
+        },
+        {
+          "title": "I CONFIRMED THE SCENT MACHINES WERE RUNNING ON THE PRE-SHIFT SCHEDULE SO THE SPACE WAS FILLED AND READY FOR GUESTS, NOT SWITCHED ON AT OPEN."
+        },
+        {
+          "title": "I VERIFIED THAT ALL OPENING CHECKLISTS FOR TODAY WERE FILLED OUT CORRECTLY."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "LEAD",
+      "role_es": "LÍDER",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I VERIFIED EVERY CLOSING CHECKLIST WAS COMPLETED AND INITIALED.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any checklist not completed or initialed, or all clear"
+            }
+          ]
+        },
+        {
+          "title": "I SENT THE LEAD GROUP CHAT THE NAMES OF ANY STAFF WHO DID NOT FINISH THEIR CHECKLIST TASKS, FOR COUNSELING.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Names sent to the lead chat, or none"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED THE OFFICE. ANY BOXES WERE TAKEN TO THE TRASH.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The office cleaned and organized, no boxes left"
+            }
+          ]
+        },
+        {
+          "title": "I BALANCED THE RETAIL CASH BOX TO $300.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The retail cash box balanced to $300, or the discrepancy"
+            }
+          ]
+        },
+        {
+          "title": "I BALANCED THE BAR CASH DRAWER TO $400.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The bar drawer balanced to $400, or the discrepancy"
+            }
+          ]
+        },
+        {
+          "title": "I COUNTED ALL CASH AND TIP MONEY AND ENTERED THE TOTALS INTO THE DAILY CASH DROP SHEET."
+        },
+        {
+          "title": "I ENTERED THE COMP AMOUNT INTO THE CASH DROP SHEET AND NOTED IF AND WHY COMPS WERE HIGHER THAN $300.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The comp total, and why it ran over $300 if it did"
+            }
+          ]
+        },
+        {
+          "title": "I VERIFIED THAT EVERY OPENTABLE RESERVATION FROM TONIGHT WITH A GREEN OCCASION MARKER HAD AN ACCOMPANYING GUEST NOTE."
+        },
+        {
+          "title": "I CONFIRMED THE RETAIL FRONT DOOR AND THE LOUNGE BACK DOOR WERE LOCKED.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The retail front door and the lounge back door, locked"
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE STAFF ADDED DURABLE GUEST NOTES IN OPENTABLE."
+        },
+        {
+          "title": "I PRINTED ALL CHECKLISTS FOR NEXT WEEK."
+        },
+        {
+          "title": "I CHECKED THE DOWNSTAIRS STORAGE AREA AND CONFIRMED ALL CHECKLIST TASKS WERE COMPLETED."
+        },
+        {
+          "title": "I RAN A HAND ALONG THE UNDERSIDE OF THE BAR TOP AT EVERY WELL. NOT STICKY ANYWHERE."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "HOST",
+      "role_es": "ANFITRIÓN",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CHECKED THE IPAD CHARGE AND STOCKED THE IPAD CASES WITH BUSINESS CARDS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THE EMAILS AND RESPONDED TO ALL INQUIRIES. I KEEP CHECKING THROUGH THE NIGHT.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I ASSIGNED LARGE PARTY RESERVATIONS TO TABLES UNLESS OTHERWISE SPECIFIED.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WENT THROUGH THE MENUS AND MADE SURE THEY WERE CLEAN AND ORGANIZED. ANY DETERIORATED MENUS WERE REMOVED OR REPLACED BEFORE SERVICE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I STOCKED THE BATHROOMS WITH TOILET PAPER, HAND SOAP, PAPER TOWELS FOLDED NAPKIN STYLE, AND A LIT CANDLE.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each bathroom stocked: toilet paper, soap, folded towels, candle lit"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE MIRROR, FAUCET, TOILET SEATS, TOILET BOWLS AND URINALS FOR CLEANLINESS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I FILLED THE BACKUP STOCK OF BATHROOM SUPPLIES: 6 ROLLS OF TOILET PAPER, 6 PACKS OF HAND TOWELS, 1 JUG OF HAND SOAP, 2 CANDLES.",
+          "section": "DAILY",
+          "detail": [
+            "Backup stock lives in the WC closet only"
+          ]
+        },
+        {
+          "title": "I WROTE 5 BIRTHDAY CARDS AND 5 ANNIVERSARY CARDS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I DID A BAR WALKTHROUGH AND MADE SURE THE ROOM WAS SET TO THE FLOOR PLAN, CHAIRS INCLUDED.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I ORGANIZED THE MENU CABINET BY THE FRONT DOOR AND MADE SURE IT WAS NEAT FOR SERVICE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES PER PERSON IN OPENTABLE WITH MY INITIALS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes per person added in OpenTable"
+            }
+          ]
+        },
+        {
+          "title": "I DEEP CLEANED THE FIRST BATHROOM AND DOUBLE CHECKED THE FULL MIRROR, INSIDE, OUTSIDE AND UNDER THE URINAL, INSIDE, OUTSIDE AND UNDER THE TOILET, THE COUNTER AND THE TILE LEDGES.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The first bathroom deep cleaned: mirror, urinal, toilet, counter, tile ledges"
+            }
+          ]
+        },
+        {
+          "title": "I DEEP CLEANED THE SECOND BATHROOM AND DOUBLE CHECKED THE FULL MIRROR, INSIDE, OUTSIDE AND UNDER THE URINAL, INSIDE, OUTSIDE AND UNDER THE TOILET, THE COUNTER AND THE TILE LEDGES.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The second bathroom deep cleaned: mirror, urinal, toilet, counter, tile ledges"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED AND WIPED DOWN THE PUPPY DOG SIDE FIREPLACE, ALL GOLD SURFACES AND THE CHAIRS, AND MOPPED THE PLATFORM.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I DUSTED AND WIPED DOWN THE WOLF SIDE FIREPLACE, ALL GOLD SURFACES AND THE CHAIRS, AND MOPPED THE PLATFORM.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I DID AN OVERALL DUSTING INSIDE THE BAR AND SPOT CLEANED ALL THE WOOD WALLS.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I DETAILED ALL THE WAINSCOTING LEDGES IN BOTH HALLWAYS AND THE BAR, AND WIPED DOWN THE BAR STOOL BASES.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I SPOT CLEANED BOTH SIDES OF THE FIREPLACE AND THE ENTRANCE.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "HOST",
+      "role_es": "ANFITRIÓN",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I LOCKED THE FRONT DOOR, GIVING IT A SHAKE TO BE SURE BECAUSE, YA KNOW, WEREWOLVES.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front door locked"
+            }
+          ]
+        },
+        {
+          "title": "I EMPTIED THE TRASH BENEATH THE POS TERMINAL, FROM THE OFFICE AND FROM THE INSIDE HOST STAND.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I RETURNED ANY BAR ITEMS OR GLASSWARE THAT HAD MADE THEIR WAY INTO THE RETAIL SHOP AND OFFICE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED BOTH GUEST RESTROOMS, EMPTIED THE TRASH, STOCKED THE PAPER GOODS I GRABBED FROM DOWNSTAIRS, REFILLED THE SOAP AND BLEW OUT THE CANDLE.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each restroom reset: trash empty, paper stocked, soap full, candle out"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED THE LIGHT FIXTURES IN THE BATHROOM, THE VENTS AND THE GREEN TILE WALL.",
+          "section": "DAILY"
+        },
+        {
+          "title": "IF I COULD NOT FIND PAPER GOODS, I ASKED A SERVER, BARTENDER OR MOD.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I FULLY STOCKED THE RESTROOMS WITH TOILET PAPER, HAND TOWELS AND HAND SOAP.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I BROUGHT THE BATHROOM TRASH DOWN TO THE TRASH CHUTE AT THE END OF THE NIGHT, ALWAYS AFTER LAST CALL.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THE STORE EMAIL, YELP AND INSTAGRAM AND RESPONDED TO INQUIRIES.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WIPED DOWN ALL IPADS AND THE RETAIL HANDHELD AND MADE SURE THEY WERE PLUGGED IN. I PUT THE PHONE ON ITS CHARGER, SO FUTURE ME WON'T BE DISAPPOINTED.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every iPad and the retail handheld plugged in and charging"
+            }
+          ]
+        },
+        {
+          "title": "I CLOSED THE RETAIL DRAWER AND TOOK THE SERVER REPORT, CASH DRAWER AND HANDHELD TO THE OFFICE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CAREFULLY PUT OUT ALL THE OIL LAMPS, LET THEM COOL, AND REFILLED THEM WITH OIL, CUTTING NEW WICKS IF NEEDED.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TURNED OFF ALL THE FLOOR AND TABLE LAMPS IN THE BAR AREA AND ALL THE DISPLAY CASES IN THE RETAIL SHOP.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WIPED DOWN ALL THE TABLES AND CHAIRS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tables and chairs wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I ADDED A TRASH BAG TO BOTH THE FRONT AND BACK HOST TRASH CANS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I VERIFIED THAT EVERY OPENTABLE RESERVATION FROM TONIGHT WITH A GREEN OCCASION MARKER HAD AN ACCOMPANYING GUEST NOTE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED FOR AND REMOVED ALL GUM.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I DETAILED AND ORGANIZED THE SCOTCH, BOURBON, RUM AND LIQUEUR SECTIONS, BOTTLES AND SHELVES, AND REFRESHED THE MENU PAGES.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I ORGANIZED THE TOOLS, VODKA AND GIN BOTTLES AND SHELVES, AND CLEANED THE EXTERIOR BLUE LATTICE WINDOWS WITH A BRUSH.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I ORGANIZED THE TOOLS, RYE, AMERICAN WHISKEY, IRISH WHISKEY AND FORTIFIED SECTIONS, BOTTLES AND SHELVES, AND REFRESHED THE MENU PAGES.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING RETAIL CLERK TO DETAIL AND ORGANIZE THE RUM AND BRANDY SPIRITS, BOTTLES AND SHELVES.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING RETAIL CLERK TO DETAIL AND ORGANIZE ALL 4 DISPLAY CASES, JAPANESE, PAPPY, SCOTCH AND THE REST, BOTTLES INSIDE AND ON TOP, AND ORGANIZED AND DETAILED THE AGAVE SECTION.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I ORGANIZED THE RETAIL BACK BAR AND THE BOOK CASES.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "SERVER",
+      "role_es": "MESERO",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CLOCKED IN AND GREETED THE MOD AND MY CO-WORKERS."
+        },
+        {
+          "title": "I SEPARATED TWO ROLLS OF COASTERS FOR SERVICE AND PLACED THEM AT THE GARNISH STATION."
+        },
+        {
+          "title": "I REFILLED BOTH MISTER BOTTLES AND SET ASIDE 2 BAR TOWELS."
+        },
+        {
+          "title": "I PLACED A SANITIZED BAR TOWEL, A MISTER BOTTLE AND A MICROFIBER AT THE WATER STATION."
+        },
+        {
+          "title": "I SET UP ALL THE TABLES AND CHAIRS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room set: all tables and chairs in place"
+            }
+          ]
+        },
+        {
+          "title": "I DOUBLE CHECKED THAT ALL TABLES, BOOTHS, PILLARS AND THE FLOOR AROUND THE PILLARS WERE WIPED DOWN, CHECKING FOR GUM AND DUST."
+        },
+        {
+          "title": "I LIT ALL THE OIL LAMPS AND PLACED THEM AT THE RIGHT TABLES, TURNED ON ALL THE TABLE AND FLOOR LAMPS, SET THE OVERHEAD LIGHTING FOR SERVICE, AND MADE SURE THEY WERE CLEAN OF LAMP OIL.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The oil lamps lit and placed, table and floor lamps on"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE THE TRAYS WERE POLISHED FROM THE NIGHT BEFORE AND PLACED THEM AT THE PASS."
+        },
+        {
+          "title": "I PULLED DOWN ALL THE BAR STOOLS AND SPACED THEM OUT IN THEIR SECTIONS."
+        },
+        {
+          "title": "I TURNED ON THE BARTOP LAMPS."
+        },
+        {
+          "title": "I TURNED ON ALL THE LAMPS IN THE SPACE."
+        },
+        {
+          "title": "I MADE SURE ALL THE LAMP SHADES WERE LEVEL WITH THE FLOOR."
+        },
+        {
+          "title": "I MADE SURE THERE WERE 3 BACKUP THERMAL PAPER ROLLS AT THE SERVER STATION FOR THE RECEIPT PRINTER.",
+          "detail": [
+            "There are no visible backups for the wall mounted printers; those come from the hall closet as needed"
+          ]
+        },
+        {
+          "title": "I TURNED ON THE BOOKSHELF, CEILING AND COVE LIGHTS, AND THE SMALL ORANGE CEILING GLOBES WITH THE WHITE REMOTE."
+        },
+        {
+          "title": "I RETRIEVED 4 HANDHELD POS AND PLACED THEM AT THE PASS."
+        },
+        {
+          "title": "I WIPED DOWN THE BAR TOP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE FLOOR AND SPOT CLEANED ANY AND ALL MESSES."
+        },
+        {
+          "title": "I TOOK DOWN ALL THE RECYCLABLES.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I TOOK DOWN THE TRASH AND RELINED THE CANS.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I RESTOCKED THE BOTTLES IN THE WATER CLOSET.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I PICKED AND BUNCHED 4 MINTS.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I CHECKED ON ALL THE CAMBRO BATCHES AND REFILLED ANY THAT WERE LOW.",
+          "section": "POST SHIFT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Which batches you refilled, or all at par"
+            }
+          ]
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES PER PERSON IN OPENTABLE WITH MY INITIALS.",
+          "section": "POST SHIFT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes per person added in OpenTable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "SERVER",
+      "role_es": "MESERO",
+      "phase": "close",
+      "room": "Upstairs",
+      "items": [
+        {
+          "title": "I REPLENISHED THE BACK STOCK PER THE MUST-HAVES LIST.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Anything still short after back stock, or all at par"
+            }
+          ]
+        },
+        {
+          "title": "I BROUGHT ALL THE DELIS DOWNSTAIRS, MADE SURE THEY WERE CLEAN, AND HUNG THEM UP TO DRY."
+        },
+        {
+          "title": "I RAN MY CHECK EMPLOYEE SUMMARY AND PLACED THE CHECKOUT REPORT IN ORDER: CHECKOUT SLIP, CASH TENDERED, CC SLIPS, CASH TIPS. I PUT IT ALL ON THE DESK AND INFORMED THE MOD."
+        },
+        {
+          "title": "I TOOK ALL FORGOTTEN CREDIT CARDS FROM THE SERVER STATION AND THE BAR TO THE MOD OR PLACED THEM IN THE BLACK CC BOX IN THE OFFICE."
+        },
+        {
+          "title": "I TOOK THE CART LOADED WITH REUSABLE GARNISHES, CITRUS, ALL SYRUPS, ALL BATCHES AND ALL INFUSIONS, CHECKING THAT THE BOTTLES WERE NOT STICKY.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cart loaded: reusable garnishes, citrus, syrups, batches, infusions"
+            }
+          ]
+        },
+        {
+          "title": "I REFILLED THE FIREPLACE BIO-FUEL."
+        },
+        {
+          "title": "I EMPTIED ALL THE DINING ROOM TRASH CANS AND CLEANED THE BIN.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room cans emptied and the bin clean"
+            }
+          ]
+        },
+        {
+          "title": "I REMOVED ANY GARBAGE AND PERSONAL ITEMS FROM THE SERVER STATION AND CHECKED BEHIND THE BOOTHS FOR MENUS."
+        },
+        {
+          "title": "I EMPTIED ANY FOOD FROM THE WATER CLOSET FRIDGE THAT HAD BEEN IN THERE LONGER THAN A DAY."
+        },
+        {
+          "title": "I MADE SURE THERE WAS NO BACK STOCK OR ITEMS ON TOP OF THE WATER HEATER IN THE WATER CLOSET."
+        },
+        {
+          "title": "I DUSTED THE METAL FRAMEWORK ON THE PILLARS, TOP AND BOTTOM."
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES PER PERSON IN OPENTABLE WITH MY INITIALS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes per person added in OpenTable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "SERVER",
+      "role_es": "MESERO",
+      "phase": "close",
+      "room": "Downstairs",
+      "items": [
+        {
+          "title": "I REFILLED EVERY BATCH TO THE DAILY PAR AND NOTED ANY LOWS ON THE SHEET.",
+          "detail": [
+            "Pars run Saturday night to Wednesday night / Thursday to Friday night",
+            "Finders Keepers 4 / 5",
+            "Ambrosia, Ambrosia 4 / 5",
+            "Off Script 4 / 5",
+            "Cinna Black 5 / 6",
+            "White Elephant clarified batch 4 / 5",
+            "White Elephant liquor batch 3 / 4",
+            "Things Going South 4 / 5",
+            "First Course 3 / 4",
+            "Secret Provenance 3 / 3",
+            "Island Of 5 / 6",
+            "Nana Coco 4 / 5",
+            "Strange Bedfellows 3 / 4",
+            "The Taking 4 / 5",
+            "Blueberry Espresso Cordial 4 / 5",
+            "Liquor 18 3 / 4",
+            "Espresso Martini 3 / 4",
+            "Rooftop Boombox batch 3 / 3",
+            "Doctor's Orders carbonate 4 / 4",
+            "Quebranta Social carbonate 4 / 4",
+            "Jade Pagoda carbonate 4 / 4",
+            "Rooftop Boombox carbonate 4 / 4"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Which batches you refilled and anything low or 86'd"
+            }
+          ]
+        },
+        {
+          "title": "I CAPPED EVERY CITRUS BOTTLE WITH AN AIRTIGHT CAP."
+        },
+        {
+          "title": "I LABELED EVERY CITRUS BOTTLE WITH A DAY DOT FROM THE DAY OF."
+        },
+        {
+          "title": "I NOTED ANY LOWS OR 86'S ON THE SHEET.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Lows or 86's for the day, or none"
+            }
+          ]
+        },
+        {
+          "title": "I DISCARDED THE EGG YOLKS AND EGG WHITES."
+        },
+        {
+          "title": "I BROUGHT UP THE FREEZER DOOR COCKTAILS."
+        },
+        {
+          "title": "I CLEANED AND DRIED THE GARNISH CART.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish cart cleaned and dried"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BARTENDER",
+      "role_es": "BARTENDER",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CLOCKED IN AND GREETED THE MOD AND MY CO-WORKERS."
+        },
+        {
+          "title": "I BROUGHT ALL THE PASUBIO AND AMONTILLADO SHERRY OUT OF THE WATER CLOSET AND STOCKED EACH WELL."
+        },
+        {
+          "title": "I SET UP EACH WELL WITH ALL THE TOOLS, HEAVY CREAM AND WHIPPED CREAM.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each well set with tools, heavy cream and whipped cream"
+            }
+          ]
+        },
+        {
+          "title": "I STOCKED THE WINE, CHAMPAGNE AND SODAS IN THE FRONT FRIDGE."
+        },
+        {
+          "title": "I LAID THE MAT AT THE ENTRANCE TO THE BAR."
+        },
+        {
+          "title": "I STOCKED 4 OF EVERY WELL BOTTLE IN THE WATER CLOSET."
+        },
+        {
+          "title": "I MADE SURE THE SALT SHAKER WAS FILLED."
+        },
+        {
+          "title": "I CHECKED IN WITH THE OPENING BARBACK TO SEE WHERE THEY NEEDED ASSISTANCE."
+        },
+        {
+          "title": "I STOCKED FRESH CITRUS, LEMONS, ORANGES, LIMES AND GRAPEFRUITS, FOR PEELS IN EACH WELL IN THE RED TUB."
+        },
+        {
+          "title": "I REMOVED ALL THE NIPPLES FROM THE BOTTLES IN THE WELL."
+        },
+        {
+          "title": "I MADE SURE ALL THE BITTERS WERE FILLED FROM THE NIGHT BEFORE AND STOCKED THE BACKUP BOTTLES."
+        },
+        {
+          "title": "I TURNED ON THE FOUNTAIN AND THE BAR TOP LIGHTS AND CHECKED THE WATER LEVELS."
+        },
+        {
+          "title": "I PREPARED COASTERS ON PLATES FOR BARTOP SERVICE."
+        },
+        {
+          "title": "I CONFIRMED ALL THE CHEATER BOTTLES, SYRUPS AND GARNISHES WERE SET UP AND IN THEIR PROPER PLACES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cheater bottles, syrups and garnishes set in their places"
+            }
+          ]
+        },
+        {
+          "title": "I COUNTED AND CONFIRMED THE BANK.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The bank count"
+            }
+          ]
+        },
+        {
+          "title": "I GRABBED EVERYTHING NEEDED FROM DOWNSTAIRS: TOWELS, PENNY POUND, CITRUS, LIQUOR, PICKS, FLOOR MAT, SODAS, WINE, CHAMPAGNE, POUR SPOUTS, BITTERS."
+        },
+        {
+          "title": "I MADE SURE EVERYTHING WAS GOOD TO GO BEFORE OPENING."
+        },
+        {
+          "title": "I ASSISTED ON ANY BATCHES THAT COULD BE REFILLED.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I WIPED DOWN THE INSIDE AND OUTSIDE OF ALL THE FRIDGE DOORS WITH SANITIZER.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I TOOK DOWN ALL THE RECYCLABLES.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I RESTOCKED THE LARGE CUBE ICE AND THE ICE SPEARS.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I RESTOCKED THE BOTTLES IN THE WATER CLOSET AND THE GARNISHES.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I PICKED AND BUNCHED FOUR MINTS.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I ASSISTED IN KNOCKING OUT THE WEEKLY SIDE WORK.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES IN OPENTABLE WITH MY INITIALS.",
+          "section": "POST SHIFT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes added in OpenTable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "Bar",
+      "items": [
+        {
+          "title": "I PULLED THE GLASSWARE FROM REFRIGERATORS 1 TO 4, DETAILED ALL THE INSIDE SURFACES, BURNED THE PENNY POUND TRAYS FOR THE ICE DELIVERY, AND PULLED OUT AND SWEPT BEHIND THE DISHWASHER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Refrigerators 1 to 4 detailed inside, floor swept behind the dishwasher"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED UNDER ALL THE BAR COMPARTMENTS AND SWEPT UNDER THE SINKS, WELLS AND TRASH CHUTES TO REMOVE ALL DEBRIS.",
+          "detail": [
+            "First and third Mondays of the month"
+          ]
+        },
+        {
+          "title": "I PULLED GLASS REFRIGERATORS 5 TO 8, DETAILED ALL THE INSIDE SURFACES AND RACKS, AND CLEANED THE GLASS DOORS."
+        },
+        {
+          "title": "I DETAILED THE RUM AND AGAVE SECTION, SWEPT THE WATER CLOSET FLOOR, AND DEEP CLEANED THE VENTS AND FANS NEXT TO THE FRIDGES."
+        },
+        {
+          "title": "I DETAILED THE IRISH, SCOTCH AND JAPANESE BOTTLES, REFILLED THE FOUNTAIN, AND ORGANIZED DRY STORAGE."
+        },
+        {
+          "title": "I DETAILED THE VODKA, FLIGHTS AND AMERICAN WHISKEY, AND WASHED THE CUPS THAT HOUSE THE STRAWS FOR ALL STATIONS."
+        },
+        {
+          "title": "I DETAILED THE GIN, BRANDY AND COGNAC SECTION AND THE JIGGERS INSIDE AND OUT. I CHECKED AROUND THE BAR FOR DUPLICATE BOTTLES, PULLED THEM, AND BROUGHT THEM BACK INTO THE WATER CLOSET AS BACKUPS."
+        },
+        {
+          "title": "I DETAILED THE AMARO AND LIQUEUR SECTION, EMPTIED THE WATER CLOSET FRIDGE OF UNCLAIMED MEALS AND DRINKS, AND DEEP CLEANED THE BEER GRATES AND TAPS."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BARTENDER",
+      "role_es": "BARTENDER",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I PLACED ALL THE DIRTY TOWELS IN THE SOILED LINEN BAGS AND THE DIRTY FLOOR MATS ON THE CORRECT SHELF.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I WASHED AND HUNG ALL THE EQUIPMENT IN THE PREP ROOM, FOR EXAMPLE THE MOP AND BROOM.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I PLACED ALL THE GARBAGE AND RECYCLING ONTO THE CART TO TAKE OUT.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I SWEPT UNDER ALL THE WELLS TO CLEAR THE DEBRIS FOR THE CLEANING CREW.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "WHEN TAKING DOWN THE RECYCLING, I NOTED THE BACK BAR BOTTLES THAT HAD BEEN DEPLETED AND RESTOCKED THEM.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I TOOK THE CART DOWNSTAIRS TO UNLOAD THE GARBAGE AND RECYCLING AND WASH THE DISHES AND BOTTLES.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I CHECKED THAT ALL THINGS WERE ON SHELVES, NOT ON THE FLOOR.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I MADE SURE THE PARS WERE HIT FOR THE CARBONATED COCKTAILS.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I PUT ALL THE CARTS IN THE PREP ROOM AND LOCKED THE DOOR.",
+          "section": "COMMUNITY DUTIES"
+        },
+        {
+          "title": "I CHECKED THE FRESHNESS OF THE WINES AND DATED THE BOTTLES.",
+          "section": "WELL 3"
+        },
+        {
+          "title": "I DETAILED THE DISHWASHER AND CLEARED THE DRAINS AND FILTERS.",
+          "section": "WELL 3"
+        },
+        {
+          "title": "I WIPED DOWN ALL THE WATER PITCHERS.",
+          "section": "WELL 3"
+        },
+        {
+          "title": "I DETAILED THE BEER TAPS AND CLEANED AND SANITIZED THE GRATES.",
+          "section": "WELL 2"
+        },
+        {
+          "title": "I CLEANED THE WALLS AND DRAWERS OF BOTH BLOCK ICE FRIDGES.",
+          "section": "WELL 2"
+        },
+        {
+          "title": "I DETAIL CLEANED POS 2.",
+          "section": "WELL 2"
+        },
+        {
+          "title": "I WIPED DOWN ALL THE POS TERMINALS, PRINTERS AND CABLES.",
+          "section": "WELL 4"
+        },
+        {
+          "title": "I DETAIL CLEANED POS 1.",
+          "section": "WELL 4"
+        },
+        {
+          "title": "I DUSTED THE INSIDE AND OUTSIDE OF THE RESERVE CASE.",
+          "section": "WELL 4"
+        },
+        {
+          "title": "I RESTOCKED ALL THE DRY GARNISHES AND STRAWS.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I FILLED AND DETAILED THE LIQUEUR CHEATERS AND BITTERS BOTTLES.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I EMPTIED AND SANITIZED THE ICE WELLS.",
+          "section": "ALL WELLS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice wells emptied and sanitized"
+            }
+          ]
+        },
+        {
+          "title": "I PLACED ALL THE BATCH BOTTLES ON THE CART AND ALL THE FORTIFIED WINES IN THE WATER CLOSET.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "USING FRESH SANI, I COMPLETED THE WELL CLEANING: TOP GRATES, DRIP RAILS, WELL CADDIES, BLENDER, UNDER-WELL CABINET, LEGS, WATER TOWER, DIPPER WELL, HAND SINK AND ALL OTHER STAINLESS SURFACES.",
+          "section": "ALL WELLS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wells cleaned down: grates, drip rails, caddies, stainless all wiped"
+            }
+          ]
+        },
+        {
+          "title": "I RETURNED ALL THE CLEANED AND DRIED SPIRIT BOTTLES TO THEIR HOMES.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I SENT ALL THE TOOLS TO THE BARBACK TO BE WASHED.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I PUT NIPPLE COVERS ON ALL THE BOTTLES.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I CLEANED THE BLENDER.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I DETAILED THE LAMPS, INCLUDING THE SHADE AND BULB.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I DETAILED THE SODA FOUNTAIN AND THE HANDLES.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I CHECKED THAT ALL THE ICE BUCKETS HANG ON THEIR PROPER RACKS.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "ON DAYS WITH NO BARBACK, THE TEAM COMPLETED THE BARBACK CHECKLIST.",
+          "section": "ALL WELLS"
+        },
+        {
+          "title": "I BROUGHT UP THE ESSENTIALS LIST FOR THE WEDNESDAY AND THURSDAY OPENER.",
+          "section": "ALL WELLS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Essentials list brought up for the next opener"
+            }
+          ]
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES PER PERSON IN OPENTABLE WITH MY INITIALS.",
+          "section": "ALL WELLS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes per person added in OpenTable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BARBACK",
+      "role_es": "BARBACK",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I PULLED ALL THE CONTENTS FROM THE BODEGA AND PLACED THEM ON THE CART FOR THE SERVER TO TAKE DOWN.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I RAN AND POLISHED ALL THE DIRTY GLASS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glassware run and polished"
+            }
+          ]
+        },
+        {
+          "title": "I RAN EACH WELL'S TOOLS INDIVIDUALLY AND WIPED THEM DRY BEFORE PLACEMENT.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLEANED THE CUPS THAT HOUSE THE STRAWS FOR EACH WELL.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I DRAINED THE DISHWASHER, REMOVED THE BUNG AND CLEANED OUT THE FILTERS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I DETAILED THE DISHWASHER, THE BACK WALL, THE WATER LINES, THE PIPES AND THE FLOOR UNDERNEATH.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher detailed, pipes and floor underneath clean"
+            }
+          ]
+        },
+        {
+          "title": "WEARING GLOVES, I CLEARED AND DETAILED THE DRAIN ON BOTH SIDES OF THE BAR.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I DRAINED AND DETAILED THE 3 COMP SINK, THEN FLUSHED IT WITH BLEACH AND HOT WATER.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE THE THREE COMP AREA WAS CLEAR OF BOTTLES AND GARNISHES. I CLEANED THE BAR TOP ABOVE THE THREE COMP SINK BETWEEN WELLS 3 AND 4, TOP AND UNDERNEATH.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE ALL THE CHEATER BOTTLES BY WELL ONE WERE CLEAN.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I GREEN SCRUBBED THE MARBLE BAR TOP, WIPED IT DOWN WITH A CLEAN MICROFIBER, THEN PUT THE BARSTOOLS UPSIDE DOWN ON TOP OF THE BAR.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The marble bar top scrubbed clean, barstools up"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE BACK BAR TOP ABOVE THE CARBONATED COCKTAIL COLD STORAGE, AND UNDERNEATH IT.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WASHED ALL THE BARTOP MATS AND SET THEM ASIDE TO DRY.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WASHED AND DRIED ALL THE SERVER TRAYS AND ANTI SLIP INSERTS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I EMPTIED AND RAN THE STRAINER AND BUCKET THROUGH THE DISH.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I SWEPT UNDER ALL THE WELLS TO CLEAR THE DEBRIS FOR THE CLEANING CREW.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I RAN A HAND ALONG THE UNDERSIDE OF THE BAR TOP AT EVERY WELL. NOT STICKY ANYWHERE.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I RETURNED ALL THE CLEAR GLASS RODS TO THEIR CORRECT LOCATIONS AND CONFIRMED ALL WERE ACCOUNTED FOR.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "All clear glass rods accounted for, or any missing"
+            }
+          ]
+        },
+        {
+          "title": "I DETAILED THE HALL CLOSET: ALL SURFACES INSIDE AND OUT, THE HINGES AND HANDLES OF THE REFRIGERATOR, AND I DETAILED AND ORGANIZED ALL THE SHELVING.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I SPOT CHECKED AND CLEANED WELL ONE TO MAKE SURE IT WAS NOT STICKY ANYWHERE.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I PULLED ALL THE BOTTLES FROM THE HALL CLOSET FRIDGE AND DETAILED INSIDE THE FRIDGE.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I CLEANED AND DETAILED ALL THE HANDHELD TOAST DEVICES AND THE PORT THEY LIVE IN AT THE BAR.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I DEEP CLEANED THE PEN, MONEY AND CHECK PRESENTER HOLDERS BY BOTH BAR POS SETUPS.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I DEEP DETAILED THE STEP SPEED RACK TO THE RIGHT OF WELL THREE.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I ORGANIZED THE DRY STORAGE ABOVE THE WATER CLOSET FRIDGE AND WATER HEATER.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "RETAIL",
+      "role_es": "VENDEDOR",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I STOCKED THE GIFT BAGS AND WRAPPING PAPER.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I GAVE THE RETAIL AREA A DAILY SWEEP AND DUST, INCLUDING UNDER THE TABLES AND DISPLAY CASES.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TURNED ON ALL THE RETAIL SHOP LIGHTS AND LAMPS AND MADE SURE ALL THE LANTERNS OUTSIDE WERE LIT AF.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TURNED ON THE MUSIC, THE SPOTIFY R.B.W.A.T. PLAYLIST.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I GRABBED THE REGISTER FOR OPENING AND COUNTED THE BANK. IT'S AT $300.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The opening bank count. It should be $300"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE THE POS TERMINAL WAS ON AND WORKING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE THE HANDHELD POS FOR RETAIL WAS ON AND WORKING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CALLED THE STORE TO MAKE SURE THE PHONE WAS RINGING, 619.629.0243 EXTENSION 4.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WALKED THE FLOOR TO INSPECT HOUSEKEEPING NEEDS AND NOTIFIED THE MOD IF ANYTHING WAS OFF. I CHECKED THAT ALL IPADS WERE PLUGGED IN AND CHARGED OR CHARGING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED FOR BACKUP BOTTLES IN THE OFFICE RETAIL SHELVES, PULLED ANY 86'D LABELS, AND SET THEM IN THE STACK.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WIPED DOWN THE FRONT DOOR WINDOWS AND SHOP WINDOWS INSIDE AND OUT.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front door and shop windows clean inside and out"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED THE FACADE, THE FIXTURES AND EVERYTHING ACROSS THE FRONT OF THE BUILDING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I VACUUMED INSIDE ALL THE DISPLAY CASES.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WIPED INSIDE AND OUTSIDE ALL THE DISPLAY CASE GLASS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The display case glass clean inside and out"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE FRIDGE DOOR WINDOW INSIDE AND OUT.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I KNOCKED OUT THE WEEKLY SIDEWORK TASKS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "CHIN CHECK: I CONFIRMED THAT ALL LIGHTS WERE ON, THE MUSIC WAS DIALED IN, PERSONAL ITEMS WERE STASHED, I WAS IN UNIFORM, AND I WAS READY TO GO BEFORE THE STORE OPENED.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THE EXTERIOR OF THE BUILDING FOR ACCUMULATED TRASH EVERY 2 HOURS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THE PLANTS IN THE FRONT FOR TRASH EVERY 2 HOURS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I SPRAYED AND CLEANED THE 50 BEST SIGN WITH BRASS POLISH.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THAT EVERY DISPLAY PIECE HAD A PRICE TAG, AND REMOVED OR REHOMED ANY ORPHAN VELCRO LEFT BEHIND FROM A TAG THAT CAME OFF.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I UNLOCKED THE DOORS AND EAGERLY WELCOMED THE MAYHEM.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TOOK DOWN ALL THE RECYCLABLES.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I TOOK DOWN THE TRASH AND RELINED THE CANS IF NEEDED.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I RESTOCKED THE BOTTLES IN THE WATER CLOSET AND THE GARNISHES.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I RESTOCKED THE RTDS IN THE RETAIL FRIDGE.",
+          "section": "POST SHIFT"
+        },
+        {
+          "title": "I ADDED TWO GUEST NOTES PER PERSON IN OPENTABLE WITH MY INITIALS.",
+          "section": "POST SHIFT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Two guest notes per person added in OpenTable"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED AND WASHED THE OUTSIDE OF THE STORE, SECTIONS ONE, TWO AND THREE, AND HIT ALL THE BOOKS AND MERCHANDISE WITH A DUSTER. I PULLED ALL THE BOTTLES FROM THE BOTTOM SHELF BY THE REVOLVING DOOR AND DUSTED THE ENTIRE SHELF. I PULLED ALL THE PRODUCT FROM THE MIRROR TABLE AND CLEANED THE TABLE.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "INDOOR DUSTING: THE TOPS OF ALL THE TALL THINGS, LEDGES, WINDOWSILLS, THE FIREPLACE BOTH SIDES, AND THE GLOBE LAMPS, CAREFULLY. I CHECKED TAG QUALITY THROUGHOUT THE SPACE AND COMPILED A LIST OF TAGS TO BE REPLACED. I DUSTED UNDER ALL THE GLASS CORNER SHELVES AND THE TOPS OF THE BOTTLE DOME HOLDERS. I PULLED ALL THE BOTTLES FROM THE MIDDLE SHELF BY THE REVOLVING DOOR AND DUSTED THE ENTIRE SHELF.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I TOUCHED UP THE OUTSIDE OF THE STORE, DUSTING THE LEDGES AND FILIGREE, PAYING SPECIAL ATTENTION TO THE WINDOWS IF NEEDED. I PULLED ALL THE BOTTLES FROM THE TOP SHELF BY THE REVOLVING DOOR AND DUSTED THE ENTIRE SHELF.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I DETAILED AND ORGANIZED THE LIQUEURS, GIN, VODKA AND BRANDY BOTTLES AND SHELVES, DETAILED THE MIRROR WALL NEAR THE RUM SECTION, AND DETAILED THE FRIDGE INCLUDING THE GASKET SEAL. I PULLED ALL THE BOTTLES FROM THE TOP OF THE DISPLAY CASES AND DUSTED THE ENTIRE CASE.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I DETAILED AND ORGANIZED ALL THE SCOTCH AND BOURBON SPIRITS, BOTTLES AND SHELVES, AS WELL AS ALL 5 CASES. I PULLED ALL THE BOTTLES FROM THE BACK BAR AND HOST TABLE AND DUSTED THE ENTIRE SECTION.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I DETAILED AND ORGANIZED ALL 5 DISPLAY CASES, JAPANESE, PAPPY, SCOTCH AND THE REST, BOTTLES INSIDE AND ON TOP. I CLEARED ALL THE TRASH FROM THE COVE BY THE OFFICE AND USED BRASS POLISH ON THE METAL PIECE ON THE SIDE DOOR TO THE BAR.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I DETAILED AND ORGANIZED THE RETAIL BACK BAR AND THE CLOSING HOST DESK SECTIONS, BOTTLES AND SHELVES.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "RETAIL",
+      "role_es": "VENDEDOR",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I UPDATED THE 86 LIST AS NEEDED AND PUT ANY 86'D TAGS IN A NEAT STACK.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What you added to the 86 list, or nothing new"
+            }
+          ]
+        },
+        {
+          "title": "I TYPED UP A RETAIL SUMMARY REPORT ABOUT MY DAY, INCLUDING ANY ISSUES, ENDING SALES AND GENERAL NEED-TO-KNOW, AND SENT IT OUT TO THE MANAGEMENT AND RETAIL TEAM.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The retail summary: issues, ending sales, need-to-know"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE DISPLAY CASES, THE RTD FRIDGE AND THE FRONT DOOR WINDOWS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I DOUBLE CHECKED THAT ALL THE DISPLAY CASES WERE LOCKED.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The display cases locked"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED OFF ALL THE RETAIL SHOP LIGHTS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WIPED DOWN THE TERMINAL INCLUDING THE SCREEN, UNDER THE POS, THE PRINTER AND CABLES. I ALSO TOOK OUT THE TRASH AND REMOVED ANY ITEMS THAT HAD WANDERED FROM THEIR HOME.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLOSED ANY GAPS IN THE SHELVES AND RESTOCKED WHAT I COULD.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TOOK THE GARBAGE AND RECYCLING TO THE RESPECTIVE COMPACTORS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLOSED OUT THE RETAIL DRAWER, ENSURING THERE WERE NO OPEN CHECKS AND ALL PAID CHECKS WERE CLOSED OUT. I PRINTED THE RETAIL SHIFT REVIEW SUMMARY, THEN BUNDLED IT NEATLY WITH THE CASH IN HAND AND ANY CASH TIPS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I ENSURED THE BANK WAS AT $300 AND NOTIFIED THE MOD OF ANY DISCREPANCIES. I LEFT THE CASH BOX IN THE OFFICE AND GAVE THE RETAIL CASH-OUT REPORT TO THE MOD.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The bank at $300, or the discrepancy told to the MOD"
+            }
+          ]
+        },
+        {
+          "title": "I SHOWED THIS COMPLETED CHECKLIST TO THE MOD.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLOCKED OUT, GRABBED MY CHIT, AND AM OFF TO CARPE NOCTEM.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE THE SCOTCH AND BOURBON SPIRITS, BOTTLES AND SHELVES.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE THE TOOLS, VODKA AND GIN BOTTLES AND SHELVES.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE THE TOOLS, RYE, AMERICAN WHISKEY, IRISH WHISKEY AND FORTIFIED SECTIONS, BOTTLES AND SHELVES.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE THE RUM AND BRANDY SPIRITS, BOTTLES AND SHELVES.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE ALL 5 DISPLAY CASES, JAPANESE, PAPPY, SCOTCH AND THE REST, BOTTLES INSIDE AND ON TOP.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I WORKED WITH THE CLOSING HOST TO DETAIL AND ORGANIZE THE RETAIL BACK BAR AND THE CLOSING HOST DESK SECTIONS, BOTTLES AND SHELVES.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "AM PREP",
+      "role_es": "PREP AM",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I REFILLED EVERY BATCH TO THE DAILY PAR AND NOTED ANY LOWS ON THE SHEET.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Which batches you refilled and anything low or 86'd"
+            }
+          ]
+        },
+        {
+          "title": "I JUICED EVERY CITRUS TO PAR IN FULL BOTTLES.",
+          "detail": [
+            "Pars run Mon to Wed / Thursday and Sunday / Friday and Saturday",
+            "Lime 5 / 6 / 7",
+            "Simple 4 / 4 / 4",
+            "Lemon 5 / 6 / 7",
+            "Pineapple 3 / 3 / 4",
+            "Grapefruit 1 / 1 / 1",
+            "Orange 1 / 1 / 1",
+            "Wolf juice: unlimited"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Anything short of par, or all full"
+            }
+          ]
+        },
+        {
+          "title": "I MADE THE FRESH MID-WELL ITEMS TO PAR: CREAM, EGG WHITES, EGG YOLKS, COCO CREAM, MACADAMIA-KOJI ORGEAT AND PLUM OLIVE OLEO.",
+          "detail": [
+            "Pars run Mon to Wed / Thursday and Sunday / Friday and Saturday",
+            "Cream, always fresh 3 / 3 / 4",
+            "Egg whites, always fresh 3 / 3 / 3",
+            "Egg yolks, always fresh 3 / 3 / 3",
+            "Coco cream 3 / 3 / 4",
+            "Macadamia-koji orgeat 3 / 3 / 4",
+            "Plum olive oleo 3 / 3 / 4"
+          ]
+        },
+        {
+          "title": "I CAPPED EVERY CITRUS BOTTLE BEFORE BRINGING IT UPSTAIRS."
+        },
+        {
+          "title": "I STOCKED EVERY GARNISH ON THE CART TO PAR.",
+          "detail": [
+            "Pars run Mon to Wed / Thursday and Sunday / Friday and Saturday",
+            "Strawberry 1 / 1 / 1",
+            "Cucumber 4 / 4 / 6",
+            "Raspberry baskets 6 / 6 / 8",
+            "Pineapple fronds deli 2 / 2 / 3",
+            "Lemon wedges 1 / 1 / 1",
+            "Lime wedges 1 / 1 / 1",
+            "Bachelor buttons boxes 2 / 2 / 3",
+            "Banana leaves cut 2 / 3 / 4",
+            "Mint 6 / 6 / 9",
+            "Olives 1 / 1 / 1",
+            "Luxardo cherries 1 / 1 / 1",
+            "Sugar lemon peels 1 / 1 / 1",
+            "Matcha pocky sticks 1 / 1 / 1",
+            "Feta whip deli 1 / 1 / 2",
+            "Edible chocolate paint deli 1 / 1 / 1",
+            "Blueberry basket 4 / 4 / 5"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish cart stocked to par"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "PM PREP",
+      "role_es": "PREP PM",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I JUMPED ON TO ASSIST THE OPENING BARTENDER WITH SETUP.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I PUT AWAY ANY RELEVANT ORDERS, COLLECTED THE INVOICES, AND GAVE THEM TO THE MOD OR PUT THEM IN THE BOX.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE ALL THE BATCHING BOTTLES WERE IN THEIR LABELED SPOT ON THE SHELF.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I VERIFIED THAT THE KOLD-DRAFT AND SCOTSMAN ICE MACHINES WERE WORKING PROPERLY AND THE ICE WAS DUMPING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLEANED AND DRIED THE BLACK CART, BEING CAREFUL TO MAKE SURE IT WAS NOT WET OR STICKY.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE EVERYTHING MADE WAS PROPERLY LABELED AND DATED.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLEANED ALL THE TOOLS AND LET THEM DRY ON THE DRYING RACKS. IF AN ITEM COULD DRY WHERE IT LIVES WITHOUT POOLING WATER, I PUT IT THERE TO DRY.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CLEANED ALL THE WALLS, THE TABLE, THE FLOOR AND THE AREA AROUND THE JUICER WHEN I WAS DONE PREPPING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I ORGANIZED AND DETAILED ALL THE WALK-IN SHELVING AND CLEANED THE BATCH CONTAINERS SO THEY WERE NOT STICKY.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in shelving organized and detailed"
+            }
+          ]
+        },
+        {
+          "title": "I MADE SURE THE SINK AND FAUCET SPRAYER HEAD WERE CLEAR AND CLEAN.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I SWEPT AND MOPPED THE FLOOR THROUGHOUT THE PREP ROOM AND WALK-IN, CLEANED OUT THE FLOOR DRAINS, AND CHECKED UNDER ALL THE RACKS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The prep room and walk-in floor swept and mopped, drains clear"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THAT THE FLOOR DRAIN IN FRONT OF THE ICE MACHINE WAS CLEAR OF DEBRIS, FULLY DRAINED AND CLEAN AFTER MOPPING.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE THERE WAS NO DEBRIS UNDER THE ICE MACHINES OR ANY OF THE RACKS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I CHECKED THE FLOOR WAS NOT STILL TACKY AFTER MOPPING, AND REMOPPED WITH FRESH WATER IF IT WAS.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I MADE SURE THE SUGAR CAMBRO LIDS WERE DETAILED AND NOT STICKY.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I TOOK OUT ALL THE CARDBOARD AND TRASH.",
+          "section": "DAILY"
+        },
+        {
+          "title": "I PERFORMED A THOROUGH WALKTHROUGH AND NOTED ANY CLEANING OR REPAIR NEEDS.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any cleaning or repair needs, or none"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED INSIDE BOTH MACHINES FOR MILDEW OR GROWTH, INCLUDING THE PIPES IN THE TOP BACK LEFT CORNER OF THE KOLD-DRAFT AND THE INTERIOR OF THE SCOTSMAN DOOR, AND REPORTED ANYTHING FOUND.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Anything found inside the ice machines, or all clear"
+            }
+          ]
+        },
+        {
+          "title": "I PLACED THE PRODUCE ORDER.",
+          "section": "DAILY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The produce order placed"
+            }
+          ]
+        },
+        {
+          "title": "I DEEP CLEANED AND ORGANIZED THE DEEP FREEZER FOR THE PENNY POUND DELIVERY ON TUESDAY. I CLEANED THE RAIL THE LARGE BATCH CONTAINERS SIT ON, AND THE LARGE BATCH POUR SPOUTS.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I PULLED AND DEEP CLEANED THE INTERIOR OF BOTH ICE MACHINES, INCLUDING AROUND THE PIPES AND THE DOOR INTERIORS. NOTHING LEFT GROWING.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I DETAILED THE CART AND SPRAYED OUT THE GARBAGE CANS. I MOVED ALL THE BACKSTOCK SYRUPS FROM THE CAMBROS INTO THE SYRUP DISPENSERS.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I DETAILED THE WALK-IN WALLS AND FAN HOUSINGS AND DEEP CLEANED THE PREP AND 3 COMP SINKS. I DEEP CLEANED THE DRAIN UNDER THE ICE MACHINE.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I DETAILED THE PREP SHELF AND TABLE ADJACENT TO THE WALK-IN. I PULLED ANYTHING NOT ON THE CURRENT MENU AND SET IT ASIDE FOR THE LEAD TO DECIDE ON, RATHER THAN RETURNING IT TO THE SHELF.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I DECK BRUSHED THE WALK-IN AND MADE SURE ALL THE TABLES WERE CLEAR OF BOTTLES AND PRODUCT.",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I REORGANIZED THE PREP ROOM, WALK-IN AND DRY GOODS AREA COMPLETELY AND PREPARED FOR THE TUESDAY DELIVERIES. I DETAILED THE FLOORS, INCLUDING UNDER THE FREEZER, THE ICE MACHINES, AND ALL THE FLOOR GRATES AND DRAINS.",
+          "section": "WEEKLY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "Dining room",
+      "items": [
+        {
+          "title": "I DUSTED AND DETAILED THE BOOKCASE AND SHELVING ABOVE TABLES 14 AND 15, ARRANGED THE BOTTLES, DUSTED THE SCONCES BETWEEN THE BOOKSHELVES, DUSTED THE LAMPS AND WOLF PLAQUES ABOVE 11 AND 12, AND POLISHED THE MIRROR UNDER PILLARS 1 AND 2."
+        },
+        {
+          "title": "I DUSTBUSTED THE CHAIRS, DETAILED THE WOOD WALLS FROM TABLE 9 TO 14 AND THE SPEAKER ABOVE TABLE 14, AND POLISHED THE MIRROR UNDER PILLARS 3 AND 4."
+        },
+        {
+          "title": "I DUSTED AND DETAILED THE BOOKCASE AND SHELVING ABOVE TABLES 7 TO 10, ARRANGED THE BOTTLES, DUSTED THE SCONCES BETWEEN THE BOOKSHELVES AND THE SPEAKER ABOVE TABLE 9, POLISHED THE MIRROR UNDER PILLARS 5 AND 6, DUSTED THE GLASS POLES AROUND THE BAR EXTERIOR UNDER THE SEATS, AND SWEPT THE WATER CLOSET FLOOR."
+        },
+        {
+          "title": "I DUSTED AND DETAILED THE FRAMED AREA ABOVE THE BOOKCASE AT TABLES 1 AND 2 INCLUDING THE LIGHTS, DUSTED THE SPEAKER ABOVE TABLE 2, DUSTED THE SLIDING BOOKCASE, POLISHED THE MIRROR UNDER PILLARS 7 AND 8, AND MOPPED THE BACK HALLWAY."
+        },
+        {
+          "title": "I DUSTED AND DETAILED THE SCONCES, LAMPS, MANTLE AND DECORATIONS AROUND TABLES 3 TO 5, AND DETAILED THE WOOD SURFACES AND THE WALLS ABOVE THE BOOTHS."
+        },
+        {
+          "title": "I CLEANED OUT THE SERVER STATION NEAR THE EXIT AND DUSTED ALL ALONG THE LEDGE IN THE BACK HALLWAY, THE FIREPLACE SHELVING AND THE ANGLES UNDER THE BAR LAMPS."
+        },
+        {
+          "title": "I WASHED AND POLISHED THE ENTIRE MARBLE BARTOP INCLUDING THE ADA SECTION AND THE UNDERSIDE OF THE BAR, AND WASHED AND POLISHED THE BRASS EDGES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The marble bartop and brass edges washed and polished"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED AND DETAILED THE BOOKCASE AND SHELVING ABOVE TABLES 16 TO 19, ARRANGED THE BOTTLES, DUSTED THE SCONCES BETWEEN THE BOOKSHELVES, AND DUSTED AND REFILLED THE FOUNTAIN."
+        },
+        {
+          "title": "I DUSTED THE PAINTINGS AND LAMPS ABOVE THE SERVER STATION AND TABLE 20 AND THE SPEAKER ABOVE TABLE 20, DETAILED THE LAMPS AT THE SERVER STATION, DETAILED BOTH SCONCES BETWEEN THE BOOKSHELVES, AND EMPTIED THE WATER CLOSET FRIDGE OF UNCLAIMED MEALS."
+        },
+        {
+          "title": "I DETAILED THE PEACOCK LAMP AND TABLE BY THE HALL ENTRANCE INCLUDING THE LEGS AND UNDERNEATH THE TABLE TOP, DETAILED THE CORNER LAMPS AT TABLES 9, 14 AND 19, DUSTED THE SCONCES BETWEEN THE BOOKSHELVES, AND DUSTED AND ORGANIZED DRY STORAGE."
+        },
+        {
+          "title": "I DUSTED AND DETAILED ALL THE BOOKS AND LEDGES ABOVE TABLES 1 AND 2, DUSTED THE SCONCES BETWEEN THE BOOKSHELVES, AND ORGANIZED THE BOOKS SO THEY ALL FACE UP."
+        },
+        {
+          "title": "I DETAILED THE FIREPLACE BETWEEN 3 AND 4, THE TOPS OF THE PILLARS BETWEEN THE GREEN BARS, AND DUSTED ALL THE WOOD ON THE TOP OF THE COUCHES."
+        },
+        {
+          "title": "I DETAILED ALL THE MIRRORS, THE EXIT DOOR AND HANDLE, AND DUSTED ALL THE EXIT HALL LEDGES AND THE BATHROOM VENTS, AND SWEPT THE WATER CLOSET FLOOR."
+        },
+        {
+          "title": "I DUSTED AND DETAILED ALL THE UNDERBAR CLEAR TUBING AND GOLD HOUSING, POLISHED THE MARBLE FOOTREST AND LEDGES, AND DEEP CLEANED THE RESERVE CASE."
+        }
+      ]
+    }
+  ]
+}

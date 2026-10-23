@@ -14,36 +14,110 @@
  * and then nobody touched them, which is the correct response to a scoreboard
  * that cannot be satisfied.
  *
- * The rule is deliberately narrow: a heading that names a weekday means that
- * item belongs to that day. Every other heading is a heading. CLOSING SQUAD,
- * FIRST CUTS and DAILY are groupings, not schedules, and an item under one of
- * those is due whenever its list is walked. An item with no heading is due
- * too, which is what keeps every ordinary list behaving exactly as before.
+ * The rule is deliberately narrow: a heading is a schedule only when every
+ * word in it is a weekday, an ordinal, or a connector. One stray word and it
+ * is a grouping again. CLOSING SQUAD, FIRST CUTS and DAILY are groupings, not
+ * schedules, and an item under one of those is due whenever its list is
+ * walked. An item with no heading is due too, which is what keeps every
+ * ordinary list behaving exactly as before.
+ *
+ * Three shapes of schedule are understood, all off the same paper the crews
+ * used:
+ *   MONDAY                      every Monday
+ *   TUESDAY AND FRIDAY AND SAT  every Tuesday, Friday and Saturday
+ *   FIRST AND THIRD MONDAYS     the first and third Monday of the month
+ *   LAST FRIDAY                 the last Friday of the month
+ * A heading may name more than one weekday and may pin them to weeks of the
+ * month. With no ordinal it is every one of those weekdays; with an ordinal it
+ * is only those occurrences.
+ *
+ * A caller may also hand dueOnNight an explicit list of weekdays instead of
+ * leaning on the heading, for a list or an item that runs only on named
+ * nights. That list wins over any heading when it is given.
  */
 
-/** Index matches Date.getUTCDay: Sunday is 0. */
-const DAYS = [
-  "SUNDAY",
-  "MONDAY",
-  "TUESDAY",
-  "WEDNESDAY",
-  "THURSDAY",
-  "FRIDAY",
-  "SATURDAY",
-];
+/** Weekday words, long and short, singular and plural, to a day index. */
+const DAY_WORDS: Record<string, number> = {
+  SUN: 0, SUNDAY: 0, SUNDAYS: 0,
+  MON: 1, MONDAY: 1, MONDAYS: 1,
+  TUE: 2, TUES: 2, TUESDAY: 2, TUESDAYS: 2,
+  WED: 3, WEDS: 3, WEDNESDAY: 3, WEDNESDAYS: 3,
+  THU: 4, THUR: 4, THURS: 4, THURSDAY: 4, THURSDAYS: 4,
+  FRI: 5, FRIDAY: 5, FRIDAYS: 5,
+  SAT: 6, SATURDAY: 6, SATURDAYS: 6,
+};
+
+/** Ordinal words for weeks of the month. "last" is the final occurrence. */
+const ORDINAL_WORDS: Record<string, number | "last"> = {
+  FIRST: 1, "1ST": 1, "1": 1,
+  SECOND: 2, "2ND": 2, "2": 2,
+  THIRD: 3, "3RD": 3, "3": 3,
+  FOURTH: 4, "4TH": 4, "4": 4,
+  FIFTH: 5, "5TH": 5, "5": 5,
+  LAST: "last",
+};
 
 /**
- * The day a heading names, or null when it does not name one.
+ * Words allowed inside a schedule that neither name a day nor an ordinal.
+ * Anything outside this, a day word or an ordinal word means the heading is a
+ * grouping, not a schedule, and the item is due whenever its list is walked.
+ */
+const FILLER = new Set(["AND", "OF", "THE", "MONTH", "MONTHS", "EVERY", "EACH"]);
+
+type Schedule = { days: Set<number>; ordinals: Set<number | "last"> };
+
+/** The words of a heading, uppercased, punctuation dropped. */
+function wordsOf(section: string): string[] {
+  return section
+    .toUpperCase()
+    .split(/[^A-Z0-9]+/)
+    .filter(Boolean);
+}
+
+/**
+ * The schedule a heading describes, or null when it does not describe one.
  *
- * Forgiving about case and stray punctuation because a heading is typed by
- * whoever writes the list, and "Monday" and "MONDAY:" mean the same thing to
- * the person reading it off the wall.
+ * Strict on purpose. Every word has to be a weekday, an ordinal or a
+ * connector, and at least one weekday has to be named. "MONDAY PREP" keeps its
+ * stray word and stays a grouping; "FIRST AND THIRD MONDAYS" does not.
+ */
+function parseSchedule(section: string | null | undefined): Schedule | null {
+  if (!section) return null;
+  const words = wordsOf(section);
+  if (words.length === 0) return null;
+  const days = new Set<number>();
+  const ordinals = new Set<number | "last">();
+  for (const w of words) {
+    if (w in DAY_WORDS) {
+      days.add(DAY_WORDS[w]);
+    } else if (w in ORDINAL_WORDS) {
+      ordinals.add(ORDINAL_WORDS[w]);
+    } else if (FILLER.has(w)) {
+      // allowed, carries no meaning of its own
+    } else {
+      // a word that schedules nothing: this heading groups work, it does not
+      // time it.
+      return null;
+    }
+  }
+  if (days.size === 0) return null;
+  return { days, ordinals };
+}
+
+/**
+ * The day a heading names, or null when it does not name exactly one.
+ *
+ * Kept single-weekday only because its one caller, the initials carry on a
+ * close list, groups consecutive rows that share a day. A multi-day or
+ * monthly heading is its own row and does not carry, which is the safe
+ * default. Reads the same as it always did for a plain "MONDAY".
  */
 export function dayOfSection(section: string | null | undefined): number | null {
-  if (!section) return null;
-  const flat = section.trim().toUpperCase().replace(/[^A-Z]/g, "");
-  const index = DAYS.indexOf(flat);
-  return index === -1 ? null : index;
+  const schedule = parseSchedule(section);
+  if (!schedule) return null;
+  if (schedule.ordinals.size > 0) return null;
+  if (schedule.days.size !== 1) return null;
+  return [...schedule.days][0];
 }
 
 /**
@@ -65,17 +139,35 @@ export function weekdayOfNight(night: string): number | null {
 }
 
 /**
- * Is this item due on this night?
+ * Which occurrence of its weekday a night is within its month, and whether it
+ * is the last one. The first Monday of the month is nth 1; a fifth Friday,
+ * where the month has one, is both nth 5 and the last.
+ */
+function occurrenceInMonth(night: string): { nth: number; isLast: boolean } | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(night)) return null;
+  const at = new Date(`${night}T12:00:00Z`);
+  const dom = at.getUTCDate();
+  if (Number.isNaN(dom)) return null;
+  const nth = Math.floor((dom - 1) / 7) + 1;
+  const daysInMonth = new Date(
+    Date.UTC(at.getUTCFullYear(), at.getUTCMonth() + 1, 0),
+  ).getUTCDate();
+  return { nth, isLast: dom + 7 > daysInMonth };
+}
+
+/**
+ * Is an item due on this night?
  *
  * Two ways an item can be tied to particular nights, checked in order:
  *
- * 1. An explicit `days` set. This names the weekdays the item is owed, and it
- *    can name more than one — a SERVER list that only runs Friday and Saturday,
- *    or the four bar-close jobs handed to that server, which stay on bar close
- *    the other five nights. A heading on the item is ignored while a day set is
- *    present; the set is the schedule.
- * 2. A heading that is itself a weekday (the deep clean rota). One item a night,
- *    the heading names which.
+ * 1. An explicit `days` list handed in by the caller. It names every weekday
+ *    the item is owed and can name more than one, for a list or item that runs
+ *    only on certain nights. A heading on the item is ignored while the list is
+ *    present; the list is the schedule. Each entry reads the same forgiving way
+ *    as a heading, so FRIDAY, Friday and "friday" all land, and an entry that
+ *    is not a weekday matches nothing.
+ * 2. The item's heading. A weekday, several weekdays, or weekdays pinned to
+ *    weeks of the month, parsed above.
  *
  * True for everything with neither, which is almost everything. An unreadable
  * night is treated as "due", because a list that shows too much is recoverable
@@ -86,29 +178,32 @@ export function dueOnNight(
   night: string,
   days?: readonly (string | null | undefined)[] | null,
 ): boolean {
+  const tonight = weekdayOfNight(night);
   if (days && days.length > 0) {
-    const tonight = weekdayOfNight(night);
     if (tonight === null) return true;
-    // Each entry is read the same forgiving way as a heading, so FRIDAY,
-    // Friday and "friday" all land. An entry that is not a weekday name is no
-    // night and matches nothing.
     return days.some((d) => dayOfSection(d) === tonight);
   }
-  const day = dayOfSection(section);
-  if (day === null) return true;
-  const tonight = weekdayOfNight(night);
+  const schedule = parseSchedule(section);
+  if (!schedule) return true;
   if (tonight === null) return true;
-  return day === tonight;
+  if (!schedule.days.has(tonight)) return false;
+  if (schedule.ordinals.size === 0) return true;
+  const occ = occurrenceInMonth(night);
+  if (occ === null) return true;
+  return (
+    schedule.ordinals.has(occ.nth) ||
+    (schedule.ordinals.has("last") && occ.isLast)
+  );
 }
 
 /**
- * Does this list schedule its items across the week?
+ * Does this list schedule its items across the week or the month?
  *
  * Used to decide whether a screen should explain itself. A list where nothing
- * is filed under a day should look exactly as it always has.
+ * is scheduled should look exactly as it always has.
  */
 export function hasDayScheduling(
   sections: (string | null | undefined)[],
 ): boolean {
-  return sections.some((section) => dayOfSection(section) !== null);
+  return sections.some((section) => parseSchedule(section) !== null);
 }

@@ -1,0 +1,1952 @@
+{
+  "venue": "UBNP",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "BAR",
+      "role_es": "BAR",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I OPENED THE WINDOWS, UNHITCHED THE DOOR AND PLACED IT BEHIND THE DOOR LEADING TO THE WALK-IN."
+        },
+        {
+          "title": "I FILLED MY ICE WELL, FILLED THE MOLDS FOR ICE SPEARS, AND FILLED THE SPEAR TRAYS TO REPLENISH STOCK."
+        },
+        {
+          "title": "I TURNED ON THE SLUSHEE MACHINES AND FILLED THEM TO CAPACITY. I WIPED THE MACHINES AND DUMPED THE STANDING WATER IN THE DRIP TRAYS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The slushee machines filled and wiped, drip trays empty"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED ON THE HOT WATER MAKER AND TURNED ON AND TOPPED OFF THE HOT SAKE MACHINE."
+        },
+        {
+          "title": "AFTER REMOVING THE TAP PLUGS, I BLED ALL THE BEER TAPS FOR 5 SECONDS."
+        },
+        {
+          "title": "I PULLED ALL THE CHEATERS FROM THE FRIDGE AND SET UP THE WELL ACCORDING TO THE BAR SCHEMATIC. I FILLED THE EMPTY SPOTS IN THE WELL AND ADDED SPEED POURS TO THE BOTTLES THAT NEED THEM.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well set up to the bar schematic"
+            }
+          ]
+        },
+        {
+          "title": "I CUT AND PLACED GARNISHES ON THE BAR TOP ACCORDING TO THE GARNISH SCHEMATIC, PULLING \"USE FIRST\" STOCK FROM THE WALK-IN BEFORE NEW STOCK.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Garnishes cut and placed to the schematic"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE PREP LIST AND MADE TIME TO PREPARE THE NECESSARY ITEMS."
+        },
+        {
+          "title": "I CHECKED THE WATER BOTTLES FOR CHIPS IN THE GLASS AND THREW OUT ANY CHIPPED BOTTLES."
+        },
+        {
+          "title": "I CHECKED THE BAR HANDWASHING STATION TO MAKE SURE THE SOAP AND PAPER TOWELS ARE FULL."
+        },
+        {
+          "title": "I PREPPED ICED TEA FOR SERVICE USING FOUR TEA BAGS AND 1L HOT WATER (OOLONG AND GREEN)."
+        },
+        {
+          "title": "I PLACED COASTERS AT EACH CORNER OF THE BAR AND MADE SURE THE STRAWS ARE FULLY STOCKED."
+        },
+        {
+          "title": "I MADE SURE THE CANDLES ARE READY TO LIGHT FOR DINNER SERVICE."
+        },
+        {
+          "title": "I MADE SURE WE HAD BACK-UP BOTTLES OF ALL JUICES, CORDIALS, SYRUPS AND GARNISH IN THE BAR FRIDGE FOR SERVICE, ACCORDING TO THE GUIDE."
+        },
+        {
+          "title": "I MADE SURE ANY ORDERS WERE PUT AWAY AND THE INVOICES ARE IN THE INVOICE CLIPBOARD."
+        },
+        {
+          "title": "I COMPLETED MY WEEKLY SIDEWORK AND CLEANING DUTY."
+        },
+        {
+          "title": "I RETRIEVED THE MONEY BAG, ALL 4 HANDHELDS, AND ONE BAG EACH OF TERRY AND MICROFIBER TOWELS FOR SERVICE."
+        },
+        {
+          "title": "I CHECKED IN WITH THE MOD BEFORE I AM SCHEDULED TO CLOCK OUT."
+        },
+        {
+          "title": "I STOCKED THE LIQUOR AND BATCH BOTTLES ACCORDING TO PAR."
+        },
+        {
+          "title": "I MADE SURE TO CLOCK OUT BEFORE MY 6TH HOUR IF I DIDN'T TAKE A BREAK."
+        },
+        {
+          "title": "I MADE SURE THE BAR FRIDGES WERE FULLY STOCKED FOR THE PM TRANSITION, ACCORDING TO THE GUIDE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar fridges fully stocked"
+            }
+          ]
+        },
+        {
+          "title": "AT THE END OF MY SHIFT, I DUMPED THE RECYCLING IN THE TRASH ROOM."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "BAR",
+      "role_es": "BAR",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I COMPLETED MY WEEKLY CLEANING DUTY."
+        },
+        {
+          "title": "I REPORTED ANY LOW OR 86'D ITEMS TO THE BAR TEAM.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What's low or 86'd, or nothing"
+            }
+          ]
+        },
+        {
+          "title": "I RESTOCKED ALL THE LIQUOR AND WINE, KEEPING ONE BACK-UP OF EACH LIQUOR, LIQUOR BATCH, AND WINE."
+        },
+        {
+          "title": "I FULLY RESTOCKED THE BAR FRIDGES WITH ALL NA BEVS AND SAKE, ACCORDING TO THE GUIDE."
+        },
+        {
+          "title": "I DATED AND PUMP-SEALED ALL OPEN WINE BOTTLES AND STORED THEM PROPERLY, DISCARDING ANY EXPIRED PRODUCT."
+        },
+        {
+          "title": "I RESTOCKED ANY NECESSARY GLASSWARE."
+        },
+        {
+          "title": "I RESTOCKED THE PAPER AND BOBA STRAWS."
+        },
+        {
+          "title": "I WASHED ALL THE WATER BOTTLES AFTER SERVICE AND REFILLED THEM."
+        },
+        {
+          "title": "I WASHED ALL THE DIRTY GLASSWARE."
+        },
+        {
+          "title": "I SANITIZED UNDERNEATH BOTH GLASSWARE GRATES."
+        },
+        {
+          "title": "I BURNED ALL THE ICE IN THE ICE WELLS."
+        },
+        {
+          "title": "I WIPED DOWN THE JUICE AND SYRUP BOTTLES AND RETURNED THEM TO THE FRIDGE. I REMOVED THE POUR SPOUTS AND SENT THEM THROUGH DISH, AND PLACED CORKS IN THE CHEATER BOTTLES TO SEAL THEM."
+        },
+        {
+          "title": "I WIPED DOWN THE BITTERS BOTTLES AND REFILLED THEM TO THE BASE OF THE NECK."
+        },
+        {
+          "title": "I THREW OUT SPENT CITRUS, RIM FRUIT, AND ANY CUT FRUIT FROM THE DAY. I STORED THE FLOWERS, PANDAN, AND CUCUMBERS IN THE WALK-IN FOR THE NEXT DAY IN THE \"USE FIRST\" AREA."
+        },
+        {
+          "title": "I WIPED DOWN THE SPIRIT BOTTLES AND POUR SPOUTS WITH VIGOROSO, THREW ANY EMPTIES IN RECYCLING, AND STORED THE VERMOUTH IN THE FRIDGE."
+        },
+        {
+          "title": "I COVERED ALL THE POUR SPOUTS ON THE LIQUOR AND BITTERS BOTTLES WITH BOTTLE COVERS."
+        },
+        {
+          "title": "I BROKE DOWN THE WELL AND SINKS AND RAN ALL THE TOOLS AND TRAYS THROUGH DISH."
+        },
+        {
+          "title": "I WIPED DOWN THE ENTIRE WELL INCLUDING UNDERNEATH, THE SPEED RAILS, THE BAR COUNTERTOP, THE FRONT OF THE SLUSHY MACHINE, THE SINKS AND THE HAMILTON MIXER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well wiped down top to bottom"
+            }
+          ]
+        },
+        {
+          "title": "I SANITIZED AND DRIED UNDERNEATH ALL THE GRATES SURROUNDING THE BAR."
+        },
+        {
+          "title": "AFTER RUNNING THEM THROUGH DISH, I PLACED ALL THE BAR TOOLS BACK IN THEIR AREAS."
+        },
+        {
+          "title": "I RAN ALL THE BEER GRATES THROUGH DISH AND POURED HOT SANITIZER WATER DOWN THE DRAINS."
+        },
+        {
+          "title": "I CLEANED AND WIPED DRY ALL THE BEER TAPS AND POLES, THEN INSTALLED THE TAP PLUGS."
+        },
+        {
+          "title": "I CLEANED THE TRACKS OF THE UPRIGHT FREEZER.",
+          "detail": [
+            "It builds up fast, so clean nightly"
+          ]
+        },
+        {
+          "title": "I RAN THE HIGHBALL ACCESSORIES AND SPOUT THROUGH DISH, THEN WIPED THEM CLEAN AND REPLACED THEM."
+        },
+        {
+          "title": "I TURNED OFF THE HOT SAKE MACHINE AND MADE SURE THERE WAS BACK-UP SAKE FOR TOMORROW."
+        },
+        {
+          "title": "I WIPED OFF AND COVERED THE HOT SAKE MACHINE WITH PLASTIC WRAP TO DETER FLIES."
+        },
+        {
+          "title": "I EMPTIED, RINSED, AND REFILLED THE HOT WATER MACHINE, THEN UNPLUGGED IT."
+        },
+        {
+          "title": "I TURNED THE SLUSHEE MACHINES TO NIGHT MODE."
+        },
+        {
+          "title": "I WASHED THE BAR MATS ON TOP OF THE DISHWASHER, TURNED OFF AND WIPED THE DISHWASHER (TOP, FRONT, SIDES, INSIDE), AND CLEANED BOTH FILTERS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher wiped down and off, both filters clean"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THERE WERE ENOUGH CHEMICALS FOR THE DISHWASHER FOR TOMORROW AND BROUGHT ANY NEEDED FROM THE STORAGE ROOM."
+        },
+        {
+          "title": "I TOOK OUT BOTH TRASH CANS BEHIND THE BAR."
+        },
+        {
+          "title": "I POURED BLEACH DOWN THE SINKS AND COVERED THEM WITH PLASTIC WRAP AND A METAL CUP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The sinks bleached and covered"
+            }
+          ]
+        },
+        {
+          "title": "I DID A ONCE-OVER AND MADE SURE NO GOOEY OR STICKY STAINS ARE LEFT ON ANY BAR SURFACE."
+        },
+        {
+          "title": "I CHECKED IN WITH THE FLOOR CLOSERS AND HELPED WITH THE CLOSE WHEREVER NEEDED."
+        },
+        {
+          "title": "I MADE SURE THE FAN(S) ARE ON AND RUNNING TO HELP WITH FLIES."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "FLOOR",
+      "role_es": "PISO",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I MADE SURE THE OVERNIGHT CLEANERS DID A GOOD JOB ON THE FLOOR, AND I SWEPT THE PATIO."
+        },
+        {
+          "title": "I SWEPT UP AND PICKED UP ANY TRASH OR DEBRIS IN FRONT OF THE RESTAURANT."
+        },
+        {
+          "title": "I BROUGHT OUT ALL THE CHAIRS FOR THE PATIO.",
+          "detail": [
+            "Firepits: 5 small stools on the long side, 2 on the sides. 7 stools on each side of the island. 6 at the ramen bar, 5 on the side bar, 10-11 at the front bar, the rest at the back bar."
+          ]
+        },
+        {
+          "title": "I SANITIZED ALL THE TABLES, THE BARTOP, THE RAMEN BAR, AND THE SEATS, AND MADE SURE ALL THE FOOT RESTS ARE FREE OF DUST AND DEBRIS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tables, bartop and ramen bar sanitized and set"
+            }
+          ]
+        },
+        {
+          "title": "I USED WOOD POLISH AND A MICROFIBER ON THE WOOD SURFACES (RAMEN BAR, EXPO AREA, ISLAND, BAR), AND POLISHED AGAIN THROUGHOUT AND AT THE END OF MY SHIFT."
+        },
+        {
+          "title": "I SPOT-SWEPT THE RAMEN BAR AND PATIO THROUGHOUT THE SHIFT."
+        },
+        {
+          "title": "I FILLED THE HABANERO CHILI PASTE CONTAINERS AND BUILT THE CADDIES WITH SOY, SESAME, TOGARASHI AND CHILI PASTE. I FILLED A SQUIRT BOTTLE WITH HABANERO TO REFILL THE CADDIES.",
+          "detail": [
+            "If warm or sunny, don't fill too high, and keep on an ice bath"
+          ]
+        },
+        {
+          "title": "I BROUGHT OUT THE TO-GO CHILI PASTE.",
+          "detail": [
+            "If it's hot, keep it on ice"
+          ]
+        },
+        {
+          "title": "I FILLED THE FIREBOMB CONTAINER AT EXPO AND MADE SURE WE HAD A BACK-UP CAMBRO NEARBY FOR REFILLS. I CHANGED THE PLATE AND NAPKIN UNDER THE FIREBOMB AT EXPO AND WIPED THE OUTSIDE IF NEEDED."
+        },
+        {
+          "title": "I PLACED 3 CONDIMENT CADDIES AT THE FIREPITS, 1 AT EACH SINGLE TABLE (P4, P5), 2-3 AT THE ISLAND AND RAMEN BAR, AND 6-7 AROUND THE BAR."
+        },
+        {
+          "title": "I FILLED THE BUCKETS (2 LARGE, 1 SMALL) WITH SANITIZER AND PUT OUT TOWELS FOR SERVICE, INCLUDING A MICROFIBER FOR THE WATER BOTTLES, AND PLACED A TOWEL UNDER THE BUCKETS TO KEEP THE COUNTER DRY."
+        },
+        {
+          "title": "I REPLACED THE TRAY FOR EMPLOYEE FOOD AND DRINK IF NEEDED."
+        },
+        {
+          "title": "I MADE SURE ALL THE TRASH CANS WERE WIPED DOWN AND RELINED AS NEEDED FOR SERVICE (BAR, RECYCLING, EXPO AND THE RESTROOM)."
+        },
+        {
+          "title": "I CHECKED THE POS FOR 86'D ITEMS AND CONFIRMED THEM WITH THE KITCHEN AND BAR FOR LUNCH SERVICE."
+        },
+        {
+          "title": "I MADE SURE ALL THE WINDOWS ARE CLEAN INSIDE AND OUT, INCLUDING THE MESH SCREEN BETWEEN THE ISLAND AND THE BACK WALL, AND THE FRONT DISPLAY-MENU WINDOW.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The windows clean inside and out, no fingerprints"
+            }
+          ]
+        },
+        {
+          "title": "I WENT OVER THE WINDOWSILLS SO THERE ARE NO DEAD FLIES OR DUST."
+        },
+        {
+          "title": "I MADE SURE THE EXPO STATION WAS STOCKED WITH A WET MICROFIBER, A SHARPIE, ALL TO-GOS AND UTENSILS FOR SERVICE (INCLUDING TWEEZER TONGS IN A CUP OF HOT WATER) AND A DRY MICROFIBER FOR SILVERWARE, AND I WIPED DOWN THE EXPO COUNTER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The expo station stocked for service"
+            }
+          ]
+        },
+        {
+          "title": "I DOUBLE-CHECKED THE CLEANING CREW DID A GOOD JOB ON THE BATHROOM, AND CHECKED THE HAND SOAP WAS FULL AND THERE WAS PLENTY OF TOILET PAPER, PAPER TOWELS, PERIOD PRODUCTS AND BACK-UPS."
+        },
+        {
+          "title": "I COMPLETED MY WEEKLY SIDEWORK."
+        },
+        {
+          "title": "AFTER THIS LIST WAS DONE, I DID A FINAL WALKTHROUGH TO MAKE SURE EVERYTHING WAS EXECUTED."
+        },
+        {
+          "title": "DURING DOWN TIME, I MADE SURE WE WERE FULLY STOCKED IN DRY STORAGE AND THE TOOL BOX (DOUBLE BAGS, POKED LIDS, CONDIMENTS)."
+        },
+        {
+          "title": "AT THE END OF LUNCH SERVICE, I WALKED THE EXTERIOR TO CHECK FOR DEBRIS AND TRASH."
+        },
+        {
+          "title": "AT THE END OF LUNCH SERVICE, I COMPLETED A RESTROOM CHECK."
+        },
+        {
+          "title": "AT THE END OF LUNCH SERVICE, I CHANGED THE SANITIZER AND TOWELS BEFORE CLOCKING OUT."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "FLOOR",
+      "role_es": "PISO",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "I MADE SURE ALL THE SANITIZER BUCKETS AND TOWELS WERE CHANGED, INCLUDING THE WET MICROFIBER AT THE EXPO COUNTER."
+        },
+        {
+          "title": "I WIPED OFF THE EXPO AND TO-GO COUNTERS AND CHANGED THE WATER IN THE TONG CUPS AT BOTH."
+        },
+        {
+          "title": "I CHECKED THE CONDIMENT TRAYS THROUGHOUT THE RESTAURANT, WIPING THEM DOWN AND FILLING ANY NEAR-EMPTY HABANERO JARS."
+        },
+        {
+          "title": "I SPOT-SWEPT NEAR THE PASS AND REGISTER, AND THE PATIO IF NEEDED."
+        },
+        {
+          "title": "I RESTOCKED ANY NECESSARY ITEMS AT THE EXPO AND TO-GO STATIONS TO GET READY FOR DINNER."
+        },
+        {
+          "title": "I MADE SURE ALL THE TRASH CANS WERE EMPTIED, CLEANED AND RELINED AS NEEDED FOR SERVICE (BAR, RECYCLING, EXPO AND THE RESTROOM)."
+        },
+        {
+          "title": "I MADE SURE THE BATHROOM WAS CLEAN, CLEANING IT IF NEEDED INCLUDING WINDEXING THE MIRRORS, AND STOCKED THE TOILET PAPER AND PAPER TOWELS."
+        },
+        {
+          "title": "I PLACED OUT ALL THE CHAIRS, HEATERS AND TABLES, AND CLEANED THE TABLES AND TABLE BASES FOR SERVICE."
+        },
+        {
+          "title": "I MOPPED ALL THE FOH AREAS."
+        },
+        {
+          "title": "UPSTAIRS: I TURNED ON THE AC AND THE RIGHT LIGHTS, SWEPT AND SET UP THE CHAIRS, AND WIPED DOWN THE TABLES AND WHITE TILE."
+        },
+        {
+          "title": "I DEEP CLEANED THE PATIO, FRONT AND FIR ST. SIDEWALKS."
+        },
+        {
+          "title": "I OPENED ALL THE WINDOWS AND PLACED THE REMAINING CHAIRS."
+        },
+        {
+          "title": "I MADE SURE ALL THE BLACK WINDOWSILLS WERE CLEAN AND WINDEXED ALL THE GLASS IN THE HOUSE."
+        },
+        {
+          "title": "I VACUUMED THE PATIO, FRONT, DECK 1, DECK 2 AND FIR ST. SIDEWALKS."
+        },
+        {
+          "title": "I CLEANED AND PLEDGED ALL THE PATIO AREAS, DECK 1, DECK 2 AND CHAIRS."
+        },
+        {
+          "title": "I PULLED SMALL AMOUNTS OF BEER THROUGH THE LINES."
+        },
+        {
+          "title": "I CLEANED THE PARTITION LEGS AND BASES AND WINDEXED THE CLEAR SECTIONS."
+        },
+        {
+          "title": "I SWEPT THE ENTIRE FOH AREA, INCLUDING INSIDE, PATIO, BAR, AND HALLWAYS."
+        },
+        {
+          "title": "I ASSISTED MY TEAMMATE WHEREVER NEEDED."
+        },
+        {
+          "title": "I TOOK A BREAK."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "FLOOR",
+      "role_es": "PISO",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I MADE SURE ALL THE PLATES WERE COLLECTED FROM GUESTS AND BROUGHT TO THE KITCHEN.",
+          "detail": [
+            "This is priority; keep doing it and attend to guests while you finish your checklist"
+          ]
+        },
+        {
+          "title": "I COMPLETED MY WEEKLY SIDEWORK AND CLEANING."
+        },
+        {
+          "title": "I RESTOCKED ALL THE PAPER AND PLASTIC GOODS AT BOTH THE EXPO AND TO-GO STATIONS."
+        },
+        {
+          "title": "I MADE SURE WE ARE STOCKED ON DOUBLE BAGS AND BROTH LIDS WITH 2 HOLES (POKEYS)."
+        },
+        {
+          "title": "I MADE SURE WE HAD ENOUGH FULL CONTAINERS OF TO-GO CHILI PASTE, ROTATED SO THE OLDEST ARE IN FRONT.",
+          "detail": [
+            "Three containers Sunday through Wednesday, two Thursday through Saturday"
+          ]
+        },
+        {
+          "title": "I SWEPT THE RAMEN BAR BEFORE BRINGING IN THE PATIO FURNITURE."
+        },
+        {
+          "title": "I WIPED DOWN THE KICK PANELS AT THE RAMEN BAR AND THOROUGHLY CLEANED THE COUNTERTOP."
+        },
+        {
+          "title": "I COLLECTED ALL THE CADDIES, REFILLED THE TOGARASHI, SOY, AND SESAME OIL, WIPED THEM DOWN, AND WASHED THE CONDIMENT TRAYS IN THE DISHWASHER SO THERE'S NO SAUCE OR OIL RESIDUE.",
+          "detail": [
+            "Dump night Wednesday and Sunday",
+            "Don't mix soy sauce and sesame oil"
+          ]
+        },
+        {
+          "title": "I EMPTIED ALL THE HABANERO SAUCE INTO A CLEAN CONTAINER AND WASHED AND POLISHED THE CONTAINERS, LIDS AND SPOONS."
+        },
+        {
+          "title": "I RAN ALL THE SERVING TRAYS THROUGH THE DISH MACHINE OR SPRAYED AND WIPED THEM DOWN WITH SANITIZER."
+        },
+        {
+          "title": "I EMPTIED AND WIPED ALL THE TRASH CANS."
+        },
+        {
+          "title": "I REFILLED THE TOGARASHI AND FIREBOMB REFILL CAMBROS, WASHING AND REFILLING CLEAN DRY ONES IF THEY WERE EMPTY."
+        },
+        {
+          "title": "I SANITIZED AND WIPED DOWN EVERY TABLE IN THE RESTAURANT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every table wiped and sanitized"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN EVERY SEAT IN THE RESTAURANT."
+        },
+        {
+          "title": "I BROUGHT IN ALL THE CHAIRS AND UMBRELLAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All chairs and umbrellas brought in"
+            }
+          ]
+        },
+        {
+          "title": "I FULLY WIPED DOWN ALL THE KICK PANELS UNDER THE BAR AND ISLAND."
+        },
+        {
+          "title": "I RESTOCKED THE RESTROOMS, INCLUDING FILLING THE HAND SOAP, AND SANITIZED THE DOOR HANDLE AND ANY TOUCHED SURFACES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restrooms restocked, soap full"
+            }
+          ]
+        },
+        {
+          "title": "I FULLY RESTOCKED DRY STORAGE."
+        },
+        {
+          "title": "I WIPED OFF ALL THE FOH FANS."
+        },
+        {
+          "title": "I CLOSED AND SECURELY LOCKED ALL THE WINDOWS AND DOORS, THEN CHECKED THEM ALL ONCE MORE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The windows and doors closed and locked"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE TO-GO EXPO COUNTER AND CLEANED THE KICKSTAND UNDER IT."
+        },
+        {
+          "title": "I WIPED DOWN THE EXPO COUNTERS AND THE EXPO PRINTER, CLEANED UNDER THE TICKET RAILS, AND CLEANED THE KICKSTAND UNDER THE EXPO COUNTER."
+        },
+        {
+          "title": "I DUSTED THE LAMP NEXT TO THE SODAS."
+        },
+        {
+          "title": "IF IT WAS USED, I TURNED THE LIGHT STRIP OFF AT EXPO AND CLEANED IT OFF."
+        },
+        {
+          "title": "I CHARGED THE LIGHT STRIP OVERNIGHT.",
+          "detail": [
+            "Charger and strip are under the front register"
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE WALL BEHIND THE DISH PIT."
+        },
+        {
+          "title": "I FULLY CLEANED OFF THE DIRTY DISH RACK AND BUS STATION."
+        },
+        {
+          "title": "I USED WOOD POLISH AND A MICROFIBER ON THE WOOD SURFACES (RAMEN BAR, EXPO AREA, ISLAND, BAR)."
+        },
+        {
+          "title": "I SANITIZED ALL THE MENUS, INCLUDING THE ONES FROM THE BAR."
+        },
+        {
+          "title": "I WIPED DOWN AND REFILLED ALL THE WATER BOTTLES, LEAVING SPACE NEXT TO THE WATER MACHINE TO BREATHE."
+        },
+        {
+          "title": "I POLISHED ANY REMAINING SILVERWARE."
+        },
+        {
+          "title": "I COUNTED THE SPOONS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The spoon count"
+            }
+          ]
+        },
+        {
+          "title": "I COUNTED THE FORKS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The fork count"
+            }
+          ]
+        },
+        {
+          "title": "I SPOT-SWEPT THE PATIO IF NEEDED (NAPKINS, CHOPSTICKS)."
+        },
+        {
+          "title": "I THREW AWAY ANY FOOD OR DRINKS EATEN THROUGHOUT THE SHIFT."
+        },
+        {
+          "title": "I CLEANED AND REPLACED THE DESIGNATED TRAY FOR EMPLOYEE ITEMS."
+        },
+        {
+          "title": "I CHECKED IN WITH MY TEAMMATE AND THE BAR AND HELPED THEM CLOSE WHEREVER NEEDED."
+        },
+        {
+          "title": "I CHECKED IN WITH THE MOD BEFORE CLOCKING OUT."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MANAGER",
+      "role_es": "GERENTE",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I RETRIEVED ALL 4 HANDHELDS FROM THE OFFICE, ALONG WITH THE TIP JAR AND MONEY BAG, PLUS ONE BAG EACH OF TERRY AND MICROFIBER TOWELS."
+        },
+        {
+          "title": "I MADE SURE BOTH THE FLOOR AND THE BAR WERE SET UP BY 11:25."
+        },
+        {
+          "title": "I MADE SURE THE MUSIC WAS WORKING, ON THE RIGHT PLAYLIST, WITH THE SPEAKERS ON AT THE RIGHT VOLUME BEFORE WE OPENED."
+        },
+        {
+          "title": "I REVIEWED THE ROSTER AND KEPT THE PM MOD INFORMED OF ANY CHANGES I MADE."
+        },
+        {
+          "title": "I UPDATED AND PRINTED THE MENUS IF NEEDED."
+        },
+        {
+          "title": "DURING SERVICE, I FACILITATED ANY BREAKS AND MADE SCHEDULE ADJUSTMENTS AS NEEDED."
+        },
+        {
+          "title": "AT THE END OF MY SHIFT, I MADE SURE THE CHECKLISTS WERE COMPLETED AND FILLED OUT, ESPECIALLY MY OWN."
+        },
+        {
+          "title": "I WROTE MY NOTES AND CHECKED IN WITH THE PM MOD BEFORE CLOCKING OUT."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MANAGER",
+      "role_es": "GERENTE",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I CHECKED IN WITH THE AM MOD AND REVIEWED THE ROSTER FOR THE NIGHT."
+        },
+        {
+          "title": "I TURNED ALL THE LIGHTS TO THE RIGHT LEVEL."
+        },
+        {
+          "title": "THROUGHOUT MY SHIFT, I KEPT THE MUSIC ON THE RIGHT PLAYLIST AND ADJUSTED THE VOLUME AS NEEDED."
+        },
+        {
+          "title": "I MADE SURE THE CANDLES WERE PLACED AND LIT BEFORE SUNSET, AND THE FIRE PITS LIT IF NEEDED."
+        },
+        {
+          "title": "DURING SERVICE, I FACILITATED BREAKS AND CUTS AND MADE ADJUSTMENTS AS NEEDED."
+        },
+        {
+          "title": "DURING SERVICE, I OVERSAW THAT THE SIDE TASKS GOT DONE, INCLUDING STOCKING, SIDEWORK, AND RESTROOM AND EXTERIOR CHECKS."
+        },
+        {
+          "title": "I OVERSAW THE CLOSE AND MADE SURE ALL THE CHECKLISTS AND TASKS WERE COMPLETED."
+        },
+        {
+          "title": "I CHECKED THAT WE WERE FULLY STOCKED ON THE FLOOR, IN DRY STORAGE, AND AT THE BAR."
+        },
+        {
+          "title": "I DOUBLE-CHECKED THAT ALL THE DOORS AND WINDOWS WERE CLOSED AND LOCKED.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The doors and windows locked for the night"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THAT ALL THE LIGHTS AND MUSIC WERE OFF, WITH THE OUTSIDE SPEAKERS DOWN BEFORE 11:45 FOR THE UPSTAIRS NEIGHBORS."
+        },
+        {
+          "title": "I DOUBLE-CHECKED BOTH THERMOSTATS AND TURNED THEM OFF IF THEY WERE USED (ONE BEHIND THE KITCHEN DOOR, ONE AT THE BACK BAR)."
+        },
+        {
+          "title": "I MADE SURE ALL THE CHECKS WERE CLOSED, PRINTED THE LONG CHECKOUT SLIP, AND CLOCKED OUT #1000."
+        },
+        {
+          "title": "I COLLECTED THE MONEY BAG, THE CASH FROM BOTH DRAWERS, THE CASH TIPS, AND ALL 4 HANDHELDS AND BROUGHT THEM TO THE OFFICE TO CHARGE."
+        },
+        {
+          "title": "I COUNTED THE MONEY IN THE DRAWERS AND SUBTRACTED THE $420 STARTING BANK FOR THE NIGHT'S TOTAL CASH."
+        },
+        {
+          "title": "I RESET THE BANK FOR TOMORROW TO $420 ($20 IN QUARTERS, $150 IN 1S, $150 IN 5S, $100 IN 20S)."
+        },
+        {
+          "title": "I BUNDLED THE CHECKOUT SLIP, CASH DROP, AND CASH TIPS TOGETHER AND WROTE THE CASH TOTALS ON THE CHECKOUT SLIP."
+        },
+        {
+          "title": "I PUT ALL THE MONEY BAGS AND THE CASH BOX BACK IN THE SAFE, THEN CLOSED AND LOCKED IT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The safe closed and locked"
+            }
+          ]
+        },
+        {
+          "title": "I PUT THE HANDHELDS ON TO CHARGE."
+        },
+        {
+          "title": "I FINISHED ANY OTHER TASKS, INCLUDING PM MOD NOTES AND OTHER COMMUNICATIONS."
+        },
+        {
+          "title": "I MADE SURE ALL THE LIGHTS WERE OFF AND THE DOORS LOCKED, INCLUDING THE TRASH ROOM, MEAT ROOM, AND OFFICE."
+        },
+        {
+          "title": "I CLOCKED OUT AND LOCKED THE BACK DOOR."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "Floor",
+      "items": [
+        {
+          "title": "I WALKED THE PROPERTY FOR TRASH ON THE GROUND AND IN THE PLANTER BOXES, CLEANED AND POLISHED THE WET FLOOR SIGNS, AND USED DEGREASER ON THE RAMEN BAR COUNTER.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ramen bar counter degreased and clean"
+            }
+          ]
+        },
+        {
+          "title": "I RINSED OUT ALL THE FOH TRASH CANS INCLUDING BEHIND THE BAR, AND DETAIL-CLEANED THE TICKET RAILS ON EXPO AND TO-GO.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I RAN THE METAL FIREBOMB CONTAINER THROUGH DISH.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED THE CORRESPONDING BINS AT DRY STORAGE IN THE KITCHEN AND ROTATED THE ITEMS, MAKING SURE THE BINS WERE FULLY DRY BEFORE REPLACING ANYTHING.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dry-storage bins clean and dry"
+            }
+          ]
+        },
+        {
+          "title": "I DETAIL-CLEANED THE HIGH CHAIRS AND WINDOWSILLS, WIPED OFF THE HEALTH DEPT SCORE CARD AT THE FRONT WINDOW, AND USED DEGREASER TO CLEAN BOTH THE EXPO AND TO-GO COUNTERS.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED AND DUSTED THE TOOL BOX (TOP, SIDES, FRONT OF DRAWERS) AND THE EXPO STATION, AND PULLED OUT THE TOOL BOX AND EXPO CABINETS TO SWEEP UNDERNEATH.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I COUNTED THE SPOONS.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The spoon count"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE METAL KITCHEN DOORS AND DUSTED THE FRONT COUNTER AROUND THE REGISTER, NA BEVS AND CANDY.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I SWEPT BETWEEN THE WOODEN WALL PANELS.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED THE HOLDERS FOR NAPKINS, CHOPSTICKS, SILVERWARE, WETNAPS AND FUNCHOPS BY THE EXPO AREA, INCLUDING THE COUNTER UNDERNEATH.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I CLEANED THE COUNTERS UNDERNEATH THE PLATES AND TO-GO CONTAINERS AT THE TO-GO AND EXPO STATIONS.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I REMOVED THE TO-GO LIDS AND SMALL DELI CUPS FROM BOTH STATIONS TO WIPE THE CONTAINERS HOLDING THEM, REPLACED THE USABLE ITEMS, AND CHECKED THAT PANTRY IS STOCKED ON TO-GO RAMEKINS.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I THOROUGHLY CLEANED THE ORDER NUMBERS AND NUMBER STANDS (REPLACING ANY AS NEEDED, NO DOUBLES) AND WIPED OFF THE HEATERS.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED UNDER THE FRONT REGISTER, WASHED THE DOG BOWLS, AND DUSTED THE FRONT AND SIDES OF THE HOST STAND INCLUDING THE RIDGES.",
+          "section": "SUNDAY"
+        },
+        {
+          "title": "I COMPLETELY FILLED THE TO-GO CONDIMENTS IN THE TOOL BOX.",
+          "detail": [
+            "Tuesdays, Fridays and Saturdays"
+          ]
+        },
+        {
+          "title": "DUMP NIGHT: I DUMPED ALL THE CONDIMENTS AND WASHED ALL THE CONTAINERS, INCLUDING THE SOY AND SESAME PITCHERS.",
+          "detail": [
+            "Wednesdays and Sundays"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "Bar",
+      "items": [
+        {
+          "title": "I COMPLETED THE WEEKLY PREP AND ORGANIZED THE BAR AREA OF THE WALK-IN.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I CLEANED THE INSIDE OF THE TY KU SAKE MACHINE: EMPTIED THE SAKE INTO A SEPARATE CONTAINER, POURED HOT WATER IN THE TOP, FULLY DRAINED IT, AND REPLACED THE SAKE.",
+          "section": "MONDAY",
+          "detail": [
+            "Do it early enough to have sake ready for lunch service"
+          ]
+        },
+        {
+          "title": "I CHANGED THE WATER IN THE TANK FOR THE TY KU MACHINE.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I CLEANED THE BAR MATS AND THE SURFACE UNDERNEATH ABOVE THE BAR FRIDGE AND NEXT TO THE DUMP SINK.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED THE SHELVES UNDER THE GLASSES TO THE LEFT OF THE DISHWASHER.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I PUT THE IFS, MUTUAL AND REALSODA DELIVERIES AWAY IN THE OFFICE.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I SWEPT THE OFFICE DURING DOWN TIME.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED UNDER THE EXTRA GLASS GRATE AT THE FRONT BAR AND CLEANED THE EXTRA GLASSES IF NEEDED.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I THOROUGHLY CLEANED ALL THE LAMPS AT THE BACK BAR AND WIPED OFF THE BAR BALL BULBS.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I REMOVED AND WIPED THE BOTTLES ON THE WEEK'S SHELF, CLEANED THE SHELF, AND NEATLY REPLACED THE BOTTLES IN THE CORRECT AREA.",
+          "section": "WEDNESDAY",
+          "detail": [
+            "Rotate shelves by week: back bar well-to-dishwasher, dishwasher-to-sidebar, front bar Hibiki-to-Toki, Toki-to-sidebar, under the plants above the water machine"
+          ]
+        },
+        {
+          "title": "I RAN THE DE-LIME CYCLE FOR THE DISHWASHER AND RESET THE TOKI MACHINE.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I UNSCREWED THE TOKI MACHINE AND CLEANED UNDER THE GRATE.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I CLEANED, ORGANIZED AND RESTOCKED THE TO-GO STATION BEHIND THE BAR AND THE SILVERWARE HOLDER.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I THOROUGHLY CLEANED THE OUTSIDE OF THE TY KU MACHINE AND THE GRATE UNDERNEATH.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "I DEEP CLEANED THE SLUSHY MACHINE.",
+          "section": "FRIDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The slushy machine deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE BAR FRIDGE (LEFT SIDE: SHELVES, FLOOR, ANYTHING STICKY).",
+          "section": "FRIDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar fridge clean inside"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE HOT WATER MACHINE WITH CITRIC ACID: FILLED IT WITH WATER AND ABOUT A QUARTER TO A THIRD CUP OF CITRIC ACID, BOILED, DUMPED AND SCRUBBED WITH A GREEN PAD, BOILED AGAIN, DUMPED, RINSED, AND REFILLED.",
+          "section": "FRIDAY"
+        },
+        {
+          "title": "I CLEANED THE BAR MATS ABOVE THE REACH-IN, BAR FRIDGE, UNDER THE WINE GLASSES, UNDER THE HOT WATER MACHINE, ABOVE THE EXTRA WELL, AND NEXT TO THE DUMP SINK.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I WASHED THE WATER BOTTLES, AND THE BITTERS BOTTLES EVERY OTHER WEEK.",
+          "section": "SUNDAY"
+        },
+        {
+          "title": "I WASHED THE MAT UNDER THE WATER CUPS.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "NOODLE STATION",
+      "role_es": "ESTACIÓN DE FIDEOS",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CHECKED THE PREP SHEET.",
+          "title_es": "REVISÉ LA HOJA DE PREP."
+        },
+        {
+          "title": "I REMOVED THE PLASTIC WRAP FROM MY STATION.",
+          "title_es": "QUITÉ EL PLÁSTICO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED THE CUTTING BOARD ON MY STATION.",
+          "title_es": "PUSE LA TABLA DE CORTAR EN MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED A SANITIZER BUCKET WITH SANITIZER UNDER MY STATION.",
+          "title_es": "PUSE UN BALDE CON SANITIZER DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I CHECKED MY STATION FOR WHAT I NEED FROM THE WALK-IN.",
+          "title_es": "REVISÉ MI ESTACIÓN PARA VER QUÉ NECESITO DEL WALK-IN."
+        },
+        {
+          "title": "I TURNED ON THE NOODLE MACHINE.",
+          "title_es": "PRENDÍ LA MÁQUINA DE FIDEOS."
+        },
+        {
+          "title": "I SET UP THE POTS FOR THE BROTH.",
+          "title_es": "ARMÉ LAS OLLAS PARA EL CALDO."
+        },
+        {
+          "title": "I PULLED OUT ALL THREE BROTHS.",
+          "title_es": "SAQUÉ LOS TRES CALDOS."
+        },
+        {
+          "title": "I PULLED OUT AT LEAST THREE HOTEL PANS OF NOODLES.",
+          "title_es": "SAQUÉ POR LO MENOS TRES HOTEL PANS DE FIDEOS."
+        },
+        {
+          "title": "I KEPT FILLING UP MY STATION AS THE DAY WENT ON.",
+          "title_es": "MANTUVE MI ESTACIÓN LLENA DURANTE EL DÍA."
+        },
+        {
+          "title": "I CHECKED IN WITH THE NIGHT CREW AND MADE SURE THE STATION IS FULL.",
+          "title_es": "ME COMUNIQUÉ CON EL TURNO DE NOCHE Y ME ASEGURÉ DE QUE LA ESTACIÓN ESTÉ LLENA."
+        },
+        {
+          "title": "I CLEANED MY STATION BEFORE HEADING OUT.",
+          "title_es": "LIMPIÉ MI ESTACIÓN ANTES DE SALIR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The noodle station clean and stocked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "NOODLE STATION",
+      "role_es": "ESTACIÓN DE FIDEOS",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I RESTOCKED AND REFILLED ALL THE HOTEL PANS IN THE TOP OF MY STATION.",
+          "title_es": "RELLENÉ TODOS LOS HOTEL PANS DE ARRIBA DE MI ESTACIÓN."
+        },
+        {
+          "title": "I FLIPPED AND CONDENSED ALL THE HOTEL PANS INTO CLEAN ONES.",
+          "title_es": "PASÉ Y JUNTÉ TODOS LOS HOTEL PANS EN UNOS LIMPIOS."
+        },
+        {
+          "title": "I BROUGHT EVERYTHING I NEEDED FROM THE WALK-IN TO RESTOCK MY STATION.",
+          "title_es": "TRAJE DEL WALK-IN TODO LO QUE NECESITABA PARA SURTIR MI ESTACIÓN."
+        },
+        {
+          "title": "AFTER RESTOCKING, I WRAPPED EACH CONTAINER WITH PLASTIC WRAP.",
+          "title_es": "DESPUÉS DE SURTIR, TAPÉ CADA CONTENEDOR CON PLÁSTICO."
+        },
+        {
+          "title": "I TOOK ALL MY DIRTY DISHES TO THE DISHPIT IN AS FEW TRIPS AS POSSIBLE.",
+          "title_es": "LLEVÉ TODOS MIS TRASTES SUCIOS AL DISHPIT EN LOS MENOS VIAJES POSIBLES."
+        },
+        {
+          "title": "I FILLED A CONTAINER WITH ORANGE FORCE AND GRABBED A SCRUBBIE FROM THE DISHPIT.",
+          "title_es": "LLENÉ UN CONTENEDOR CON ORANGE FORCE Y AGARRÉ UN SCRUBBIE DEL DISHPIT."
+        },
+        {
+          "title": "I SCRUBBED ALL THE SURFACES OF MY STATION: THE LID, DOORS, AND SIDES.",
+          "title_es": "TALLÉ TODAS LAS SUPERFICIES DE MI ESTACIÓN: LA TAPA, LAS PUERTAS Y LOS LADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The station scrubbed clean, lid, doors and sides"
+            }
+          ]
+        },
+        {
+          "title": "I SQUEEGEED AND WIPED MY STATION DRY WITH A CLEAN TOWEL AND WIPED BETWEEN THE DOOR GASKETS.",
+          "title_es": "SEQUÉ MI ESTACIÓN CON EL JALADOR Y UNA TOALLA LIMPIA Y LIMPIÉ ENTRE LOS EMPAQUES DE LAS PUERTAS."
+        },
+        {
+          "title": "I SHUT OFF THE HEAT AND WATER TO THE NOODLE BOILER AND POURED IN 12OZ OF DELIMER.",
+          "title_es": "APAGUÉ EL CALOR Y EL AGUA DEL NOODLE BOILER Y LE ECHÉ 12OZ DE DELIMER."
+        },
+        {
+          "title": "I SCRUBBED THE STAINLESS TABLE TO THE LEFT OF MY STATION WITH ORANGE FORCE, SQUEEGEED IT, AND WIPED IT CLEAN.",
+          "title_es": "TALLÉ LA MESA DE ACERO A LA IZQUIERDA DE MI ESTACIÓN CON ORANGE FORCE, LA SEQUÉ Y LA LIMPIÉ."
+        },
+        {
+          "title": "I MOVED THE TO-GO CONTAINERS AND BOWLS FROM THE TABLES LEFT OF THE NOODLE BOILER AND SCRUBBED THEM WITH ORANGE FORCE.",
+          "title_es": "MOVÍ LOS CONTENEDORES TO-GO Y LOS TAZONES DE LAS MESAS A LA IZQUIERDA DEL NOODLE BOILER Y LOS TALLÉ CON ORANGE FORCE."
+        },
+        {
+          "title": "I DRAINED THE NOODLE BOILER AND SCRUBBED IT WITH ORANGE FORCE.",
+          "title_es": "DRENÉ EL NOODLE BOILER Y LO TALLÉ CON ORANGE FORCE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The noodle boiler drained and scrubbed"
+            }
+          ]
+        },
+        {
+          "title": "I RINSED THE BOILER WITH CLEAN WATER AND WIPED IT CLEAN.",
+          "title_es": "ENJUAGUÉ EL BOILER CON AGUA LIMPIA Y LO LIMPIÉ."
+        },
+        {
+          "title": "I WIPED THE STAINLESS TABLES CLEAN.",
+          "title_es": "LIMPIÉ LAS MESAS DE ACERO."
+        },
+        {
+          "title": "I WIPED DOWN THE WHITE BRICK WALL AND THE FLOOR FAN WITH A DAMP TOWEL.",
+          "title_es": "LIMPIÉ LA PARED DE LADRILLO BLANCO Y EL VENTILADOR DE PISO CON UNA TOALLA HÚMEDA."
+        },
+        {
+          "title": "I SWEPT UNDER MY STATION.",
+          "title_es": "BARRÍ DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I CLEANED THE PASTA COOKER, INCLUDING THE KNOB AREA AND THE SIDE.",
+          "title_es": "LIMPIÉ EL PASTA COOKER, INCLUYENDO LA ZONA DE LA PERILLA Y EL LADO."
+        },
+        {
+          "title": "EACH CONTAINER IS WRAPPED TIGHT, WITH NO LOOSE PLASTIC THAT COULD TEAR INTO THE FOOD.",
+          "title_es": "CADA CONTENEDOR BIEN TAPADO, SIN PLÁSTICO SUELTO QUE PUEDA CAER EN LA COMIDA."
+        },
+        {
+          "title": "I ASKED MY TEAMMATES IF THEY NEEDED HELP WITH ANYTHING.",
+          "title_es": "LES PREGUNTÉ A MIS COMPAÑEROS SI NECESITABAN AYUDA."
+        },
+        {
+          "title": "I CHECKED OUT WITH THE MOD AND CLOCKED OUT.",
+          "title_es": "ME REPORTÉ CON EL MOD Y MARQUÉ SALIDA."
+        },
+        {
+          "title": "I TOOK THE TRASH OUT TO THE TRASH ROOM AND PUT IT IN THE DUMPSTER.",
+          "title_es": "SAQUÉ LA BASURA AL CUARTO DE BASURA Y LA PUSE EN EL DUMPSTER."
+        },
+        {
+          "title": "I FILLED OUT THE PREP LIST.",
+          "title_es": "LLENÉ LA LISTA DE PREP.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The prep list filled in"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "MEAT STATION",
+      "role_es": "ESTACIÓN DE CARNE",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CHECKED THE PREP SHEET.",
+          "title_es": "REVISÉ LA HOJA DE PREP."
+        },
+        {
+          "title": "I REMOVED THE PLASTIC WRAP FROM MY STATION.",
+          "title_es": "QUITÉ EL PLÁSTICO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED THE CUTTING BOARD ON MY STATION.",
+          "title_es": "PUSE LA TABLA DE CORTAR EN MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED A SANITIZER BUCKET WITH SANITIZER UNDER MY STATION.",
+          "title_es": "PUSE UN BALDE CON SANITIZER DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I CHECKED MY STATION FOR WHAT I NEED FROM THE WALK-IN.",
+          "title_es": "REVISÉ MI ESTACIÓN PARA VER QUÉ NECESITO DEL WALK-IN."
+        },
+        {
+          "title": "I CHECKED THE TEMPERATURE OF THE ITEMS IN MY STATION.",
+          "title_es": "REVISÉ LA TEMPERATURA DE LOS PRODUCTOS EN MI ESTACIÓN.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The station temps"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED ON THE PLANCHA AND THE OVEN.",
+          "title_es": "PRENDÍ LA PLANCHA Y EL HORNO."
+        },
+        {
+          "title": "I PRIORITIZED MY ITEMS FROM MOST TO LEAST IMPORTANT.",
+          "title_es": "ORDENÉ MIS PRODUCTOS DEL MÁS AL MENOS IMPORTANTE."
+        },
+        {
+          "title": "I SWEPT AND CLEANED TO PREVENT CROSS-CONTAMINATION.",
+          "title_es": "BARRÍ Y LIMPIÉ PARA EVITAR LA CONTAMINACIÓN CRUZADA."
+        },
+        {
+          "title": "I SET OUT A HALF PAN OF PULLED PORK AND A THIRD PAN OF CONFIT.",
+          "title_es": "PUSE UN HALF PAN DE PULLED PORK Y UN THIRD PAN DE CONFIT."
+        },
+        {
+          "title": "I PREPPED THE BEEF BOWL MARINADE.",
+          "title_es": "PREPARÉ LA MARINADA DEL BEEF BOWL."
+        },
+        {
+          "title": "I STARTED COOKING THE RICE.",
+          "title_es": "EMPECÉ A COCINAR EL ARROZ."
+        },
+        {
+          "title": "I PUT BOTH THE SHORT RIB AND PORK BELLY IN THE OVEN TO HEAT UP.",
+          "title_es": "METÍ EL SHORT RIB Y EL PORK BELLY AL HORNO PARA CALENTAR."
+        },
+        {
+          "title": "I KEPT FILLING UP MY STATION AS THE DAY WENT ON.",
+          "title_es": "MANTUVE MI ESTACIÓN LLENA DURANTE EL DÍA."
+        },
+        {
+          "title": "I TOLD THE NIGHT CREW WHAT THEY NEED FROM ME.",
+          "title_es": "LE DIJE AL TURNO DE NOCHE LO QUE NECESITAN DE MÍ."
+        },
+        {
+          "title": "I CLEANED MY STATION BEFORE HEADING OUT.",
+          "title_es": "LIMPIÉ MI ESTACIÓN ANTES DE SALIR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The meat station clean and stocked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "MEAT STATION",
+      "role_es": "ESTACIÓN DE CARNE",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I RESTOCKED AND REFILLED ALL THE HOTEL PANS IN THE TOP OF MY STATION.",
+          "title_es": "RELLENÉ TODOS LOS HOTEL PANS DE ARRIBA DE MI ESTACIÓN."
+        },
+        {
+          "title": "I FLIPPED AND CONDENSED ALL THE HOTEL PANS INTO CLEAN ONES.",
+          "title_es": "PASÉ Y JUNTÉ TODOS LOS HOTEL PANS EN UNOS LIMPIOS."
+        },
+        {
+          "title": "I BROUGHT EVERYTHING I NEEDED FROM THE WALK-IN TO RESTOCK MY STATION.",
+          "title_es": "TRAJE DEL WALK-IN TODO LO QUE NECESITABA PARA SURTIR MI ESTACIÓN."
+        },
+        {
+          "title": "AFTER RESTOCKING, I WRAPPED EACH CONTAINER WITH PLASTIC WRAP.",
+          "title_es": "DESPUÉS DE SURTIR, TAPÉ CADA CONTENEDOR CON PLÁSTICO."
+        },
+        {
+          "title": "I TOOK ALL MY DIRTY DISHES TO THE DISHPIT IN AS FEW TRIPS AS POSSIBLE.",
+          "title_es": "LLEVÉ TODOS MIS TRASTES SUCIOS AL DISHPIT EN LOS MENOS VIAJES POSIBLES."
+        },
+        {
+          "title": "I FILLED A CONTAINER WITH ORANGE FORCE AND GRABBED A SCRUBBIE FROM THE DISHPIT.",
+          "title_es": "LLENÉ UN CONTENEDOR CON ORANGE FORCE Y AGARRÉ UN SCRUBBIE DEL DISHPIT."
+        },
+        {
+          "title": "I SCRUBBED ALL THE SURFACES OF MY STATION: THE LID, DOORS, AND SIDES.",
+          "title_es": "TALLÉ TODAS LAS SUPERFICIES DE MI ESTACIÓN: LA TAPA, LAS PUERTAS Y LOS LADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The station scrubbed clean, lid, doors and sides"
+            }
+          ]
+        },
+        {
+          "title": "I SQUEEGEED AND WIPED MY STATION DRY WITH A CLEAN TOWEL AND WIPED BETWEEN THE DOOR GASKETS.",
+          "title_es": "SEQUÉ MI ESTACIÓN CON EL JALADOR Y UNA TOALLA LIMPIA Y LIMPIÉ ENTRE LOS EMPAQUES DE LAS PUERTAS."
+        },
+        {
+          "title": "I SCRAPED THE FLAT TOP CLEAN, THEN USED THE GRILL BRICK AND GRILL CLEANER, EMPTIED THE GREASE TRAP, AND RINSED IT CLEAN WITH WATER.",
+          "title_es": "RASPÉ LA PLANCHA, LUEGO USÉ EL GRILL BRICK Y EL LIMPIADOR, VACIÉ LA TRAMPA DE GRASA Y LA ENJUAGUÉ CON AGUA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The flat top scraped and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I SCRUBBED THE OVEN DOOR AND THE STAINLESS SURFACES OF THE RANGE WITH ORANGE FORCE AND WIPED THEM CLEAN.",
+          "title_es": "TALLÉ LA PUERTA DEL HORNO Y LAS SUPERFICIES DE ACERO DEL RANGE CON ORANGE FORCE Y LAS LIMPIÉ."
+        },
+        {
+          "title": "I SCRAPED THE BURNERS CLEAN OF FOOD DEBRIS WITH THE METAL BRUSH.",
+          "title_es": "RASPÉ LOS QUEMADORES CON EL CEPILLO DE METAL."
+        },
+        {
+          "title": "I SCRUBBED THE STAINLESS TABLE TO THE LEFT OF THE OVEN, SQUEEGEED IT, AND WIPED IT CLEAN.",
+          "title_es": "TALLÉ LA MESA DE ACERO A LA IZQUIERDA DEL HORNO, LA SEQUÉ Y LA LIMPIÉ."
+        },
+        {
+          "title": "I SCRUBBED THE TOP, FRONT, AND SIDES OF THE FREEZER TO THE RIGHT OF MY STATION, SQUEEGEED IT, AND WIPED IT AND THE DOOR GASKETS CLEAN.",
+          "title_es": "TALLÉ LA PARTE DE ARRIBA, EL FRENTE Y LOS LADOS DEL FREEZER A LA DERECHA DE MI ESTACIÓN, LO SEQUÉ Y LIMPIÉ LOS EMPAQUES."
+        },
+        {
+          "title": "I PULLED THE FLOOR DRAIN COVER FROM UNDER THE OVEN AND EMPTIED IT INTO THE TRASH.",
+          "title_es": "SAQUÉ LA TAPA DEL DRENAJE DE DEBAJO DEL HORNO Y LA VACIÉ EN LA BASURA."
+        },
+        {
+          "title": "I SWEPT UNDER MY STATION.",
+          "title_es": "BARRÍ DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I CLEANED THE OPEN SHELF SPACE UNDER THE RANGE.",
+          "title_es": "LIMPIÉ EL ESTANTE ABIERTO DEBAJO DEL RANGE."
+        },
+        {
+          "title": "I WIPED THE WALL BEHIND THE CORNER STOCK BURNER.",
+          "title_es": "LIMPIÉ LA PARED DETRÁS DEL QUEMADOR DE LA ESQUINA."
+        },
+        {
+          "title": "EACH CONTAINER IS WRAPPED TIGHT, WITH NO LOOSE PLASTIC THAT COULD TEAR INTO THE FOOD.",
+          "title_es": "CADA CONTENEDOR BIEN TAPADO, SIN PLÁSTICO SUELTO QUE PUEDA CAER EN LA COMIDA."
+        },
+        {
+          "title": "I CHECKED OUT WITH THE MOD AND CLOCKED OUT.",
+          "title_es": "ME REPORTÉ CON EL MOD Y MARQUÉ SALIDA."
+        },
+        {
+          "title": "I TOOK THE TRASH OUT TO THE TRASH ROOM AND PUT IT IN THE DUMPSTER.",
+          "title_es": "SAQUÉ LA BASURA AL CUARTO DE BASURA Y LA PUSE EN EL DUMPSTER."
+        },
+        {
+          "title": "I FILLED OUT THE PREP LIST.",
+          "title_es": "LLENÉ LA LISTA DE PREP.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The prep list filled in"
+            }
+          ]
+        },
+        {
+          "title": "I ASKED MY TEAMMATES IF THEY NEEDED HELP WITH ANYTHING.",
+          "title_es": "LES PREGUNTÉ A MIS COMPAÑEROS SI NECESITABAN AYUDA."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PANTRY STATION",
+      "role_es": "ESTACIÓN DE PANTRY",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CHECKED THE PREP SHEET.",
+          "title_es": "REVISÉ LA HOJA DE PREP."
+        },
+        {
+          "title": "I REMOVED THE PLASTIC WRAP FROM MY STATION.",
+          "title_es": "QUITÉ EL PLÁSTICO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED THE CUTTING BOARD ON MY STATION.",
+          "title_es": "PUSE LA TABLA DE CORTAR EN MI ESTACIÓN."
+        },
+        {
+          "title": "I PLACED A SANITIZER BUCKET WITH SANITIZER UNDER MY STATION.",
+          "title_es": "PUSE UN BALDE CON SANITIZER DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "I TURNED ON THE FRYER.",
+          "title_es": "ENCENDÍ LA FREIDORA."
+        },
+        {
+          "title": "I CHECKED THE TEMPERATURE OF THE ITEMS IN MY STATION AND MADE SURE THEY'RE OUT OF THE DANGER ZONE.",
+          "title_es": "REVISÉ LA TEMPERATURA DE LOS PRODUCTOS Y ME ASEGURÉ DE QUE ESTÉN FUERA DE LA ZONA DE PELIGRO.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The station temps"
+            }
+          ]
+        },
+        {
+          "title": "I USED THE CART TO CUT DOWN ON TRIPS BETWEEN THE WALK-IN AND MY STATION.",
+          "title_es": "USÉ EL CARRITO PARA MINIMIZAR LOS VIAJES ENTRE EL WALK-IN Y LA ESTACIÓN."
+        },
+        {
+          "title": "I PRIORITIZED MY ITEMS FROM MOST TO LEAST IMPORTANT.",
+          "title_es": "ORDENÉ MIS PRODUCTOS DEL MÁS AL MENOS IMPORTANTE."
+        },
+        {
+          "title": "I CLEANED MY STATION AFTER EACH USE TO REDUCE CROSS-CONTAMINATION.",
+          "title_es": "LIMPIÉ MI ESTACIÓN DESPUÉS DE CADA USO PARA REDUCIR LA CONTAMINACIÓN CRUZADA."
+        },
+        {
+          "title": "I SWEPT AROUND MY STATION.",
+          "title_es": "BARRÍ ALREDEDOR DE MI ESTACIÓN."
+        },
+        {
+          "title": "I KEPT FILLING UP MY STATION AS LUNCH SERVICE WENT ALONG.",
+          "title_es": "MANTUVE MI ESTACIÓN LLENA DURANTE EL SERVICIO DE ALMUERZO."
+        },
+        {
+          "title": "I CHECKED HOW MUCH RICE WAS LEFT AND MADE MORE IF NEEDED.",
+          "title_es": "REVISÉ CUÁNTO ARROZ QUEDABA Y PREPARÉ MÁS SI ERA NECESARIO."
+        },
+        {
+          "title": "I CHECKED IN WITH THE NIGHT CREW AND MADE SURE EVERYTHING IS TO THEIR LIKING.",
+          "title_es": "ME COMUNIQUÉ CON EL TURNO DE NOCHE Y ME ASEGURÉ DE QUE TODO ESTÉ A SU GUSTO."
+        },
+        {
+          "title": "I TOOK OUT THE TRASH IF NEEDED AND DID A FINAL LINE SWEEP.",
+          "title_es": "SAQUÉ LA BASURA SI HACÍA FALTA Y DI UN ÚLTIMO BARRIDO A LA LÍNEA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The pantry station clean and stocked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PANTRY STATION",
+      "role_es": "ESTACIÓN DE PANTRY",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I RESTOCKED AND REFILLED ALL THE HOTEL PANS IN THE TOP OF MY STATION.",
+          "title_es": "RELLENÉ TODOS LOS HOTEL PANS DE ARRIBA DE MI ESTACIÓN."
+        },
+        {
+          "title": "I FLIPPED AND CONDENSED ALL THE HOTEL PANS INTO CLEAN ONES.",
+          "title_es": "PASÉ Y JUNTÉ TODOS LOS HOTEL PANS EN UNOS LIMPIOS."
+        },
+        {
+          "title": "I BROUGHT EVERYTHING I NEEDED FROM THE WALK-IN TO RESTOCK MY STATION.",
+          "title_es": "TRAJE DEL WALK-IN TODO LO QUE NECESITABA PARA SURTIR MI ESTACIÓN."
+        },
+        {
+          "title": "AFTER RESTOCKING, I WRAPPED EACH CONTAINER WITH PLASTIC WRAP.",
+          "title_es": "DESPUÉS DE SURTIR, TAPÉ CADA CONTENEDOR CON PLÁSTICO."
+        },
+        {
+          "title": "I TOOK ALL MY DIRTY DISHES TO THE DISHPIT IN AS FEW TRIPS AS POSSIBLE.",
+          "title_es": "LLEVÉ TODOS MIS TRASTES SUCIOS AL DISHPIT EN LOS MENOS VIAJES POSIBLES."
+        },
+        {
+          "title": "I FILLED A CONTAINER WITH ORANGE FORCE AND GRABBED A SCRUBBIE FROM THE DISHPIT.",
+          "title_es": "LLENÉ UN CONTENEDOR CON ORANGE FORCE Y AGARRÉ UN SCRUBBIE DEL DISHPIT."
+        },
+        {
+          "title": "I SCRUBBED ALL THE SURFACES OF MY STATION: THE LID, DOORS, AND SIDES.",
+          "title_es": "TALLÉ TODAS LAS SUPERFICIES DE MI ESTACIÓN: LA TAPA, LAS PUERTAS Y LOS LADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The station scrubbed clean, lid, doors and sides"
+            }
+          ]
+        },
+        {
+          "title": "I SQUEEGEED AND WIPED MY STATION DRY WITH A CLEAN TOWEL AND WIPED BETWEEN THE DOOR GASKETS.",
+          "title_es": "SEQUÉ MI ESTACIÓN CON EL JALADOR Y UNA TOALLA LIMPIA Y LIMPIÉ ENTRE LOS EMPAQUES DE LAS PUERTAS."
+        },
+        {
+          "title": "I BROKE DOWN THE YAKITORI GRILL BY DUMPING THE ASH AND WASHING THE GRATE, THEN STACKED THE GRILL ON THE NOODLE BAR TOP SO I COULD CLEAN THE STAINLESS STATION UNDER IT.",
+          "title_es": "DESARMÉ LA PARRILLA DE YAKITORI TIRANDO LA CENIZA Y LAVANDO LA REJILLA, LUEGO PUSE LA PARRILLA SOBRE EL NOODLE BAR PARA LIMPIAR LA ESTACIÓN DE ACERO DONDE VA."
+        },
+        {
+          "title": "I SCRUBBED ALL THE SURFACES OF THE YAKITORI STATION, SQUEEGEED IT, WIPED IT CLEAN, AND WIPED THE DOOR GASKETS.",
+          "title_es": "TALLÉ TODAS LAS SUPERFICIES DE LA ESTACIÓN DE YAKITORI, LA SEQUÉ, LA LIMPIÉ Y LIMPIÉ LOS EMPAQUES DE LAS PUERTAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The yakitori station clean"
+            }
+          ]
+        },
+        {
+          "title": "I SKIMMED THE FRYER WITH A SPIDER TO REMOVE ANY DEBRIS IN THE OIL.",
+          "title_es": "PASÉ LA ARAÑA POR LA FREIDORA PARA SACAR CUALQUIER RESIDUO DEL ACEITE."
+        },
+        {
+          "title": "I SCRUBBED THE PREP SINK TO THE RIGHT OF MY STATION AND WIPED IT CLEAN.",
+          "title_es": "TALLÉ EL PREP SINK A LA DERECHA DE MI ESTACIÓN Y LO LIMPIÉ."
+        },
+        {
+          "title": "I PULLED THE FLOOR DRAIN COVER FROM UNDER THE PREP SINK AND EMPTIED IT INTO THE TRASH.",
+          "title_es": "SAQUÉ LA TAPA DEL DRENAJE DE DEBAJO DEL PREP SINK Y LA VACIÉ EN LA BASURA."
+        },
+        {
+          "title": "I SWEPT UNDER MY STATION.",
+          "title_es": "BARRÍ DEBAJO DE MI ESTACIÓN."
+        },
+        {
+          "title": "EACH CONTAINER IS WRAPPED TIGHT, WITH NO LOOSE PLASTIC THAT COULD TEAR INTO THE FOOD.",
+          "title_es": "CADA CONTENEDOR BIEN TAPADO, SIN PLÁSTICO SUELTO QUE PUEDA CAER EN LA COMIDA."
+        },
+        {
+          "title": "I ASKED MY TEAMMATES IF THEY NEEDED HELP WITH ANYTHING.",
+          "title_es": "LES PREGUNTÉ A MIS COMPAÑEROS SI NECESITABAN AYUDA."
+        },
+        {
+          "title": "I CHECKED OUT WITH THE MOD AND CLOCKED OUT.",
+          "title_es": "ME REPORTÉ CON EL MOD Y MARQUÉ SALIDA."
+        },
+        {
+          "title": "I FILLED OUT THE PREP LIST.",
+          "title_es": "LLENÉ LA LISTA DE PREP.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The prep list filled in"
+            }
+          ]
+        },
+        {
+          "title": "ALL THE SQUEEZE BOTTLE TOPS ARE WASHED, NOT LEFT ON DIRTY.",
+          "title_es": "TODAS LAS TAPAS DE LOS SQUEEZE BOTTLES LAVADAS, NO DEJADAS SUCIAS."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DISH",
+      "role_es": "LAVAPLATOS",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I FILLED THE SINK WITH WATER, SOAP, AND SANITIZER.",
+          "title_es": "LLENÉ EL FREGADERO CON AGUA, JABÓN Y SANITIZER."
+        },
+        {
+          "title": "I MADE SURE ALL THE CHEMICALS WERE FULL FOR THE SINK AND THE DISHWASHER.",
+          "title_es": "ME ASEGURÉ DE QUE TODOS LOS QUÍMICOS ESTUVIERAN LLENOS PARA EL FREGADERO Y LA MÁQUINA DE LAVAR PLATOS."
+        },
+        {
+          "title": "I PEELED AT LEAST 2 FULL BUCKETS OF EGGS, TRYING NOT TO WASTE ANY.",
+          "title_es": "PELÉ POR LO MENOS 2 BALDES COMPLETOS DE HUEVOS, TRATANDO DE NO DESPERDICIAR."
+        },
+        {
+          "title": "I CLEANED THE WALLS AROUND THE PREP TABLE AND AROUND THE SINK.",
+          "title_es": "LIMPIÉ LAS PAREDES ALREDEDOR DE LA MESA DE PREP Y ALREDEDOR DEL FREGADERO."
+        },
+        {
+          "title": "I SWEPT AND MOPPED THE WALK-IN.",
+          "title_es": "BARRÍ Y MAPEÉ EL WALK-IN.",
+          "detail": [
+            "Sundays and Thursdays"
+          ]
+        },
+        {
+          "title": "I CLEANED THE TRASH ROOM AND THE HALLWAY, SWEEPING AND MOPPING.",
+          "title_es": "LIMPIÉ EL CUARTO DE BASURA Y EL PASILLO, BARRIENDO Y MAPEANDO.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I FILLED A CONTAINER WITH PRESOAK FOR THE SILVERWARE.",
+          "title_es": "LLENÉ UN CONTENEDOR CON PRESOAK PARA LOS CUBIERTOS."
+        },
+        {
+          "title": "I MADE SURE THE LARGE WHITE BINS FOR FLOUR, RICE, AND SO ON WERE CLEAN, AND I WASHED THE SCOOPS AND LIDS.",
+          "title_es": "ME ASEGURÉ DE QUE LOS BALDES GRANDES BLANCOS DE HARINA, ARROZ, ETC. ESTUVIERAN LIMPIOS, Y LAVÉ LOS CUCHARONES Y LAS TAPAS."
+        },
+        {
+          "title": "I MADE SURE THE LINE'S DISH TRAY WAS EMPTY.",
+          "title_es": "ME ASEGURÉ DE QUE LA BANDEJA DE TRASTES DE LA LÍNEA ESTUVIERA VACÍA."
+        },
+        {
+          "title": "BEFORE LEAVING, I MADE SURE EVERYTHING WAS CLEAN, INCLUDING THE DRAIN.",
+          "title_es": "ANTES DE SALIR, ME ASEGURÉ DE QUE TODO ESTUVIERA LIMPIO, INCLUYENDO EL DRENAJE."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DISH",
+      "role_es": "LAVAPLATOS",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "I CLEANED THE WALLS AROUND THE SINK AND THE MACHINE, AND UNDER THE SINK, USING BLEACH AND MAGIC ERASERS.",
+          "title_es": "LIMPIÉ LAS PAREDES ALREDEDOR DEL FREGADERO Y LA MÁQUINA, Y DEBAJO DEL FREGADERO, CON CLORO Y MAGIC ERASERS."
+        },
+        {
+          "title": "THE MORNING SHIFT PREPPED AT LEAST ONE TRAY OF DUMPLINGS.",
+          "title_es": "EL TURNO DE LA MAÑANA PREPARÓ POR LO MENOS UNA CHAROLA DE DUMPLINGS."
+        },
+        {
+          "title": "I HELPED WITH SMALL PREP (CILANTRO, SNAP PEAS, THYME, CABBAGE, CUCUMBERS).",
+          "title_es": "AYUDÉ CON PREP PEQUEÑO (CILANTRO, SNAP PEAS, THYME, CABBAGE, PEPINOS)."
+        },
+        {
+          "title": "I KEPT THE FLOOR AND THE AREA CLEAN, FREE OF TRASH AND WATER.",
+          "title_es": "MANTUVE EL PISO Y EL ÁREA LIMPIOS, SIN BASURA NI AGUA."
+        },
+        {
+          "title": "I CLEANED THE STRAY POTS AND THE DISH SHELVES.",
+          "title_es": "LIMPIÉ LAS OLLAS PERDIDAS Y LOS ESTANTES PARA TRASTES."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DISH",
+      "role_es": "LAVAPLATOS",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I MADE SURE ALL THE CHEMICALS WERE FULL FOR THE SINK AND THE DISHWASHER.",
+          "title_es": "ME ASEGURÉ DE QUE TODOS LOS QUÍMICOS ESTUVIERAN LLENOS PARA EL FREGADERO Y LA MÁQUINA DE LAVAR PLATOS."
+        },
+        {
+          "title": "I CLEANED THE WALLS AROUND THE PREP TABLE AND AROUND THE SINK.",
+          "title_es": "LIMPIÉ LAS PAREDES ALREDEDOR DE LA MESA DE PREP Y ALREDEDOR DEL FREGADERO."
+        },
+        {
+          "title": "I RINSED ALL THE TRASH CANS WITH BLEACH.",
+          "title_es": "ENJUAGUÉ TODOS LOS BOTES DE BASURA CON CLORO.",
+          "detail": [
+            "Mondays and Thursdays"
+          ]
+        },
+        {
+          "title": "I CLEANED THE MOP AREA AND THE ICE MACHINE.",
+          "title_es": "LIMPIÉ EL ÁREA DEL TRAPEADOR Y LA MÁQUINA DE HIELO."
+        },
+        {
+          "title": "I MADE SURE THE DISHES HAD NO LABELS OR TAPE LEFT ON THEM.",
+          "title_es": "ME ASEGURÉ DE QUE LOS TRASTES NO TUVIERAN ETIQUETAS NI CINTA."
+        },
+        {
+          "title": "I MADE SURE THE LARGE WHITE BINS FOR FLOUR, RICE, AND SO ON WERE CLEAN, AND I WASHED THE SCOOPS AND LIDS.",
+          "title_es": "ME ASEGURÉ DE QUE LOS BALDES GRANDES BLANCOS DE HARINA, ARROZ, ETC. ESTUVIERAN LIMPIOS, Y LAVÉ LOS CUCHARONES Y LAS TAPAS."
+        },
+        {
+          "title": "I MADE SURE ALL THE CHEMICALS WERE FULL AT THE END OF THE NIGHT.",
+          "title_es": "ME ASEGURÉ DE QUE TODOS LOS QUÍMICOS ESTUVIERAN LLENOS AL FINAL DE LA NOCHE."
+        },
+        {
+          "title": "BEFORE LEAVING, I MADE SURE EVERYTHING WAS CLEAN, INCLUDING THE DRAIN.",
+          "title_es": "ANTES DE SALIR, ME ASEGURÉ DE QUE TODO ESTUVIERA LIMPIO, INCLUYENDO EL DRENAJE."
+        },
+        {
+          "title": "I CLEANED THE PLUMBING IN THE DISH AREA AND UNDER THE STOVE.",
+          "title_es": "LIMPIÉ LA TUBERÍA DEL ÁREA DE LAVADO DE PLATOS Y DEBAJO DE LA ESTUFA."
+        },
+        {
+          "title": "I TOOK OUT THE TOWELS AND MADE SURE THE TRASH ROOM WAS LOCKED.",
+          "title_es": "SAQUÉ LAS TOALLAS Y ME ASEGURÉ DE QUE EL CUARTO DE BASURA QUEDARA CON LLAVE."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "CHEF",
+      "role_es": "CHEF",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I FILLED OUT THE DCR WITH ALL THE INVOICES THAT CAME IN FOR THE DAY.",
+          "title_es": "LLENÉ EL DCR CON TODAS LAS FACTURAS QUE LLEGARON EN EL DÍA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The invoices logged, or none"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THAT EVERYONE'S CHORE CHART AND CHECKLIST WAS COMPLETED.",
+          "title_es": "REVISÉ QUE EL CHORE CHART Y LA LISTA DE CADA QUIEN ESTUVIERAN COMPLETOS."
+        },
+        {
+          "title": "I CHECKED THE WALK-IN TO SEE WHERE WE ARE ON PREP, HOW STOCKED WE ARE ON DUMPLINGS, AND WHETHER WE NEED MEAT ORDERED FOR THE NEXT DAY.",
+          "title_es": "REVISÉ EL WALK-IN PARA VER CÓMO VAMOS DE PREP, CUÁNTOS DUMPLINGS HAY, Y SI HAY QUE PEDIR CARNE PARA EL DÍA SIGUIENTE."
+        },
+        {
+          "title": "I HAVE THE SCHEDULE IN THE BUILDER.",
+          "title_es": "TENGO EL HORARIO EN EL BUILDER.",
+          "detail": [
+            "By Monday"
+          ]
+        },
+        {
+          "title": "I COMPLETED LINE CHECKS AND TASTED ALL THE SAUCES AND CONDIMENTS ON THE LINE.",
+          "title_es": "HICE LOS LINE CHECKS Y PROBÉ TODAS LAS SALSAS Y CONDIMENTOS DE LA LÍNEA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The line check done"
+            }
+          ]
+        },
+        {
+          "title": "I COMPLETED THE TEMPERATURE LOGS.",
+          "title_es": "COMPLETÉ LOS TEMP LOGS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The temp logs"
+            }
+          ]
+        },
+        {
+          "title": "I POSTED THE APPROVED SCHEDULE.",
+          "title_es": "PUBLIQUÉ EL HORARIO APROBADO.",
+          "detail": [
+            "By Wednesday"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "LINE COOK",
+      "role_es": "COCINERO DE LÍNEA",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I BROKE DOWN ALL THE PRODUCT FROM THE BOXES AND PLACED IT ON THE SHELVES FOLLOWING FIFO.",
+          "title_es": "SAQUÉ TODO EL PRODUCTO DE LAS CAJAS Y LO ACOMODÉ EN LOS ESTANTES SIGUIENDO FIFO.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "I CONSOLIDATED PREPPED PRODUCT INTO SMALLER CONTAINERS, LABELED AND DATED.",
+          "title_es": "JUNTÉ EL PRODUCTO PREPARADO EN CONTENEDORES MÁS CHICOS, ETIQUETADOS Y CON FECHA.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "I WENT THROUGH THE HERB BOXES AND REMOVED ANY HERBS STARTING TO GO BAD.",
+          "title_es": "REVISÉ LAS CAJAS DE HIERBAS Y QUITÉ LAS QUE EMPEZABAN A ECHARSE A PERDER.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "I ARRANGED THE WALK-IN TO HEALTH CODE: RAW CHICKEN ON THE BOTTOM, THEN RAW PORK AND BEEF, THEN COOKED PROTEINS, THEN FRUITS, VEGETABLES AND BREADS ON TOP.",
+          "title_es": "ACOMODÉ EL WALK-IN SEGÚN EL CÓDIGO DE SALUD: POLLO CRUDO ABAJO, LUEGO PUERCO Y RES CRUDOS, LUEGO PROTEÍNAS COCIDAS, Y FRUTAS, VERDURAS Y PAN ARRIBA.",
+          "section": "WALK IN DUTY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in organized to health code"
+            }
+          ]
+        },
+        {
+          "title": "I SWEPT THE WALK-IN FLOOR AND MOPPED IT WITH A BLEACH SOLUTION.",
+          "title_es": "BARRÍ EL PISO DEL WALK-IN Y LO MAPEÉ CON SOLUCIÓN DE CLORO.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "I WROTE THE INTERNAL AND EXTERNAL TEMPS ON THE TEMP LOG.",
+          "title_es": "ANOTÉ LAS TEMPERATURAS INTERNAS Y EXTERNAS EN EL TEMP LOG.",
+          "section": "WALK IN DUTY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The temp log filled in"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE FANS IN THE BACK WITH A BRUSH AND TOWEL AND WIPED UP ANY DUST THAT FELL.",
+          "title_es": "LIMPIÉ LOS VENTILADORES DE ATRÁS CON CEPILLO Y TOALLA Y LIMPIÉ EL POLVO QUE CAYÓ.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "I TOOK ALL THE BOXES AND TRASH FROM THE WALK-IN STRAIGHT TO THE BINS IN THE TRASH ROOM, NEAT AND ORGANIZED.",
+          "title_es": "LLEVÉ TODAS LAS CAJAS Y BASURA DEL WALK-IN DIRECTO A LOS BOTES DEL CUARTO DE BASURA, ORDENADO.",
+          "section": "WALK IN DUTY"
+        },
+        {
+          "title": "IN DRY STORAGE, I BROKE DOWN ALL THE PRODUCT FROM THE BOXES AND PLACED IT ON THE SHELVES FOLLOWING FIFO.",
+          "title_es": "EN EL DRY STORAGE, SAQUÉ TODO EL PRODUCTO DE LAS CAJAS Y LO ACOMODÉ SIGUIENDO FIFO.",
+          "section": "DRY STORAGE"
+        },
+        {
+          "title": "IN DRY STORAGE, I CONSOLIDATED PREPPED PRODUCT INTO SMALLER CONTAINERS, LABELED AND DATED.",
+          "title_es": "EN EL DRY STORAGE, JUNTÉ EL PRODUCTO EN CONTENEDORES MÁS CHICOS, ETIQUETADOS Y CON FECHA.",
+          "section": "DRY STORAGE"
+        },
+        {
+          "title": "I KEPT THE BOH ITEMS OFF THE FLOOR IN THE BACK AND KEPT THE HALLWAYS AND WALKWAYS CLEAR.",
+          "title_es": "MANTUVE LAS COSAS DE BOH FUERA DEL PISO Y LOS PASILLOS Y ACCESOS DESPEJADOS.",
+          "section": "DRY STORAGE"
+        },
+        {
+          "title": "I MOVED ITEMS OUT OF OPEN BAGS OR BOXES INTO PROPER CONTAINERS.",
+          "title_es": "PASÉ LOS PRODUCTOS DE BOLSAS O CAJAS ABIERTAS A CONTENEDORES ADECUADOS.",
+          "section": "DRY STORAGE"
+        },
+        {
+          "title": "I TOOK ALL THE BOXES AND TRASH FROM DRY STORAGE STRAIGHT TO THE BINS IN THE TRASH ROOM, NEAT AND ORGANIZED.",
+          "title_es": "LLEVÉ TODAS LAS CAJAS Y BASURA DEL DRY STORAGE DIRECTO A LOS BOTES DEL CUARTO DE BASURA, ORDENADO.",
+          "section": "DRY STORAGE"
+        },
+        {
+          "title": "AT THE START OF MY SHIFT, I MADE 2 RED SANI BUCKETS WITH COLD SANI SOLUTION, ONE BETWEEN THE MEAT AND NOODLE STATION AND ONE BY PANTRY.",
+          "title_es": "AL INICIO DE MI TURNO, HICE 2 BALDES ROJOS CON SANI FRÍO, UNO ENTRE LA ESTACIÓN DE MEAT Y NOODLE Y OTRO JUNTO A PANTRY.",
+          "section": "LINE SWEEPS"
+        },
+        {
+          "title": "I SWEPT THE LINE WHEN NEEDED AND BEFORE LEAVING FOR THE DAY.",
+          "title_es": "BARRÍ LA LÍNEA CUANDO HIZO FALTA Y ANTES DE IRME.",
+          "section": "LINE SWEEPS"
+        },
+        {
+          "title": "I EMPTIED THE TRASH FROM THE LINE AS NEEDED.",
+          "title_es": "SAQUÉ LA BASURA DE LA LÍNEA CUANDO HIZO FALTA.",
+          "section": "LINE SWEEPS"
+        },
+        {
+          "title": "I HELD OTHERS ACCOUNTABLE FOR KEEPING THEIR STATION TIDY, WIPED CLEAN, AND ORGANIZED.",
+          "title_es": "MANTUVE A LOS DEMÁS RESPONSABLES DE TENER SU ESTACIÓN LIMPIA, TRAPEADA Y ORDENADA.",
+          "section": "LINE SWEEPS"
+        },
+        {
+          "title": "I POURED BLEACH SOLUTION DOWN EACH FLOOR DRAIN AT THE END OF MY SHIFT.",
+          "title_es": "ECHÉ SOLUCIÓN DE CLORO EN CADA DRENAJE DE PISO AL FINAL DE MI TURNO.",
+          "section": "LINE SWEEPS"
+        },
+        {
+          "title": "I WIPED THE HOOD VENTS OF ANY VISIBLE GREASE DRIPS.",
+          "title_es": "LIMPIÉ LOS ESCAPES DE LA CAMPANA DE CUALQUIER GRASA VISIBLE.",
+          "section": "LINE SWEEPS"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA",
+      "phase": "mid",
+      "room": "Kitchen",
+      "items": [
+        {
+          "title": "I ORGANIZED THE WALK-IN.",
+          "title_es": "ACOMODÉ Y ORGANICÉ EL WALK-IN.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I MOPPED THE WALK-IN AND OUTSIDE, AND BLEACHED THE CUTTING BOARDS AND THE ICE MACHINE.",
+          "title_es": "MAPEÉ EL WALK-IN Y AFUERA, Y BLANQUEÉ LAS TABLAS Y LA MÁQUINA DE HIELO.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I REMOVED EVERYTHING FROM THE HOOD AND LEFT IT TO SOAK.",
+          "title_es": "REMOVÍ TODO DE LA CAMPANA Y LO DEJÉ REMOJANDO.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I CLEANED AND RINSED THE TRASH CANS.",
+          "title_es": "LIMPIÉ Y ENJUAGUÉ LOS BASUREROS.",
+          "section": "MONDAY"
+        },
+        {
+          "title": "I CLEANED AND DETAILED THE BOH SINKS.",
+          "title_es": "LIMPIÉ Y DETALLÉ LOS FREGADEROS DE BOH.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED THE SMALL EQUIPMENT: ROBOT COUPES, BLENDERS, AND CUTTING BOARDS.",
+          "title_es": "LIMPIÉ LA HERRAMIENTA PEQUEÑA: ROBOCOUPS, LICUADORAS Y TABLAS.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED BEHIND THE REFRIGERATORS AND ALL THE WALLS IN MY AREA.",
+          "title_es": "LIMPIÉ DETRÁS DE LOS REFRIGERADORES Y TODAS LAS PAREDES DE MI ÁREA.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I SOAKED WHATEVER NEEDED SOAKING.",
+          "title_es": "REMOJÉ LO QUE NECESITABA REMOJO.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I WASHED THE SCOOPS AND THE LIDS OF THE FLOUR AND SUGAR BINS.",
+          "title_es": "LAVÉ LOS CUCHARONES Y LAS TAPAS DE LAS HARINAS Y EL AZÚCAR.",
+          "section": "TUESDAY"
+        },
+        {
+          "title": "I CLEANED AND RINSED THE TRASH CANS WITH BLEACH.",
+          "title_es": "LIMPIÉ Y ENJUAGUÉ LOS BASUREROS CON CLORO.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I DID LIGHT CLEANING OF THE HOOD TO KEEP IT UP.",
+          "title_es": "LIMPIÉ UN POCO LA CAMPANA PARA MANTENERLA.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I CLEANED THE GRILLS AND CHANGED THE FOIL ON MY STATION.",
+          "title_es": "LIMPIÉ LAS PARRILLAS Y CAMBIÉ EL PAPEL ALUMINIO DE MI ESTACIÓN.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I SWEPT AND MOPPED THE WALK-IN AND OUTSIDE.",
+          "title_es": "BARRÍ Y MAPEÉ EL WALK-IN Y AFUERA.",
+          "section": "WEDNESDAY"
+        },
+        {
+          "title": "I CLEANED AND MOPPED THE METAL ROOM.",
+          "title_es": "LIMPIÉ Y MAPEÉ EL METAL ROOM.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I CLEANED THE SHELF ON MY STATION.",
+          "title_es": "LIMPIÉ EL ESTANTE DE MI ESTACIÓN.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I CLEANED UNDER EVERY SHELF.",
+          "title_es": "LIMPIÉ DEBAJO DE CUALQUIER ESTANTE.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I RINSED THE TRASH CANS WITH BLEACH.",
+          "title_es": "ENJUAGUÉ LOS BOTES CON CLORO.",
+          "section": "SATURDAY"
+        },
+        {
+          "title": "I CLEANED THE ICE MACHINE AND THE MOP AREA.",
+          "title_es": "LIMPIÉ LA MÁQUINA DE HIELO Y EL ESPACIO DEL TRAPEADOR.",
+          "section": "SUNDAY"
+        },
+        {
+          "title": "I SOAKED WHATEVER DISHES NEEDED IT.",
+          "title_es": "REMOJÉ LOS TRASTES QUE LO NECESITABAN.",
+          "section": "SUNDAY"
+        },
+        {
+          "title": "I CLEANED THE DISH MACHINE, UNDERNEATH AND OUTSIDE.",
+          "title_es": "LIMPIÉ LA MÁQUINA DE TRASTES, POR DEBAJO Y POR FUERA.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "MONTHLY DEEP CLEAN",
+      "role_es": "LIMPIEZA PROFUNDA MENSUAL",
+      "phase": "mid",
+      "room": "Kitchen",
+      "items": [
+        {
+          "title": "I PULLED OUT THE OVEN AND FLAT TOP AND CLEANED BEHIND THEM.",
+          "title_es": "SAQUÉ EL HORNO Y LA PLANCHA Y LIMPIÉ POR DETRÁS.",
+          "section": "FIRST WEDNESDAY",
+          "detail": [
+            "Done the first Wednesday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the oven and flat top, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I PULLED OUT THE CANDY BURNERS AND CLEANED BEHIND THEM.",
+          "title_es": "SAQUÉ LOS CANDY BURNERS Y LIMPIÉ POR DETRÁS.",
+          "section": "FIRST THURSDAY",
+          "detail": [
+            "Done the first Thursday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the candy burners, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I PULLED OUT THE FRYER AND CLEANED BEHIND IT.",
+          "title_es": "SAQUÉ LA FREIDORA Y LIMPIÉ POR DETRÁS.",
+          "section": "SECOND TUESDAY",
+          "detail": [
+            "Done the second Tuesday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the fryer, pulled out and cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I MOVED EVERYTHING OFF THE WALK-IN SHELVES, DEEP CLEANED THE SHELVES AND THE WALK-IN, AND BURNED OFF ALL THE GREASE AND DEBRIS FROM THE BURNERS.",
+          "title_es": "SAQUÉ TODO DE LOS ESTANTES DEL WALK-IN, LIMPIÉ A FONDO LOS ESTANTES Y EL WALK-IN, Y QUEMÉ TODA LA GRASA Y SUCIEDAD DE LOS QUEMADORES.",
+          "section": "THIRD MONDAY",
+          "detail": [
+            "AM team. Done the third Monday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in shelves emptied and deep cleaned, the burners burned off"
+            }
+          ]
+        },
+        {
+          "title": "I BURNED OFF ALL THE GREASE AND DEBRIS FROM THE CANDY BURNERS.",
+          "title_es": "QUEMÉ TODA LA GRASA Y SUCIEDAD DE LOS CANDY BURNERS.",
+          "section": "FOURTH FRIDAY",
+          "detail": [
+            "Done the fourth Friday of the month"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The candy burners burned off, grease and debris gone"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
