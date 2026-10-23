@@ -5,7 +5,7 @@ import { LangFromLink } from "@/components/Lang";
 import { LeaderLoginForm } from "@/components/LeaderLoginForm";
 import { APP_NAME, safeNext } from "@/lib/app";
 import { getSession } from "@/lib/session";
-import { getVenues } from "@/lib/status";
+import { getSignInVenues } from "@/lib/status";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ export default async function HomePage({
   // so a scanned code goes where it was pointed on the second morning too.
   if (session) redirect(landing);
 
-  const venues = await getVenues();
+  const venues = await getSignInVenues();
 
   // A printed code belongs to one building, so it names it and the person
   // scanning it only ever types a PIN. Matched on the code rather than the id
