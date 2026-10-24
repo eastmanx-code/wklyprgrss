@@ -155,8 +155,8 @@
  */
 .ww-menu {
   display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
+  flex-direction: column-reverse;
+  align-items: flex-end;
   gap: 8px;
 }
 
@@ -166,10 +166,10 @@
 }
 
 /* The summary is the disc itself, so the global focus ring traced its circle
-   as a white halo floating a couple of pixels off the accent — which reads as
-   a rendering fault rather than a focus state, and shows up on a plain mouse
-   click because that is how browsers treat a focused summary. Same indicator,
-   moved inside the disc and drawn in the ink that already sits on it. */
+   as a white halo floating a couple of pixels off the accent, which reads as a
+   rendering fault rather than a focus state and shows up on a plain mouse click
+   because that is how browsers treat a focused summary. Same indicator, moved
+   inside the disc and drawn in the ink that already sits on it. */
 .ww-menu > summary:focus-visible {
   outline: 2px solid var(--color-on-warn);
   outline-offset: -7px;
@@ -179,63 +179,44 @@
   display: none;
 }
 
+/* The panel is hidden until the disc is opened or hovered. It used to lay the
+   controls out in a horizontal row on a wide screen, which grew to ten items
+   and became the widest thing on the page; on a phone it ran clean off the
+   edge. One vertical card on every screen instead: full-width rows a thumb can
+   hit, grouped by hairlines into where-to-go, settings, and the way out. */
 .ww-menu-items {
   display: none;
-  white-space: nowrap;
 }
 
 .ww-menu[open] .ww-menu-items,
 .ww-menu:hover .ww-menu-items {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px;
+  min-width: 13.5rem;
+  max-width: min(18rem, calc(100vw - 2rem));
 }
 
-/* On a phone the row was wider than the phone.
+.ww-menu-items > *,
+.ww-menu-items .btn-ghost {
+  width: 100%;
+  min-height: 44px;
+}
 
-   It is pinned to the right edge and lays out leftwards, so the entries at the
-   far end simply ran off the screen: 503px of menu on a 390px handset put
-   "All venues" entirely out of view and chopped the one beside it to "CKLS".
-   Nothing said so — it looked like a menu that happened to start at the edge.
-   That is how a whole section stayed unfindable on the device everybody uses.
+/* A full-width hairline between groups rather than an upright rule. */
+.ww-menu-items > span[aria-hidden] {
+  width: 100%;
+  height: 1px;
+  min-height: 0;
+}
 
-   Stacked above the disc until the row genuinely fits, so the widest entry
-   sets the width and every entry is on the screen and thumb-sized. The
-   threshold is measured, not guessed. The row is 700px of buttons plus the
-   64px disc, its gap and the screen margins: it needs about 805px before it
-   stops running off the left, so everything narrower than a laptop gets the
-   stack. A tablet held in portrait wants the stack anyway. */
-@media (max-width: 1023px) {
-  .ww-menu {
-    flex-direction: column-reverse;
-    align-items: flex-end;
-  }
-
-  .ww-menu-items {
-    height: auto;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
-    padding: 8px;
-  }
-
-  .ww-menu-items > *,
-  .ww-menu-items .btn-ghost {
-    width: 100%;
-    min-height: 44px;
-  }
-
-  /* The upright hairline between groups is a rule across the stack now. */
-  .ww-menu-items > span[aria-hidden] {
-    width: 100%;
-    height: 1px;
-    min-height: 0;
-  }
-
-  /* Everything else is a full-width row; this one is a square glyph, and a
-     square stretched to the menu's width is a 192px hole at the bottom of it. */
-  .ww-menu-items > .ww-menu-theme {
-    width: auto;
-    align-self: flex-end;
-  }
+/* Everything else is a full-width row; this one is a square glyph, and a
+   square stretched to the menu's width is a hole at the bottom of it. */
+.ww-menu-items > .ww-menu-theme {
+  width: auto;
+  align-self: flex-end;
 }
 
 html {
