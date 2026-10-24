@@ -59,6 +59,11 @@ is("latest night: not done is named", r.latest, {
 });
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
 is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);
+// Stanchions was open on night two, which Ana signed off anyway, so she is
+// named as having signed it short once, and no open night went unsigned.
+is("missed names who signed it off short",
+  r.missed.map((m) => [m.item, m.signedShortBy, m.unsignedNights]),
+  [["Stanchions", [{ who: "Ana", nights: 1 }], 0]]);
 // The same ruler per position: one list, two nights, done and signed once.
 is("byRole", r.byRole, [{ role: "MOD", done: 1, of: 2 }]);
 is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
