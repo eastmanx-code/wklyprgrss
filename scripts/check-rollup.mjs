@@ -52,10 +52,10 @@ is("certified", r.certified, 1);
 is("nights", r.nights, 2);
 is("lists done and signed over the running nights", [r.done, r.of], [1, 2]);
 // Which one, and which way it fell short: signed, not done.
-is("latest night: not done is named", r.latest, {
+is("latest night: not done is named, with who signed it", r.latest, {
   night: W[1],
   notSigned: [],
-  notDone: [{ role: "MOD", room: null, phase: "close" }],
+  notDone: [{ role: "MOD", room: null, phase: "close", by: "Ana" }],
 });
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
 is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]);

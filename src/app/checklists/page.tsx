@@ -201,7 +201,14 @@ export default async function ChecklistsPage() {
                     </span>
                     <span className="text-muted">
                       {l.state === "short" ? (
-                        <T en="signed short" es="firmada incompleta" />
+                        l.by ? (
+                          <>
+                            <T en="signed short by" es="firmada incompleta por" />{" "}
+                            <span className="text-ink">{l.by}</span>
+                          </>
+                        ) : (
+                          <T en="signed short" es="firmada incompleta" />
+                        )
                       ) : (
                         <T en="not signed" es="sin firmar" />
                       )}
