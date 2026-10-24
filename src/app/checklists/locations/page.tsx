@@ -221,8 +221,10 @@ export default async function LocationsPage({
   // stores folded into one row. Missed at many stores is a process to fix;
   // missed at one is a store to call.
   const company = companyMissed(detailed);
-  const systemic = company.filter((c) => c.stores.length > 1).slice(0, 10);
-  const local = company.filter((c) => c.stores.length === 1).slice(0, 12);
+  const systemic = company.filter((c) => c.stores.length > 1).slice(0, 6);
+  // One-store misses belong on that store's own lens, not dumped here. The
+  // overview owes a count and a way in, not the list.
+  const localCount = company.filter((c) => c.stores.length === 1).length;
 
   // Code to id, so a store row taps through to that store's own dash. Entering
   // sets the working venue; the dash reads it.
@@ -336,78 +338,9 @@ export default async function LocationsPage({
         </div>
       ) : null}
 
-      <div>
-        <Card
-          /* "Last night" only when it is; browsing back, the card is
-             named for the night it shows. */
-          title={
-            !over ? (
-              <T en="Tonight" es="Esta noche" />
-            ) : night === lastClosed ? (
-              <T en="Last night" es="Anoche" />
-            ) : (
-              <T en={formatNight(night)} es={formatNightEs(night)} />
-            )
-          }
-          hint={
-            lists === 0 ? (
-              <T en="nothing running yet" es="todavía no hay nada corriendo" />
-            ) : (
-              /* The counts that make the score, so 8/10 beside 3 fails
-                 reconciles at a glance: twelve of fifteen, three short,
-                 eight in ten. */
-              <T
-                en={[
-                  `${done} of ${lists} lists checked off and signed off`,
-                  short > 0
-                    ? `${short} ${short === 1 ? "fail" : "fails"}`
-                    : over
-                      ? "no fails"
-                      : "no fails so far",
-                  ...(over ? [] : ["in progress"]),
-                ].join(" · ")}
-                es={[
-                  `${done} de ${lists} listas marcadas y firmadas`,
-                  short > 0
-                    ? `${short} ${short === 1 ? "falla" : "fallas"}`
-                    : over
-                      ? "sin fallas"
-                      : "sin fallas hasta ahora",
-                  ...(over ? [] : ["en curso"]),
-                ].join(" · ")}
-              />
-            )
-          }
-        >
-          {/* The month, tappable, inside the card it belongs to. One
-              square per night the group ran; the arrows in the foot step
-              one night at a time. */}
-          {strip.length > 0 ? (
-            <div className="mb-4">
-              <NightStrip
-                nights={strip}
-                current={night}
-                base="/checklists/locations"
-              />
-            </div>
-          ) : null}
-
-          {running.length === 0 && idle.length === 0 ? (
-            <p className="note text-muted leading-relaxed">
-              <T
-                en="No venue is on the checklists yet. Add one below and write its first list."
-                es="Todavía no hay ningún lugar en las listas. Agrega uno abajo y escribe su primera lista."
-              />
-            </p>
-          ) : (
-            <ul className="space-y-6">
-              {[...running, ...idle].map((row) => (
-                <VenueBar key={row.id} row={row} night={night} />
-              ))}
-            </ul>
-          )}
-        </Card>
-      </div>
+      {/* No per-store fail walls here. The overview never shows a store's
+          own failed lists; you tap a store to see them. What this page owes
+          is the scan below and what is breaking across the company. */}
 
       {/* Every store, ranked over the month, worst first. Each taps through to
           that store's own dash. */}
@@ -485,7 +418,7 @@ export default async function LocationsPage({
 
       {/* What keeps getting missed across the company. Many stores is a process
           to fix; one store is a store to call. */}
-      {systemic.length > 0 || local.length > 0 ? (
+      {systemic.length > 0 || localCount > 0 ? (
         <div className="mt-6">
           <Card
             title={
@@ -511,18 +444,15 @@ export default async function LocationsPage({
                 </div>
               </>
             ) : null}
-            {local.length > 0 ? (
-              <>
-                <p className="label mt-5">
-                  <T
-                    en="One store only · make the call"
-                    es="Una sola tienda · haz la llamada"
-                  />
-                </p>
-                <div className="mt-3">
-                  <CompanyMissed rows={local} />
-                </div>
-              </>
+            {localCount > 0 ? (
+              <p
+                className={`note text-muted ${systemic.length > 0 ? "border-divider mt-5 border-t pt-4" : ""}`}
+              >
+                <T
+                  en={`${localCount} more ${localCount === 1 ? "thing is" : "things are"} missed at a single store. Open that store to see its own.`}
+                  es={`${localCount} ${localCount === 1 ? "cosa más falla" : "cosas más fallan"} en una sola tienda. Entra a esa tienda para verlas.`}
+                />
+              </p>
             ) : null}
           </Card>
         </div>
