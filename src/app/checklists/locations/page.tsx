@@ -4,12 +4,17 @@ import { redirect } from "next/navigation";
 import { enrolVenue } from "./actions";
 
 import { Card } from "@/components/Card";
+import { Dial } from "@/components/Dial";
+import { AllStoresTrend } from "@/components/checklists/AllStoresTrend";
 import {
   ListBar,
   NightNav,
   NightStrip,
 } from "@/components/checklists/Compliance";
-import { RunCard } from "@/components/checklists/RunCard";
+import {
+  CompanyMissed,
+  type CompanyMiss,
+} from "@/components/checklists/CompanyMissed";
 import { BackLink } from "@/components/ui";
 import { T } from "@/components/Lang";
 import { previousNight } from "@/lib/close-status";
@@ -26,7 +31,8 @@ import {
   isNightOver,
   shiftNights,
 } from "@/lib/night";
-import { nightWindow } from "@/lib/rollup";
+import { groupRollupDetailed, nightWindow } from "@/lib/rollup";
+import type { MissedRow } from "@/lib/rollup-math";
 import { shortOf, shortOfEs } from "@/lib/short";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
@@ -173,15 +179,6 @@ export default async function LocationsPage({
     n = shiftNights(n, 1);
   }
   const all = await nightTrend(span);
-  // Only the nights something ran. Charted over the whole window, the line
-  // began with three flat weeks at nought that were not bad nights, they were
-  // nights before the venue had the app.
-  const ran = all.filter((t) => t.ran && t.night <= night);
-  const points = ran.map((t) => ({
-    weekStart: t.night,
-    percent: t.done,
-    approvedPercent: t.done,
-  }));
   // Two buckets, no legend: every list checked off and signed off, or not.
   const strip = all
     .filter((t) => t.ran)
@@ -194,10 +191,42 @@ export default async function LocationsPage({
             ? ("complete" as const)
             : ("short" as const),
     }));
-  // Best and worst only when there is something to compare against.
-  const ranked = [...ranVenues].sort((a, b) => b.score - a.score);
-  const best = ranked.length > 1 ? ranked[0] : null;
-  const worst = ranked.length > 1 ? ranked[ranked.length - 1] : null;
+  // The thirty-night standing, every store at once: for the multi-line chart,
+  // the ranked list, and what is being missed across the company. One load in
+  // the data layer, scored per venue.
+  const detailed = (await groupRollupDetailed()) ?? [];
+  const chartWindow = nightWindow();
+  const storeSeries = detailed.map((d) => ({
+    code: d.code,
+    points: d.rollup.series.map((s) => ({
+      night: s.night,
+      percent: s.of === 0 ? 0 : (s.done / s.of) * 100,
+    })),
+  }));
+  // groupRollupDetailed comes back worst first, so the two ends are the lines
+  // to draw in weight and name beside the chart.
+  const standing = detailed.map((d) => ({
+    code: d.code,
+    name: d.name,
+    done: d.rollup.done,
+    of: d.rollup.of,
+    pct: d.rollup.of === 0 ? 0 : Math.round((d.rollup.done / d.rollup.of) * 100),
+  }));
+  const worstStore = standing.length > 1 ? standing[0] : null;
+  const bestStore = standing.length > 1 ? standing[standing.length - 1] : null;
+  // The night's own aggregate, for the ring on the group chart.
+  const nightPct = lists === 0 ? 0 : Math.round((done / lists) * 100);
+
+  // What keeps getting missed across the company, the same item at several
+  // stores folded into one row. Missed at many stores is a process to fix;
+  // missed at one is a store to call.
+  const company = companyMissed(detailed);
+  const systemic = company.filter((c) => c.stores.length > 1).slice(0, 10);
+  const local = company.filter((c) => c.stores.length === 1).slice(0, 12);
+
+  // Code to id, so a store row taps through to that store's own dash. Entering
+  // sets the working venue; the dash reads it.
+  const idOf = new Map(venues.map((v) => [v.code, v.id]));
 
   return (
     <main>
@@ -235,23 +264,75 @@ export default async function LocationsPage({
         <NightNav night={night} base="/checklists/locations" />
       </header>
 
-      {/* The run leads now. How the month is going, and who is best and worst,
-          is what an admin wants first when they open this in the morning, above
-          the per-venue breakdown of a single night. */}
-      {lists > 0 && ran.length >= 2 ? (
+      {/* Nightly scores, every store its own line, the best and the worst in
+          weight and the rest faint behind them. The night's own ring on the
+          left, the two ends named on the right. */}
+      {standing.length > 0 ? (
         <div className="mb-6">
-          <RunCard
-            done={done}
-            total={lists}
-            nights={points.length}
-            points={points}
-            failed={short > 0}
-            labelLeft={formatNight(ran[0].night)}
-            labelRight={`${formatNight(night)}${over ? "" : " · so far"}`}
-            over={over}
-            best={best}
-            worst={worst}
-          />
+          <Card
+            title={<T en="Nightly scores" es="Notas por noche" />}
+            hint={
+              <T
+                en={`Last ${chartWindow.length} nights · every store · lists checked off and signed off`}
+                es={`Últimas ${chartWindow.length} noches · cada tienda · listas marcadas y firmadas`}
+              />
+            }
+          >
+            <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[120px_minmax(0,1fr)_auto]">
+              <Dial
+                size={120}
+                percent={nightPct}
+                caption={
+                  <T
+                    en={`${done} of ${lists} lists · ${over ? "last night" : "tonight so far"}`}
+                    es={`${done} de ${lists} listas · ${over ? "anoche" : "esta noche hasta ahora"}`}
+                  />
+                }
+                tone={short > 0 ? "var(--warn)" : "var(--ink)"}
+              />
+
+              {storeSeries.length > 0 && chartWindow.length > 1 ? (
+                <AllStoresTrend
+                  window={chartWindow}
+                  stores={storeSeries}
+                  bestCode={bestStore?.code ?? null}
+                  worstCode={worstStore?.code ?? null}
+                  labelLeft={formatNight(chartWindow[0])}
+                  labelRight={formatNight(chartWindow[chartWindow.length - 1])}
+                />
+              ) : (
+                <p className="note text-muted self-center leading-relaxed">
+                  <T
+                    en="Not enough nights yet to draw the run."
+                    es="Aún no hay noches suficientes para dibujar la racha."
+                  />
+                </p>
+              )}
+
+              {bestStore && worstStore ? (
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-1">
+                  <div>
+                    <p className="label">
+                      <T en="Best" es="Mejor" />
+                    </p>
+                    <p className="text-title mt-1 tracking-[0.08em]">
+                      {bestStore.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{bestStore.pct}%</p>
+                  </div>
+                  <div>
+                    <p className="label">
+                      <T en="Worst" es="Peor" />
+                    </p>
+                    <p className="text-title text-warn mt-1 tracking-[0.08em]">
+                      {worstStore.code}
+                    </p>
+                    <p className="label mt-1 tabular-nums">{worstStore.pct}%</p>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </Card>
         </div>
       ) : null}
 
@@ -328,6 +409,125 @@ export default async function LocationsPage({
         </Card>
       </div>
 
+      {/* Every store, ranked over the month, worst first. Each taps through to
+          that store's own dash. */}
+      {standing.length > 0 ? (
+        <div className="mt-6">
+          <Card
+            title={<T en="Every store" es="Cada tienda" />}
+            hint={
+              <T
+                en="Last 30 nights · worst first · tap in to a store"
+                es="Últimas 30 noches · peor primero · entra a una tienda"
+              />
+            }
+          >
+            <ul className="space-y-3">
+              {standing.map((s) => {
+                const id = idOf.get(s.code);
+                const last = scoreOf.get(s.code);
+                const pct = s.pct;
+                const body = (
+                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="text-title w-16 shrink-0 tracking-[0.08em]">
+                      {s.code}
+                    </span>
+                    <span className="flex min-w-0 flex-1 items-center gap-3">
+                      <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
+                        <span
+                          className={`block h-full rounded-[1px] ${
+                            pct < 60
+                              ? "bg-warn"
+                              : pct < 80
+                                ? "bg-warn/40"
+                                : "bg-ink/30"
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </span>
+                      <span className="label w-10 shrink-0 text-right tabular-nums">
+                        {pct}%
+                      </span>
+                    </span>
+                    <span className="label ml-auto shrink-0 tabular-nums">
+                      {last && last.ran ? (
+                        <T
+                          en={`${last.done}/${last.total} last night`}
+                          es={`${last.done}/${last.total} anoche`}
+                        />
+                      ) : (
+                        <T en="dark last night" es="apagado anoche" />
+                      )}
+                    </span>
+                  </span>
+                );
+                return (
+                  <li key={s.code}>
+                    {id ? (
+                      <Link
+                        href={`/checklists/enter/${id}`}
+                        className="bg-inset hover:ring-muted/30 block rounded-[4px] px-4 py-3 hover:ring-1 hover:ring-inset"
+                      >
+                        {body}
+                      </Link>
+                    ) : (
+                      <div className="bg-inset rounded-[4px] px-4 py-3">
+                        {body}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </Card>
+        </div>
+      ) : null}
+
+      {/* What keeps getting missed across the company. Many stores is a process
+          to fix; one store is a store to call. */}
+      {systemic.length > 0 || local.length > 0 ? (
+        <div className="mt-6">
+          <Card
+            title={
+              <T en="What's getting missed" es="Qué se está faltando" />
+            }
+            hint={
+              <T
+                en="Across every store · last 30 nights"
+                es="En todas las tiendas · últimas 30 noches"
+              />
+            }
+          >
+            {systemic.length > 0 ? (
+              <>
+                <p className="label">
+                  <T
+                    en="Across many stores · fix the process"
+                    es="En varias tiendas · arregla el proceso"
+                  />
+                </p>
+                <div className="mt-3">
+                  <CompanyMissed rows={systemic} />
+                </div>
+              </>
+            ) : null}
+            {local.length > 0 ? (
+              <>
+                <p className="label mt-5">
+                  <T
+                    en="One store only · make the call"
+                    es="Una sola tienda · haz la llamada"
+                  />
+                </p>
+                <div className="mt-3">
+                  <CompanyMissed rows={local} />
+                </div>
+              </>
+            ) : null}
+          </Card>
+        </div>
+      ) : null}
+
       {/* Closed, one small button. Open, the same line is the heading with
           its own button to close it, and each venue's Add is a button with
           a boundary of its own. Every action gets a shape and space around
@@ -380,6 +580,51 @@ export default async function LocationsPage({
         </details>
       ) : null}
     </main>
+  );
+}
+
+/**
+ * Fold every store's missed items into one list, the same item at several
+ * stores on one row.
+ *
+ * Grouped on house, role, phase and the item text with case and spacing
+ * flattened, so "Clean the soda gun" and "clean the soda gun" are one problem
+ * rather than two. The counts sum across the stores that miss it, and the
+ * streak is the worst active run among them. Whether it is one store or many
+ * is what the caller splits on, and the whole reason to group.
+ */
+function companyMissed(
+  detailed: { code: string; rollup: { missed: MissedRow[] } }[],
+): CompanyMiss[] {
+  const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+  const groups = new Map<string, CompanyMiss>();
+  for (const d of detailed) {
+    for (const m of d.rollup.missed) {
+      const key = `${m.house}|${m.role}|${m.phase}|${norm(m.item)}`;
+      const held = groups.get(key);
+      if (held) {
+        held.open += m.open;
+        held.of += m.of;
+        held.streak = Math.max(held.streak, m.streak);
+        if (!held.stores.includes(d.code)) held.stores.push(d.code);
+      } else {
+        groups.set(key, {
+          house: m.house,
+          role: m.role,
+          phase: m.phase,
+          item: m.item,
+          itemEs: m.itemEs,
+          open: m.open,
+          of: m.of,
+          streak: m.streak,
+          stores: [d.code],
+        });
+      }
+    }
+  }
+  // Most stores first, then most missed: the widest problem on top.
+  return [...groups.values()].sort(
+    (a, b) => b.stores.length - a.stores.length || b.open - a.open,
   );
 }
 
