@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { MissedList } from "@/components/checklists/MissedList";
 import { Sparkline } from "@/components/checklists/Sparkline";
 import { T } from "@/components/Lang";
+import { PHASE_ES, phaseName } from "@/lib/checklists";
 import { BackLink } from "@/components/ui";
 import { formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
@@ -104,6 +105,15 @@ export default async function ChecklistsPage() {
   const latestShort = latest
     ? latest.notSigned.length + latest.notDone.length
     : 0;
+  // Which lists were short last night, named, each with how it fell short:
+  // signed with something still open, or never signed at all. The count alone
+  // made a leader ask "which two"; this answers it on the spot.
+  const shortLists = latest
+    ? [
+        ...latest.notDone.map((l) => ({ ...l, state: "short" as const })),
+        ...latest.notSigned.map((l) => ({ ...l, state: "unsigned" as const })),
+      ]
+    : [];
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-6">
@@ -153,22 +163,55 @@ export default async function ChecklistsPage() {
         ) : null}
 
         {latest ? (
-          <p
-            className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
-          >
-            <T
-              en={
-                latestShort > 0
-                  ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
-                  : `no fails last night · ${formatNight(latest.night)}`
-              }
-              es={
-                latestShort > 0
-                  ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
-                  : `sin fallas anoche · ${formatNight(latest.night)}`
-              }
-            />
-          </p>
+          <>
+            <p
+              className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
+            >
+              <T
+                en={
+                  latestShort > 0
+                    ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
+                    : `no fails last night · ${formatNight(latest.night)}`
+                }
+                es={
+                  latestShort > 0
+                    ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
+                    : `sin fallas anoche · ${formatNight(latest.night)}`
+                }
+              />
+            </p>
+            {shortLists.length > 0 ? (
+              <ul className="mt-2 space-y-1">
+                {shortLists.map((l, i) => {
+                  const ph = l.phase as "open" | "mid" | "close";
+                  return (
+                  <li
+                    key={`${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
+                    className="label flex flex-wrap items-baseline gap-x-2"
+                  >
+                    <span className="text-ink/80">
+                      <T
+                        en={[l.role, l.room, phaseName(ph)]
+                          .filter(Boolean)
+                          .join(" · ")}
+                        es={[l.role, l.room, PHASE_ES[ph]]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      />
+                    </span>
+                    <span className="text-muted">
+                      {l.state === "short" ? (
+                        <T en="signed short" es="firmada incompleta" />
+                      ) : (
+                        <T en="not signed" es="sin firmar" />
+                      )}
+                    </span>
+                  </li>
+                  );
+                })}
+              </ul>
+            ) : null}
+          </>
         ) : null}
       </section>
 

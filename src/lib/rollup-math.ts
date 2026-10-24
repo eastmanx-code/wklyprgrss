@@ -36,12 +36,26 @@ export type MissedRow = {
   house: "FOH" | "HOH";
   role: string;
   phase: "open" | "mid" | "close";
+  /** The list's room, when it has one, so three deep cleans read apart. */
+  room: string | null;
   item: string;
   /** The same item in Spanish, where somebody has written it. */
   itemEs: string | null;
   /** Nights the item finished with no tick against it. */
   open: number;
   of: number;
+  /**
+   * Who signed the list off on the nights this item was still open, most
+   * nights first. The accountability the data can actually name: ticks carry
+   * no author and there is no "opened by", so the only named person on a night
+   * is whoever certified the list. A missed item on a signed list means they
+   * put their name to it as done while this was open. Almost every list is
+   * signed, so this is almost always a name; the few open nights where nobody
+   * signed at all are counted in unsignedNights instead, with no one to name.
+   */
+  signedShortBy: { who: string; nights: number }[];
+  /** Open nights where the list was never signed, so no one can be named. */
+  unsignedNights: number;
   /**
    * Nights running, counted back from the newest night the item was owed.
    *
@@ -416,12 +430,30 @@ export function computeRollup(
       // Oldest first, one entry per night the item was owed: true where it
       // was missed. A night it was not on the list, or not owed, is skipped
       // entirely, so it neither counts against the item nor breaks a streak.
+      // On the nights it was missed, tally who signed the list off anyway, so
+      // the row can name who put their name to it as done while it was open.
       const owedMissed: boolean[] = [];
+      const signerNights = new Map<string, number>();
+      let unsignedNights = 0;
       for (const night of live) {
         const entry = at(list.id, night).find((p) => p.id === id);
         if (!entry || !entry.due) continue;
-        owedMissed.push(!entry.ticked);
+        const missedTonight = !entry.ticked;
+        owedMissed.push(missedTonight);
+        if (!missedTonight) continue;
+        const row = nightAt.get(`${list.id}:${night}`);
+        const who = row?.certified_at
+          ? (row.certified_by ?? "").trim().replace(/\s+/g, " ")
+          : "";
+        if (who && who.toLowerCase() !== "null") {
+          signerNights.set(who, (signerNights.get(who) ?? 0) + 1);
+        } else {
+          unsignedNights += 1;
+        }
       }
+      const signedShortBy = [...signerNights.entries()]
+        .map(([who, nights]) => ({ who, nights }))
+        .sort((a, b) => b.nights - a.nights || a.who.localeCompare(b.who));
       const asked = owedMissed.length;
       const open = owedMissed.filter(Boolean).length;
       // Nights running: trailing misses from the newest owed night back, until
@@ -435,6 +467,7 @@ export function computeRollup(
         house: list.house,
         role: list.role,
         phase: list.phase,
+        room: list.room ?? null,
         item: cat.title,
         itemEs: cat.itemEs,
         open,
@@ -442,6 +475,8 @@ export function computeRollup(
         streak,
         recentOpen: recent.filter(Boolean).length,
         recentOf: recent.length,
+        signedShortBy,
+        unsignedNights,
       };
     })
     .filter(
