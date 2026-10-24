@@ -119,16 +119,20 @@ export default async function ChecklistsPage() {
 
   const { nights, strip, latest, missed, byRole, certifiers } = report;
 
-  // Repeated first: a thing missed more than once, or more than a quarter of
-  // the nights it was owed. A single stray miss is not the conversation.
-  const isRepeated = (open: number, of: number) =>
-    open > 1 || (of > 0 && open / of >= 0.25);
-  const repeated = missed.filter((m) => isRepeated(m.open, m.of));
+  // Repeated means missed on two or more nights. A rate was the wrong ruler:
+  // a venue one trial night in has everything at "1 of 1", which is 100% and
+  // not a habit, and it flooded the page with a store's whole first night.
+  const isRepeated = (open: number) => open >= 2;
+  // Too new to call a pattern. Under a working week of nights, "what keeps
+  // getting missed" has nothing honest to say, so it says that rather than
+  // listing every one-off.
+  const tooNew = nights < 5;
+  const repeated = tooNew ? [] : missed.filter((m) => isRepeated(m.open));
   // New this week: missed recently, but not yet a standing problem. Caught
   // before it becomes one.
-  const newlyMissed = missed.filter(
-    (m) => !isRepeated(m.open, m.of) && m.recentOpen > 0,
-  );
+  const newlyMissed = tooNew
+    ? []
+    : missed.filter((m) => !isRepeated(m.open) && m.recentOpen > 0);
   const latestShort = latest
     ? latest.notSigned.length + latest.notDone.length
     : 0;
@@ -234,8 +238,25 @@ export default async function ChecklistsPage() {
             <T en="What keeps getting missed" es="Lo que se sigue faltando" />
           </p>
           <div className="mt-3">
-            {repeated.length > 0 ? (
-              <MissedList rows={repeated.slice(0, 12)} />
+            {tooNew ? (
+              <p className="note text-muted">
+                <T
+                  en={`Only ${nights} ${nights === 1 ? "night" : "nights"} recorded. Too new to call a pattern yet.`}
+                  es={`Apenas ${nights} ${nights === 1 ? "noche" : "noches"} registradas. Muy pronto para ver un patrón.`}
+                />
+              </p>
+            ) : repeated.length > 0 ? (
+              <>
+                <MissedList rows={repeated.slice(0, 6)} />
+                {repeated.length > 6 ? (
+                  <p className="label text-muted mt-3">
+                    <T
+                      en={`+ ${repeated.length - 6} more missed on two or more nights`}
+                      es={`+ ${repeated.length - 6} más que faltaron en dos o más noches`}
+                    />
+                  </p>
+                ) : null}
+              </>
             ) : (
               <p className="note text-muted">
                 <T
@@ -245,7 +266,7 @@ export default async function ChecklistsPage() {
               </p>
             )}
           </div>
-          {newlyMissed.length > 0 ? (
+          {!tooNew && newlyMissed.length > 0 ? (
             <div className="border-divider mt-4 border-t pt-3">
               <p className="label">
                 <T en="New this week" es="Nuevo esta semana" />

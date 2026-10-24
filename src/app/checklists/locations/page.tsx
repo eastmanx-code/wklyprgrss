@@ -6,11 +6,8 @@ import { enrolVenue } from "./actions";
 import { Card } from "@/components/Card";
 import { Dial } from "@/components/Dial";
 import { AllStoresTrend } from "@/components/checklists/AllStoresTrend";
-import {
-  ListBar,
-  NightNav,
-  NightStrip,
-} from "@/components/checklists/Compliance";
+import { Sparkline } from "@/components/checklists/Sparkline";
+import { NightNav } from "@/components/checklists/Compliance";
 import {
   CompanyMissed,
   type CompanyMiss,
@@ -18,22 +15,16 @@ import {
 import { BackLink } from "@/components/ui";
 import { T } from "@/components/Lang";
 import { previousNight } from "@/lib/close-status";
-import {
-  nightCompliance,
-  nightTrend,
-  type VenueCompliance,
-} from "@/lib/compliance";
+import { nightCompliance, type VenueCompliance } from "@/lib/compliance";
 import {
   currentNight,
   formatNight,
   formatNightEs,
   formatNightSpan,
   isNightOver,
-  shiftNights,
 } from "@/lib/night";
 import { groupRollupDetailed, nightWindow } from "@/lib/rollup";
 import type { MissedRow } from "@/lib/rollup-math";
-import { shortOf, shortOfEs } from "@/lib/short";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -41,16 +32,6 @@ export const dynamic = "force-dynamic";
 
 const NIGHT = /^\d{4}-\d{2}-\d{2}$/;
 
-type Row = {
-  id: string;
-  code: string;
-  score: string;
-  tier: "good" | "neutral" | "fail" | null;
-  note: string;
-  noteEs: string;
-  /** The lists that failed, by name, with the fact that failed them. */
-  fails: VenueCompliance["lists"];
-};
 
 /**
  * Every venue, one night. The admin's whole report, and the door into each
@@ -83,12 +64,11 @@ export default async function LocationsPage({
   const asked = (await searchParams).night;
   const night = asked && NIGHT.test(asked) ? asked : lastClosed;
 
-  const [{ data: venueRows }, { data: listRows }, scored] = await Promise.all([
+  const [{ data: venueRows }, scored] = await Promise.all([
     db()
       .from("venues")
       .select("id, code, name, active, close_active")
       .order("code"),
-    db().from("close_checklists").select("venue_id").eq("active", true),
     nightCompliance(night),
   ]);
 
@@ -110,11 +90,6 @@ export default async function LocationsPage({
   const enrolled = venues.filter((v) => v.close_active);
   const candidates = venues.filter((v) => !v.close_active && v.active);
 
-  const counts = new Map<string, number>();
-  for (const row of (listRows ?? []) as { venue_id: string }[]) {
-    counts.set(row.venue_id, (counts.get(row.venue_id) ?? 0) + 1);
-  }
-
   const scoreOf = new Map<string, VenueCompliance>(
     scored.map((v) => [v.code, v]),
   );
@@ -125,72 +100,6 @@ export default async function LocationsPage({
   const lists = ranVenues.reduce((n, v) => n + v.total, 0);
   const done = ranVenues.reduce((n, v) => n + v.done, 0);
   const short = ranVenues.reduce((n, v) => n + v.notSigned + v.notDone, 0);
-
-  const lineFor = (venue: (typeof venues)[number]): Row => {
-    const row = scoreOf.get(venue.code);
-    return {
-      id: venue.id,
-      code: venue.code,
-      // The count, not a conversion. "8/10" beside "3 fails" on fifteen
-      // lists made no sense; "12/15 · 3 fails" is the same fact, readable.
-      score: row && row.ran ? `${row.done}/${row.total}` : "—",
-      tier: row && row.ran ? row.tier : null,
-      // Said twice, because the row is built on the server and the language
-      // is on the device. The same words the venue's night opens with.
-      note: !row
-        ? "No lists yet"
-        : !row.ran
-          ? over
-            ? "nothing recorded"
-            : "nothing yet"
-          : shortOf(row),
-      noteEs: !row
-        ? "Todavía sin listas"
-        : !row.ran
-          ? over
-            ? "sin registro"
-            : "todavía nada"
-          : shortOfEs(row),
-      fails: row && row.ran ? row.lists.filter((l) => l.state === "fail") : [],
-    };
-  };
-
-  // Worst first. Knowing which building needs you is what the order is for.
-  const TIER = { fail: 0, neutral: 1, good: 2 } as const;
-  const running = enrolled
-    .filter((v) => (counts.get(v.id) ?? 0) > 0)
-    .map(lineFor)
-    .sort(
-      (a, b) =>
-        (a.tier ? TIER[a.tier] : 3) - (b.tier ? TIER[b.tier] : 3) ||
-        a.code.localeCompare(b.code),
-    );
-  const idle = enrolled
-    .filter((v) => (counts.get(v.id) ?? 0) === 0)
-    .map(lineFor);
-
-  // The run. The window reaches tonight whichever night is open, so the
-  // strip keeps every square and there is always a way forward; the chart
-  // ends at the night being read.
-  const window = nightWindow(30, night);
-  const span: string[] = [...window];
-  for (let n = shiftNights(night, 1); n <= tonight && span.length < 90; ) {
-    span.push(n);
-    n = shiftNights(n, 1);
-  }
-  const all = await nightTrend(span);
-  // Two buckets, no legend: every list checked off and signed off, or not.
-  const strip = all
-    .filter((t) => t.ran)
-    .map((t) => ({
-      night: t.night,
-      state:
-        t.night > lastClosed
-          ? ("open" as const)
-          : t.done >= 100
-            ? ("complete" as const)
-            : ("short" as const),
-    }));
   // The thirty-night standing, every store at once: for the multi-line chart,
   // the ranked list, and what is being missed across the company. One load in
   // the data layer, scored per venue.
@@ -217,6 +126,31 @@ export default async function LocationsPage({
   // The night's own aggregate, for the ring on the group chart.
   const nightPct = lists === 0 ? 0 : Math.round((done / lists) * 100);
 
+  // Every enrolled location, worst first, with the ones that have not opened a
+  // night yet at the foot. Each carries its 30-night average, its run for the
+  // sparkline, and last night, so the row says the standing and the shape
+  // without opening the store.
+  const standingByCode = new Map(standing.map((s) => [s.code, s]));
+  const seriesByCode = new Map(storeSeries.map((s) => [s.code, s.points]));
+  const allStores = enrolled
+    .map((v) => {
+      const s = standingByCode.get(v.code);
+      const last = scoreOf.get(v.code);
+      return {
+        code: v.code,
+        id: v.id,
+        pct: s ? s.pct : null,
+        points: seriesByCode.get(v.code) ?? [],
+        last: last && last.ran ? { done: last.done, total: last.total } : null,
+      };
+    })
+    .sort((a, b) => {
+      if (a.pct === null && b.pct === null) return a.code.localeCompare(b.code);
+      if (a.pct === null) return 1;
+      if (b.pct === null) return -1;
+      return a.pct - b.pct;
+    });
+
   // What keeps getting missed across the company, the same item at several
   // stores folded into one row. Missed at many stores is a process to fix;
   // missed at one is a store to call.
@@ -226,9 +160,6 @@ export default async function LocationsPage({
   // overview owes a count and a way in, not the list.
   const localCount = company.filter((c) => c.stores.length === 1).length;
 
-  // Code to id, so a store row taps through to that store's own dash. Entering
-  // sets the working venue; the dash reads it.
-  const idOf = new Map(venues.map((v) => [v.code, v.id]));
 
   return (
     <main>
@@ -344,70 +275,73 @@ export default async function LocationsPage({
 
       {/* Every store, ranked over the month, worst first. Each taps through to
           that store's own dash. */}
-      {standing.length > 0 ? (
+      {allStores.length > 0 ? (
         <div className="mt-6">
           <Card
             title={<T en="Every store" es="Cada tienda" />}
             hint={
               <T
-                en="Last 30 nights · worst first · tap in to a store"
-                es="Últimas 30 noches · peor primero · entra a una tienda"
+                en="All locations · worst first · 30-night average · tap in"
+                es="Todas las ubicaciones · peor primero · promedio de 30 noches · entra"
               />
             }
           >
-            <ul className="space-y-3">
-              {standing.map((s) => {
-                const id = idOf.get(s.code);
-                const last = scoreOf.get(s.code);
-                const pct = s.pct;
+            <ul className="divide-divider divide-y">
+              {allStores.map((s) => {
+                // The one accent that is rationed: a store carries the warn
+                // dot only when it is below the line, so the eye lands on the
+                // few that need a call. The rest are quiet.
+                const fail = s.pct !== null && s.pct < 60;
+                const neutral = s.pct !== null && s.pct >= 60 && s.pct < 80;
+                const dot = fail
+                  ? "bg-warn"
+                  : neutral
+                    ? "bg-warn/50"
+                    : s.pct !== null
+                      ? "bg-ink/40"
+                      : "ring-muted/40 ring-1 ring-inset";
                 const body = (
-                  <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <span className="text-title w-16 shrink-0 tracking-[0.08em]">
-                      {s.code}
-                    </span>
-                    <span className="flex min-w-0 flex-1 items-center gap-3">
-                      <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
-                        <span
-                          className={`block h-full rounded-[1px] ${
-                            pct < 60
-                              ? "bg-warn"
-                              : pct < 80
-                                ? "bg-warn/40"
-                                : "bg-ink/30"
-                          }`}
-                          style={{ width: `${pct}%` }}
-                        />
-                      </span>
-                      <span className="label w-10 shrink-0 text-right tabular-nums">
-                        {pct}%
+                  <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <span className="flex w-24 shrink-0 items-center gap-2.5">
+                      <span
+                        className={`size-2 shrink-0 rounded-full ${dot}`}
+                        aria-hidden
+                      />
+                      <span className="text-title tracking-[0.08em]">
+                        {s.code}
                       </span>
                     </span>
-                    <span className="label ml-auto shrink-0 tabular-nums">
-                      {last && last.ran ? (
-                        <T
-                          en={`${last.done}/${last.total} last night`}
-                          es={`${last.done}/${last.total} anoche`}
-                        />
-                      ) : (
-                        <T en="dark last night" es="apagado anoche" />
-                      )}
+                    <span className={fail ? "text-warn" : "text-muted"}>
+                      <Sparkline points={s.points} />
+                    </span>
+                    <span className="ml-auto flex shrink-0 items-center gap-x-5 tabular-nums">
+                      <span className="label">
+                        <span className="text-muted">
+                          <T en="avg " es="prom " />
+                        </span>
+                        <span className={fail ? "text-warn" : "text-ink"}>
+                          {s.pct === null ? "—" : `${s.pct}%`}
+                        </span>
+                      </span>
+                      <span className="label">
+                        <span className="text-muted">
+                          <T en="last night " es="anoche " />
+                        </span>
+                        <span className="text-ink">
+                          {s.last ? `${s.last.done}/${s.last.total}` : "—"}
+                        </span>
+                      </span>
                     </span>
                   </span>
                 );
                 return (
-                  <li key={s.code}>
-                    {id ? (
-                      <Link
-                        href={`/checklists/enter/${id}`}
-                        className="bg-inset hover:ring-muted/30 block rounded-[4px] px-4 py-3 hover:ring-1 hover:ring-inset"
-                      >
-                        {body}
-                      </Link>
-                    ) : (
-                      <div className="bg-inset rounded-[4px] px-4 py-3">
-                        {body}
-                      </div>
-                    )}
+                  <li key={s.code} className="first:pt-0 last:pb-0">
+                    <Link
+                      href={`/checklists/enter/${s.id}`}
+                      className="hover:bg-hover -mx-2 block rounded-[4px] px-2 py-3"
+                    >
+                      {body}
+                    </Link>
                   </li>
                 );
               })}
@@ -558,82 +492,3 @@ function companyMissed(
   );
 }
 
-/**
- * One venue's night as a bar, in the weekly board's proportions, with the
- * lists that failed under it.
- *
- * One bar, one door: it opens the venue's night, because that is what this
- * page is for. Two doors on one bar, "do checklists" beside "3 fails", was
- * two boxes with a seam between them and a reader could not tell which was
- * the bar. Doing the checklists is a quiet line under the venue instead.
- */
-function VenueBar({ row, night }: { row: Row; night: string }) {
-  const failed = row.tier === "fail";
-  const shell = failed
-    ? "bg-warn text-on-warn hover:bg-warn/90"
-    : "bg-inset hover:ring-muted/30 hover:ring-1 hover:ring-inset";
-  return (
-    <li>
-      <Link
-        href={
-          row.tier
-            ? `/checklists/compliance/${row.code}?night=${night}`
-            : `/checklists/enter/${row.id}`
-        }
-        className={`flex flex-wrap items-baseline gap-x-3 rounded-[4px] px-4 py-3 ${shell}`}
-      >
-        <span
-          className={`text-title w-16 shrink-0 tracking-[0.08em] ${
-            failed ? "text-on-warn" : "text-ink"
-          }`}
-        >
-          {row.code}
-        </span>
-        <span
-          className={`text-title w-16 shrink-0 tracking-normal tabular-nums ${
-            failed
-              ? "text-on-warn"
-              : row.tier === "neutral"
-                ? "text-warn"
-                : row.tier === "good"
-                  ? "text-ink"
-                  : "text-muted"
-          }`}
-        >
-          {row.score}
-        </span>
-        <span
-          className={`label ml-auto flex items-center gap-2 whitespace-nowrap ${
-            failed ? "text-on-warn" : ""
-          }`}
-        >
-          <T en={row.note} es={row.noteEs} />
-          <span aria-hidden>→</span>
-        </span>
-      </Link>
-      {/* The same left edge as the venue's bar. */}
-      {row.fails.length > 0 ? (
-        <ul className="mt-3 space-y-3">
-          {row.fails.map((list) => (
-            <ListBar
-              key={list.row.checklist_id}
-              list={list}
-              code={row.code}
-              night={night}
-              full
-            />
-          ))}
-        </ul>
-      ) : null}
-      <p className="mt-2">
-        <Link
-          href={`/checklists/enter/${row.id}`}
-          className="label hover:text-ink inline-flex min-h-11 items-center gap-2 px-4"
-        >
-          <T en="Do the checklists" es="Hacer las listas" />
-          <span aria-hidden>→</span>
-        </Link>
-      </p>
-    </li>
-  );
-}
