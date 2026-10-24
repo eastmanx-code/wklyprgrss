@@ -42,6 +42,24 @@ export type MissedRow = {
   /** Nights the item finished with no tick against it. */
   open: number;
   of: number;
+  /**
+   * Nights running, counted back from the newest night the item was owed.
+   *
+   * A thing missed fourteen nights scattered across a month is a habit; a
+   * thing missed the last six nights it was owed is on fire right now. The
+   * streak is the second reading, and it is the one that decides whether this
+   * is a conversation to have tonight or one to have this week. Nights the
+   * item was not owed are skipped, not counted and not breaking the run, so a
+   * deep clean owed one night a week streaks on its own day.
+   */
+  streak: number;
+  /**
+   * The same two counts over only the last few nights the item was owed, so
+   * the view can say whether a long-standing miss is getting worse or cooling
+   * off. recentOf is how many of those nights there were, up to seven.
+   */
+  recentOpen: number;
+  recentOf: number;
 };
 
 /** How many nights the report looks back over. */
@@ -65,6 +83,13 @@ export type Rollup = {
   /** Lists done and signed, over every list on every running night. */
   done: number;
   of: number;
+  /**
+   * Per running night, oldest first: lists done and signed, over lists that
+   * exist. The strip reads each night as done-or-not in one character; this
+   * keeps the share, so a page can draw one venue's nightly line beside the
+   * others. Of is the same every night, the venue's list count.
+   */
+  series: { night: string; done: number; of: number }[];
   /** One character per night, oldest first. */
   strip: string;
   /**
@@ -310,16 +335,22 @@ export function computeRollup(
   let certified = 0;
   let done = 0;
   let latest: Rollup["latest"] = null;
+  const series: Rollup["series"] = [];
   const strip = live
     .map((night) => {
       const notSigned: NamedList[] = [];
       const notDone: NamedList[] = [];
+      let doneThisNight = 0;
       for (const list of checklists) {
         const row = nightAt.get(`${list.id}:${night}`);
-        if (complete(list, night, row)) done += 1;
-        else if (row?.certified_at) notDone.push(named(list));
+        if (complete(list, night, row)) {
+          done += 1;
+          doneThisNight += 1;
+        } else if (row?.certified_at) notDone.push(named(list));
         else notSigned.push(named(list));
       }
+      // The night's own share, so the group screen can draw a line per venue.
+      series.push({ night, done: doneThisNight, of: checklists.length });
       const short = notSigned.length + notDone.length;
       if (short === 0) certified += 1;
       // The window is oldest first, so the last one through here is the most
@@ -377,20 +408,29 @@ export function computeRollup(
     }
   }
 
+  const RECENT = 7;
   const missed: MissedRow[] = [...catalog.entries()]
     .map(([id, cat]) => {
       const list = listOf.get(cat.checklist_id);
       if (!list) return null;
-      let open = 0;
-      let asked = 0;
+      // Oldest first, one entry per night the item was owed: true where it
+      // was missed. A night it was not on the list, or not owed, is skipped
+      // entirely, so it neither counts against the item nor breaks a streak.
+      const owedMissed: boolean[] = [];
       for (const night of live) {
-        // Only the nights this item was on the list and owed. A night it was
-        // not on the list yet, or already retired from it, is not a miss.
         const entry = at(list.id, night).find((p) => p.id === id);
         if (!entry || !entry.due) continue;
-        asked += 1;
-        if (!entry.ticked) open += 1;
+        owedMissed.push(!entry.ticked);
       }
+      const asked = owedMissed.length;
+      const open = owedMissed.filter(Boolean).length;
+      // Nights running: trailing misses from the newest owed night back, until
+      // the first night it was actually done.
+      let streak = 0;
+      for (let i = owedMissed.length - 1; i >= 0 && owedMissed[i]; i -= 1) {
+        streak += 1;
+      }
+      const recent = owedMissed.slice(-RECENT);
       return {
         house: list.house,
         role: list.role,
@@ -399,6 +439,9 @@ export function computeRollup(
         itemEs: cat.itemEs,
         open,
         of: asked,
+        streak,
+        recentOpen: recent.filter(Boolean).length,
+        recentOf: recent.length,
       };
     })
     .filter(
@@ -450,6 +493,7 @@ export function computeRollup(
     certified,
     done,
     of,
+    series,
     strip,
     latest,
     missed,

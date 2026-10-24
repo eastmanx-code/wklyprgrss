@@ -62,6 +62,17 @@ is("missed", r.missed.map((m) => [m.item, m.open, m.of]), [["Stanchions", 1, 2]]
 // The same ruler per position: one list, two nights, done and signed once.
 is("byRole", r.byRole, [{ role: "MOD", done: 1, of: 2 }]);
 is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
+// Per running night, the share done and signed. One list, so of is one each
+// night: done on night one, short on night two.
+is("series", r.series, [
+  { night: W[0], done: 1, of: 1 },
+  { night: W[1], done: 0, of: 1 },
+]);
+// Stanchions was done night one and missed night two, so it is on a one-night
+// streak, and one of the two recent nights it was owed.
+is("missed carries streak and the recent window",
+  r.missed.map((m) => [m.item, m.streak, m.recentOpen, m.recentOf]),
+  [["Stanchions", 1, 1, 2]]);
 
 // ------------------------------------------------------- which nights count
 //
@@ -165,6 +176,26 @@ is("certifiers", r.certifiers, [{ who: "Ana", nights: 2 }]);
   is("three of four outranks one of one",
     ranked.missed.map((m) => [m.item, m.open, m.of]),
     [["Restrooms", 3, 4], ["Dust the shelves", 1, 1]]);
+}
+
+// Streak and the recent window: trailing misses count back from the newest
+// night the item was owed, and stop at the first night it was done.
+{
+  const four = ["2026-07-27", "2026-07-28", "2026-07-29", "2026-07-30"];
+  const lists = [{ id: "H", venue_id: "V", house: "FOH", role: "Host", phase: "close" }];
+  const rows = [{ id: "rest", checklist_id: "H", title: "Restrooms" }];
+  const opened = four.map((n, i) => ({ id: `h${i}`, checklist_id: "H", night: n, certified_at: "t", certified_by: "x" }));
+  // Done only the first night, missed the last three running.
+  const streaky = computeRollup({ checklists: lists, items: rows, nights: opened, ticks: [{ night_id: "h0", item_id: "rest" }] }, four, isDue);
+  is("streak: missed the last three nights running",
+    streaky.missed.map((m) => [m.item, m.open, m.of, m.streak, m.recentOpen, m.recentOf]),
+    [["Restrooms", 3, 4, 3, 3, 4]]);
+  // Done again on the newest night breaks the streak to zero, though it is
+  // still three of four missed over the window.
+  const broken = computeRollup({ checklists: lists, items: rows, nights: opened, ticks: [{ night_id: "h3", item_id: "rest" }] }, four, isDue);
+  is("streak: a miss done again on the newest owed night is not running",
+    broken.missed.map((m) => [m.item, m.open, m.of, m.streak]),
+    [["Restrooms", 3, 4, 0]]);
 }
 
 // A perfect window reports nothing missed rather than rows of zeroes.

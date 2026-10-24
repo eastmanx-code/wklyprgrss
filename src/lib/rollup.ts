@@ -7,6 +7,7 @@ import {
   computeRollup,
   type ChecklistRow,
   type GroupRow,
+  type IsDue,
   type ItemRow,
   type Loaded,
   type NightRow,
@@ -141,6 +142,69 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
   // The rota rule, handed to a module that keeps itself import free.
   return computeRollup(data, window, (item, night) =>
     dueOnNight(item.section, night, item.days),
+  );
+}
+
+/**
+ * Every venue's full report, computed in one pass.
+ *
+ * groupRollup answers "what share does each venue get done"; this answers the
+ * same and everything the single-venue report answers too, for every venue at
+ * once. The window is loaded once and the arithmetic runs per venue in memory,
+ * so the all-locations dash can show each venue's standing, each venue's
+ * nightly line, and what is being missed across the whole company without a
+ * query per building.
+ *
+ * Null until one venue records a night. Venues with no running night are left
+ * out, the same as everywhere else: a venue not using the app yet is not a
+ * venue missing everything.
+ */
+export async function groupRollupDetailed(): Promise<
+  { code: string; name: string | null; rollup: Rollup }[] | null
+> {
+  const window = nightWindow();
+  const data = await load(null, window);
+  if (!data || data.nights.length === 0) return null;
+
+  const { data: venueRows } = await db()
+    .from("venues")
+    .select("id, code, name");
+  const venues = (venueRows ?? []) as {
+    id: string;
+    code: string;
+    name: string | null;
+  }[];
+
+  const isDue: IsDue = (item, night) =>
+    dueOnNight(item.section, night, item.days);
+
+  const out: { code: string; name: string | null; rollup: Rollup }[] = [];
+  for (const venue of venues) {
+    // The venue's own rows, filtered out of the one load. computeRollup counts
+    // running nights off the rows it is handed, so one venue's rows in means
+    // one venue's nights scored.
+    const checklists = data.checklists.filter((c) => c.venue_id === venue.id);
+    if (checklists.length === 0) continue;
+    const listIds = new Set(checklists.map((c) => c.id));
+    const items = data.items.filter((i) => listIds.has(i.checklist_id));
+    const nights = data.nights.filter((n) => listIds.has(n.checklist_id));
+    const nightIds = new Set(nights.map((n) => n.id));
+    const ticks = data.ticks.filter((t) => nightIds.has(t.night_id));
+    const rollup = computeRollup(
+      { checklists, items, nights, ticks },
+      window,
+      isDue,
+    );
+    if (rollup.nights === 0) continue;
+    out.push({ code: venue.code, name: venue.name, rollup });
+  }
+
+  // Worst first, by share done and signed: the building that needs the call is
+  // the one a group lead wants at the top.
+  return out.sort(
+    (a, b) =>
+      a.rollup.done / Math.max(1, a.rollup.of) -
+      b.rollup.done / Math.max(1, b.rollup.of),
   );
 }
 

@@ -1,286 +1,40 @@
 import { redirect } from "next/navigation";
 
-import { MissedList } from "@/components/checklists/MissedList";
-import { BackLink } from "@/components/ui";
-import { formatNight } from "@/lib/night";
-import { groupRollup, venueRollup } from "@/lib/rollup";
-import { listName } from "@/lib/slug";
-import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Two buckets, no legend. Quiet grey for a night where every list was done
- * and signed, yellow for a night where something was not. Twenty-four blocks
- * shouting "fine" would drown the six that are the point of the page, and
- * three shades needed a key to read.
- */
-const NIGHT_STATE: Record<string, string> = {
-  c: "bg-ink/20",
-  m: "bg-warn",
-};
-
-/** Share of lists checked off and signed off, over the nights recorded. */
-function rateOf(done: number, of: number): number {
-  return of === 0 ? 0 : Math.round((done / of) * 100);
-}
-
-/**
- * A bar with the score on the end of it. Coloured by the same bands the
- * tiers use, fail at five and under and neutral at six or seven, so a bar
- * here and a row on the group screen agree about what yellow means.
- */
-function Bar({ done, of }: { done: number; of: number }) {
-  const pct = rateOf(done, of);
-  return (
-    <span className="flex min-w-0 flex-1 items-center gap-3">
-      <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
-        <span
-          className={`block h-full rounded-[1px] ${
-            pct < 60 ? "bg-warn" : pct < 80 ? "bg-warn/40" : "bg-ink/30"
-          }`}
-          style={{ width: `${pct}%` }}
-        />
-      </span>
-      <span className="label w-10 shrink-0 text-right tabular-nums">
-        {pct}%
-      </span>
-    </span>
-  );
-}
-
-/**
- * The report the whole thing is for: not whether tonight is done, but what
- * keeps not getting done.
+ * The thirty-night report moved onto the store dash at /checklists, which is
+ * now what a shift lands on. This route stays so the old links keep working
+ * and sends the reader to the one place the report lives.
  *
- * Every figure is read from signed nights. It was once built against sample
- * data so the shape could be argued with before anything was stored, and that
- * turned out to be the worse of the two failures: a fabricated month that
- * reads as real teaches a manager that the numbers here cannot be trusted,
- * which is a lesson that outlives the sample. A venue with nothing recorded
- * now gets one honest line instead.
+ * An admin arrives carrying a venue code: enter that building (which sets the
+ * working venue) and the dash shows it. Anybody else has one venue already, so
+ * the dash is theirs.
  */
-export default async function RollupPage({
+export default async function RollupRedirect({
   searchParams,
 }: {
-  searchParams: Promise<{ code?: string; night?: string }>;
+  searchParams: Promise<{ code?: string }>;
 }) {
   const session = await getSession();
   if (!session) redirect("/");
 
-  // An admin arrives from a venue's night carrying its code. Anyone else
-  // has one venue and the app knows which; a code in their address bar is
-  // ignored, because a URL is not a permission.
-  const { code: rawCode, night: askedNight } = await searchParams;
-  const askedCode = rawCode?.toUpperCase();
-  const nightQuery =
-    askedNight && /^\d{4}-\d{2}-\d{2}$/.test(askedNight)
-      ? `?night=${askedNight}`
-      : "";
-  // An admin with no venue named has nothing to read here. Every location
-  // is the page that names one.
-  if (session.role === "admin" && !askedCode) redirect("/checklists/locations");
-  let venue: string | null = null;
-  if (session.role === "admin" && askedCode) {
-    const { data } = await db()
-      .from("venues")
-      .select("id")
-      .eq("code", askedCode)
-      .maybeSingle();
-    venue = (data as { id: string } | null)?.id ?? null;
-  }
-  if (!venue) venue = await closeVenueId(session);
-  const venueName = venue ? await closeVenueName(venue) : null;
-  const back =
-    session.role === "admin" && askedCode
-      ? `/checklists/compliance/${askedCode}${nightQuery}`
-      : "/checklists";
+  if (session.role !== "admin") redirect("/checklists");
 
-  const real = venue ? await venueRollup(venue) : null;
-  const group = real ? await groupRollup() : null;
+  const code = (await searchParams).code?.toUpperCase();
+  if (!code) redirect("/checklists/locations");
 
-  /**
-   * Nothing recorded, nothing reported.
-   *
-   * This page used to fill itself with invented figures so a venue in its
-   * first week could see the shape of the report. What it actually produced
-   * was a confident month of tracking for lists nobody had ever signed, with
-   * item names and hit rates a reader had no way to tell from real ones.
-   * An empty report says the true thing and says it in one line.
-   */
-  if (!real) {
-    return (
-      <main className="close-flow mx-auto max-w-2xl pb-4">
-        <BackLink href={back}>Back</BackLink>
-        <header className="mt-4 mb-5">
-          <p className="label">{venueName ?? "This venue"}</p>
-          <h1 className="mt-2 text-metric font-medium">
-            What&apos;s getting missed
-          </h1>
-        </header>
-        <section className="panel-quiet">
-          <p className="note text-muted leading-relaxed">
-            Nothing signed off yet. The report starts the night somebody signs a
-            list and builds from there: what got left open, by role, by night
-            and by venue.
-          </p>
-        </section>
-      </main>
-    );
-  }
+  const { data } = await db()
+    .from("venues")
+    .select("id")
+    .eq("code", code)
+    .maybeSingle();
+  const id = (data as { id: string } | null)?.id;
+  if (!id) redirect("/checklists/locations");
 
-  const nights = real.nights;
-  const strip = real.strip;
-  const latest = real.latest;
-  const missed = real.missed;
-  const byRole = real.byRole;
-  const certifiers = real.certifiers;
-  const venues = group ?? [];
-
-  return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href={back}>Back</BackLink>
-
-      <header className="mt-4 mb-5">
-        {/* Named from the row, not typed in. It read "Night Hawk" on every
-            venue's report, including the ones that are not Night Hawk. */}
-        <p className="label">
-          {venueName ? `${venueName} · ` : ""}
-          last 30 nights · {nights} recorded
-        </p>
-        <h1 className="mt-2 text-metric font-medium">
-          What&apos;s getting missed
-        </h1>
-      </header>
-
-      {/* Pinned. Every figure below it is a way of asking the same question,
-          and the answer is easier to hold onto when the month is still on
-          screen while you read them — the two yellow squares are what the rest
-          of the page is explaining. Laid out tight and full-bleed, because a
-          header that costs half a phone screen is not a header. */}
-      <section className="border-card-border bg-paper sticky top-0 z-30 -mx-4 mb-4 border-b px-4 py-3">
-        <div className="flex items-baseline justify-between gap-4">
-          <p className="label">Lists checked off and signed off</p>
-          <p className="text-title tabular-nums tracking-[0.08em]">
-            {real.done} of {real.of} · {rateOf(real.done, real.of)}%
-          </p>
-        </div>
-        <div
-          className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1"
-          aria-hidden
-        >
-          {strip.split("").map((code, index) => (
-            <span
-              key={index}
-              className={`aspect-square rounded-[2px] ${NIGHT_STATE[code] ?? "bg-inset"}`}
-            />
-          ))}
-        </div>
-        {/* The answer to "which ones", on the page, so nobody has to ask.
-            One row per list, the same as every other level. */}
-        {latest && latest.notSigned.length + latest.notDone.length > 0 ? (
-          <div className="mt-3">
-            <p className="label">
-              {formatNight(latest.night)} ·{" "}
-              {latest.notSigned.length + latest.notDone.length} fails
-            </p>
-            <ul className="mt-2 space-y-[2px]">
-              {[
-                ...latest.notDone.map((l) => ({ l, why: "not checked off" })),
-                ...latest.notSigned.map((l) => ({ l, why: "not signed off" })),
-              ].map(({ l, why }) => (
-                <li
-                  key={`${l.role}-${l.room}-${l.phase}`}
-                  className="bg-warn text-on-warn flex flex-wrap items-baseline justify-between gap-x-4 rounded-[4px] px-3 py-2"
-                >
-                  <span className="text-body font-medium">
-                    {listName(l.role, l.room)} {l.phase}
-                  </span>
-                  <span className="text-label tracking-[0.08em] uppercase">
-                    {why}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-        {latest &&
-        latest.notSigned.length === 0 &&
-        latest.notDone.length === 0 ? (
-          <p className="note text-muted mt-3">
-            No fails {formatNight(latest.night)}.
-          </p>
-        ) : null}
-      </section>
-
-      <div className="space-y-4">
-        {/* The point of the whole exercise. */}
-        <section className="panel border-warn/30">
-          <p className="label">Left undone most often</p>
-          <div className="mt-3">
-            <MissedList rows={missed.slice(0, 12)} />
-          </div>
-          {missed.length === 0 ? (
-            <p className="note text-muted mt-1">
-              No fails in the last {nights} nights.
-            </p>
-          ) : null}
-        </section>
-
-        <section className="panel">
-          <p className="label">Each position</p>
-          <ul className="mt-3 space-y-3">
-            {byRole.map((row) => (
-              <li key={row.role} className="flex items-center gap-3">
-                <span className="label w-24 shrink-0">{row.role}</span>
-                <Bar done={row.done} of={row.of} />
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="panel">
-          <p className="label">Who signs</p>
-          <ul className="mt-3">
-            {certifiers.length === 0 ? (
-              <li className="note text-muted">Nobody has signed a list yet.</li>
-            ) : null}
-            {certifiers.map((row) => (
-              <li
-                key={row.who}
-                className="border-divider flex items-baseline justify-between gap-4 border-t py-2.5 first:border-t-0"
-              >
-                <span className="text-body">{row.who}</span>
-                <span className="label tabular-nums">
-                  {row.nights} {row.nights === 1 ? "list" : "lists"}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        {/* One level up: the same question asked of the whole group. */}
-        <section className="panel">
-          <p className="label">Across the group</p>
-          <p className="note text-muted mt-2">
-            {group
-              ? `The same report, asked of ${venues.length} ${venues.length === 1 ? "venue" : "venues"} rather than one.`
-              : "The same report, asked of 26 venues rather than one."}
-          </p>
-          <ul className="mt-3 space-y-3">
-            {venues.map((row) => (
-              <li key={row.code} className="flex items-center gap-3">
-                <span className="label w-16 shrink-0">{row.code}</span>
-                <Bar done={row.done} of={row.of} />
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <p className="label mt-6">Counted over the last {nights} nights.</p>
-    </main>
-  );
+  // Enter sets the working venue in a cookie, then lands on the store dash.
+  redirect(`/checklists/enter/${id}`);
 }
