@@ -86,8 +86,21 @@ export default async function ChecklistsPage() {
   const neutral = pct >= 60 && pct < 80;
   const trend = series.map((s) => ({ percent: rateOf(s.done, s.of) }));
 
+  // A real repeat offender, not everything missed twice. Over thirty nights
+  // almost every item slips at least twice, so "missed >= 2" floods the list
+  // and buries the chronic ones under one bad night listed item by item. The
+  // bar is both: missed at least three times AND on at least a quarter of the
+  // nights it was owed, so a thing owed thirty nights and missed four (one bad
+  // stretch) drops out while a thing missed eight of thirty, or every night it
+  // was owed, stays. Ranked by how often it slips, worst rate first.
   const tooNew = nights < 5;
-  const repeated = tooNew ? [] : missed.filter((m) => m.open >= 2);
+  const MIN_MISSES = 3;
+  const MIN_RATE = 0.25;
+  const repeated = tooNew
+    ? []
+    : missed
+        .filter((m) => m.of > 0 && m.open >= MIN_MISSES && m.open / m.of >= MIN_RATE)
+        .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
   const latestShort = latest
     ? latest.notSigned.length + latest.notDone.length
     : 0;
@@ -161,9 +174,9 @@ export default async function ChecklistsPage() {
 
       <div className="mt-4">{DoButton}</div>
 
-      {/* What keeps getting missed: the few that happened on two or more
-          nights, worst first, in the words the crew reads. Capped, with the
-          rest as a count. On its own panel. */}
+      {/* What keeps getting missed: the chronic ones, worst rate first, in the
+          words the crew reads. Capped, with the rest as a count. On its own
+          panel. */}
       <section className="panel mt-4">
         <p className="label">
           <T en="What keeps getting missed" es="Lo que se sigue faltando" />
@@ -182,8 +195,8 @@ export default async function ChecklistsPage() {
               {repeated.length > 6 ? (
                 <p className="label text-muted mt-4">
                   <T
-                    en={`+ ${repeated.length - 6} more missed on two or more nights`}
-                    es={`+ ${repeated.length - 6} más que faltaron en dos o más noches`}
+                    en={`+ ${repeated.length - 6} more that keep slipping`}
+                    es={`+ ${repeated.length - 6} más que se siguen faltando`}
                   />
                 </p>
               ) : null}
@@ -191,8 +204,8 @@ export default async function ChecklistsPage() {
           ) : (
             <p className="note text-muted">
               <T
-                en={`Nothing missed more than once in the last ${nights} nights.`}
-                es={`Nada faltó más de una vez en las últimas ${nights} noches.`}
+                en={`Nothing keeps slipping over the last ${nights} nights. The odd miss, but no pattern.`}
+                es={`Nada se sigue faltando en las últimas ${nights} noches. Alguna falla suelta, pero sin patrón.`}
               />
             </p>
           )}
