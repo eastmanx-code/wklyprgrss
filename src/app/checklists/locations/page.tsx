@@ -126,10 +126,14 @@ export default async function LocationsPage() {
         <T en="Home" es="Inicio" />
       </BackLink>
 
-      {/* The company in one line: how many stores, and how last night went
-          across all of them. "So far" while a night is still being walked, so
-          a low count early reads as a night going rather than a night failed. */}
-      <header className="mt-4 mb-6">
+      {/* Everything data-bearing sits on one solid panel over the dot grid,
+          the way the rest of the app does it. The summary on top, a rule, then
+          the ranked table. Best on top. Every row says its state three ways —
+          a plain word, a bar, a number — so anyone can read it. */}
+      <section className="panel mt-4">
+        {/* The company in one line: how many stores, and how last night went
+            across all of them. "So far" while a night is still being walked,
+            so a low count early reads as a night going, not a night failed. */}
         <p className="label">
           <T
             en={`all locations · ${enrolled.length} on checklists · last 30 nights`}
@@ -156,10 +160,20 @@ export default async function LocationsPage() {
             </>
           )}
         </h1>
-      </header>
 
-      {/* The ranked table. Best on top. Every row says its state three ways —
-          a plain word, a bar, a number — so anyone can read it. */}
+        <div className="mt-4 flex items-center justify-between gap-4">
+          <p className="label">
+            <T en="every store · best first" es="cada tienda · mejor primero" />
+          </p>
+          <p className="label text-muted">
+            <T
+              en={`last night · ${formatNight(night)}`}
+              es={`anoche · ${formatNightEs(night)}`}
+            />
+          </p>
+        </div>
+        <hr className="border-divider mt-3 mb-1 border-0 border-t" />
+
       {rows.length > 0 ? (
         <ul className="divide-divider divide-y">
           {rows.map((s) => {
@@ -243,21 +257,14 @@ export default async function LocationsPage() {
           })}
         </ul>
       ) : (
-        <p className="note text-muted leading-relaxed">
+        <p className="note text-muted mt-3 leading-relaxed">
           <T
             en="No stores on the checklists yet. Add one below to start its report."
             es="Todavía no hay tiendas en las listas. Agrega una abajo para empezar su informe."
           />
         </p>
       )}
-
-      {/* A date under the table, so "last night" has a day on it. */}
-      <p className="label text-muted mt-5">
-        <T
-          en={`last night · ${formatNight(night)}`}
-          es={`anoche · ${formatNightEs(night)}`}
-        />
-      </p>
+      </section>
 
       {/* Closed, one small button. Open, the line becomes the heading with its
           own Hide, and each venue's Add is a button with space of its own. */}

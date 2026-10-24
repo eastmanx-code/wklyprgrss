@@ -63,19 +63,19 @@ export default async function ChecklistsPage() {
     return (
       <main className="close-flow mx-auto max-w-2xl pb-6">
         <BackLink href={backHref}>{backLabel}</BackLink>
-        <header className="mt-4 mb-5">
+        <section className="panel mt-4">
           <p className="label">{name}</p>
           <h1 className="text-metric mt-2 font-medium">
             <T en="Nothing recorded yet" es="Todavía nada registrado" />
           </h1>
-        </header>
-        <div className="mb-5">{DoButton}</div>
-        <p className="note text-muted leading-relaxed">
-          <T
-            en="The report starts the night somebody signs a list."
-            es="El informe empieza la noche que alguien firma una lista."
-          />
-        </p>
+          <p className="note text-muted mt-3 leading-relaxed">
+            <T
+              en="The report starts the night somebody signs a list."
+              es="El informe empieza la noche que alguien firma una lista."
+            />
+          </p>
+        </section>
+        <div className="mt-4">{DoButton}</div>
       </main>
     );
   }
@@ -96,9 +96,11 @@ export default async function ChecklistsPage() {
     <main className="close-flow mx-auto max-w-2xl pb-6">
       <BackLink href={backHref}>{backLabel}</BackLink>
 
-      {/* The month, as one number and one line. The question a leader opens
-          with is "are we ok", and the answer is the first thing on the page. */}
-      <header className="mt-4">
+      {/* The month, on one solid panel over the dot grid, the way the rest of
+          the app grounds its content. The question a leader opens with is
+          "are we ok", and the answer is the first thing on the panel: the
+          number, the count under it, the run as one line, last night. */}
+      <section className="panel mt-4">
         <p className="label">
           {name ? `${name} · ` : ""}
           <T
@@ -121,48 +123,48 @@ export default async function ChecklistsPage() {
             es="listas marcadas y firmadas"
           />
         </p>
-      </header>
 
-      {/* The run as one line, no axes: the shape of the month next to the
-          number, climbing, flat, or sliding. Warn when the store is failing. */}
-      {trend.length >= 2 ? (
-        <div
-          className={`mt-4 ${fail ? "text-warn" : neutral ? "text-warn/60" : "text-ink/70"}`}
-        >
-          <Sparkline
-            points={trend}
-            width={640}
-            height={56}
-            className="h-14 w-full"
-          />
-        </div>
-      ) : null}
+        {/* The run as one line, no axes: the shape of the month next to the
+            number, climbing, flat, or sliding. Warn when the store is failing. */}
+        {trend.length >= 2 ? (
+          <div
+            className={`mt-4 ${fail ? "text-warn" : neutral ? "text-warn/60" : "text-ink/70"}`}
+          >
+            <Sparkline
+              points={trend}
+              width={640}
+              height={56}
+              className="h-14 w-full"
+            />
+          </div>
+        ) : null}
 
-      {latest ? (
-        <p
-          className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
-        >
-          <T
-            en={
-              latestShort > 0
-                ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
-                : `no fails last night · ${formatNight(latest.night)}`
-            }
-            es={
-              latestShort > 0
-                ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
-                : `sin fallas anoche · ${formatNight(latest.night)}`
-            }
-          />
-        </p>
-      ) : null}
+        {latest ? (
+          <p
+            className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
+          >
+            <T
+              en={
+                latestShort > 0
+                  ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
+                  : `no fails last night · ${formatNight(latest.night)}`
+              }
+              es={
+                latestShort > 0
+                  ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
+                  : `sin fallas anoche · ${formatNight(latest.night)}`
+              }
+            />
+          </p>
+        ) : null}
+      </section>
 
-      <div className="mt-6">{DoButton}</div>
+      <div className="mt-4">{DoButton}</div>
 
       {/* What keeps getting missed: the few that happened on two or more
           nights, worst first, in the words the crew reads. Capped, with the
-          rest as a count. */}
-      <section className="mt-8">
+          rest as a count. On its own panel. */}
+      <section className="panel mt-4">
         <p className="label">
           <T en="What keeps getting missed" es="Lo que se sigue faltando" />
         </p>
