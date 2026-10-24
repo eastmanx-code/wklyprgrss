@@ -169,7 +169,7 @@ export default async function PositionPage({
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href="/checklists">
+      <BackLink href="/checklists/do">
         <T en="All positions" es="Todos los puestos" />
       </BackLink>
 

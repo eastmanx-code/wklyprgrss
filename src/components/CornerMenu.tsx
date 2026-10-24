@@ -57,57 +57,48 @@ export async function CornerMenu() {
         {/* In flow beside the button, not laid over it. Absolute, it covered the
             only control that could close it again — which is why the menu
             opened and then never shut. */}
-        <div className="border-card-border bg-surface/90 ww-menu-items h-14 items-center justify-end gap-2 rounded-[8px] border px-2 backdrop-blur-md lg:gap-3 lg:px-3">
+        <div className="border-card-border bg-surface/90 ww-menu-items rounded-[8px] border backdrop-blur-md">
+          {/* Group one: where to go. Home, then the sections, with only the
+              controls of the one you are standing in. The weekly deadline used
+              to sit on every screen, which is the site telling a closer at one
+              in the morning about Thursday at four; it stays inside the week. */}
           {home ? (
             <Link href={home} className="btn-ghost">
               <T en="Home" es="Inicio" />
             </Link>
           ) : null}
 
-          {/* The two sections, and only the controls of the one you are in.
-              The weekly deadline used to sit here on every screen, which is
-              the site telling a closer at one in the morning about Thursday
-              at four. */}
           {session ? (
-            <>
-              <span className="bg-card-border h-6 w-px" aria-hidden />
-              <SectionNav
-                isAdmin={isAdmin}
-                canWalkthroughs={canWalkthroughs}
-                deadlineMs={deadlineMs}
-              />
-            </>
+            <SectionNav
+              isAdmin={isAdmin}
+              canWalkthroughs={canWalkthroughs}
+              deadlineMs={deadlineMs}
+            />
           ) : null}
 
-          {/* Only while standing on a checklist, and it renders nothing
-              anywhere else. The way into the editor is otherwise the link at
-              the foot of the list, below every item on it, which is right for
-              somebody walking it at one in the morning and useless for the
-              person setting one up. */}
-          {/* Managers only, like the link at the foot of a list. This one was
-              shown to anybody signed in, so the crew holding the venue code
-              off the QR by the rack were being offered a door that refuses
-              them — the exact thing the foot of the list stopped doing. */}
+          {/* Group two: settings. Edit this list where you are on one, help,
+              language, theme. Edit is managers only, like the link at the foot
+              of a list: the crew holding the venue code off the QR by the rack
+              were being offered a door that refuses them. */}
+          {session ? <span className="bg-card-border h-6 w-px" aria-hidden /> : null}
+
           {canEdit ? <EditThisList /> : null}
 
           <HelpLink />
 
-          <span className="bg-card-border h-6 w-px" aria-hidden />
-
-          {/* Here rather than on the checklists screen, because the language
-              somebody reads is not a property of one screen in one product.
-              This bar is on every page, so the switch is too. */}
           <LangSwitch />
 
-          <span className="bg-card-border h-6 w-px" aria-hidden />
-
-          {session ? (
-            <SignOut className="btn-ghost">
-              <T en="Out" es="Salir" />
-            </SignOut>
-          ) : null}
-
           <ThemeToggle />
+
+          {/* Group three: the way out, at the foot where a reader expects it. */}
+          {session ? (
+            <>
+              <span className="bg-card-border h-6 w-px" aria-hidden />
+              <SignOut className="btn-ghost">
+                <T en="Out" es="Salir" />
+              </SignOut>
+            </>
+          ) : null}
         </div>
       </details>
     </nav>

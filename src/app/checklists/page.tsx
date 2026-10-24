@@ -1,296 +1,216 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { MissedList } from "@/components/checklists/MissedList";
+import { Sparkline } from "@/components/checklists/Sparkline";
 import { T } from "@/components/Lang";
-import { NewChecklistForm } from "@/components/checklists/NewChecklistForm";
-import {
-  HOUSE_ES,
-  houseName,
-  roleSlug,
-  type House,
-  type Phase,
-} from "@/lib/checklists";
-import { boardNight } from "@/lib/active-night";
-import { closeStatus } from "@/lib/close-status";
-import { formatNight, formatNightEs } from "@/lib/night";
-import {
-  closeVenueCode,
-  closeVenueId,
-  closeVenueName,
-} from "@/lib/close-venue";
-import { getSession, mayManage } from "@/lib/session";
-import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
+import { formatNight } from "@/lib/night";
+import { venueRollup } from "@/lib/rollup";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
+import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
-type Row = {
-  id: string;
-  house: House;
-  role: string;
-  role_es: string | null;
-  phase: Phase;
-};
+function rateOf(done: number, of: number): number {
+  return of === 0 ? 0 : Math.round((done / of) * 100);
+}
 
 /**
- * The clipboard. Front of house or heart of house, then the role, then open,
- * mid or close — you flip to yours rather than scrolling one long list.
+ * The store lens: one venue's compliance, kept to three things.
  *
- * Built from the venue's own rows. It used to render forty slots from a fixed
- * list of roles invented in code, so every venue was shown the same MOD,
- * Bartender, Barback whether or not it splits a shift that way, and thirty-odd
- * of them permanently read "not set up". A venue writes the roles it actually
- * runs; an empty clipboard says so plainly and offers the way to start one.
+ * How the month is going, the way in to do tonight's work, and what keeps
+ * getting missed. Nothing else. The page a leader opens to answer "are we ok"
+ * answers it in the first line, without scrolling past four other panels.
+ * Crew, leaders and the store's own manager all see the same thing.
  */
 export default async function ChecklistsPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
   const venue = await closeVenueId(session);
-  // An admin who has not picked a building yet gets the list of them. This
-  // used to show them one venue chosen in code, with nothing on the page
-  // saying which, which is how an admin edits the wrong venue's list.
-  if (!venue && session.role === "admin") redirect("/checklists/locations");
-  const venueName = venue ? await closeVenueName(venue) : null;
-  const venueCode = venue ? await closeVenueCode(venue) : null;
-
-  const { data: listRows } = venue
-    ? await db()
-        .from("close_checklists")
-        .select("id, house, role, role_es, phase")
-        .eq("venue_id", venue)
-        .eq("active", true)
-    : { data: [] };
-
-  const lists = (listRows ?? []) as Row[];
-
-  /**
-   * The position, in Spanish, where somebody has written it.
-   *
-   * A role is free text on the checklist row and several rows share one: a
-   * bartender has an open list and a close list. First non-empty wins, so a
-   * position reads the same whichever of its lists carried the translation.
-   */
-  const roleEs = new Map<string, string>();
-  for (const row of lists) {
-    const said = row.role_es?.trim();
-    if (said && !roleEs.has(row.role)) roleEs.set(row.role, said);
+  if (!venue) {
+    if (session.role === "admin") redirect("/checklists/locations");
+    redirect("/");
   }
 
-  /**
-   * Which lists are already signed for tonight.
-   *
-   * The colour on this screen is the night draining away. Everything starts
-   * lit because nothing is signed, and a position goes quiet when every list
-   * under it has been closed out — so the page is loud exactly while there is
-   * work in it, and the same accent means the same thing it means on the
-   * walkthrough board: this wants something from you.
-   */
-  // The night the board is on. After the 4am roll, while any list in the
-  // building is still being walked, the board stays on the night it
-  // started; this page used to ask the calendar and blank itself at 4:00.
-  const night = await boardNight(lists.map((l) => l.id));
+  const [name, report] = await Promise.all([
+    closeVenueName(venue),
+    venueRollup(venue),
+  ]);
 
-  const signed = new Set<string>();
-  if (lists.length > 0) {
-    const { data: nightRows } = await db()
-      .from("close_nights")
-      .select("checklist_id, certified_at")
-      .eq("night", night)
-      .in(
-        "checklist_id",
-        lists.map((l) => l.id),
-      );
-    for (const row of (nightRows ?? []) as {
-      checklist_id: string;
-      certified_at: string | null;
-    }[]) {
-      if (row.certified_at) signed.add(row.checklist_id);
-    }
-  }
-
-  /** Every list under this position is signed. */
-  const positionDone = (house: House, role: string) =>
-    lists
-      .filter((l) => l.house === house && l.role === role)
-      .every((l) => signed.has(l.id));
-
-  /**
-   * Where each position is tonight, in one phrase on its row.
-   *
-   * Lit used to be all this screen said, and lit covers everything from
-   * "nobody has started" to "every item ticked and nobody signed". Those
-   * are different nights. The second one is the closer who did the work
-   * and left no record, and it is the one this screen most needs to say.
-   */
-  const status = new Map(
-    (await closeStatus(night)).map((row) => [row.checklist_id, row]),
-  );
-  const positionNote = (
-    house: House,
-    role: string,
-  ): { en: string; es: string; urgent: boolean } | null => {
-    const open = lists.filter(
-      (l) => l.house === house && l.role === role && !signed.has(l.id),
+  const backHref = session.role === "admin" ? "/checklists/locations" : "/home";
+  const backLabel =
+    session.role === "admin" ? (
+      <T en="All locations" es="Todas las ubicaciones" />
+    ) : (
+      <T en="Home" es="Inicio" />
     );
-    const rows = open.map((l) => status.get(l.id)).filter(Boolean);
-    const ticked = rows.reduce((n, r) => n + (r?.ticked ?? 0), 0);
-    const total = rows.reduce((n, r) => n + (r?.items_on_list ?? 0), 0);
-    if (rows.length === 0 || total === 0 || ticked === 0) return null;
-    if (ticked >= total)
-      return { en: "Done · not signed", es: "Hecho · sin firmar", urgent: true };
-    return {
-      en: `${ticked}/${total} done`,
-      es: `${ticked}/${total} hechos`,
-      urgent: false,
-    };
-  };
 
-  /**
-   * The positions a house runs, each once.
-   *
-   * Not the lists. A position owns up to three of them and printing all three
-   * here put the whole building on one screen: two houses, every role, every
-   * phase, and a count on each. You pick the position you are working and the
-   * lists are one tap in.
-   */
-  const positionsIn = (house: House) => {
-    const roles = [
-      ...new Set(lists.filter((l) => l.house === house).map((l) => l.role)),
-    ];
-    return roles.sort((a, b) => a.localeCompare(b));
-  };
+  const DoButton = (
+    <Link
+      href="/checklists/do"
+      className="bg-warn text-on-warn hover:bg-warn/90 flex min-h-14 items-center justify-between gap-3 rounded-[6px] px-5 py-4 text-title tracking-[0.02em]"
+    >
+      <T en="Do the checklists" es="Hacer las listas" />
+      <span aria-hidden>→</span>
+    </Link>
+  );
 
-  return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      {/* The only close screen that had no way back at the top: it leaned on
-          the bar at the foot, and the bar is gone. */}
-      <BackLink
-        href={session.role === "admin" ? "/checklists/locations" : "/home"}
-      >
-        {session.role === "admin" ? (
-          <T en="All locations" es="Todas las ubicaciones" />
-        ) : (
-          <T en="Home" es="Inicio" />
-        )}
-      </BackLink>
-
-      <header className="mb-5">
-        <p className="label">
-          {venueName ? `${venueName} · ` : ""}
-          <T en={formatNight(night)} es={formatNightEs(night)} />
-        </p>
-        <h1 className="mt-2 text-metric font-medium">
-          <T en="Checklists" es="Listas" />
-        </h1>
-        <p className="label mt-2">
-          <T
-            en="Pick your position · lit means not signed yet"
-            es="Escoge tu puesto · lo iluminado no está firmado"
-          />
-        </p>
-      </header>
-
-      {/* The report is not on this screen. This is the clipboard the crew
-          opens to tick and sign, and a month of misses above it is the
-          public shame the report is not for. A manager gets one link to the
-          venue's night; a leader gets the lists. */}
-      {mayManage(session) && venueCode ? (
-        <p className="mb-5">
-          <Link
-            href={`/checklists/compliance/${venueCode}`}
-            className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
-          >
-            <T en="Last night" es="Anoche" />
-            <span className="text-muted">
-              <T en="what failed, who signed" es="qué falló, quién firmó" />
-            </span>
-          </Link>
-        </p>
-      ) : null}
-
-      {lists.length === 0 ? (
-        <section className="panel mb-5">
-          <h2 className="card-title">No lists yet</h2>
-          <p className="note text-muted mt-2 leading-relaxed">
-            Start with the one your venue already runs on paper. A role, a
-            phase, and the items in the order somebody walks them.
+  // Nothing signed off yet. One honest line and the way in, not a page of
+  // confident zeroes.
+  if (!report) {
+    return (
+      <main className="close-flow mx-auto max-w-2xl pb-6">
+        <BackLink href={backHref}>{backLabel}</BackLink>
+        <section className="panel mt-4">
+          <p className="label">{name}</p>
+          <h1 className="text-metric mt-2 font-medium">
+            <T en="Nothing recorded yet" es="Todavía nada registrado" />
+          </h1>
+          <p className="note text-muted mt-3 leading-relaxed">
+            <T
+              en="The report starts the night somebody signs a list."
+              es="El informe empieza la noche que alguien firma una lista."
+            />
           </p>
         </section>
-      ) : (
-        <div className="mb-5 space-y-5">
-          {(["FOH", "HOH"] as House[]).map((house) =>
-            positionsIn(house).length === 0 ? null : (
-              <section key={house} className="panel">
-                <h2 className="card-title">
-                  <T en={houseName(house)} es={HOUSE_ES[house]} />
-                </h2>
+        <div className="mt-4">{DoButton}</div>
+      </main>
+    );
+  }
 
-                {/* Cards, not rows off a hairline. A position is the thing
-                    you are here to tap, and a list of names divided by rules
-                    reads as a table of contents — the tap target has to look
-                    like one. */}
-                <ul className="mt-4 space-y-2">
-                  {positionsIn(house).map((role) => (
-                    <li key={role}>
-                      <Link
-                        href={`/checklists/position/${house.toLowerCase()}/${roleSlug(role)}`}
-                        className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
-                          positionDone(house, role)
-                            ? "bg-inset text-muted ring-divider ring-1 ring-inset"
-                            : "bg-warn text-on-warn hover:bg-warn/90"
-                        }`}
-                      >
-                        <span className="text-body tracking-[0.08em]">
-                          <T en={role} es={roleEs.get(role) ?? role} />
-                        </span>
-                        {positionDone(house, role) ? (
-                          <span className="label">
-                            <T en="Signed" es="Firmada" />
-                          </span>
-                        ) : positionNote(house, role) ? (
-                          <span
-                            className={`label ${
-                              positionNote(house, role)!.urgent
-                                ? "font-medium"
-                                : ""
-                            }`}
-                          >
-                            <T
-                              en={positionNote(house, role)!.en}
-                              es={positionNote(house, role)!.es}
-                            />
-                            <span aria-hidden> →</span>
-                          </span>
-                        ) : (
-                          <span aria-hidden>→</span>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ),
+  const { nights, series, latest, missed, done, of } = report;
+  const pct = rateOf(done, of);
+  const fail = pct < 60;
+  const neutral = pct >= 60 && pct < 80;
+  const trend = series.map((s) => ({ percent: rateOf(s.done, s.of) }));
+
+  // A real repeat offender, not everything missed twice. Over thirty nights
+  // almost every item slips at least twice, so "missed >= 2" floods the list
+  // and buries the chronic ones under one bad night listed item by item. The
+  // bar is both: missed at least three times AND on at least a quarter of the
+  // nights it was owed, so a thing owed thirty nights and missed four (one bad
+  // stretch) drops out while a thing missed eight of thirty, or every night it
+  // was owed, stays. Ranked by how often it slips, worst rate first.
+  const tooNew = nights < 5;
+  const MIN_MISSES = 3;
+  const MIN_RATE = 0.25;
+  const repeated = tooNew
+    ? []
+    : missed
+        .filter((m) => m.of > 0 && m.open >= MIN_MISSES && m.open / m.of >= MIN_RATE)
+        .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
+  const latestShort = latest
+    ? latest.notSigned.length + latest.notDone.length
+    : 0;
+
+  return (
+    <main className="close-flow mx-auto max-w-2xl pb-6">
+      <BackLink href={backHref}>{backLabel}</BackLink>
+
+      {/* The month, on one solid panel over the dot grid, the way the rest of
+          the app grounds its content. The question a leader opens with is
+          "are we ok", and the answer is the first thing on the panel: the
+          number, the count under it, the run as one line, last night. */}
+      <section className="panel mt-4">
+        <p className="label">
+          {name ? `${name} · ` : ""}
+          <T
+            en={`last 30 nights · ${nights} recorded`}
+            es={`últimas 30 noches · ${nights} registradas`}
+          />
+        </p>
+        <h1
+          className={`text-metric mt-2 font-medium tabular-nums ${fail ? "text-warn" : ""}`}
+        >
+          {pct}%{" "}
+          <span className="text-muted text-title">
+            <T en="signed off" es="firmadas" />
+          </span>
+        </h1>
+        <p className="label mt-1 tabular-nums">
+          {done} <T en="of" es="de" /> {of}{" "}
+          <T
+            en="lists checked off and signed off"
+            es="listas marcadas y firmadas"
+          />
+        </p>
+
+        {/* The run as one line, no axes: the shape of the month next to the
+            number, climbing, flat, or sliding. Warn when the store is failing. */}
+        {trend.length >= 2 ? (
+          <div
+            className={`mt-4 ${fail ? "text-warn" : neutral ? "text-warn/60" : "text-ink/70"}`}
+          >
+            <Sparkline
+              points={trend}
+              width={640}
+              height={56}
+              className="h-14 w-full"
+            />
+          </div>
+        ) : null}
+
+        {latest ? (
+          <p
+            className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
+          >
+            <T
+              en={
+                latestShort > 0
+                  ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
+                  : `no fails last night · ${formatNight(latest.night)}`
+              }
+              es={
+                latestShort > 0
+                  ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
+                  : `sin fallas anoche · ${formatNight(latest.night)}`
+              }
+            />
+          </p>
+        ) : null}
+      </section>
+
+      <div className="mt-4">{DoButton}</div>
+
+      {/* What keeps getting missed: the chronic ones, worst rate first, in the
+          words the crew reads. Capped, with the rest as a count. On its own
+          panel. */}
+      <section className="panel mt-4">
+        <p className="label">
+          <T en="What keeps getting missed" es="Lo que se sigue faltando" />
+        </p>
+        <div className="mt-3">
+          {tooNew ? (
+            <p className="note text-muted">
+              <T
+                en={`Only ${nights} ${nights === 1 ? "night" : "nights"} recorded. Too new to call a pattern yet.`}
+                es={`Apenas ${nights} ${nights === 1 ? "noche" : "noches"} registradas. Muy pronto para ver un patrón.`}
+              />
+            </p>
+          ) : repeated.length > 0 ? (
+            <>
+              <MissedList rows={repeated.slice(0, 6)} />
+              {repeated.length > 6 ? (
+                <p className="label text-muted mt-4">
+                  <T
+                    en={`+ ${repeated.length - 6} more that keep slipping`}
+                    es={`+ ${repeated.length - 6} más que se siguen faltando`}
+                  />
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="note text-muted">
+              <T
+                en={`Nothing keeps slipping over the last ${nights} nights. The odd miss, but no pattern.`}
+                es={`Nada se sigue faltando en las últimas ${nights} noches. Alguna falla suelta, pero sin patrón.`}
+              />
+            </p>
           )}
         </div>
-      )}
-
-      {/* Starting a whole new list is an admin job, and the form sat here for
-          anybody holding the venue code — which is everybody, since the code
-          is on the QR by the rack. The server refuses it either way now; this
-          is so nobody is offered a button that is going to say no. */}
-      {mayManage(session) ? <NewChecklistForm /> : null}
-
-      {/* The way out of the building you are in. Without it the cookie is a
-          one-way door and the only way back to another venue is the address
-          bar. */}
-      {session.role === "admin" ? (
-        <p className="mt-6">
-          <Link href="/checklists/locations" className="label hover:text-ink">
-            Switch location
-          </Link>
-        </p>
-      ) : null}
+      </section>
     </main>
   );
 }

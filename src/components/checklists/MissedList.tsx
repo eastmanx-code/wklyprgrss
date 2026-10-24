@@ -5,13 +5,14 @@ import { PHASE_ES, phaseName } from "@/lib/checklists";
 import type { MissedRow } from "@/lib/rollup-math";
 
 /**
- * What keeps getting left open, ranked.
+ * What keeps getting left open, in the words the crew reads.
  *
- * The bar is the whole point of the row: "9 of 30" is a number you have to
- * think about, and a bar nine-thirtieths full is a thing you see. The share is
- * of nights the item was still open at signature, so a long bar is bad — the
- * one place in this app where filled means worse, which is why it is the only
- * accent on the panel.
+ * Two lines a row, nothing else. The top line says who owns it on the left and
+ * how often it slipped on the right; the line under it is the thing itself.
+ * No bar, no streak, no drift arrow: the count already says how bad, and the
+ * extra marks were reading as chaos rather than as help. A person who has
+ * never seen this app can read a row out loud and know what to fix and how
+ * often it has been missed.
  */
 export function MissedList({ rows }: { rows: MissedRow[] }) {
   const spanish = useSpanish();
@@ -19,32 +20,23 @@ export function MissedList({ rows }: { rows: MissedRow[] }) {
   return (
     <ul>
       {rows.map((row) => {
-        const pct = Math.round((row.open / row.of) * 100);
+        const phase = spanish ? PHASE_ES[row.phase] : phaseName(row.phase);
         return (
           <li
-            key={`${row.role}-${row.item}`}
+            key={`${row.house}-${row.role}-${row.phase}-${row.item}`}
             className="border-divider border-t py-3 first:border-t-0 first:pt-0"
           >
             <div className="flex items-baseline justify-between gap-4">
-              <span className="text-body min-w-0 break-words">
-                {spanish && row.itemEs ? row.itemEs : row.item}
+              <span className="label text-muted min-w-0">
+                {row.role} · {phase}
               </span>
               <span className="label text-warn shrink-0 tabular-nums">
                 {t("missed", "faltó")} {row.open} {t("of", "de")} {row.of}
               </span>
             </div>
-            <div className="mt-2 flex items-center gap-3">
-              <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
-                <span
-                  className="bg-warn block h-full rounded-[1px]"
-                  style={{ width: `${pct}%` }}
-                />
-              </span>
-              <span className="label shrink-0">
-                {row.house} · {row.role} ·{" "}
-                {spanish ? PHASE_ES[row.phase] : phaseName(row.phase)}
-              </span>
-            </div>
+            <p className="text-body mt-1 break-words">
+              {spanish && row.itemEs ? row.itemEs : row.item}
+            </p>
           </li>
         );
       })}

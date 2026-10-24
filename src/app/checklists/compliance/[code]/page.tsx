@@ -270,10 +270,14 @@ export default async function VenueCompliancePage({
           </>
         ) : null}
 
-        {/* The thirty-night view, in the foot of the same card. */}
+        {/* The thirty-night view is the dash this came from. */}
         <p className="border-divider mt-4 border-t pt-4">
           <Link
-            href={`/checklists/rollup?code=${code}&night=${night}`}
+            href={
+              session.role === "admin"
+                ? `/checklists/rollup?code=${code}`
+                : "/checklists"
+            }
             className="label hover:text-ink inline-flex min-h-11 items-center gap-2"
           >
             What keeps getting missed · last 30 nights

@@ -234,6 +234,24 @@ export function CloseGuide() {
 
       <section className="panel mb-3">
         <h2 className="text-body font-medium">
+          <T en="What you land on" es="Lo que ves al entrar" />
+        </h2>
+        <p className="note mt-4 leading-relaxed">
+          <T
+            en="Signing in opens the stats for your venue: how the last thirty nights have gone, and above all what keeps getting missed, the item left open night after night. Everyone sees the same report, so anyone can tell when a list is slipping."
+            es="Al entrar se abren las estadísticas de tu lugar: cómo han ido las últimas treinta noches y, sobre todo, lo que se sigue faltando, el punto que queda sin hacer noche tras noche. Todos ven el mismo informe, así que cualquiera nota cuando una lista se está cayendo."
+          />
+        </p>
+        <p className="note mt-3 leading-relaxed">
+          <T
+            en="To do tonight's work, tap “Do the checklists”. The night's photos are one tap away beside it. Nothing is buried in a menu."
+            es="Para hacer el trabajo de esta noche, toca “Hacer las listas”. Las fotos de la noche están a un toque al lado. Nada queda escondido en un menú."
+          />
+        </p>
+      </section>
+
+      <section className="panel mb-3">
+        <h2 className="text-body font-medium">
           <T en="The rule" es="La regla" />
         </h2>
         <p className="note mt-4 leading-relaxed">
