@@ -6,7 +6,6 @@ import { enrolVenue } from "./actions";
 import { Card } from "@/components/Card";
 import { Dial } from "@/components/Dial";
 import { AllStoresTrend } from "@/components/checklists/AllStoresTrend";
-import { Sparkline } from "@/components/checklists/Sparkline";
 import { NightNav } from "@/components/checklists/Compliance";
 import {
   CompanyMissed,
@@ -310,9 +309,6 @@ export default async function LocationsPage({
                       <span className="text-title tracking-[0.08em]">
                         {s.code}
                       </span>
-                    </span>
-                    <span className={fail ? "text-warn" : "text-muted"}>
-                      <Sparkline points={s.points} />
                     </span>
                     <span className="ml-auto flex shrink-0 items-center gap-x-5 tabular-nums">
                       <span className="label">

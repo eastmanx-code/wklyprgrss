@@ -11,10 +11,12 @@ export function Sparkline({
   points,
   width = 112,
   height = 28,
+  className = "shrink-0",
 }: {
   points: { percent: number }[];
   width?: number;
   height?: number;
+  className?: string;
 }) {
   if (points.length < 2) {
     return (
@@ -39,14 +41,13 @@ export function Sparkline({
         `${i === 0 ? "M" : "L"}${x(i).toFixed(1)} ${y(pt.percent).toFixed(1)}`,
     )
     .join(" ");
-  const lastX = x(n - 1);
-  const lastY = y(points[n - 1].percent);
   return (
     <svg
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className="shrink-0"
+      preserveAspectRatio="none"
+      className={className}
       role="img"
       aria-hidden
     >
@@ -57,8 +58,8 @@ export function Sparkline({
         strokeWidth={2}
         strokeLinejoin="round"
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
       />
-      <circle cx={lastX} cy={lastY} r={2.5} fill="currentColor" />
     </svg>
   );
 }

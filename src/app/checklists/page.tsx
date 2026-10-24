@@ -2,79 +2,50 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { MissedList } from "@/components/checklists/MissedList";
+import { Sparkline } from "@/components/checklists/Sparkline";
 import { T } from "@/components/Lang";
 import { BackLink } from "@/components/ui";
 import { formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
-import {
-  closeVenueCode,
-  closeVenueId,
-  closeVenueName,
-} from "@/lib/close-venue";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
-
-/**
- * Two buckets, no legend, the same rule the whole report uses: quiet grey for
- * a night every list was done and signed, yellow for a night something was
- * not.
- */
-const NIGHT_STATE: Record<string, string> = {
-  c: "bg-ink/20",
-  m: "bg-warn",
-};
 
 function rateOf(done: number, of: number): number {
   return of === 0 ? 0 : Math.round((done / of) * 100);
 }
 
-/** A bar with the share on the end, coloured by the same bands the tiers use. */
-function Bar({ done, of }: { done: number; of: number }) {
-  const pct = rateOf(done, of);
-  return (
-    <span className="flex min-w-0 flex-1 items-center gap-3">
-      <span className="bg-inset h-1.5 min-w-0 flex-1 rounded-[1px]">
-        <span
-          className={`block h-full rounded-[1px] ${
-            pct < 60 ? "bg-warn" : pct < 80 ? "bg-warn/40" : "bg-ink/30"
-          }`}
-          style={{ width: `${pct}%` }}
-        />
-      </span>
-      <span className="label w-10 shrink-0 text-right tabular-nums">{pct}%</span>
-    </span>
-  );
-}
-
 /**
- * The store lens: one venue's compliance, stats first.
+ * The store lens: one venue's compliance, kept to three things.
  *
- * This is where a shift lands. Not the clipboard — the report on it: how the
- * month is going, and above all what keeps getting missed, which is the whole
- * reason the lists exist. Doing tonight's work is one clear tap away rather
- * than the first thing in your face, because the question a leader opens this
- * with is "are we ok", and the answer is on the page before anything is
- * tapped. Crew, leaders and a store's own manager all see the same thing, so
- * anyone can see when it is slipping.
+ * How the month is going, the way in to do tonight's work, and what keeps
+ * getting missed. Nothing else. The page a leader opens to answer "are we ok"
+ * answers it in the first line, without scrolling past four other panels.
+ * Crew, leaders and the store's own manager all see the same thing.
  */
 export default async function ChecklistsPage() {
   const session = await getSession();
   if (!session) redirect("/");
 
-  // A store-scoped session carries its venue. An admin with no building picked
-  // belongs on the all-locations lens, not here.
   const venue = await closeVenueId(session);
   if (!venue) {
     if (session.role === "admin") redirect("/checklists/locations");
     redirect("/");
   }
 
-  const [name, code, report] = await Promise.all([
+  const [name, report] = await Promise.all([
     closeVenueName(venue),
-    closeVenueCode(venue),
     venueRollup(venue),
   ]);
+
+  const backHref = session.role === "admin" ? "/checklists/locations" : "/home";
+  const backLabel =
+    session.role === "admin" ? (
+      <T en="All locations" es="Todas las ubicaciones" />
+    ) : (
+      <T en="Home" es="Inicio" />
+    );
 
   const DoButton = (
     <Link
@@ -86,68 +57,48 @@ export default async function ChecklistsPage() {
     </Link>
   );
 
-  // Nothing signed off yet. One honest line and the way in to start, rather
-  // than a page of confident zeroes.
+  // Nothing signed off yet. One honest line and the way in, not a page of
+  // confident zeroes.
   if (!report) {
     return (
-      <main className="close-flow mx-auto max-w-2xl pb-4">
-        <BackLink href={session.role === "admin" ? "/checklists/locations" : "/home"}>
-          {session.role === "admin" ? (
-            <T en="All locations" es="Todas las ubicaciones" />
-          ) : (
-            <T en="Home" es="Inicio" />
-          )}
-        </BackLink>
+      <main className="close-flow mx-auto max-w-2xl pb-6">
+        <BackLink href={backHref}>{backLabel}</BackLink>
         <header className="mt-4 mb-5">
-          <p className="label">{name ?? code}</p>
-          <h1 className="mt-2 text-metric font-medium">
-            <T en="What's getting missed" es="Qué se está faltando" />
+          <p className="label">{name}</p>
+          <h1 className="text-metric mt-2 font-medium">
+            <T en="Nothing recorded yet" es="Todavía nada registrado" />
           </h1>
         </header>
         <div className="mb-5">{DoButton}</div>
-        <section className="panel-quiet">
-          <p className="note text-muted leading-relaxed">
-            <T
-              en="Nothing signed off yet. The report starts the night somebody signs a list and builds from there: what got left open, by position and by night."
-              es="Todavía nada firmado. El informe empieza la noche que alguien firma una lista y crece desde ahí: qué quedó abierto, por puesto y por noche."
-            />
-          </p>
-        </section>
+        <p className="note text-muted leading-relaxed">
+          <T
+            en="The report starts the night somebody signs a list."
+            es="El informe empieza la noche que alguien firma una lista."
+          />
+        </p>
       </main>
     );
   }
 
-  const { nights, strip, latest, missed, byRole, certifiers } = report;
+  const { nights, series, latest, missed, done, of } = report;
+  const pct = rateOf(done, of);
+  const fail = pct < 60;
+  const neutral = pct >= 60 && pct < 80;
+  const trend = series.map((s) => ({ percent: rateOf(s.done, s.of) }));
 
-  // Repeated means missed on two or more nights. A rate was the wrong ruler:
-  // a venue one trial night in has everything at "1 of 1", which is 100% and
-  // not a habit, and it flooded the page with a store's whole first night.
-  const isRepeated = (open: number) => open >= 2;
-  // Too new to call a pattern. Under a working week of nights, "what keeps
-  // getting missed" has nothing honest to say, so it says that rather than
-  // listing every one-off.
   const tooNew = nights < 5;
-  const repeated = tooNew ? [] : missed.filter((m) => isRepeated(m.open));
-  // New this week: missed recently, but not yet a standing problem. Caught
-  // before it becomes one.
-  const newlyMissed = tooNew
-    ? []
-    : missed.filter((m) => !isRepeated(m.open) && m.recentOpen > 0);
+  const repeated = tooNew ? [] : missed.filter((m) => m.open >= 2);
   const latestShort = latest
     ? latest.notSigned.length + latest.notDone.length
     : 0;
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-4">
-      <BackLink href={session.role === "admin" ? "/checklists/locations" : "/home"}>
-        {session.role === "admin" ? (
-          <T en="All locations" es="Todas las ubicaciones" />
-        ) : (
-          <T en="Home" es="Inicio" />
-        )}
-      </BackLink>
+    <main className="close-flow mx-auto max-w-2xl pb-6">
+      <BackLink href={backHref}>{backLabel}</BackLink>
 
-      <header className="mt-4 mb-5">
+      {/* The month, as one number and one line. The question a leader opens
+          with is "are we ok", and the answer is the first thing on the page. */}
+      <header className="mt-4">
         <p className="label">
           {name ? `${name} · ` : ""}
           <T
@@ -155,194 +106,96 @@ export default async function ChecklistsPage() {
             es={`últimas 30 noches · ${nights} registradas`}
           />
         </p>
-        <h1 className="mt-2 text-metric font-medium">
-          <T en="What's getting missed" es="Qué se está faltando" />
+        <h1
+          className={`text-metric mt-2 font-medium tabular-nums ${fail ? "text-warn" : ""}`}
+        >
+          {pct}%{" "}
+          <span className="text-muted text-title">
+            <T en="signed off" es="firmadas" />
+          </span>
         </h1>
+        <p className="label mt-1 tabular-nums">
+          {done} <T en="of" es="de" /> {of}{" "}
+          <T
+            en="lists checked off and signed off"
+            es="listas marcadas y firmadas"
+          />
+        </p>
       </header>
 
-      {/* The way to the work, up top and unmissable, and the night's photos
-          beside it: the proof is a first-class thing a leader opens, not a
-          link buried at the bottom of a list. */}
-      <div className="mb-5 flex flex-col gap-3">
-        {DoButton}
-        {code && latest ? (
-          <Link
-            href={`/checklists/compliance/${code}/photos?night=${latest.night}`}
-            className="ring-card-border text-ink hover:bg-hover flex min-h-12 items-center justify-between gap-3 rounded-[6px] px-5 text-label tracking-[0.08em] ring-1"
-          >
-            <T
-              en="See the night's photos"
-              es="Ver las fotos de la noche"
-            />
-            <span aria-hidden>→</span>
-          </Link>
-        ) : null}
-      </div>
-
-      {/* Standing: the month in one line and one strip, with last night's
-          verdict under it. */}
-      <section className="panel mb-4">
-        <div className="flex items-baseline justify-between gap-4">
-          <p className="label">
-            <T
-              en="Lists checked off and signed off"
-              es="Listas marcadas y firmadas"
-            />
-          </p>
-          <p className="text-title tabular-nums tracking-[0.08em]">
-            {report.done} <T en="of" es="de" /> {report.of} ·{" "}
-            {rateOf(report.done, report.of)}%
-          </p>
+      {/* The run as one line, no axes: the shape of the month next to the
+          number, climbing, flat, or sliding. Warn when the store is failing. */}
+      {trend.length >= 2 ? (
+        <div
+          className={`mt-4 ${fail ? "text-warn" : neutral ? "text-warn/60" : "text-ink/70"}`}
+        >
+          <Sparkline
+            points={trend}
+            width={640}
+            height={56}
+            className="h-14 w-full"
+          />
         </div>
-        <div className="mt-2.5 grid max-w-[22rem] grid-cols-10 gap-1" aria-hidden>
-          {strip.split("").map((c, i) => (
-            <span
-              key={i}
-              className={`aspect-square rounded-[2px] ${NIGHT_STATE[c] ?? "bg-inset"}`}
-            />
-          ))}
-        </div>
-        {latest && latestShort > 0 ? (
-          <p className="note text-warn mt-3">
-            <T
-              en={`${formatNight(latest.night)} · ${latestShort} ${latestShort === 1 ? "list" : "lists"} short`}
-              es={`${formatNight(latest.night)} · ${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta`}
-            />
-            {code ? (
-              <>
-                {" · "}
-                <Link
-                  href={`/checklists/compliance/${code}?night=${latest.night}`}
-                  className="hover:text-ink underline"
-                >
-                  <T en="what and who" es="qué y quién" />
-                </Link>
-              </>
-            ) : null}
-          </p>
-        ) : latest ? (
-          <p className="note text-muted mt-3">
-            <T
-              en={`No fails ${formatNight(latest.night)}.`}
-              es={`Sin fallas ${formatNight(latest.night)}.`}
-            />
-          </p>
-        ) : null}
-      </section>
+      ) : null}
 
-      <div className="space-y-4">
-        {/* The hero. What keeps getting left open, worst first, in the words
-            the crew reads, with the active run and the drift on each. */}
-        <section className="panel border-warn/30">
-          <p className="label">
-            <T en="What keeps getting missed" es="Lo que se sigue faltando" />
-          </p>
-          <div className="mt-3">
-            {tooNew ? (
-              <p className="note text-muted">
-                <T
-                  en={`Only ${nights} ${nights === 1 ? "night" : "nights"} recorded. Too new to call a pattern yet.`}
-                  es={`Apenas ${nights} ${nights === 1 ? "noche" : "noches"} registradas. Muy pronto para ver un patrón.`}
-                />
-              </p>
-            ) : repeated.length > 0 ? (
-              <>
-                <MissedList rows={repeated.slice(0, 6)} />
-                {repeated.length > 6 ? (
-                  <p className="label text-muted mt-3">
-                    <T
-                      en={`+ ${repeated.length - 6} more missed on two or more nights`}
-                      es={`+ ${repeated.length - 6} más que faltaron en dos o más noches`}
-                    />
-                  </p>
-                ) : null}
-              </>
-            ) : (
-              <p className="note text-muted">
-                <T
-                  en={`Nothing missed more than once in the last ${nights} nights.`}
-                  es={`Nada faltó más de una vez en las últimas ${nights} noches.`}
-                />
-              </p>
-            )}
-          </div>
-          {!tooNew && newlyMissed.length > 0 ? (
-            <div className="border-divider mt-4 border-t pt-3">
-              <p className="label">
-                <T en="New this week" es="Nuevo esta semana" />
-              </p>
-              <ul className="mt-2 space-y-1">
-                {newlyMissed.slice(0, 6).map((m) => (
-                  <li
-                    key={`${m.role}-${m.phase}-${m.item}`}
-                    className="text-body leading-relaxed"
-                  >
-                    <span className="label text-muted">
-                      {m.house} · {m.role}
-                    </span>{" "}
-                    {m.item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </section>
+      {latest ? (
+        <p
+          className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
+        >
+          <T
+            en={
+              latestShort > 0
+                ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
+                : `no fails last night · ${formatNight(latest.night)}`
+            }
+            es={
+              latestShort > 0
+                ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
+                : `sin fallas anoche · ${formatNight(latest.night)}`
+            }
+          />
+        </p>
+      ) : null}
 
-        {/* Which positions carry it. */}
-        <section className="panel">
-          <p className="label">
-            <T en="Each position" es="Cada puesto" />
-          </p>
-          <ul className="mt-3 space-y-3">
-            {byRole.map((row) => (
-              <li key={row.role} className="flex items-center gap-3">
-                <span className="label w-24 shrink-0">{row.role}</span>
-                <Bar done={row.done} of={row.of} />
-              </li>
-            ))}
-          </ul>
-        </section>
+      <div className="mt-6">{DoButton}</div>
 
-        {/* Who is putting their name to it. */}
-        <section className="panel">
-          <p className="label">
-            <T en="Who signs" es="Quién firma" />
-          </p>
-          <ul className="mt-3">
-            {certifiers.length === 0 ? (
-              <li className="note text-muted">
-                <T
-                  en="Nobody has signed a list yet."
-                  es="Nadie ha firmado una lista todavía."
-                />
-              </li>
-            ) : null}
-            {certifiers.map((row) => (
-              <li
-                key={row.who}
-                className="border-divider flex items-baseline justify-between gap-4 border-t py-2.5 first:border-t-0"
-              >
-                <span className="text-body">{row.who}</span>
-                <span className="label tabular-nums">
-                  {row.nights} {row.nights === 1 ? "list" : "lists"}
-                </span>
-              </li>
-            ))}
-          </ul>
-          {certifiers.length === 1 && nights > 1 ? (
-            <p className="note text-muted mt-3">
+      {/* What keeps getting missed: the few that happened on two or more
+          nights, worst first, in the words the crew reads. Capped, with the
+          rest as a count. */}
+      <section className="mt-8">
+        <p className="label">
+          <T en="What keeps getting missed" es="Lo que se sigue faltando" />
+        </p>
+        <div className="mt-3">
+          {tooNew ? (
+            <p className="note text-muted">
               <T
-                en="One name on everything. A second signature is the check that a list was actually walked, not just closed."
-                es="Un solo nombre en todo. Una segunda firma confirma que la lista se recorrió de verdad, no solo que se cerró."
+                en={`Only ${nights} ${nights === 1 ? "night" : "nights"} recorded. Too new to call a pattern yet.`}
+                es={`Apenas ${nights} ${nights === 1 ? "noche" : "noches"} registradas. Muy pronto para ver un patrón.`}
               />
             </p>
-          ) : null}
-        </section>
-      </div>
-
-      {/* The way to the work again, at the foot, for a reader who scrolled the
-          report and now wants to go do it. */}
-      <div className="mt-6">{DoButton}</div>
+          ) : repeated.length > 0 ? (
+            <>
+              <MissedList rows={repeated.slice(0, 6)} />
+              {repeated.length > 6 ? (
+                <p className="label text-muted mt-4">
+                  <T
+                    en={`+ ${repeated.length - 6} more missed on two or more nights`}
+                    es={`+ ${repeated.length - 6} más que faltaron en dos o más noches`}
+                  />
+                </p>
+              ) : null}
+            </>
+          ) : (
+            <p className="note text-muted">
+              <T
+                en={`Nothing missed more than once in the last ${nights} nights.`}
+                es={`Nada faltó más de una vez en las últimas ${nights} noches.`}
+              />
+            </p>
+          )}
+        </div>
+      </section>
     </main>
   );
 }
