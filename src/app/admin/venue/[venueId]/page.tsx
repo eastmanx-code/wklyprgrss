@@ -14,6 +14,7 @@ import { AddItemForm } from "@/components/admin/AddItemForm";
 import { ChangeVerdict } from "@/components/admin/ChangeVerdict";
 import { SendBack } from "@/components/admin/SendBack";
 import { GradeWeek } from "@/components/admin/GradeWeek";
+import { CarryWeek } from "@/components/admin/CarryWeek";
 import { AddItemSlot } from "@/components/admin/AddItemSlot";
 import { RenameItemForm } from "@/components/admin/RenameItemForm";
 import { SubmitButton } from "@/components/admin/SubmitButton";
@@ -39,6 +40,7 @@ import {
   getSubmissionsForItems,
   getVenue,
   gradesFor,
+  carriedByHouse,
   houseScored,
   latestByItem,
   statusFor,
@@ -130,6 +132,7 @@ export default async function AdminVenuePage({
   // The week the venue is waiting on a grade for.
   const gradedWeek = mostRecentCompletedWeek();
   const grades = await gradesFor(venue.id, gradedWeek);
+  const carried = await carriedByHouse(gradedWeek);
 
   /**
    * How much of the week being graded still has no verdict.
@@ -205,6 +208,22 @@ export default async function AdminVenuePage({
             gradedBy: grades.get(house)?.gradedBy ?? null,
             pending: pendingFor(house),
             // Practice halves are still gradeable, just not binding.
+            scored: houseScored(house, gradedWeek),
+          }),
+        )}
+      />
+
+      {/* For the week a grader was out: hold the board instead of failing it. */}
+      <CarryWeek
+        venueId={venue.id}
+        weekStart={gradedWeek}
+        weekLabel={formatWeekStart(gradedWeek)}
+        mine={session.house ?? null}
+        houses={HOUSES.filter((house) => venue.houses.includes(house)).map(
+          (house) => ({
+            house,
+            carriedBy: carried.get(house)?.get(venue.id) ?? null,
+            graded: Boolean(grades.get(house)?.gradedBy),
             scored: houseScored(house, gradedWeek),
           }),
         )}

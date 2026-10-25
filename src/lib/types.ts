@@ -181,6 +181,13 @@ export type HouseWeek = {
   status: WeekStatus;
   failStreak: number;
   /**
+   * Carried: grading was deferred because the grader could not rule on it in
+   * time. A carried week is scored against the cards it was actually filed
+   * against, not the board as it stands now, so rebuilding next week's board
+   * cannot orphan it; and it is held rather than failed for the missing grade.
+   */
+  carried: boolean;
+  /**
    * Whether this house's numbers count yet.
    *
    * A house shows on the board from the day it exists, but it is not scored
