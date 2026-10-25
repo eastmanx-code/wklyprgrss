@@ -86,8 +86,17 @@ export const WINDOW_NIGHTS = 30;
  */
 export type NightState = "c" | "m";
 
-/** A list, by name, for the lines that say which ones. */
-export type NamedList = { role: string; room: string | null; phase: string };
+/**
+ * A list, by name, for the lines that say which ones. `by` is the signer, set
+ * only on a list that was signed with something still open: the person who put
+ * their name to it as done. A never-signed list has no one to name.
+ */
+export type NamedList = {
+  role: string;
+  room: string | null;
+  phase: string;
+  by?: string | null;
+};
 
 export type Rollup = {
   /** Nights the venue was running, not nights on the calendar. */
@@ -360,8 +369,14 @@ export function computeRollup(
         if (complete(list, night, row)) {
           done += 1;
           doneThisNight += 1;
-        } else if (row?.certified_at) notDone.push(named(list));
-        else notSigned.push(named(list));
+        } else if (row?.certified_at) {
+          // Signed with something still open: name who signed it.
+          const by = (row.certified_by ?? "").trim().replace(/\s+/g, " ");
+          notDone.push({
+            ...named(list),
+            by: by && by.toLowerCase() !== "null" ? by : null,
+          });
+        } else notSigned.push(named(list));
       }
       // The night's own share, so the group screen can draw a line per venue.
       series.push({ night, done: doneThisNight, of: checklists.length });
