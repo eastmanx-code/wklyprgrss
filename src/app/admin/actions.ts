@@ -699,6 +699,15 @@ export async function gradeWeek(formData: FormData) {
       { onConflict: "venue_id,week_start,house" },
     );
 
+  // A grade supersedes a carry: the week that was held has now been ruled on,
+  // so it is graded, not deferred.
+  await db()
+    .from("carried_weeks")
+    .delete()
+    .eq("venue_id", venueId)
+    .eq("week_start", weekStart)
+    .eq("house", house);
+
   refresh(venueId);
 
   // A grade is the end of that half for the person who gave it, so it hands
@@ -771,6 +780,96 @@ export async function gradeAllVenues(formData: FormData) {
 
   await db()
     .from("graded_weeks")
+    .upsert(rows, { onConflict: "venue_id,week_start,house" });
+
+  revalidatePath("/admin");
+  revalidatePath("/venue");
+  revalidatePath("/board");
+}
+
+/**
+ * Carry a week for one house at one venue.
+ *
+ * Deferring grading, not skipping it. A carried board is held rather than
+ * failed for the grade that could not happen in time, and scored against the
+ * cards it was filed against so a rebuild for the next week cannot orphan it.
+ * Unlike grading, it does not wait on every card being ruled on — the whole
+ * point is that nobody could rule on them yet.
+ */
+export async function carryWeek(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const weekStart = String(formData.get("weekStart") ?? "");
+  const by = String(formData.get("by") ?? "").trim() || "admin";
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
+  if (!venueId || !weekStart) return;
+  if (!(await ownsHouse(house))) return;
+
+  await db()
+    .from("carried_weeks")
+    .upsert(
+      { venue_id: venueId, week_start: weekStart, house, carried_by: by },
+      { onConflict: "venue_id,week_start,house" },
+    );
+
+  refresh(venueId);
+}
+
+/** Lifts a carry, if the week turned out to be gradeable after all. */
+export async function uncarryWeek(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const venueId = String(formData.get("venueId") ?? "");
+  const weekStart = String(formData.get("weekStart") ?? "");
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
+  if (!venueId || !weekStart) return;
+  if (!(await ownsHouse(house))) return;
+
+  await db()
+    .from("carried_weeks")
+    .delete()
+    .eq("venue_id", venueId)
+    .eq("week_start", weekStart)
+    .eq("house", house);
+
+  refresh(venueId);
+}
+
+/**
+ * Carry a week for one house across every venue that owes it.
+ *
+ * For the common case the whole thing exists for: a house's grader is away for
+ * the week, so none of their boards can be ruled on. One move holds them all
+ * instead of failing the lot, the mirror of Grade All.
+ */
+export async function carryAllVenues(formData: FormData) {
+  if (!(await isAdmin())) return;
+
+  const weekStart = String(formData.get("weekStart") ?? "");
+  const by = String(formData.get("by") ?? "").trim() || "admin";
+  const house: House = formData.get("house") === "HOH" ? "HOH" : "FOH";
+  if (!weekStart) return;
+  if (!(await ownsHouse(house))) return;
+
+  // Only the venues that owe this house, the same rule as grading all: a carry
+  // on a kitchen a bar does not have would be a held week for a board that was
+  // never walked.
+  const { data: venues } = await db()
+    .from("venues")
+    .select("id, houses")
+    .eq("active", true)
+    .contains("houses", [house]);
+  const rows = ((venues ?? []) as { id: string }[]).map((venue) => ({
+    venue_id: venue.id,
+    week_start: weekStart,
+    house,
+    carried_by: by,
+  }));
+  if (rows.length === 0) return;
+
+  await db()
+    .from("carried_weeks")
     .upsert(rows, { onConflict: "venue_id,week_start,house" });
 
   revalidatePath("/admin");

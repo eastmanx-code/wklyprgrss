@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
+import { CarryAll } from "@/components/admin/CarryAll";
 import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
-import { getDashboard, gradersByHouse } from "@/lib/status";
+import { carriedByHouse, getDashboard, gradersByHouse } from "@/lib/status";
+import { HOUSES } from "@/lib/types";
 import {
   deadlineFor,
   formatDeadline,
@@ -40,6 +42,15 @@ export default async function AdminDashboardPage() {
   // Before the due time the board reads as filing, not scoring.
   const deadlinePassed = isDeadlinePassed(weekStart);
   const deadlineLabel = formatDeadline(weekStart);
+
+  // For the "grader out" case: how many of each house are already held, and how
+  // many owe it, so one move can carry the rest.
+  const carriedMap = await carriedByHouse(weekStart);
+  const carryCounts = HOUSES.map((house) => ({
+    house,
+    total: rows.filter((r) => r.scored.some((h) => h.house === house)).length,
+    carried: carriedMap.get(house)?.size ?? 0,
+  }));
   const filed = byHouse.reduce((n, h) => n + h.itemsDone, 0);
   const signed = byHouse.reduce((n, h) => n + h.itemsApproved, 0);
   const target = byHouse.reduce((n, h) => n + h.itemsTarget, 0);
@@ -84,6 +95,14 @@ export default async function AdminDashboardPage() {
           deadlinePassed={deadlinePassed}
           deadlineLabel={deadlineLabel}
         />
+
+        {deadlinePassed ? (
+          <CarryAll
+            weekStart={weekStart}
+            weekLabel={formatWeekStart(weekStart)}
+            houses={carryCounts}
+          />
+        ) : null}
 
         <VenueRows
           rows={rows}

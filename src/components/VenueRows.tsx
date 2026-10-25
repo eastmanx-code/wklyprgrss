@@ -266,17 +266,20 @@ export function VenueRows({
       deadlinePassed &&
       (!house.hasBoard || house.doneCount < house.activeCount);
 
+    // A carried board is settled for display the same way a graded one is: its
+    // score shows and it is no longer "still to grade", just held.
+    const settledFor = (house: HouseWeek) =>
+      Boolean(gradedBy(row.venue.id, house.house)) || house.carried;
+
     const fullFail =
       row.scored.length > 0 &&
       row.scored.every(
-        (house) =>
-          missed(house) ||
-          (Boolean(gradedBy(row.venue.id, house.house)) &&
-            tierFor(house) === "fail"),
+        (house) => missed(house) || (settledFor(house) && tierFor(house) === "fail"),
       );
 
     return row.scored.map((house) => {
       const graded = Boolean(gradedBy(row.venue.id, house.house));
+      const settled = settledFor(house);
       const ruled = house.hasBoard && house.scored && house.pendingCount === 0;
       // A board short of its ten when the deadline went has auto-failed on the
       // count (this is exactly what `missed` tests): its filed cards can never
@@ -288,12 +291,15 @@ export function VenueRows({
       const autoFailed = missed(house);
       const gradeNote = [
         autoFailed ? "missed 4pm" : null,
+        house.carried ? "carried" : null,
         !house.hasBoard ? "no board" : null,
-        !autoFailed && house.pendingCount > 0
+        !autoFailed && !house.carried && house.pendingCount > 0
           ? `${house.pendingCount} to review`
           : null,
         house.rollingCount > 0 ? `${house.rollingCount} needs more time` : null,
-        !autoFailed && house.hasBoard && !graded ? "not graded" : null,
+        !autoFailed && house.hasBoard && !graded && !house.carried
+          ? "not graded"
+          : null,
         house.hasBoard && house.doneCount === 0
           ? "nothing filed"
           : house.hasBoard && house.doneCount < house.activeCount
@@ -341,7 +347,7 @@ export function VenueRows({
           ? null
           : missed(house)
             ? "fail"
-            : graded
+            : settled
               ? tierFor(house)
               : null,
         ratio:
