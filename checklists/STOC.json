@@ -901,6 +901,9 @@
         },
         {
           "title": "THROUGHOUT THE SHIFT, I USED THE RESTROOM CHECK LOG EACH HOUR TO CONFIRM TOILETS ARE CLEAN, SOAP AND PAPER TOWELS ARE STOCKED, AND THERE IS NO EMPLOYEE TRASH OR STAFF TOWELS IN ANY RESTROOM."
+        },
+        {
+          "title": "I ENSURED THERE WERE ENOUGH BOXES OF ROLLED TOWELS FOR THE RESTROOMS: 8 BOXES SUN-WED, 10 BOXES THURS-SAT."
         }
       ]
     },
@@ -994,6 +997,9 @@
         },
         {
           "title": "I WROTE OR ADDED TO THE ANCHORS DAILY CLOSING NOTES ON WHATSAPP AND MENTIONED USEFUL INFORMATION BEFORE HEADING HOME."
+        },
+        {
+          "title": "I ENSURED THERE WERE ENOUGH BOXES OF ROLLED TOWELS FOR THE RESTROOMS: 8 BOXES SUN-WED, 10 BOXES THURS-SAT."
         }
       ]
     },
@@ -1642,7 +1648,14 @@
       "items": [
         {
           "title": "I BROUGHT THE COCKTAIL, DINNER, AND DESSERT MENUS BACK TO THE HOST STAND AND ARRANGED THEM NICLEY",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I RESTOCKED THE UTENSILS, GLASSWARE, AND LINENS",
@@ -1652,15 +1665,36 @@
               "kind": "photo",
               "prompt": "The utensils, glassware and linens restocked."
             }
+          ],
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
           ]
         },
         {
           "title": "I BROUGHT IN THE CHILI FLAKES, PEPPER, AND SALT TO BE FILLED",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I FILLED THE SENECA HEAD FULL OF ALMONDS AND PLACED IT IN THE FRIDGE TO STORE OVERNIGHT",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED UNDERNEATH THE SERVER STATION (2 ROLLS.)",
@@ -1670,15 +1704,36 @@
               "kind": "photo",
               "prompt": "Printer paper restocked under the server station (2 rolls)."
             }
+          ],
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
           ]
         },
         {
           "title": "I DID MY CHECK OUT",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I EMPITIED THE TRASH FROM MY STATION AND PLACED THE TRASH CAN UPSIDE DOWN",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND MADE SURE TO SWEEP UNDERNEATH THE SERVER STATION",
@@ -1688,197 +1743,554 @@
               "kind": "photo",
               "prompt": "The station swept, including underneath the server station."
             }
+          ],
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
           ]
         },
         {
           "title": "I CHECKED THE SPACE BETWEEN THE TERRACE BOOTHS, GLASS, AND TRC CURTAIN, AND REMOVED ANY TRASH / DEBRIS",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I COVERED MY POS AND I COVERED THE SERVER STATION",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CHECKED MY STAND FOR ANY LINGERING ITEMS THAT NEED TO BE PUT AWAY",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I TOOK ALL THE WATER PITCHERS INSIDE AND EMPTIED THEM",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I REPLACED THE LINENS UNDERNEATH THE PARM AND SILVERWARE",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I ASKED MY MOD WHAT TO FOCUS (FOLDS, POLISHING, ETC.)",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CHECKED THE CRACK IN BETWEEN THE MAIN DINING ROOM, AND THE PATIO TO ENSURE IT WAS SPOTLESS",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 1; I RESOLVED AS NEEDED",
-          "section": "CLOSING TASKS"
+          "section": "CLOSING TASKS",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I HELPED SECTION ONE RESTOCK OUR OUTSIDE SERVER STATION",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I STARTED TO UNSET OUR TABLES AFTER OUR LAST SETTING",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I HELPED OUR SUPPORT TEAM BUS THE OUTSIDE TABLES AND WIPE THEM DOWN",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I HELPED BRING DISHES BACK TO THE DISHWASHERS",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I BROUGHT ANY PLATES OR SILVERWARE THAT NEED TO BE POLISHED FROM THE KITCHEN TO THE POLISHING STATION",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I COMPLETED MY CHECK OUT",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I SWEPT UP THE LOOSE GARBAGE FROM MY SECTION (UNDERNEATH TABLES AND SERVER STATION)",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I MADE SURE TO TREAT ESPRESSO MACHINE LINE WITH DRAIN CLEANER",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I MADE SURE TO CLEAN ALL DEBRIS FROM UNDERNEATH ESPRESSO MASHINE",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
-          "title": "I ASKED MY MOD WHAT TO FOCUS ON (FOLDS, POLISHING, ETC.)"
+          "title": "I ASKED MY MOD WHAT TO FOCUS ON (FOLDS, POLISHING, ETC.)",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
-          "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 2; I RESOLVED AS NEEDED"
+          "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 2; I RESOLVED AS NEEDED",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I RESTOCKED THE UTENSILS, GLASSWARE, PLATES, AND LINENS IN MY STATION",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I RESTOCKED THE STRAWS AND COASTERS AND PUT THEM UNDERNEATH MY POS COVER",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED FOR THE MORNING SHIFT (2 ROLLS.)",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CLEARED THE LOUNGE AND SANITIZED THE GLASS TABLE",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I EMPITIED THE TRASH FROM MY STATION",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND I SWEPT UNDERNEATH MY STATION",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s AND 60s",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I COVERED MY POS AND SERVER STATION - ENSURING STRAWS, COASTERS AND SWIZZLE STICKS ARE STOCKED",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I BROUGHT IN PIZZA STANDS AND TRAYS",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I HELPED SUPPORT BRING IN THE CUSIONS FROM THE LOUNGE AND ARRANGED THEM NICELY AT 21",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CLEANED ANY LEFTOVER PARM BEHIND THE POS AND I REPLACED ALL THE LINENS ON MY SERVER STATION",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CHECKED THE CRACK IN BETWEEN THE MAIN DINING ROOM, AND THE PATIO TO ENSURE IT WAS SPOTLESS.",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 3; I RESOLVED AS NEEDED.",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I RESTOCKED THE UTENSILS, PLATES, AND LINENS ON THE INSIDE STATION",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CHECKED THE ESPRESSO BEANS (BOTH REGULAR AND DECAF), SUGAR CUBES, STRAWS, COASTERS, AND ALMONDS AND RESTOCKED THEM ACCORDINGLY",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I BROUGHT IN ALL OF THE TEA CUPS, POLISHED THEM, AND ARRANGED THEM ON THEIR SHELF",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I STARTED BREAKING DOWN THE COFFEE STATION AND SENDING IT TO THE DISH PIT TO BE WASHED",
-          "section": "CLOSING PREP"
+          "section": "CLOSING PREP",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CLEANED THE WINE AND WATER SHELVES WITH GLASS CLEANER",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I FINISHED BREAKING DOWN AND DETAILING THE COFFEE MACHINE",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "WHEN RUNNING LOW OR EMPTY- I EMPTIED THE ICED TEA AND LEMONADE AND CLEANED BOTH MACHINES",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "WHEN DOING THE TASK ABOVE- I PULLED UP THE MATS NEXT THE THE ICED TEA AND LEMONADE MACHINES, I WIPED UNDERNEATH THEM, AND SENT THE MATS TO THE DISH PIT TO BE RAN THROUGH",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I WIPED DOWN THE GLASS CANDLE COVERING DOMES AND REPLACED THE LINEN UNDERNEATH THEM",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I WIPED DOWN ALL OF THE PIZZA STANDS",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I WIPED DOWN THE ENTIRE POS STATION INCLUDING AROUND THE TWO SINKS; I CLEANED ANY DEBRIS IN THE SINK",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I POURED SANITIZING SOLUTION DOWN BOTH SINKS AND THE DRAIN UNDERNEATH THE FRIDGE",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I CARRIED THE MATS OUTSIDE AND HUNG THEM OVER THE FENCE",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I PUT BACK TOGETHER MY STATION AND GAVE IT ONE LAST WIPE DOWN",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
         },
         {
           "title": "I WIPED DOWN THE ALL OF THE FRIDGES AND UNDERNEATH THE MATS WHERE WE STORE COFFEE CUPS AND BISCOTTI",
-          "section": "CLOSING TASK"
+          "section": "CLOSING TASK",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "I WASHED THE LEMONADE DISPENSER TO PREP FOR THE FRESH LEMONADE THE NEXT DAY",
+          "days": [
+            "SUNDAY",
+            "TUESDAY",
+            "THURSDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lemonade dispenser washed out and draining."
+            }
+          ]
         }
       ]
     },
@@ -3062,13 +3474,31 @@
           "title": "I ENSURED GARNISH COOLER WERE FULLY STOCKED WITH NECESSARY BACK UP GARNISHES."
         },
         {
-          "title": "I SET UP THE BAR WITH THE PROPER SYRUPS, CORDIALS, AND JUICES ENSURING A PROPER MISE EN PLACE (SEE PHOTOS FROM WHATSAPP FOR REFERENCE ON PROPER BAR MISE EN PLACE)"
+          "title": "I SET UP THE BAR WITH THE PROPER SYRUPS, CORDIALS, AND JUICES ENSURING A PROPER MISE EN PLACE",
+          "reference": [
+            {
+              "caption": "Proper bar mise en place",
+              "path": null
+            }
+          ]
         },
         {
-          "title": "I SET UP THE DRINK PASS WITH THE PROPER SET UPS FOR SERVICE (SEE PHOTOS FROM WHATSAPP FOR REFERENCE)"
+          "title": "I SET UP THE DRINK PASS WITH THE PROPER SET UPS FOR SERVICE",
+          "reference": [
+            {
+              "caption": "Proper drink pass set up for service",
+              "path": null
+            }
+          ]
         },
         {
-          "title": "I SET UP THE POINT WELL WITH PROPER SYRUPS, CORDIALS, AND JUICES, ENSURING A PROPER MISE EN PLACE (SEE PHOTOS FROM WHATSAPP FOR REFERENCE ON PROPER POINT WELL MISE EN PLACE)"
+          "title": "I SET UP THE POINT WELL WITH PROPER SYRUPS, CORDIALS, AND JUICES, ENSURING A PROPER MISE EN PLACE",
+          "reference": [
+            {
+              "caption": "Proper point well mise en place",
+              "path": null
+            }
+          ]
         },
         {
           "title": "I ENSURED THE SABAYON WHIP IS PREPPED AND PLACED IN THE FRIDGE NEXT TO THE BEER KEGS"
@@ -4212,13 +4642,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps sre off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING PREP",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING PREP"
         },
         {
           "title": "Check with chef on duty to prioritize prep list",
@@ -4349,13 +4773,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps are off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING PREP",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING PREP"
         },
         {
           "title": "Complete station and production counts to guide prep list for the day",
@@ -4632,13 +5050,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps are off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING PIZZA/GRILL",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING PIZZA/GRILL"
         },
         {
           "title": "Remove cover and turn on pizza oven",
@@ -4731,13 +5143,7 @@
         {
           "title": "Check and log cooler temps, notify chef on duty of any issues",
           "title_es": "Checar y anotar las temperaturas de los enfriadores y avisar al chef en turno de cualquier problema.",
-          "section": "CLOSING PIZZA",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "CLOSING PIZZA"
         },
         {
           "title": "refresh sani bucket, fold towels, and gather clean utensils for station.",
@@ -4842,13 +5248,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps are off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING GRILL",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING GRILL"
         },
         {
           "title": "Remove ash, clean, and assemble grill",
@@ -4936,13 +5336,7 @@
         {
           "title": "Check and log cooler temps, notify chef on duty of any issues",
           "title_es": "Checar y anotar las temperaturas de los enfriadores y avisar al chef en turno de cualquier problema.",
-          "section": "CLOSING GRILL",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "CLOSING GRILL"
         },
         {
           "title": "refresh sani bucket, fold towels, and gather clean utensils for my station.",
@@ -5062,13 +5456,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps are off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING PANTRY/PASTA",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING PANTRY/PASTA"
         },
         {
           "title": "Stock and make a prioritized prep list for station",
@@ -5141,13 +5529,7 @@
         {
           "title": "Check and log cooler temps, notify chef on duty of any issues",
           "title_es": "Checar y anotar las temperaturas de los enfriadores y avisar al chef en turno de cualquier problema.",
-          "section": "CLOSING PANTRY/PASTA",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "CLOSING PANTRY/PASTA"
         },
         {
           "title": "refresh sani bucket, fold towels, and gather clean utensils for my station.",
@@ -5257,13 +5639,7 @@
         {
           "title": "Check and log cooler temps (alert chef on duty if temps are off)",
           "title_es": "Checar y anotar las temperaturas de los enfriadores (avisar al chef en turno si están mal).",
-          "section": "OPENING PASTA",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "OPENING PASTA"
         },
         {
           "title": "Stock and make a prioritized prep list for station",
@@ -5341,13 +5717,7 @@
         {
           "title": "Check and log cooler temps, notify chef on duty of any issues",
           "title_es": "Checar y anotar las temperaturas de los enfriadores y avisar al chef en turno de cualquier problema.",
-          "section": "CLOSING PASTA",
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The cooler temps you logged."
-            }
-          ]
+          "section": "CLOSING PASTA"
         },
         {
           "title": "refresh sani bucket, fold towels, and gather clean utensils for my station.",
@@ -6010,6 +6380,1060 @@
         {
           "title": "pasta burners deep clean, saute tops shelves",
           "title_es": "Limpieza profunda de los quemadores de pasta y de los estantes de arriba del sauté."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
+      "phase": "open",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "CLOCK IN, RECIEVE PRODUCE ORDER"
+        },
+        {
+          "title": "UNCOVER CITRUS, ENSURING THE CASES ARE ORGANIZED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both citrus cases uncovered and the cases organized."
+            }
+          ]
+        },
+        {
+          "title": "REFILL SPRAY BOTTLES"
+        },
+        {
+          "title": "ENSURE SERVICE STATION IS STOCKED (PLATES, LINEN, SILVERWARE)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The service station stocked with plates, linen and silverware."
+            }
+          ]
+        },
+        {
+          "title": "WIPE DOWN BAR TOP, WIPE LAMPS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top and lamps wiped down and clean."
+            }
+          ]
+        },
+        {
+          "title": "ENSURE BOTH WELLS ARE STOCKED WITH STRAWS, COASTERS, AND SWIZZLE STICKS"
+        },
+        {
+          "title": "PLACE SYRUP BOTTLES ON BOTH WELLS"
+        },
+        {
+          "title": "PLACE GARNISHES ON BOTH WELLS (ORANGES, BERRIES, CELERY)"
+        },
+        {
+          "title": "PLACE GARNISH CADDYS ON BOTH WELLS"
+        },
+        {
+          "title": "PLACE LEMON, LIME, AND SPRO SYRUP ON ALL 3 SPEED RAILS"
+        },
+        {
+          "title": "ENSURE BOTH WELLS ARE STOCKED WITH EGG WHITES, PROSECCO, AND BERRY MOCKTAIL"
+        },
+        {
+          "title": "ENSURE BOTH EGG YOLK AND HEAVY CREAM BOTTLES ARE FILLED"
+        },
+        {
+          "title": "PLACE PRODUCE ORDER IN FRIDGE ENSURING THE BAR FRIDGE IS ORGANIZED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The produce put away and the bar fridge organized."
+            }
+          ]
+        },
+        {
+          "title": "PLACE ALL BTG WHITE IN WINE WELL"
+        },
+        {
+          "title": "PLACE NA BEV IN WINE WELL (NA BEER & SODA)"
+        },
+        {
+          "title": "PLACE JUICE BOTTLES IN WINE WELL (OJ, GRAPEFRUIT, PINEAPPLE)"
+        },
+        {
+          "title": "ENSURE THE BAR IS STOCKED WITH BDAY DOMINCANA AND PREPPED CREAM IN STEEL BOTTLE"
+        },
+        {
+          "title": "ENSURE BAR IS STOCKED WITH BEER"
+        },
+        {
+          "title": "ENSURE BOTH FOAM CANISTERS ARE PREPPED AND READY FOR USE"
+        },
+        {
+          "title": "ICE ALL WELLS"
+        },
+        {
+          "title": "COLLECT FOOD AND DRINKS MENUS"
+        },
+        {
+          "title": "COLLECT THE BAR HANDHELD"
+        },
+        {
+          "title": "FINAL CHECK ALL WELLS ARE READY FOR SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both wells iced, stocked and faced, ready for service."
+            }
+          ]
+        },
+        {
+          "title": "COMMUNICATE ANY TRANSFERS, ENSURING ALL OPEN TABS ARE ACCURATE",
+          "section": "OPENER UPON DEPARTURE"
+        },
+        {
+          "title": "CLOSE OUT CHECKS AND HAND REPORT TO MOD",
+          "section": "OPENER UPON DEPARTURE"
+        },
+        {
+          "title": "CONDUCT PRODUCE ORDER, ENSURING TO FOLLOW THE ORDER GUIDE",
+          "section": "OPENER UPON DEPARTURE"
+        },
+        {
+          "title": "CHECK OUT WITH TEAM AND MOD",
+          "section": "OPENER UPON DEPARTURE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
+      "phase": "close",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "RESTOCK SERVICE STATION (PLATES, SILVERWARE, LINEN)",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "REFILL ICE IN WELLS",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "REFILL LONG STRAWS. REFILL SHORT STRAWS. REFILL SWIZZLE STICKS",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "REFILL GARNISHES",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "REFILL SANI SPRAY BOTTLES",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "RESTOCK BEER AND NA BEV. HAVING THEM RETAIL READY",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "SWITCH OUT LUNCH MENUS WITH DINNER MENUS FOR DINNER SERVICE",
+          "section": "TRANSITION"
+        },
+        {
+          "title": "CONDUCT PRODUCE ORDER, ENSURING TO FOLLOW THE ORDER GUIDE",
+          "section": "MID UPON DEPARTURE"
+        },
+        {
+          "title": "RESTOCK BEER AND NA BEV",
+          "section": "MID UPON DEPARTURE"
+        },
+        {
+          "title": "RESTOCK BTG WINES",
+          "section": "MID UPON DEPARTURE"
+        },
+        {
+          "title": "Conduct bottle pull, ensuring all back up bottles are well stocked",
+          "section": "MID UPON DEPARTURE"
+        },
+        {
+          "title": "Organize backup bottle rack, ensuring both top and bottom shelves look presentable",
+          "section": "MID UPON DEPARTURE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The backup bottle rack organized, top and bottom shelves presentable."
+            }
+          ]
+        },
+        {
+          "title": "CHECK OUT WITH MOD",
+          "section": "MID UPON DEPARTURE"
+        },
+        {
+          "title": "DAILY MAINTENANCE ON RIPPLE. WIPE MACHINE AND ENSURE IT IS CLEAN, DRY, AND NOT STICKY",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "WASH BOTH FOAM CANISTERS",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "CLEAN AND ORGANIZE BACK BAR, ENSURING LABELS FACING FORWARD.",
+          "section": "CLOSERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar cleaned and organized, labels facing forward."
+            }
+          ]
+        },
+        {
+          "title": "CLEAN AND ORGANIZE INSIDE BAR FRIDGE",
+          "section": "CLOSERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The inside bar fridge cleaned and organized."
+            }
+          ]
+        },
+        {
+          "title": "RESTOCK BEER, NA BEV, & WINE BTG",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "CLOSE OUT ALL CHECKS",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "CHECK FLOOR FOR SILVERWARE, LINENS AND TRASH",
+          "section": "CLOSERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar floor clear of silverware, linens and trash."
+            }
+          ]
+        },
+        {
+          "title": "TAKE OUT TRASH, PUT NEW LINER IN MILK CRATE",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "WIPE DOWN BAR TOP",
+          "section": "CLOSERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top wiped down and clean."
+            }
+          ]
+        },
+        {
+          "title": "WIPE DOWN BAR TOP LAMPS",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "RESTOCK PRINTER PAPER ROLLS",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "TAKE DOWN ANY LIQUOR ORDERS IN THE ELEVATOR LANDING",
+          "section": "CLOSERS"
+        },
+        {
+          "title": "SERVICE NOTES. DETAIL ANY 86 ITEMS, LOW STOCK, SERVICE ISSUES, ANYTHING NEEDING FIXED OR REPLACED",
+          "section": "CLOSERS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any 86 items, low stock or service issues to flag."
+            }
+          ]
+        },
+        {
+          "title": "Wash bar tools. Ensure they are clean, dry and back in place. Notify DAVID if any are missing.",
+          "section": "THIRD WELL"
+        },
+        {
+          "title": "Detail bottles. Restock backup bottles",
+          "section": "THIRD WELL"
+        },
+        {
+          "title": "Clean speed rails and ensure they are not sticky. USE RED SCRUBBER",
+          "section": "THIRD WELL"
+        },
+        {
+          "title": "Burn ice and ensure stainless steel around ice is clean, dry and not sticky. USE RED SCRUBBER",
+          "section": "THIRD WELL"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Service (well)",
+      "role_es": "Servicio (pozo)",
+      "phase": "close",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The service well broken down, clean, dry and not sticky."
+            }
+          ]
+        },
+        {
+          "title": "Clean bar top grates to right and left of well especially under granita ice shaver and underside."
+        },
+        {
+          "title": "Marry juice bottles of the same date and thoroughly washed any empty ones."
+        },
+        {
+          "title": "Marry/ fill syrups. Wash/ change pour spouts. Detail bottles. Scrub inside when empty."
+        },
+        {
+          "title": "Pull all garnish, throw away perishables. Change out sturdy garnish caddy and put in refrigerator. Wipe BAR garnish box."
+        },
+        {
+          "title": "Pull center garnishes, (olives, blue chz, marinetti), place in refrigerator"
+        },
+        {
+          "title": "Store perishable syrups in refrigerator."
+        },
+        {
+          "title": "Detail Bitter bottles. Fill bitter bottles."
+        },
+        {
+          "title": "Burn ice and ensure stainless steel around ice is clean, dry and not sticky. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice burned down, stainless steel around the well clean and dry."
+            }
+          ]
+        },
+        {
+          "title": "Detail spirit bottles. Marry low spirits in speed rails."
+        },
+        {
+          "title": "Clean speed rails and ensure they are not sticky. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails cleaned and not sticky."
+            }
+          ]
+        },
+        {
+          "title": "Wash bar tools. Ensure they are clean, dry and back in place. Notify DAVID if any are missing."
+        },
+        {
+          "title": "Wash all tools from center garnish prep area. wipe down drink mixer. wipe down ice shaver"
+        },
+        {
+          "title": "When closing wells scrub underside of well, and tool rinse sink with red scruber."
+        },
+        {
+          "title": "Wash bar mats from the service pass. Wash bar mats from center garnish prep area"
+        },
+        {
+          "title": "Refill long straws. refill short straws. refill swizzle sticks"
+        },
+        {
+          "title": "Wipe down ripple machine. rinse out the ink cap. cover ripple machine. Give Ipad to MOD"
+        },
+        {
+          "title": "Ensure all glasswware is restocked",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The service well glassware restocked."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Guest (well)",
+      "role_es": "Invitados (pozo)",
+      "phase": "close",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The guest well broken down, clean, dry and not sticky."
+            }
+          ]
+        },
+        {
+          "title": "Clean bar top grates to right and left of well especially under granita ice shaver and underside."
+        },
+        {
+          "title": "Marry juice bottles of the same date and thoroughly washed any empty ones."
+        },
+        {
+          "title": "Marry/ fill syrups. Wash/ change pour spouts. Detail bottles. Scrub inside when empty."
+        },
+        {
+          "title": "Pull all garnish, throw away perishables. Change out sturdy garnish caddy and put in refrigerator. Wipe BAR garnish box."
+        },
+        {
+          "title": "Store perishable syrups in refrigerator."
+        },
+        {
+          "title": "Detail Bitter bottles. Fill bitter bottles."
+        },
+        {
+          "title": "Burn ice and ensure stainless steel around ice is clean, dry and not sticky. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice burned down, stainless steel around the well clean and dry."
+            }
+          ]
+        },
+        {
+          "title": "Detail spirit bottles. Marry low spirits in speed rails."
+        },
+        {
+          "title": "Clean speed rails and ensure they are not sticky. USE RED SCRUBBER"
+        },
+        {
+          "title": "Wash bar tools. Ensure they are clean, dry and back in place. Notify DAVID if any are missing."
+        },
+        {
+          "title": "When closing wells scrub underside of well, and tool rinse sink with red scruber."
+        },
+        {
+          "title": "Refill long straws. refill short straws. refill swizzle sticks"
+        },
+        {
+          "title": "Wipe down the bar top, ensuring lamps are wipe as well",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top and lamps wiped down and clean."
+            }
+          ]
+        },
+        {
+          "title": "Wipe down bar stool bases, ensuring they clean and not sticky",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar stool bases wiped clean and not sticky."
+            }
+          ]
+        },
+        {
+          "title": "Ensure all glasswware is restocked",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The guest well glassware restocked."
+            }
+          ]
+        },
+        {
+          "title": "Detail bottles. Restock backup bottles",
+          "section": "THIRD WELL"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support (well)",
+      "role_es": "Apoyo (pozo)",
+      "phase": "close",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "Clean, polish, and restock glassware",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glassware cleaned, polished and restocked."
+            }
+          ]
+        },
+        {
+          "title": "Cover glassware rack"
+        },
+        {
+          "title": "Restock red wine by the glass"
+        },
+        {
+          "title": "Refrigerate all chilled wine"
+        },
+        {
+          "title": "Burn wine ice well and ensure stainless steel around ice is clean, dry and not sticky. USE RED SCRUBBER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wine well ice burned down, stainless steel clean and dry."
+            }
+          ]
+        },
+        {
+          "title": "Conduct bottle pull, ensuring all back up bottles are well stocked"
+        },
+        {
+          "title": "Organize backup bottle rack, ensuring both top and bottom shelves look presentable",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The backup bottle rack organized, top and bottom shelves presentable."
+            }
+          ]
+        },
+        {
+          "title": "Wipe down bar fride. Wipe down polishing machine. Cover polishing machine"
+        },
+        {
+          "title": "Wipe down dishwasher and ensure stainless steel is clean, dry, and not sticky. USE RED SCRUBBER"
+        },
+        {
+          "title": "Delime the dishwasher"
+        },
+        {
+          "title": "Power down dishwasher and empty out the trap"
+        },
+        {
+          "title": "Organize empty citrus, syrup, and batch bottles, leaving clean for bar prep"
+        },
+        {
+          "title": "Organize citrus cases in boardwalk and cover them"
+        },
+        {
+          "title": "Wipe down KD and pebble ice machines. Wiping down inside and outside of doors",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The KD and pebble ice machines wiped down inside and out."
+            }
+          ]
+        },
+        {
+          "title": "Thoroughly sweep under ice machines, leaving no debris underneath",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the ice machines swept clean, no debris."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server (weekend)",
+      "role_es": "Mesero (fin de semana)",
+      "phase": "close",
+      "room": "Seneca",
+      "items": [
+        {
+          "title": "I BROUGHT THE COCKTAIL, DINNER, AND DESSERT MENUS BACK TO THE HOST STAND AND ARRANGED THEM NICLEY",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I RESTOCKED THE UTENSILS AND LEFT THE CONTAINERS ON THE OUTSIDE STATION",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I BROUGHT IN THE CHILI FLAKES, PEPPER, AND SALT TO BE FILLED",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I FILLED THE SENECA HEAD FULL OF ALMONDS AND PLACED IT IN THE FRIDGE TO STORE OVERNIGHT",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED UNDERNEATH THE SERVER STATION (2 ROLLS.)",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SECTION 1 SERVER)",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SECTION 2 SERVER)",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I EMPITIED THE TRASH FROM MY STATION AND PLACED THE TRASH CAN UPSIDE DOWN",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND MADE SURE TO SWEEP UNDERNEATH THE SERVER STATION",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE SPACE BETWEEN THE TERRACE BOOTHS, GLASS, AND TRC CURTAIN, AND REMOVED ANY TRASH / DEBRIS",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I COVERED MY POS AND I COVERED THE SERVER STATION",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The section 1 and 2 POS and server station covered."
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED MY STAND FOR ANY LINGERING ITEMS THAT NEED TO BE PUT AWAY",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I TOOK ALL THE WATER PITCHERS INSIDE AND EMPTIED THEM",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I REPLACED THE LINENS UNDERNEATH THE PARM, WATER SHELLS, AND SILVERWARE",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I ASKED MY MOD WHAT TO FOCUS (FOLDS, POLISHING, ETC.)",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTIONS 1 AND 2; I RESOLVED AS NEEDED.",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE CRACK IN BETWEEN THE MAIN DINING ROOM, AND THE PATIO TO ENSURE IT WAS SPOTLESS.",
+          "section": "SECTION 1 AND 2",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I RESTOCKED THE UTENSILS, GLASSWARE, PLATES, AND LINENS IN MY STATION",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I RESTOCKED THE STRAWS AND COASTERS AND PUT THEM UNDERNEATH MY POS COVER",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED FOR THE MORNING SHIFT (2 ROLLS.)",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CLEARED THE LOUNGE AND SANITIZED THE GLASS TABLE",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lounge cleared and the glass table sanitized."
+            }
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SECTION 3 SERVER)",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SECTION 7 SERVER)",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I EMPITIED THE TRASH FROM MY STATION",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND I SWEPT UNDERNEATH MY STATION",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s AND 60s",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I COVERED MY POS AND SERVER STATION",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I SWITCHED OFF THE FIREPLACES IN THE LOUNGE",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED SUPPORT BRING IN THE CUSIONS FROM THE LOUNGE AND ARRANGED THEM NICELY AT 21",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CLEANED ANY LEFTOVER PARM BEHIND THE POS AND I REPLACED ALL THE LINENS ON MY SERVER STATION",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I ASKED MY MOD WHAT TO FOCUS ON (FOLDS, POLISHING, ETC.)",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTIONS 2 AND 3; I RESOLVED AS NEEDED.",
+          "section": "SECTION 7 AND 3",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED NEIGHBORING SERVERS TO BRING IN THE COCKTAIL, DINNER, AND DESSERT MENUS BACK TO THE HOST STAND AND ARRANGED THEM NICLEY",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED NEIGHBORING SERVERS TO RESTOCK THE UTENSILS, GLASSWARE, PLATES, AND LINENS IN MY STATION",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I I HELPED NEIGHBORING SERVERS RESTOCK THE STRAWS AND COASTERS AND PUT THEM UNDERNEATH MY POS COVER",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED NEIGHBORING SERVERS MAKE SURE THE PRINTER PAPER IS RESTOCKED FOR THE MORNING SHIFT (2 ROLLS.)",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED PICK UP ANY LINGERING TRASH OR LINENS FROM THE WHOLE SPACE AND BOARDWALK",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE SPACE FOR ANY LINGERING ITEMS THAT NEED TO BE PUT AWAY",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HELPED NEIGHBORING SERVER COVER THEIR STATION IF NECESSARY",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED IN WITH THE SUPPORT TEAM TO SEE HOW I COULD ASSIST THEM WITH THEIR CLOSE",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS. I RESOLVED AS NEEDED.",
+          "section": "SECTION 4",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I RESTOCKED THE UTENSILS, PLATES, AND LINENS ON THE INSIDE STATION",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE ESPRESSO BEANS (BOTH REGULAR AND DECAF), SUGAR CUBES, STRAWS, COASTERS, AND ALMONDS AND RESTOCKED THEM ACCORDINGLY",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I BROUGHT IN ALL OF THE TEA CUPS, POLISHED THEM, AND ARRANGED THEM ON THEIR SHELF",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tea cups polished and arranged on their shelf."
+            }
+          ]
+        },
+        {
+          "title": "I STARTED BREAKING DOWN THE COFFEE STATION AND SENDING IT TO THE DISH PIT TO BE WASHED",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SERVER SECTION 5)",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I DID MY CHECK OUT (SERVER SECTION 6)",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CLEANED THE WINE AND WATER SHELVES WITH GLASS CLEANER, AND FINISHED BREAKING DOWN AND DETAILING THE COFFEE MACHINE",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wine and water shelves cleaned and the coffee machine broken down and detailed."
+            }
+          ]
+        },
+        {
+          "title": "WHEN RUNNING LOW OR EMPTY I EMPTIED THE ICED TEA AND LEMONADE AND CLEANED BOTH MACHINES",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "WHEN DOING THE TASK ABOVE- I PULLED UP THE MATS NEXT THE THE ICED TEA AND LEMONADE MACHINES, I WIPED UNDERNEATH THEM, AND SENT THE MATS TO THE DISH PIT TO BE RAN THROUGH",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE GLASS CANDLE COVERING DOMES AND REPLACED THE LINEN UNDERNEATH THEM",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ALL OF THE PIZZA STANDS",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE ENTIRE POS STATION INCLUDING AROUND THE TWO SINKS; I CLEANED ANY DEBRIS IN THE SINK; I POURED SANITIZING SOLUTION DOWN BOTH SINKS AND THE DRAIN UNDERNEATH THE FRIDGE",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The POS station wiped down, sinks clean and clear."
+            }
+          ]
+        },
+        {
+          "title": "I DRUG THE MATS OUTSIDE AND HUNG THEM OVER THE FENCE",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE SLIDING DRAWERS IN PDR TO ENSURE THEY WERE CLEAN AND EMPTY",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE ALL OF THE FRIDGES AND UNDERNEATH THE MATS WHERE WE STORE COFFEE CUPS AND BISCOTTI",
+          "section": "SECTION 5 AND 6",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
         }
       ]
     }
