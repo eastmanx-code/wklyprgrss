@@ -1,0 +1,137 @@
+STOC checklist onboarding — DRAFT mapping summary
+Source: FOH_BOH_Combined_Checklists.xlsx (94 tabs)
+Generated file: checklists/STOC.json  (DRAFT, nothing loaded)
+
+TOTALS: 55 lists, 1171 items, 77 photo asks, 22 note asks
+  FOH: 37 lists, 792 items
+  HOH: 18 lists, 379 items
+
+LISTS (house | role | phase | room | items | photos | notes | source tabs):
+  FOH | Deep clean (manager)       | mid   | Seneca            |   5 it |  2 ph |  0 nt | DEEP CLEAN  MANAGER
+  FOH | Deep clean (host)          | mid   | Seneca            |  14 it |  7 ph |  0 nt | DEEP CLEAN  HOST
+  FOH | Deep clean (support/runners) | mid   | Seneca            |  15 it |  4 ph |  0 nt | DEEP CLEAN SUPPORTRUNNERS
+  FOH | Deep clean (server)        | mid   | Seneca            |  20 it |  8 ph |  0 nt | DEEP CLEAN SERVER
+  FOH | MOD                        | open  | -                 |  33 it |  0 ph |  1 nt | MOD Open
+  FOH | MOD                        | mid   | -                 |  24 it |  0 ph |  1 nt | MOD Transition
+  FOH | MOD                        | close | -                 |  23 it |  1 ph |  2 nt | MOD Close
+  FOH | MOD weekly                 | mid   | -                 |  18 it |  0 ph |  0 nt | MOD Weekly
+  FOH | Host                       | open  | Seneca            |  24 it |  1 ph |  0 nt | Host Open
+  FOH | Host                       | close | Seneca            |  23 it |  2 ph |  0 nt | Host Closer
+  FOH | Support                    | open  | Seneca            |  40 it |  0 ph |  0 nt | SUPPORT | OPENER 1, SUPPORT | OPENER 2, SUPPORT | OPENER 3
+  FOH | Support                    | mid   | Seneca            |  14 it |  0 ph |  0 nt | SUPPORT | MID
+  FOH | Support (front)            | close | Seneca            |  23 it |  0 ph |  0 nt | Support Front Closer
+  FOH | Support (back)             | close | Seneca            |  20 it |  0 ph |  0 nt | Support Back Closer
+  FOH | Food runner                | close | Seneca            |  14 it |  0 ph |  0 nt | SUPPORT | CLOSING FOOD RUNNER
+  FOH | Server                     | open  | Seneca            |  29 it |  0 ph |  0 nt | SERVER | OPENER 1, SERVER | OPENER 2, SERVER | OPENER 3
+  FOH | Server                     | close | Seneca            |  60 it |  0 ph |  0 nt | SERVER | CLOSE SECTION 1, SERVER | CLOSE SECTION 2, SERVER | CLOSE SECTION 3, SERVER | CLOSE SECTION 4&5
+  FOH | Sommelier                  | open  | -                 |  18 it |  0 ph |  1 nt | Opening Somm Checklist
+  FOH | Sommelier                  | close | -                 |  13 it |  0 ph |  2 nt | Closing Somm Checklist
+  FOH | Bartender                  | open  | Seneca            |  48 it |  2 ph |  0 nt | SENECA | OPENING THE BAR & PREP, Sheet5
+  FOH | Bartender                  | mid   | Seneca            |  21 it |  0 ph |  0 nt | SENECA BAR | MID SHIFT & PREP
+  FOH | Bartender                  | close | Seneca            |  43 it |  1 ph |  1 nt | SENECA BAR | CLOSING 1, SENECA BAR | CLOSING 2
+  FOH | Garnish prep               | open  | Seneca            |  19 it |  0 ph |  0 nt | SENECA OPEN | GARNISH PREP
+  FOH | Bar deep clean             | mid   | Seneca            |  14 it |  7 ph |  0 nt | SENECA BAR WEEKLY DEEP CLEAN
+  FOH | Bar weekly cleaning        | mid   | Seneca            |  15 it |  0 ph |  0 nt | SENECA | BAR WEEKLY CLEANING CH
+  FOH | Entrance                   | open  | The Reading Club  |  15 it |  0 ph |  0 nt | TRC | ENTRANCE OPEN
+  FOH | Floor                      | open  | The Reading Club  |  15 it |  0 ph |  1 nt | TRC | OPEN 
+  FOH | Patio                      | open  | The Reading Club  |  13 it |  0 ph |  0 nt | TRC | OPEN PATIO
+  FOH | Bartender                  | open  | The Reading Club  |  28 it |  0 ph |  2 nt | TRC | BAR OPEN 1
+  FOH | Coffee                     | open  | The Reading Club  |   9 it |  0 ph |  0 nt | TRC | COFFEE STATION OPEN
+  FOH | Bartender                  | mid   | The Reading Club  |  22 it |  0 ph |  0 nt | TRC | MID
+  FOH | Floor                      | mid   | The Reading Club  |  10 it |  0 ph |  0 nt | TRC | MIDSHIFT
+  FOH | Coffee                     | close | The Reading Club  |   8 it |  0 ph |  0 nt | TRC | COFFEE STATION CLOSE
+  FOH | Floor                      | close | The Reading Club  |  14 it |  0 ph |  2 nt | TRC | CLOSE SPACE & ENTRANCE
+  FOH | Bartender                  | close | The Reading Club  |  34 it |  0 ph |  1 nt | TRC | CLOSING BAR 1, TRC | CLOSING BAR 2
+  FOH | Deep clean                 | mid   | The Reading Club  |  17 it |  0 ph |  0 nt | TRC | WEEKLY
+  FOH | Bar deep clean             | mid   | The Reading Club  |  17 it |  3 ph |  0 nt | TRC BAR WEEKLY DEEP CLEAN
+  HOH | AM sous                    | open  | -                 |  15 it |  0 ph |  0 nt | Copy of AM SOUS
+  HOH | PM sous                    | close | -                 |  19 it |  0 ph |  0 nt | Copy of PM SOUS
+  HOH | Daily cleaning             | close | -                 |  14 it |  0 ph |  0 nt | Copy of DAILY DUTIES
+  HOH | Weekly cleaning            | mid   | -                 |  21 it | 11 ph |  0 nt | Copy of WEEKLY DUTIES
+  HOH | Monthly cleaning           | mid   | -                 |   6 it |  0 ph |  0 nt | Copy of MONTHLY DUTIES
+  HOH | Prep cook                  | close | -                 |  22 it |  0 ph |  0 nt | Copy of PREP COOK DAILY 
+  HOH | Pastry                     | close | -                 |  29 it |  0 ph |  0 nt | Copy of PASTRY DAILY
+  HOH | Pasta prep                 | close | -                 |  18 it |  0 ph |  0 nt | Copy of PASTA PREP DAILY
+  HOH | Pizza                      | close | -                 |  33 it |  0 ph |  2 nt | Copy of PIZZA DAILY
+  HOH | Grill                      | close | -                 |  34 it |  0 ph |  2 nt | Copy of GRILL DAILY
+  HOH | Pantry                     | close | -                 |  31 it |  0 ph |  2 nt | Copy of PANTRY DAILY
+  HOH | Pasta                      | close | -                 |  33 it |  0 ph |  2 nt | Copy of PASTA DAILY
+  HOH | Chef                       | close | -                 |   8 it |  0 ph |  0 nt | Copy of CHEF CHECKLIST
+  HOH | Lead line                  | close | -                 |   7 it |  0 ph |  0 nt | Copy of LEAD LINE CHECKLIST
+  HOH | Dish                       | close | -                 |  30 it |  0 ph |  0 nt | Copy of DISHWASHER CHECKLIST
+  HOH | Monthly deep clean         | mid   | -                 |   6 it |  3 ph |  0 nt | Copy of MONTHLY DEEP CLEAN DUTI
+  HOH | Deep clean (by station)    | mid   | -                 |  22 it | 14 ph |  0 nt | Copy of DEEP CLEAN CHECKLIST
+  HOH | Weekly deep clean          | mid   | -                 |  31 it | 11 ph |  0 nt | Copy of WEEKLY DEEP CLEAN DUTIE
+
+TABS SKIPPED (not turned into a list):
+  - L19 | RAIN & RAIN CLOSE PROTOCO: rain-conditional, not a nightly list (see FLAG: rain protocol)
+  - L19 | POST-RAIN CHECKLIST: rain-conditional, not a nightly list (see FLAG: rain protocol)
+  - Change Log: manager reference, not a crew list
+  - Fix List: one-time repair tracker, not a nightly list
+  - RESTROOM CHECK LOG: hourly paper log (the check lives inside Host lists)
+  - RESTROOM CHECK PHOTO SPEC: reference photo page, empty
+  - FLOOR SWEEP LOG: hourly paper log
+  - WEEKEND NIGHT SERVER | CLOSE SE: weekend-only server section reshuffle (see FLAG: weekend servers)
+  - Sheet3: weekend-only server section reshuffle (SERVER 7&3)
+  - WEEKEND NIGHT SERVER | SECTION : weekend-only server section reshuffle (SERVER 4)
+  - Sheet4: weekend-only server section reshuffle (SERVER 5&6)
+  - CHIT RETURN LOG: paper log
+  - SENECA OPEN | BAR: ALTERNATE well-based bar system, held (see FLAG: two bar systems)
+  - SENECA CLOSE | BAR: ALTERNATE well-based bar system, held (see FLAG: two bar systems)
+  - SENECA CLOSE | SERVICE: ALTERNATE well-based bar system, held (see FLAG: two bar systems)
+  - SENECA CLOSE | GUEST: ALTERNATE well-based bar system, held (see FLAG: two bar systems)
+  - SENECA CLOSE | SUPPORT: ALTERNATE well-based bar system, held (see FLAG: two bar systems)
+  - SENECA M&G ORDER GUIDE: order guide / par, reference
+  - BAR PREP ORDER GUIDE: order guide / par, reference
+  - SENECA TRC Specialty Produce Pa: produce par, reference
+  - Seneca Backup Garnish Prep: garnish par, reference
+  - SENECA COCKTAIL RECIPES: recipe book, reference
+  - SENECA BATCHES & SYRUPS: recipe book, reference
+  - CAFE RECIPES: recipe book, reference
+  - CORDIAL & SYRUPS: recipe book, reference
+  - TRC COCKTAIL RECIPES: recipe book, reference
+  - Copy of WASTE LOG: waste log
+  - Copy of TRCWASTE LOG: waste log
+  - Copy of TEMP Log: temp log
+
+AMBIGUOUS / DECISIONS FOR BRIAN (nothing loads until you sign off):
+  1. TWO SENECA BAR SYSTEMS. The workbook carries two overlapping bartender
+     systems. INCLUDED (canonical): the prose set — 'SENECA | OPENING THE BAR &
+     PREP' (+ 'Sheet5'), 'SENECA BAR | MID SHIFT & PREP', 'SENECA BAR | CLOSING
+     1' + 'CLOSING 2'. HELD OUT: the newer well-based set — 'SENECA OPEN | BAR',
+     'SENECA CLOSE | BAR / SERVICE / GUEST / SUPPORT'. Pick one; I did not load
+     both or the Seneca bartender is double-counted.
+  2. WEEKEND SERVERS. 'WEEKEND NIGHT SERVER …', 'Sheet3', 'Sheet4' are the SAME
+     close tasks reshuffled onto a smaller Fri/Sat section map. I kept the
+     regular Server/close (Sections 1-5) as the one list and skipped the weekend
+     reshuffle. Confirm that's how you want it, or we model a Fri/Sat variant.
+  3. L19 RAIN TABS. 'L19 | RAIN …' and 'L19 | POST-RAIN …' are rain-conditional
+     (not nightly). They DO reference Seneca/TRC canopies, so they look like
+     STOC's rain protocol, not Lafayette. Held out of the nightly program —
+     there is no 'rain night' phase. Confirm they belong to STOC.
+  4. DEEP-CLEAN OVERLAP (kitchen). 'Copy of WEEKLY DEEP CLEAN DUTIE' (weekday
+     rota) and 'Copy of DEEP CLEAN CHECKLIST' (by-station) cover similar ground.
+     Both included for now as separate lists; may want to merge/drop one.
+  5. WEEKLY / MONTHLY CADENCE. 'MOD Weekly', 'TRC | WEEKLY', 'SENECA | BAR
+     WEEKLY CLEANING', 'Copy of WEEKLY DUTIES', 'Copy of MONTHLY DUTIES' are not
+     nightly. The app schedules by weekday (section) or ordinal-weekday. Where a
+     day was given I set it; where none was given (MOD Weekly, TRC WEEKLY, Bar
+     weekly cleaning, Monthly duties) the items currently have NO day and would
+     show every night. Decide a cadence or hold these lists.
+  6. KITCHEN STATION LISTS span open->close on one sheet; I kept each as one
+     'close' list with OPENING/THROUGHOUT/END-OF-DAY as sections. AM SOUS -> open,
+     PM SOUS -> close.
+  7. CHEF / LEAD LINE sheets are handoff sheets mixing an order guide + a short
+     'I …' checklist. Only the 'I …' checklist lines were kept; the order-guide
+     half was dropped.
+
+FLAGS ON CONTENT QUALITY (draft, needs a human pass before load):
+  - PROOF PROMPTS are rule-generated ('What this looks like when it is done
+    right.'). The skill wants each prompt to name what the picture must show.
+    These need a polish pass on the lists you keep.
+  - title_es: HOH 'DAILY/WEEKLY/MONTHLY DUTIES' and 'DISHWASHER' carried source
+    Spanish, split into title_es where a '/' separated it. The English-only
+    kitchen STATION lists (prep/pastry/pasta/pizza/grill/pantry/sous/chef/lead)
+    have NO title_es yet — they need a crew-voice Spanish pass. FOH is English.
+  - Item text is kept verbatim (the venue's words, mostly ALL CAPS). Time-block
+    sub-headers inside FOH opener lists were flattened (not kept as sections).
