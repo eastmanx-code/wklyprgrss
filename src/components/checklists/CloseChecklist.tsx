@@ -2466,7 +2466,7 @@ function SignaturePad({
       <div className="bg-panel border-card-border relative touch-none overflow-hidden rounded-lg border">
         <canvas
           ref={canvasRef}
-          className="block h-40 w-full"
+          className="block h-28 w-full"
           onPointerDown={(event) => {
             if (locked) return;
             drawing.current = true;
