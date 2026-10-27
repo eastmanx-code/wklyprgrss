@@ -4529,7 +4529,97 @@
           "title": "I CHECKED OUT WITH A LEAD.",
           "title_es": "ME REPORTÉ CON UN LEAD."
         }
-      ]
+      ],
+      "room": "Upstairs"
+    },
+    {
+      "house": "FOH",
+      "role": "WELLS",
+      "role_es": "WELLS",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES.",
+          "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well broken down: underside and stainless clean and dry"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES.",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR."
+        },
+        {
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK.",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK."
+        },
+        {
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX.",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA."
+        },
+        {
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY.",
+          "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The syrups filled, pour spouts changed, bottles detailed"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER.",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS."
+        },
+        {
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR.",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR."
+        },
+        {
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES.",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS."
+        },
+        {
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY.",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE."
+        },
+        {
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY.",
+          "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails clean and the spirits detailed"
+            }
+          ]
+        },
+        {
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING.",
+          "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any bar tools missing, or all present"
+            }
+          ]
+        },
+        {
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER.",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE."
+        },
+        {
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED.",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA."
+        },
+        {
+          "title": "I CHECKED OUT WITH A LEAD.",
+          "title_es": "ME REPORTÉ CON UN LEAD."
+        }
+      ],
+      "room": "Downstairs"
     }
   ]
 }
