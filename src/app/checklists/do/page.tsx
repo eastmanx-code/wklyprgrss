@@ -13,11 +13,7 @@ import {
 import { boardNight } from "@/lib/active-night";
 import { closeStatus } from "@/lib/close-status";
 import { formatNight, formatNightEs } from "@/lib/night";
-import {
-  closeVenueCode,
-  closeVenueId,
-  closeVenueName,
-} from "@/lib/close-venue";
+import { closeVenueId, closeVenueName } from "@/lib/close-venue";
 import { getSession, mayManage } from "@/lib/session";
 import { db } from "@/lib/supabase";
 import { BackLink } from "@/components/ui";
@@ -49,7 +45,6 @@ export default async function DoChecklistsPage() {
   // An admin who has not picked a building yet gets the list of them.
   if (!venue && session.role === "admin") redirect("/checklists/locations");
   const venueName = venue ? await closeVenueName(venue) : null;
-  const venueCode = venue ? await closeVenueCode(venue) : null;
 
   const { data: listRows } = venue
     ? await db()
@@ -147,20 +142,6 @@ export default async function DoChecklistsPage() {
           />
         </p>
       </header>
-
-      {mayManage(session) && venueCode ? (
-        <p className="mb-5">
-          <Link
-            href={`/checklists/compliance/${venueCode}`}
-            className="ring-card-border text-ink inline-flex min-h-11 items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1"
-          >
-            <T en="Last night" es="Anoche" />
-            <span className="text-muted">
-              <T en="what failed, who signed" es="qué falló, quién firmó" />
-            </span>
-          </Link>
-        </p>
-      ) : null}
 
       {lists.length === 0 ? (
         <section className="panel mb-5">

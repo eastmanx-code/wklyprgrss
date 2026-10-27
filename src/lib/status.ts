@@ -731,6 +731,19 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
       }>,
   );
 
+  // Boards whose grading was deferred this week. A carried board is scored
+  // against the cards it was actually filed against, not the live board, so a
+  // rebuild for next week cannot orphan a week that was walked and filed.
+  const { data: carriedRows } = await db()
+    .from("carried_weeks")
+    .select("venue_id, house")
+    .eq("week_start", weekStart);
+  const carriedThisWeek = new Set(
+    ((carriedRows ?? []) as { venue_id: string; house: House }[]).map((c) =>
+      keyOf(c.venue_id, c.house),
+    ),
+  );
+
   // venue|house -> weekStart -> set of done item ids
   const doneByKeyWeek = new Map<string, Map<string, Set<string>>>();
   const firstWeekByKey = new Map<string, string>();
@@ -835,8 +848,15 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
          */
         const activeIds = activeIdsByKey.get(key) ?? new Set<string>();
         const filedRaw = weeks?.get(weekStart);
+        // A carried week keeps every card it was filed against, the same way a
+        // completed past week does, so a board rebuilt for the next week cannot
+        // orphan it. A normal current week counts only the cards still live, so
+        // a stray photo on a retired card cannot pad a short board.
+        const carried = carriedThisWeek.has(key);
         const doneThisWeek = filedRaw
-          ? new Set([...filedRaw].filter((id) => activeIds.has(id)))
+          ? carried
+            ? new Set(filedRaw)
+            : new Set([...filedRaw].filter((id) => activeIds.has(id)))
           : undefined;
         const doneCount = doneThisWeek ? doneThisWeek.size : 0;
         /**
@@ -946,6 +966,7 @@ export async function getDashboard(now: Date = new Date()): Promise<Dashboard> {
           activeCount,
           status: statusFor(doneCount, activeCount, weekStart, now),
           failStreak,
+          carried,
           scored: houseScored(house, weekStart),
         };
       },
@@ -1288,6 +1309,32 @@ export async function gradersByHouse(
     // Graded is graded even where the signature did not survive: an empty
     // name must not read as an ungraded week.
     byHouse.get(row.house)?.set(row.venue_id, row.graded_by?.trim() || "—");
+  }
+  return byHouse;
+}
+
+/**
+ * Who carried each house's week, per venue — the same shape as gradersByHouse,
+ * for the screens that offer the carry and show which boards are already held.
+ */
+export async function carriedByHouse(
+  weekStart: string,
+): Promise<Map<House, Map<string, string>>> {
+  const { data, error } = await db()
+    .from("carried_weeks")
+    .select("venue_id, house, carried_by")
+    .eq("week_start", weekStart);
+  if (error) throw new Error(error.message);
+
+  const byHouse = new Map<House, Map<string, string>>(
+    HOUSES.map((house) => [house, new Map<string, string>()]),
+  );
+  for (const row of (data ?? []) as {
+    venue_id: string;
+    house: House;
+    carried_by: string | null;
+  }[]) {
+    byHouse.get(row.house)?.set(row.venue_id, row.carried_by?.trim() || "—");
   }
   return byHouse;
 }
