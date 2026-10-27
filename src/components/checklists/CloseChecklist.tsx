@@ -26,7 +26,7 @@ import { noteTrouble, flushTrouble, words, type Trouble } from "@/lib/trouble";
 import { shouldCompleteOnBlur } from "@/lib/close-tick";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
-import { dayOfSection, dueOnNight } from "@/lib/due";
+import { cadenceOwedTonight, dayOfSection } from "@/lib/due";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -131,11 +131,21 @@ export function CloseChecklist({
   referenceUrls,
   saved,
   carry = true,
+  satisfiedEarlier,
 }: {
   slug: string;
   /** Open, mid or close. The words a person signs their name to come from it. */
   phase: Phase;
   items: CloseItem[];
+  /**
+   * Weekly and monthly items already done earlier in this period, by id.
+   *
+   * A cadence item is owed every night until it is done once, then it clears
+   * for the rest of the week or month. This is worked out on the server, where
+   * the earlier nights live; a box ticked tonight is not in here, so it still
+   * shows, done. Absent or false means not yet done, so still owed.
+   */
+  satisfiedEarlier?: Record<string, boolean>;
   /**
    * Whether a blank row inherits the initials of the row above it.
    *
@@ -173,7 +183,12 @@ export function CloseChecklist({
    * tomorrow's should be able to tick it.
    */
   const isDue = (item: CloseItem) =>
-    dueOnNight(item.section, night, item.days);
+    cadenceOwedTonight(
+      item.section,
+      night,
+      item.days,
+      Boolean(satisfiedEarlier?.[item.id ?? ""]),
+    );
   const dueItems = items.filter(isDue);
   const CLOSE_TOTAL = dueItems.length;
   // The list arrived with no rows on it. On a phone that means the page did

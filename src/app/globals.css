@@ -287,9 +287,10 @@ button {
   text-transform: uppercase;
 }
 
-/* Uppercase is the house style. Headings, controls and short helper lines all
-   set in caps; the one exception is leaders' own comments, which stay in the
-   case they typed them — see .copy below. */
+/* Uppercase is the house style, with no exception. Headings, controls, body
+   copy and every short helper line are set in caps, so the whole interface
+   reads as one. Display only: what people type is stored verbatim, so this is
+   reversible and never changes a saved name, note or reason. */
 @layer base {
   h1,
   h2,

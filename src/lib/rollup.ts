@@ -1,4 +1,4 @@
-import { dueOnNight } from "./due";
+import { type Cadence, cadenceOf, dueOnNight, makeCadenceDue } from "./due";
 import "server-only";
 
 import { currentNight, isNightOver, shiftNights } from "./night";
@@ -132,6 +132,62 @@ async function load(
 }
 
 /**
+ * The due rule a report scores with, cadence-aware, built from the rows a load
+ * already holds.
+ *
+ * A weekly or monthly item is owed once per period, so it is scored on one
+ * night of the period — the night it was done, or the last night the venue was
+ * open once an empty period has closed — and ignored on every other. Everything
+ * else keeps the ordinary weekday rule. Keyed by item id and venue, so one
+ * builder serves a single-venue report and the all-venue pass alike. When a
+ * load carries no cadence items it falls straight back to the weekday rule.
+ */
+function cadenceDueFor(data: Loaded): IsDue {
+  const cadenceByItem = new Map<string, Cadence>();
+  for (const it of data.items) {
+    const c = cadenceOf(it.section);
+    if (c) cadenceByItem.set(it.id, c);
+  }
+  if (cadenceByItem.size === 0)
+    return (item, night) => dueOnNight(item.section, night, item.days);
+
+  const nightDateOf = new Map(data.nights.map((n) => [n.id, n.night]));
+  const venueOfList = new Map(data.checklists.map((c) => [c.id, c.venue_id]));
+  const runningByVenue = new Map<string, Set<string>>();
+  for (const n of data.nights) {
+    const venue = venueOfList.get(n.checklist_id);
+    if (!venue) continue;
+    const held = runningByVenue.get(venue) ?? new Set<string>();
+    held.add(n.night);
+    runningByVenue.set(venue, held);
+  }
+  const tickNightsByItem = new Map<string, string[]>();
+  for (const t of data.ticks) {
+    if (!cadenceByItem.has(t.item_id)) continue;
+    const date = nightDateOf.get(t.night_id);
+    if (!date) continue;
+    const held = tickNightsByItem.get(t.item_id) ?? [];
+    held.push(date);
+    tickNightsByItem.set(t.item_id, held);
+  }
+  for (const [id, dates] of tickNightsByItem)
+    tickNightsByItem.set(id, [...new Set(dates)].sort());
+  const runningNightsByItem = new Map<string, string[]>();
+  const listOfItem = new Map(data.items.map((it) => [it.id, it.checklist_id]));
+  for (const id of cadenceByItem.keys()) {
+    const venue = venueOfList.get(listOfItem.get(id) ?? "");
+    const running = venue ? runningByVenue.get(venue) : undefined;
+    runningNightsByItem.set(id, running ? [...running].sort() : []);
+  }
+  return makeCadenceDue({
+    cadenceByItem,
+    tickNightsByItem,
+    runningNightsByItem,
+    today: currentNight(),
+  });
+}
+
+/**
  * One venue's report, or null when nothing has been recorded yet — the caller
  * shows the sample in that case rather than a page of confident zeroes.
  */
@@ -140,9 +196,7 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
   const data = await load([venueId], window);
   if (!data || data.nights.length === 0) return null;
   // The rota rule, handed to a module that keeps itself import free.
-  return computeRollup(data, window, (item, night) =>
-    dueOnNight(item.section, night, item.days),
-  );
+  return computeRollup(data, window, cadenceDueFor(data));
 }
 
 /**
@@ -175,8 +229,7 @@ export async function groupRollupDetailed(): Promise<
     name: string | null;
   }[];
 
-  const isDue: IsDue = (item, night) =>
-    dueOnNight(item.section, night, item.days);
+  const isDue: IsDue = cadenceDueFor(data);
 
   const out: { code: string; name: string | null; rollup: Rollup }[] = [];
   for (const venue of venues) {
@@ -225,7 +278,5 @@ export async function groupRollup(): Promise<GroupRow[] | null> {
     ]),
   );
 
-  return computeGroup(data, window, codeOf, (item, night) =>
-    dueOnNight(item.section, night, item.days),
-  );
+  return computeGroup(data, window, codeOf, cadenceDueFor(data));
 }

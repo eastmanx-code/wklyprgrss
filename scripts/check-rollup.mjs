@@ -12,7 +12,7 @@
 import { computeRollup, computeGroup } from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
 // rather than a copy of it.
-import { dueOnNight } from "../.rollup-check/due.js";
+import { dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
 
 const isDue = (item, night) => dueOnNight(item.section, night);
 
@@ -359,6 +359,54 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   is("snapshot: group done from the snapshot",
     computeGroup({ checklists: lists, items: now, nights, ticks: [] }, one, new Map([["V", "HOOD"]]), isDue),
     [{ code: "HOOD", done: 1, of: 1 }]);
+}
+
+// ------------------------------------------- a weekly item scores once a week
+
+// A full Monday-to-Sunday week the venue was open every night, one close list
+// with a plain item and a WEEKLY one. Scored from the following week, so the
+// week has closed. The whole point: the weekly item is owed once, not seven
+// times, so an undone one is a single miss and a done one is a single clean.
+{
+  const WK = [
+    "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10",
+    "2026-09-11", "2026-09-12", "2026-09-13",
+  ];
+  const lists = [{ id: "L", venue_id: "V", house: "FOH", role: "BARBACK", phase: "close" }];
+  const items = [
+    { id: "d", checklist_id: "L", title: "Wipe the rail", section: null },
+    { id: "w", checklist_id: "L", title: "Deep clean the well", section: "WEEKLY" },
+  ];
+  // The venue ran and signed every night; the plain item ticked each night.
+  const nights = WK.map((night, i) => ({
+    id: `n${i}`, checklist_id: "L", night, certified_at: "t", certified_by: "Marla",
+  }));
+  const tickedDaily = WK.map((_, i) => ({ night_id: `n${i}`, item_id: "d" }));
+
+  const ctx = {
+    cadenceByItem: new Map([["w", "weekly"]]),
+    runningNightsByItem: new Map([["w", WK]]),
+    today: "2026-09-20",
+  };
+  const cadenceDue = (tickNights) =>
+    makeCadenceDue({ ...ctx, tickNightsByItem: new Map([["w", tickNights]]) });
+
+  // Never done all week: exactly one miss, not seven, landing on the last night.
+  const missed = computeRollup(
+    { checklists: lists, items, nights, ticks: tickedDaily }, WK, cadenceDue([]),
+  );
+  is("weekly undone is one open of one, not seven of seven",
+    missed.missed.map((m) => [m.item, m.open, m.of]),
+    [["Deep clean the well", 1, 1]]);
+  is("the undone weekly fails only the last night", missed.strip, "ccccccm");
+
+  // Done once, on Wednesday: no miss, every night clean.
+  const done = computeRollup(
+    { checklists: lists, items, nights, ticks: [...tickedDaily, { night_id: "n2", item_id: "w" }] },
+    WK, cadenceDue(["2026-09-09"]),
+  );
+  is("a weekly done once leaves nothing open", done.missed, []);
+  is("and every night reads clean", done.strip, "ccccccc");
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
