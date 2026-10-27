@@ -14,6 +14,7 @@ import {
 } from "@/lib/checklists";
 import type { CloseItem, Reference, Shot } from "@/lib/close-checklist";
 import { activeNight } from "@/lib/active-night";
+import { satisfiedEarlierThisPeriod } from "@/lib/close-cadence";
 import { formatNight, formatNightEs } from "@/lib/night";
 import { signedUrls } from "@/lib/photos";
 import { closeVenueId } from "@/lib/close-venue";
@@ -157,6 +158,16 @@ export default async function ChecklistPage({
     proof = (p.data ?? []) as typeof proof;
   }
 
+  // Weekly and monthly items are owed every night until done once this period,
+  // then they clear. Whether each was already done is worked out on the server,
+  // where the earlier nights of the week live, and handed to the list so the
+  // screen stops asking for it.
+  const satisfiedEarlier = await satisfiedEarlierThisPeriod(
+    list.id,
+    night,
+    items.map((it) => ({ id: it.id, section: it.section })),
+  );
+
   const urls = await signedUrls([
     ...proof
       .map((row) => row.storage_path)
@@ -230,6 +241,7 @@ export default async function ChecklistPage({
           items={items}
           night={night}
           carry={list.carry_initials}
+          satisfiedEarlier={satisfiedEarlier}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>
               (row.reference ?? []).flatMap((ref) => {

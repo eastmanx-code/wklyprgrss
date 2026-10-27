@@ -1,8 +1,9 @@
 import "server-only";
 
+import { satisfiedEarlierThisPeriod } from "./close-cadence";
 import { closeStatus, signedList, type CloseStatusRow } from "./close-status";
 import { db } from "./supabase";
-import { dueOnNight } from "./due";
+import { cadenceOwedTonight, dueOnNight } from "./due";
 import { listName } from "./slug";
 import {
   carriesForward,
@@ -562,6 +563,15 @@ export async function listDetail(
         };
       });
 
+  // A weekly or monthly item already done earlier this period is not owed on
+  // this night, so it does not read as open here either; it clears the same way
+  // it does on the crew list and the live board.
+  const satisfiedEarlier = await satisfiedEarlierThisPeriod(
+    checklistId,
+    night,
+    source.map((s) => ({ id: s.id, section: s.section })),
+  );
+
   const outcomes: ItemOutcome[] = source
     /**
      * Only what this night asked for.
@@ -573,9 +583,18 @@ export async function listDetail(
      *
      * An item filed under another day that somebody did anyway stays in, so
      * getting ahead is still credited. Only the ones nobody was asked for and
-     * nobody did drop out.
+     * nobody did drop out. A cadence item clears for the rest of its period
+     * once done, the same as everywhere else.
      */
-    .filter((item) => dueOnNight(item.section, night, item.days) || item.ticked)
+    .filter(
+      (item) =>
+        cadenceOwedTonight(
+          item.section,
+          night,
+          item.days,
+          satisfiedEarlier[item.id],
+        ) || item.ticked,
+    )
     .map((item) => ({
       id: item.id,
       title: item.title,

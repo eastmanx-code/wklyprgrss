@@ -11,9 +11,13 @@
  * deep clean lists and plain groupings everywhere else.
  */
 import {
+  cadenceOf,
+  cadenceOwedTonight,
   dayOfSection,
   dueOnNight,
   hasDayScheduling,
+  makeCadenceDue,
+  periodStartOf,
   weekdayOfNight,
 } from "../.due-check/due.js";
 
@@ -193,6 +197,92 @@ is("a monthly heading is not one day", dayOfSection("FIRST AND THIRD MONDAYS"), 
 // The richer headings still count as scheduling for the screen hint.
 is("a monthly list schedules", hasDayScheduling(["FIRST AND THIRD MONDAYS"]), true);
 is("a multi-day list schedules", hasDayScheduling(["WED AND SUN"]), true);
+
+// --------------------------------------------------------- reading a cadence
+
+// WEEKLY and MONTHLY are cadences; everything else is not.
+is("WEEKLY is a weekly cadence", cadenceOf("WEEKLY"), "weekly");
+is("MONTHLY is a monthly cadence", cadenceOf("MONTHLY"), "monthly");
+is("case does not matter for cadence", cadenceOf("weekly"), "weekly");
+is("no heading is no cadence", cadenceOf(null), null);
+is("an empty heading is no cadence", cadenceOf(""), null);
+// A stray word makes it an ordinary grouping again, owed every night.
+is("WEEKLY DEEP CLEAN is not a cadence", cadenceOf("WEEKLY DEEP CLEAN"), null);
+is("a weekday is not a cadence", cadenceOf("MONDAY"), null);
+is("a grouping is not a cadence", cadenceOf("CLOSING SQUAD"), null);
+
+// ---------------------------------------------------------- reading a period
+
+// 2026-09-07 is a Monday. The week is Monday-anchored.
+is("Monday starts its own week", periodStartOf("weekly", "2026-09-07"), "2026-09-07");
+is("Wednesday rolls back to Monday", periodStartOf("weekly", "2026-09-09"), "2026-09-07");
+is("Sunday still belongs to that Monday", periodStartOf("weekly", "2026-09-13"), "2026-09-07");
+is("the next Monday starts a new week", periodStartOf("weekly", "2026-09-14"), "2026-09-14");
+is("the month period is the first", periodStartOf("monthly", "2026-09-13"), "2026-09-01");
+is("an unreadable night has no week", periodStartOf("weekly", "nope"), null);
+
+// ------------------------------------------------ owed tonight, the crew rule
+
+// A weekly item is owed every night until it is done once this week, then it
+// clears. Tonight's own tick does not count as "earlier", so it still shows.
+is("weekly owed when not yet done", cadenceOwedTonight("WEEKLY", "2026-09-07", null, false), true);
+is("weekly clears once done earlier", cadenceOwedTonight("WEEKLY", "2026-09-09", null, true), false);
+// A non-cadence item ignores the flag and answers the ordinary way.
+is("a weekday item still reads its day", cadenceOwedTonight("MONDAY", "2026-09-07", null, true), true);
+is("a plain item is owed whatever the flag", cadenceOwedTonight(null, "2026-09-07", null, true), true);
+
+// --------------------------------------------- the cadence rule a report scores
+
+{
+  // One weekly item, a full Monday-to-Sunday week the venue was open every
+  // night, scored from the following week so the period has closed.
+  const week = [
+    "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10",
+    "2026-09-11", "2026-09-12", "2026-09-13",
+  ];
+  const base = {
+    cadenceByItem: new Map([["w", "weekly"]]),
+    runningNightsByItem: new Map([["w", week]]),
+    today: "2026-09-20",
+  };
+
+  // Done on Wednesday: due on that one night, nowhere else.
+  const done = makeCadenceDue({
+    ...base,
+    tickNightsByItem: new Map([["w", ["2026-09-09"]]]),
+  });
+  is("a done weekly is due on its tick night", done({ id: "w", section: "WEEKLY" }, "2026-09-09"), true);
+  is("a done weekly is not due the night before", done({ id: "w", section: "WEEKLY" }, "2026-09-08"), false);
+  is("a done weekly is not due the night after", done({ id: "w", section: "WEEKLY" }, "2026-09-10"), false);
+
+  // Never done, week closed: one miss, on the last night the venue was open.
+  const missed = makeCadenceDue({ ...base, tickNightsByItem: new Map() });
+  is("an undone weekly lands on the week's last running night", missed({ id: "w", section: "WEEKLY" }, "2026-09-13"), true);
+  is("an undone weekly is not due midweek", missed({ id: "w", section: "WEEKLY" }, "2026-09-10"), false);
+
+  // Venue dark on Sunday: the miss lands on Saturday, the last night it was open.
+  const darkSunday = makeCadenceDue({
+    ...base,
+    runningNightsByItem: new Map([["w", week.slice(0, 6)]]),
+    tickNightsByItem: new Map(),
+  });
+  is("the miss follows the last open night", darkSunday({ id: "w", section: "WEEKLY" }, "2026-09-12"), true);
+  is("and not the dark Sunday", darkSunday({ id: "w", section: "WEEKLY" }, "2026-09-13"), false);
+
+  // Week still open (scored from inside it) and not yet done: due on no night,
+  // so it is neither done nor missed until the week is actually over.
+  const openWeek = makeCadenceDue({
+    ...base,
+    today: "2026-09-10",
+    tickNightsByItem: new Map(),
+  });
+  is("an open undone weekly is due on no night", openWeek({ id: "w", section: "WEEKLY" }, "2026-09-07"), false);
+  is("even on the latest night so far", openWeek({ id: "w", section: "WEEKLY" }, "2026-09-09"), false);
+
+  // A non-cadence item in the same resolver keeps the ordinary weekday rule.
+  is("a non-cadence item delegates to its day", done({ id: "x", section: "MONDAY" }, "2026-09-07"), true);
+  is("a non-cadence Tuesday is not due Monday", done({ id: "x", section: "TUESDAY" }, "2026-09-07"), false);
+}
 
 console.log(`\n  ${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);

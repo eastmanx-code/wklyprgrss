@@ -1,7 +1,8 @@
 import "server-only";
 
 import { db } from "./supabase";
-import { dueOnNight } from "./due";
+import { satisfiedEarlierBatch } from "./close-cadence";
+import { cadenceOwedTonight } from "./due";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 
@@ -226,6 +227,18 @@ export async function closeStatus(
   }
   const proofOf = new Set(proofRows.map((p) => `${p.night_id}:${p.item_id}`));
 
+  // Weekly and monthly items are owed until done once this period, then they
+  // clear. Which were already done earlier this period is read once for every
+  // list on the board, so a once-a-week job stops showing open every night.
+  const satisfiedEarlier = await satisfiedEarlierBatch(
+    items.map((i) => ({
+      id: i.id,
+      checklist_id: i.checklist_id,
+      section: i.section,
+    })),
+    night,
+  );
+
   const nightOf = new Map(nights.map((n) => [n.checklist_id, n]));
   const tickOf = new Set<string>();
   const timesOn = new Map<string, { at: string; claimedAt: string | null }[]>();
@@ -280,7 +293,15 @@ export async function closeStatus(
         tickedHere: boolean;
       }[] = frozen
         ? frozen
-            .filter((i) => dueOnNight(i.section, night, i.days) || i.ticked)
+            .filter(
+              (i) =>
+                cadenceOwedTonight(
+                  i.section,
+                  night,
+                  i.days,
+                  satisfiedEarlier.has(i.item_id),
+                ) || i.ticked,
+            )
             .map((i) => ({
               id: i.item_id,
               title: i.title,
@@ -291,7 +312,12 @@ export async function closeStatus(
             .filter(
               (i) =>
                 i.checklist_id === list.id &&
-                (dueOnNight(i.section, night, i.days) ||
+                (cadenceOwedTonight(
+                  i.section,
+                  night,
+                  i.days,
+                  satisfiedEarlier.has(i.id),
+                ) ||
                   (row ? tickOf.has(`${row.id}:${i.id}`) : false)),
             )
             .map((i) => ({

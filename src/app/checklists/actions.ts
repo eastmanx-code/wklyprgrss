@@ -7,7 +7,8 @@ import { pinHolder } from "@/lib/admin-pin";
 import { nameProblem, samePerson } from "@/lib/name";
 import { closeVenueId } from "@/lib/close-venue";
 import { activeNight } from "@/lib/active-night";
-import { dueOnNight } from "@/lib/due";
+import { satisfiedEarlierThisPeriod } from "@/lib/close-cadence";
+import { cadenceOwedTonight } from "@/lib/due";
 import { matchSlug } from "@/lib/slug";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 
@@ -452,8 +453,22 @@ export async function certifyNight(
   // Judged on what is actually due tonight, not the whole list: a weekday
   // deep clean owes one day's item, and the rest are not failures.
   const nightDate = await activeNight(list.id);
+  // A weekly or monthly item already done earlier this period is not owed
+  // tonight, so the signature does not count it open or demand a reason for it.
+  // The same rule the crew list drew, read from the same place, so the screen
+  // and the server agree on what tonight asks for.
+  const satisfied = await satisfiedEarlierThisPeriod(
+    list.id,
+    nightDate,
+    frozen.map((i) => ({ id: i.item_id, section: i.section })),
+  );
   const dueFrozen = frozen.filter((i) =>
-    dueOnNight(i.section, nightDate, i.days),
+    cadenceOwedTonight(
+      i.section,
+      nightDate,
+      i.days,
+      Boolean(satisfied[i.item_id]),
+    ),
   );
   const tickedDue = dueFrozen.filter((i) => i.ticked).length;
   const leftOpenCount = Array.isArray(leftOpen) ? leftOpen.length : 0;
