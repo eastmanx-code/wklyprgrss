@@ -2472,7 +2472,13 @@ function SignaturePad({
             drawing.current = true;
             onSignedChange(true);
             strokes.current.push([pointFrom(event)]);
-            event.currentTarget.setPointerCapture(event.pointerId);
+            // Pointer capture is flaky in some embedded webviews; a signature
+            // still draws without it, so never let it throw the whole pad over.
+            try {
+              event.currentTarget.setPointerCapture(event.pointerId);
+            } catch {
+              // No capture; pointermove still fires on the canvas.
+            }
           }}
           onPointerMove={(event) => {
             if (!drawing.current) return;
