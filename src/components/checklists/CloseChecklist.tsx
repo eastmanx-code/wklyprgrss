@@ -2466,13 +2466,19 @@ function SignaturePad({
       <div className="bg-panel border-card-border relative touch-none overflow-hidden rounded-lg border">
         <canvas
           ref={canvasRef}
-          className="block h-40 w-full"
+          className="block h-28 w-full"
           onPointerDown={(event) => {
             if (locked) return;
             drawing.current = true;
             onSignedChange(true);
             strokes.current.push([pointFrom(event)]);
-            event.currentTarget.setPointerCapture(event.pointerId);
+            // Pointer capture is flaky in some embedded webviews; a signature
+            // still draws without it, so never let it throw the whole pad over.
+            try {
+              event.currentTarget.setPointerCapture(event.pointerId);
+            } catch {
+              // No capture; pointermove still fires on the canvas.
+            }
           }}
           onPointerMove={(event) => {
             if (!drawing.current) return;
