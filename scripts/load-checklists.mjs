@@ -64,6 +64,8 @@ function check() {
     if (!list.role?.trim()) throw new Error(`${where}: role is required`);
     if (list.phase_label !== undefined && list.phase_label !== null && !String(list.phase_label).trim())
       throw new Error(`${where}: phase_label is set but empty`);
+    if (list.solo_signoff !== undefined && typeof list.solo_signoff !== "boolean")
+      throw new Error(`${where}: solo_signoff must be true or false`);
     const key = `${list.house}|${list.role.trim().toLowerCase()}|${list.phase}|${(list.room ?? "").trim().toLowerCase()}`;
     if (seen.has(key)) throw new Error(`${where}: listed twice`);
     seen.add(key);
@@ -109,13 +111,14 @@ function listSql(list) {
   const match = `venue_id = (select id from venues where code = ${q(code)}) and house = ${q(list.house)} and lower(role) = lower(${q(list.role.trim())}) and phase = ${q(list.phase)} and coalesce(lower(room), '') = ${q((room ?? "").toLowerCase())}`;
   const out = [];
   const phaseLabel = list.phase_label?.trim() || null;
+  const solo = list.solo_signoff === true;
   out.push(
-    `insert into close_checklists (venue_id, house, role, role_es, phase, phase_label, room)
-select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(phaseLabel)}, ${qn(room)}
+    `insert into close_checklists (venue_id, house, role, role_es, phase, phase_label, room, solo_signoff)
+select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(phaseLabel)}, ${qn(room)}, ${solo}
 where not exists (select 1 from close_checklists where ${match});`,
   );
   out.push(
-    `update close_checklists set role_es = ${qn(list.role_es)}, phase_label = ${qn(phaseLabel)}, active = true where ${match};`,
+    `update close_checklists set role_es = ${qn(list.role_es)}, phase_label = ${qn(phaseLabel)}, solo_signoff = ${solo}, active = true where ${match};`,
   );
   list.items.forEach((item, i) => {
     const title = item.title.trim();
@@ -195,10 +198,11 @@ for (const list of doc.lists) {
     (row) => (row.room ?? "").trim().toLowerCase() === (room ?? "").toLowerCase(),
   );
   const phaseLabel = list.phase_label?.trim() || null;
+  const solo = list.solo_signoff === true;
   if (found) {
     const { error } = await db
       .from("close_checklists")
-      .update({ role_es: list.role_es ?? null, phase_label: phaseLabel, active: true })
+      .update({ role_es: list.role_es ?? null, phase_label: phaseLabel, solo_signoff: solo, active: true })
       .eq("id", found.id);
     if (error) fail(where, error);
   } else {
@@ -211,6 +215,7 @@ for (const list of doc.lists) {
         role_es: list.role_es ?? null,
         phase: list.phase,
         phase_label: phaseLabel,
+        solo_signoff: solo,
         room,
       })
       .select("id")

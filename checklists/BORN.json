@@ -446,15 +446,11 @@
           "title_es": "SURTÍ LA CREDENZA CON PLATOS Y MARKING TRAYS."
         },
         {
-          "title": "I STOCKED 3 PACKS OF BLACK LINENS FOR FOLDING AND LINED THE TOP OF THE CREDENZA AND THE BACK LEDGE.",
+          "title": "I STOCKED 3 PACKS OF PINK LINENS FOR FOLDING AND LINED THE TOP OF THE CREDENZA AND THE BACK LEDGE.",
           "title_es": "SURTÍ 3 PAQUETES DE LINEN NEGRO PARA DOBLAR Y FORRÉ LA PARTE DE ARRIBA DE LA CREDENZA Y LA REPISA DE ATRÁS."
         },
         {
-          "title": "I STAGED 2 EXTRA LAMPS ON THE LEDGE ABOVE THE CREDENZA FOR QUICK REPLACEMENTS.",
-          "title_es": "DEJÉ 2 LÁMPARAS EXTRA EN LA REPISA ARRIBA DE LA CREDENZA PARA CAMBIOS RÁPIDOS."
-        },
-        {
-          "title": "I STOCKED 2 TO 3 NAPKIN PACKS ON THE BACK LEDGE FOR FOLDS.",
+          "title": "I STOCKED 2 TO 3 PACKS OF PINK LINEN ON THE BACK LEDGE FOR FOLDS.",
           "title_es": "SURTÍ 2 O 3 PAQUETES DE SERVILLETAS EN LA REPISA DE ATRÁS PARA DOBLAR."
         },
         {
@@ -537,10 +533,6 @@
           "title_es": "AYUDÉ AL SA CON EL SETUP DE AGUA Y LOS LINERS (LA BARRA RECIBE 2 JARRAS DE AGUA, LLENAS Y LIMPIAS)."
         },
         {
-          "title": "I PREPARED 4 SANITIZED TOWELS, ROLLED, FOR EACH STATION, WITH A CRUMBING PLATE.",
-          "title_es": "PREPARÉ 4 TOALLAS SANITIZED, ENROLLADAS, PARA CADA ESTACIÓN, CON UN PLATO PARA MIGAJAS."
-        },
-        {
           "title": "I REPLACED THE MARKING TRAY NAPKIN LINERS AND RESET THE STATION.",
           "title_es": "CAMBIÉ LOS LINERS DE SERVILLETA DE LOS MARKING TRAYS Y DEJÉ LISTA LA ESTACIÓN."
         },
@@ -565,7 +557,7 @@
           "title_es": "SURTÍ 2 O 3 PILAS DE SERVILLETAS DEBAJO DE LAS DOBLADAS EN EL STAND DEL RESERVATIONIST."
         },
         {
-          "title": "I STOCKED 3 PACKS OF BLACK LINEN UNDER THE STAIRS BEFORE SERVICE, OUT OF GUEST VIEW.",
+          "title": "I STOCKED 3 PACKS OF PINK LINEN UNDER THE STAIRS BEFORE SERVICE, OUTSIDE OF GUEST VIEW.",
           "title_es": "SURTÍ 3 PAQUETES DE LINEN NEGRO DEBAJO DE LAS ESCALERAS ANTES DEL SERVICIO, FUERA DE LA VISTA DEL CLIENTE."
         },
         {
@@ -624,10 +616,6 @@
           "title_es": "QUITÉ TODAS LAS LÁMPARAS, LAS REGRESÉ A LA ESTACIÓN DE CARGA Y LIMPIÉ LAS BASES."
         },
         {
-          "title": "I CHECKED ALL THE WINE BUCKETS ARE EMPTY.",
-          "title_es": "REVISÉ QUE TODAS LAS HIELERAS DE VINO ESTUVIERAN VACÍAS."
-        },
-        {
           "title": "I PUSHED IN ALL THE TABLES TO AVOID WATER POOLING WHEN IT RAINS.",
           "title_es": "METÍ TODAS LAS MESAS PARA EVITAR CHARCOS CUANDO LLUEVE."
         },
@@ -646,10 +634,6 @@
         {
           "title": "I PUT THE BROWN TARP ON THE CREDENZA.",
           "title_es": "PUSE LA LONA CAFÉ SOBRE LA CREDENZA."
-        },
-        {
-          "title": "I HUNG THE TRAY LINERS TO DRY ON THE BAR CART.",
-          "title_es": "COLGUÉ LOS TRAY LINERS A SECAR EN EL BAR CART."
         },
         {
           "title": "I RETURNED THE HANDHELD TO THE OFFICE AND PLUGGED IT IN.",
@@ -710,11 +694,6 @@
         },
         {
           "section": "CLOSER · DESSERT",
-          "title": "I DETAILED THE CART, DUSTED THE BOTTLES, CLEANED THE BOTTLE HOLDERS AND PLACED THEM AT THE SOMM STATION.",
-          "title_es": "DETALLÉ EL CARRITO, SACUDÍ LAS BOTELLAS, LIMPIÉ LOS PORTABOTELLAS Y LOS PUSE EN LA ESTACIÓN DE SOMM."
-        },
-        {
-          "section": "CLOSER · DESSERT",
           "title": "I TOLD THE MOD ABOUT ANY CAKES THAT NEED TO BE RE-DONE.",
           "title_es": "LE AVISÉ AL MOD DE CUALQUIER PASTEL QUE HAYA QUE REHACER."
         },
@@ -735,11 +714,6 @@
         },
         {
           "section": "CLOSER",
-          "title": "I EMPTIED AND WIPED ALL THE WINE BUCKETS.",
-          "title_es": "VACIÉ Y LIMPIÉ TODAS LAS HIELERAS DE VINO."
-        },
-        {
-          "section": "CLOSER",
           "title": "I PUT ALL THE CHAIRS UPSIDE DOWN ON THE TABLES.",
           "title_es": "PUSE TODAS LAS SILLAS AL REVÉS SOBRE LAS MESAS."
         },
@@ -747,11 +721,6 @@
           "section": "CLOSER",
           "title": "I SWEPT THE RESTAURANT, INCLUDING UNDER THE TABLES AND IN FRONT OF THE POS STATIONS.",
           "title_es": "BARRÍ EL RESTAURANTE, INCLUSO DEBAJO DE LAS MESAS Y FRENTE A LAS ESTACIONES DE POS."
-        },
-        {
-          "section": "CLOSER",
-          "title": "I HUNG THE CLEAN TRAY LINERS TO DRY ON THE LIFT RAIL ONCE ALL GUESTS HAD LEFT.",
-          "title_es": "COLGUÉ LOS TRAY LINERS LIMPIOS A SECAR EN EL RIEL DEL LIFT UNA VEZ QUE SE FUERON LOS CLIENTES."
         },
         {
           "section": "CLOSER",
@@ -811,7 +780,6 @@
       "role": "SA",
       "role_es": "ASISTENTE DE MESERO",
       "phase": "open",
-      "room": "Upstairs",
       "items": [
         {
           "section": "TARPS",
@@ -918,16 +886,7 @@
           "section": "POLISHING AND CREDENZA",
           "title": "I LOCATED ANY SILVERWARE LEFT OVER FROM THE PREVIOUS NIGHT AND BROUGHT IT UPSTAIRS.",
           "title_es": "LOCALICÉ LOS CUBIERTOS QUE QUEDARON DE LA NOCHE ANTERIOR Y LOS SUBÍ."
-        }
-      ]
-    },
-    {
-      "house": "FOH",
-      "role": "SA",
-      "role_es": "ASISTENTE DE MESERO",
-      "phase": "open",
-      "room": "Downstairs",
-      "items": [
+        },
         {
           "title": "I SWEPT THE BACK DECK AND EMPLOYEE AREA AND MADE SURE THERE WAS NO TRASH AT THE START OF THE SHIFT.",
           "title_es": "BARRÍ EL DECK TRASERO Y EL ÁREA DE EMPLEADOS Y ME ASEGURÉ DE QUE NO HUBIERA BASURA AL INICIO DEL TURNO."
@@ -1014,23 +973,18 @@
         },
         {
           "section": "SHED",
-          "title": "I CLEARED THE PATHWAY IN THE SHED, ORGANIZED THE SHELVES AND PUT AWAY PRODUCT.",
-          "title_es": "DESPEJÉ EL PASO DEL SHED, ORGANICÉ LAS REPISAS Y GUARDÉ EL PRODUCTO."
-        },
-        {
-          "section": "SHED",
           "title": "I SET UP THE LINEN BAG IN THE DISH STATION.",
           "title_es": "ARMÉ LA BOLSA DE LINEN EN LA ESTACIÓN DE DISH."
-        },
-        {
-          "section": "SHED",
-          "title": "I TOLD MANAGEMENT OF ANY ITEMS THAT ARE LOW OR DAMAGED IN THE SHED.",
-          "title_es": "LE AVISÉ A GERENCIA DE CUALQUIER COSA BAJA O DAÑADA EN EL SHED."
         },
         {
           "section": "WATER LAST",
           "title": "I FILLED ALL THE STILL AND SPARKLING WATER CARAFES AND PLACED THEM WHERE THEY GO.",
           "title_es": "LLENÉ TODAS LAS JARRAS DE AGUA NATURAL Y MINERAL Y LAS PUSE EN SU LUGAR."
+        },
+        {
+          "title": "I PREPARED 4 SANITIZED TOWELS, ROLLED, FOR EACH STATION, WITH A CRUMBING PLATE.",
+          "title_es": "PREPARÉ 4 TOALLAS SANITIZED, ENROLLADAS, PARA CADA ESTACIÓN, CON UN PLATO PARA MIGAJAS.",
+          "section": null
         }
       ]
     },
@@ -1255,11 +1209,6 @@
           "title_es": "QUITÉ TODOS LOS LINERS DE LINEN NEGRO DE LA ESTACIÓN DE AGUA."
         },
         {
-          "section": "CLOSER · DINING ROOM",
-          "title": "I CLEANED THE GRIP TAPE THROUGH THE BACK HALLWAY.",
-          "title_es": "LIMPIÉ EL GRIP TAPE POR EL PASILLO TRASERO."
-        },
-        {
           "section": "FINAL WALKTHROUGH",
           "title": "I CHECKED OUT WITH THE MOD AND DID A FINAL WALKTHROUGH.",
           "title_es": "ME REPORTÉ CON EL MOD E HICE UN RECORRIDO FINAL."
@@ -1341,11 +1290,6 @@
           "section": "EXPO LINE",
           "title": "I ROLLED PLATE-WIPE TOWELS AND MOISTENED THEM IN FILTERED WATER AND A SPLASH OF WHITE VINEGAR (X20), AND SET A SANITATION TOWEL IN A 9TH PAN AT THE HAND SINK FOR THE LAVA STONE BASES.",
           "title_es": "ENROLLÉ TOALLAS PARA LIMPIAR PLATOS Y LAS HUMEDECÍ CON AGUA FILTRADA Y UN CHORRITO DE VINAGRE BLANCO (X20), Y PUSE UNA TOALLA DE SANITACIÓN EN UN PAN 9 EN EL LAVABO PARA LAS BASES DE PIEDRA DE LAVA."
-        },
-        {
-          "section": "EXPO LINE",
-          "title": "THE SMOKER FOR CHICKEN IS CLEAN AND IN GOOD WORKING ORDER, AND THE HAY FOR THE SMOKER IS STOCKED.",
-          "title_es": "EL AHUMADOR DEL POLLO ESTÁ LIMPIO Y FUNCIONANDO, Y EL HENO DEL AHUMADOR ESTÁ SURTIDO."
         },
         {
           "section": "EXPO LINE",
@@ -2051,6 +1995,16 @@
         {
           "title": "I LOCKED THE WINE ROOM AND DID ONE FINAL SWEEP THROUGH THE RESTAURANT TO MAKE SURE NOTHING WAS MISSED.",
           "title_es": "CERRÉ EL CUARTO DE VINO CON LLAVE E HICE UNA ÚLTIMA RONDA POR EL RESTAURANTE PARA NO DEJAR NADA PENDIENTE."
+        },
+        {
+          "title": "I CHECKED ALL THE WINE BUCKETS ARE EMPTY.",
+          "title_es": "REVISÉ QUE TODAS LAS HIELERAS DE VINO ESTUVIERAN VACÍAS.",
+          "section": null
+        },
+        {
+          "section": null,
+          "title": "I EMPTIED AND WIPED ALL THE WINE BUCKETS.",
+          "title_es": "VACIÉ Y LIMPIÉ TODAS LAS HIELERAS DE VINO."
         }
       ]
     },
@@ -2321,10 +2275,6 @@
         {
           "title": "I SET UP ALL THE HAPPY HOUR ITEMS FOR SERVICE AND GAVE A CHEF THE COUNTS.",
           "title_es": "ARMÉ TODOS LOS ITEMS DE HAPPY HOUR PARA EL SERVICIO Y LE DI LOS CONTEOS A UN CHEF."
-        },
-        {
-          "title": "I TOASTED OFF THE LEVAIN.",
-          "title_es": "TOSTÉ EL LEVAIN."
         },
         {
           "title": "I MADE THE POTATO PUREE AND HAD A CHEF TASTE AND APPROVE IT BEFORE PUTTING IT INTO THIRD PANS.",
@@ -3054,7 +3004,7 @@
           "title_es": "ME REPORTÉ CON UN LEAD ANTES DE IRME."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I WIPED AND DETAILED THE DROP FREEZER, MADE SURE THERE WAS NO WATER INSIDE, AND RETURNED THE ICE AND BATCHES FOR SERVICE.",
           "title_es": "LIMPIÉ Y DETALLÉ EL DROP FREEZER, ME ASEGURÉ DE QUE NO HUBIERA AGUA ADENTRO, Y REGRESÉ EL HIELO Y LOS BATCHES PARA EL SERVICIO.",
           "proof": [
@@ -3062,6 +3012,9 @@
               "kind": "photo",
               "prompt": "The drop freezer wiped out, no water inside"
             }
+          ],
+          "days": [
+            "THURSDAY"
           ]
         }
       ]
@@ -3212,9 +3165,24 @@
           "title_es": "ME REPORTÉ CON UN LEAD ANTES DE IRME."
         },
         {
-          "section": "WEEKLY",
-          "title": "I POLISHED THE BAR STOOLS WITH MICROFIBERS, FOCUSING ON THE CREVICES AND USING BRASS POLISH WHEN NEEDED (STOOLS 100 TO 118).",
-          "title_es": "PULÍ LOS BANCOS DE LA BARRA CON MICROFIBRAS, ENFOCÁNDOME EN LAS HENDIDURAS Y USANDO BRASS POLISH CUANDO HIZO FALTA (BANCOS 100 AL 118).",
+          "section": null,
+          "title": "I WIPED AND DETAILED THE DROP FREEZER, MADE SURE THERE WAS NO WATER INSIDE, AND RETURNED THE ICE AND BATCHES FOR SERVICE.",
+          "title_es": "LIMPIÉ Y DETALLÉ EL DROP FREEZER, ME ASEGURÉ DE QUE NO HUBIERA AGUA ADENTRO, Y REGRESÉ EL HIELO Y LOS BATCHES PARA EL SERVICIO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The drop freezer wiped out, no water inside"
+            }
+          ],
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "I POLISHED BAR STOOLS 100 TO 105 WITH MICROFIBERS, FOCUSING ON THE CREVICES AND USING BRASS POLISH WHEN NEEDED.",
+          "days": [
+            "MONDAY"
+          ],
           "proof": [
             {
               "kind": "photo",
@@ -3223,13 +3191,26 @@
           ]
         },
         {
-          "section": "WEEKLY",
-          "title": "I WIPED AND DETAILED THE DROP FREEZER, MADE SURE THERE WAS NO WATER INSIDE, AND RETURNED THE ICE AND BATCHES FOR SERVICE.",
-          "title_es": "LIMPIÉ Y DETALLÉ EL DROP FREEZER, ME ASEGURÉ DE QUE NO HUBIERA AGUA ADENTRO, Y REGRESÉ EL HIELO Y LOS BATCHES PARA EL SERVICIO.",
+          "title": "I POLISHED BAR STOOLS 106 TO 111 WITH MICROFIBERS, FOCUSING ON THE CREVICES AND USING BRASS POLISH WHEN NEEDED.",
+          "days": [
+            "TUESDAY"
+          ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "The drop freezer wiped out, no water inside"
+              "prompt": "The polished bar stools"
+            }
+          ]
+        },
+        {
+          "title": "I POLISHED BAR STOOLS 112 TO 118 WITH MICROFIBERS, FOCUSING ON THE CREVICES AND USING BRASS POLISH WHEN NEEDED.",
+          "days": [
+            "WEDNESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The polished bar stools"
             }
           ]
         }
@@ -3489,19 +3470,28 @@
           "title_es": "AL FINAL DE LA NOCHE, ME REPORTÉ CON UN LEAD."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I DEFROSTED THE BIG ROCK FREEZER, UNPLUGGED IT AND WIPED THE SIDES, CHANGED THE ICE PANS AND STORED THE ICE UPSTAIRS, AND STORED THE BATCHES IN THE COOLERS.",
-          "title_es": "DESCONGELÉ EL FREEZER DE ROCA GRANDE, LO DESCONECTÉ Y LIMPIÉ LOS LADOS, CAMBIÉ LAS CHAROLAS DE HIELO Y GUARDÉ EL HIELO ARRIBA, Y GUARDÉ LOS BATCHES EN LOS COOLERS."
+          "title_es": "DESCONGELÉ EL FREEZER DE ROCA GRANDE, LO DESCONECTÉ Y LIMPIÉ LOS LADOS, CAMBIÉ LAS CHAROLAS DE HIELO Y GUARDÉ EL HIELO ARRIBA, Y GUARDÉ LOS BATCHES EN LOS COOLERS.",
+          "days": [
+            "WEDNESDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE POS STATIONS, THE SCREENS AND PRINTERS, AND UNDER THE CASH DRAWER.",
-          "title_es": "LIMPIÉ LAS ESTACIONES DE POS, LAS PANTALLAS Y LAS IMPRESORAS, Y DEBAJO DEL CAJÓN DE DINERO."
+          "title_es": "LIMPIÉ LAS ESTACIONES DE POS, LAS PANTALLAS Y LAS IMPRESORAS, Y DEBAJO DEL CAJÓN DE DINERO.",
+          "days": [
+            "THURSDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE SILVERWARE STATION AND THE TOWEL AND RECYCLE STATION, REMOVED THE MISE AND WIPED THE SHELVES, USING A GREEN SCRUBBER WHEN NEEDED.",
-          "title_es": "LIMPIÉ LA ESTACIÓN DE CUBIERTOS Y LA ESTACIÓN DE TOALLAS Y RECICLAJE, QUITÉ EL MISE Y LIMPIÉ LAS REPISAS, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA."
+          "title_es": "LIMPIÉ LA ESTACIÓN DE CUBIERTOS Y LA ESTACIÓN DE TOALLAS Y RECICLAJE, QUITÉ EL MISE Y LIMPIÉ LAS REPISAS, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "days": [
+            "SUNDAY"
+          ]
         }
       ]
     },
@@ -3739,19 +3729,28 @@
           "title_es": "AL FINAL DE LA NOCHE, ME REPORTÉ CON UN LEAD."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I DEFROSTED THE BIG ROCK FREEZER, UNPLUGGED IT AND WIPED THE SIDES, CHANGED THE ICE PANS AND STORED THE ICE UPSTAIRS, AND STORED THE BATCHES IN THE COOLERS.",
-          "title_es": "DESCONGELÉ EL FREEZER DE ROCA GRANDE, LO DESCONECTÉ Y LIMPIÉ LOS LADOS, CAMBIÉ LAS CHAROLAS DE HIELO Y GUARDÉ EL HIELO ARRIBA, Y GUARDÉ LOS BATCHES EN LOS COOLERS."
+          "title_es": "DESCONGELÉ EL FREEZER DE ROCA GRANDE, LO DESCONECTÉ Y LIMPIÉ LOS LADOS, CAMBIÉ LAS CHAROLAS DE HIELO Y GUARDÉ EL HIELO ARRIBA, Y GUARDÉ LOS BATCHES EN LOS COOLERS.",
+          "days": [
+            "WEDNESDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE POS STATIONS, THE SCREENS AND PRINTERS, AND UNDER THE CASH DRAWER.",
-          "title_es": "LIMPIÉ LAS ESTACIONES DE POS, LAS PANTALLAS Y LAS IMPRESORAS, Y DEBAJO DEL CAJÓN DE DINERO."
+          "title_es": "LIMPIÉ LAS ESTACIONES DE POS, LAS PANTALLAS Y LAS IMPRESORAS, Y DEBAJO DEL CAJÓN DE DINERO.",
+          "days": [
+            "THURSDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE SILVERWARE STATION AND THE TOWEL AND RECYCLE STATION, REMOVED THE MISE AND WIPED THE SHELVES, USING A GREEN SCRUBBER WHEN NEEDED.",
-          "title_es": "LIMPIÉ LA ESTACIÓN DE CUBIERTOS Y LA ESTACIÓN DE TOALLAS Y RECICLAJE, QUITÉ EL MISE Y LIMPIÉ LAS REPISAS, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA."
+          "title_es": "LIMPIÉ LA ESTACIÓN DE CUBIERTOS Y LA ESTACIÓN DE TOALLAS Y RECICLAJE, QUITÉ EL MISE Y LIMPIÉ LAS REPISAS, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "days": [
+            "SUNDAY"
+          ]
         }
       ]
     },
@@ -3906,12 +3905,16 @@
           "title_es": "ME REPORTÉ CON UN LEAD."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I PUT AWAY THE IFS SODA AND PELLEGRINO DELIVERY.",
-          "title_es": "GUARDÉ LA ENTREGA DE SODA IFS Y PELLEGRINO."
+          "title_es": "GUARDÉ LA ENTREGA DE SODA IFS Y PELLEGRINO.",
+          "days": [
+            "TUESDAY",
+            "FRIDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I REPLACED ALL THE BLACK LINENS IN THE WALK-IN AND MADE SURE THE WALK-IN WAS CLEAN AND NOT STICKY.",
           "title_es": "CAMBIÉ TODOS LOS LINENS NEGROS DEL WALK-IN Y ME ASEGURÉ DE QUE EL WALK-IN ESTUVIERA LIMPIO Y SIN PEGOSTE.",
           "proof": [
@@ -3919,12 +3922,18 @@
               "kind": "photo",
               "prompt": "The walk-in clean and restocked with black linens"
             }
+          ],
+          "days": [
+            "MONDAY"
           ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE VENTS ON BOTH ICE MACHINES AND WIPED THE ICE MACHINE DOORS INSIDE AND OUT AND THE INTERIOR WALLS.",
-          "title_es": "LIMPIÉ LAS REJILLAS DE LAS DOS MÁQUINAS DE HIELO Y LIMPIÉ LAS PUERTAS DE LAS MÁQUINAS DE HIELO POR DENTRO Y POR FUERA Y LAS PAREDES INTERIORES."
+          "title_es": "LIMPIÉ LAS REJILLAS DE LAS DOS MÁQUINAS DE HIELO Y LIMPIÉ LAS PUERTAS DE LAS MÁQUINAS DE HIELO POR DENTRO Y POR FUERA Y LAS PAREDES INTERIORES.",
+          "days": [
+            "FRIDAY"
+          ]
         }
       ],
       "room": "Upstairs"
@@ -4080,12 +4089,16 @@
           "title_es": "ME REPORTÉ CON UN LEAD."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I PUT AWAY THE IFS SODA AND PELLEGRINO DELIVERY.",
-          "title_es": "GUARDÉ LA ENTREGA DE SODA IFS Y PELLEGRINO."
+          "title_es": "GUARDÉ LA ENTREGA DE SODA IFS Y PELLEGRINO.",
+          "days": [
+            "TUESDAY",
+            "FRIDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I REPLACED ALL THE BLACK LINENS IN THE WALK-IN AND MADE SURE THE WALK-IN WAS CLEAN AND NOT STICKY.",
           "title_es": "CAMBIÉ TODOS LOS LINENS NEGROS DEL WALK-IN Y ME ASEGURÉ DE QUE EL WALK-IN ESTUVIERA LIMPIO Y SIN PEGOSTE.",
           "proof": [
@@ -4093,12 +4106,18 @@
               "kind": "photo",
               "prompt": "The walk-in clean and restocked with black linens"
             }
+          ],
+          "days": [
+            "MONDAY"
           ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I CLEANED THE VENTS ON BOTH ICE MACHINES AND WIPED THE ICE MACHINE DOORS INSIDE AND OUT AND THE INTERIOR WALLS.",
-          "title_es": "LIMPIÉ LAS REJILLAS DE LAS DOS MÁQUINAS DE HIELO Y LIMPIÉ LAS PUERTAS DE LAS MÁQUINAS DE HIELO POR DENTRO Y POR FUERA Y LAS PAREDES INTERIORES."
+          "title_es": "LIMPIÉ LAS REJILLAS DE LAS DOS MÁQUINAS DE HIELO Y LIMPIÉ LAS PUERTAS DE LAS MÁQUINAS DE HIELO POR DENTRO Y POR FUERA Y LAS PAREDES INTERIORES.",
+          "days": [
+            "FRIDAY"
+          ]
         }
       ],
       "room": "Downstairs"
@@ -4256,19 +4275,33 @@
           "title_es": "DEJÉ MI ESTACIÓN MEJOR DE COMO LA ENCONTRÉ."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I DELIMED THE DISHWASHER AND DID A FUNCTIONALITY CHECK TO MAKE SURE EVERYTHING WAS WORKING AS IT SHOULD.",
-          "title_es": "LE QUITÉ EL SARRO AL LAVAPLATOS E HICE UNA REVISIÓN DE FUNCIONAMIENTO PARA ASEGURARME DE QUE TODO FUNCIONARA COMO DEBE."
+          "title_es": "LE QUITÉ EL SARRO AL LAVAPLATOS E HICE UNA REVISIÓN DE FUNCIONAMIENTO PARA ASEGURARME DE QUE TODO FUNCIONARA COMO DEBE.",
+          "days": [
+            "WEDNESDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "ON FRIDAYS, AS MID BARBACK, I SWEPT THE BACK CO2 AND NITROGEN TANK AREA BEFORE AND AFTER.",
-          "title_es": "LOS VIERNES, COMO BARBACK DE MID, BARRÍ EL ÁREA DE LOS TANQUES DE CO2 Y NITRÓGENO DE ATRÁS ANTES Y DESPUÉS."
+          "title_es": "LOS VIERNES, COMO BARBACK DE MID, BARRÍ EL ÁREA DE LOS TANQUES DE CO2 Y NITRÓGENO DE ATRÁS ANTES Y DESPUÉS.",
+          "days": [
+            "FRIDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "ON SATURDAYS, AS MID BARBACK, I MOPPED THE WALK-IN FLOOR BEFORE LEAVING.",
-          "title_es": "LOS SÁBADOS, COMO BARBACK DE MID, TRAPEÉ EL PISO DEL WALK-IN ANTES DE IRME."
+          "title_es": "LOS SÁBADOS, COMO BARBACK DE MID, TRAPEÉ EL PISO DEL WALK-IN ANTES DE IRME.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "I HUNG THE TRAY LINERS TO DRY ON THE BAR CART.",
+          "title_es": "COLGUÉ LOS TRAY LINERS A SECAR EN EL BAR CART.",
+          "section": null
         }
       ],
       "room": "Upstairs"
@@ -4426,19 +4459,38 @@
           "title_es": "DEJÉ MI ESTACIÓN MEJOR DE COMO LA ENCONTRÉ."
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "I DELIMED THE DISHWASHER AND DID A FUNCTIONALITY CHECK TO MAKE SURE EVERYTHING WAS WORKING AS IT SHOULD.",
-          "title_es": "LE QUITÉ EL SARRO AL LAVAPLATOS E HICE UNA REVISIÓN DE FUNCIONAMIENTO PARA ASEGURARME DE QUE TODO FUNCIONARA COMO DEBE."
+          "title_es": "LE QUITÉ EL SARRO AL LAVAPLATOS E HICE UNA REVISIÓN DE FUNCIONAMIENTO PARA ASEGURARME DE QUE TODO FUNCIONARA COMO DEBE.",
+          "days": [
+            "WEDNESDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "ON FRIDAYS, AS MID BARBACK, I SWEPT THE BACK CO2 AND NITROGEN TANK AREA BEFORE AND AFTER.",
-          "title_es": "LOS VIERNES, COMO BARBACK DE MID, BARRÍ EL ÁREA DE LOS TANQUES DE CO2 Y NITRÓGENO DE ATRÁS ANTES Y DESPUÉS."
+          "title_es": "LOS VIERNES, COMO BARBACK DE MID, BARRÍ EL ÁREA DE LOS TANQUES DE CO2 Y NITRÓGENO DE ATRÁS ANTES Y DESPUÉS.",
+          "days": [
+            "FRIDAY"
+          ]
         },
         {
-          "section": "WEEKLY",
+          "section": null,
           "title": "ON SATURDAYS, AS MID BARBACK, I MOPPED THE WALK-IN FLOOR BEFORE LEAVING.",
-          "title_es": "LOS SÁBADOS, COMO BARBACK DE MID, TRAPEÉ EL PISO DEL WALK-IN ANTES DE IRME."
+          "title_es": "LOS SÁBADOS, COMO BARBACK DE MID, TRAPEÉ EL PISO DEL WALK-IN ANTES DE IRME.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "section": null,
+          "title": "I HUNG THE CLEAN TRAY LINERS TO DRY ON THE LIFT RAIL ONCE ALL GUESTS HAD LEFT.",
+          "title_es": "COLGUÉ LOS TRAY LINERS LIMPIOS A SECAR EN EL RIEL DEL LIFT UNA VEZ QUE SE FUERON LOS CLIENTES."
+        },
+        {
+          "section": null,
+          "title": "I DETAILED THE CART, DUSTED THE BOTTLES, CLEANED THE BOTTLE HOLDERS AND PLACED THEM AT THE SOMM STATION.",
+          "title_es": "DETALLÉ EL CARRITO, SACUDÍ LAS BOTELLAS, LIMPIÉ LOS PORTABOTELLAS Y LOS PUSE EN LA ESTACIÓN DE SOMM."
         }
       ],
       "room": "Downstairs"
@@ -4450,84 +4502,286 @@
       "phase": "close",
       "items": [
         {
-          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES.",
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (THIRD WELL).",
           "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The well broken down: underside and stainless clean and dry"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES.",
-          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR."
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (THIRD WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK.",
-          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK."
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (THIRD WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX.",
-          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA."
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (THIRD WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY.",
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (THIRD WELL).",
           "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The syrups filled, pour spouts changed, bottles detailed"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER.",
-          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS."
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (THIRD WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR.",
-          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR."
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (THIRD WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES.",
-          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS."
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (THIRD WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY.",
-          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE."
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (THIRD WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY.",
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (THIRD WELL).",
           "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The speed rails clean and the spirits detailed"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING.",
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (THIRD WELL).",
           "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
           "proof": [
             {
               "kind": "note",
               "prompt": "Any bar tools missing, or all present"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER.",
-          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE."
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (THIRD WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED.",
-          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA."
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (THIRD WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CHECKED OUT WITH A LEAD.",
-          "title_es": "ME REPORTÉ CON UN LEAD."
+          "title": "I CHECKED OUT WITH A LEAD (THIRD WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "THIRD WELL"
+        },
+        {
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (POINT WELL).",
+          "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well broken down: underside and stainless clean and dry"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (POINT WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (POINT WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (POINT WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (POINT WELL).",
+          "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The syrups filled, pour spouts changed, bottles detailed"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (POINT WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (POINT WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (POINT WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (POINT WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (POINT WELL).",
+          "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails clean and the spirits detailed"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (POINT WELL).",
+          "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any bar tools missing, or all present"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (POINT WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (POINT WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CHECKED OUT WITH A LEAD (POINT WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (SERVICE WELL).",
+          "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well broken down: underside and stainless clean and dry"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (SERVICE WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (SERVICE WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (SERVICE WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (SERVICE WELL).",
+          "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The syrups filled, pour spouts changed, bottles detailed"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (SERVICE WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (SERVICE WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (SERVICE WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (SERVICE WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (SERVICE WELL).",
+          "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails clean and the spirits detailed"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (SERVICE WELL).",
+          "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any bar tools missing, or all present"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (SERVICE WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (SERVICE WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CHECKED OUT WITH A LEAD (SERVICE WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "SERVICE WELL"
         }
       ],
       "room": "Upstairs"
@@ -4539,84 +4793,286 @@
       "phase": "close",
       "items": [
         {
-          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES.",
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (THIRD WELL).",
           "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The well broken down: underside and stainless clean and dry"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES.",
-          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR."
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (THIRD WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK.",
-          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK."
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (THIRD WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX.",
-          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA."
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (THIRD WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY.",
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (THIRD WELL).",
           "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The syrups filled, pour spouts changed, bottles detailed"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER.",
-          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS."
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (THIRD WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR.",
-          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR."
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (THIRD WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES.",
-          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS."
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (THIRD WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY.",
-          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE."
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (THIRD WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY.",
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (THIRD WELL).",
           "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
           "proof": [
             {
               "kind": "photo",
               "prompt": "The speed rails clean and the spirits detailed"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING.",
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (THIRD WELL).",
           "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
           "proof": [
             {
               "kind": "note",
               "prompt": "Any bar tools missing, or all present"
             }
-          ]
+          ],
+          "section": "THIRD WELL"
         },
         {
-          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER.",
-          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE."
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (THIRD WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED.",
-          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA."
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (THIRD WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "THIRD WELL"
         },
         {
-          "title": "I CHECKED OUT WITH A LEAD.",
-          "title_es": "ME REPORTÉ CON UN LEAD."
+          "title": "I CHECKED OUT WITH A LEAD (THIRD WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "THIRD WELL"
+        },
+        {
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (POINT WELL).",
+          "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well broken down: underside and stainless clean and dry"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (POINT WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (POINT WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (POINT WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (POINT WELL).",
+          "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The syrups filled, pour spouts changed, bottles detailed"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (POINT WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (POINT WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (POINT WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (POINT WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (POINT WELL).",
+          "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails clean and the spirits detailed"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (POINT WELL).",
+          "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any bar tools missing, or all present"
+            }
+          ],
+          "section": "POINT WELL"
+        },
+        {
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (POINT WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (POINT WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I CHECKED OUT WITH A LEAD (POINT WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "POINT WELL"
+        },
+        {
+          "title": "I BROKE DOWN THE WELL FROM TOP TO BOTTOM, LEAVING IT CLEAN, DRY AND NOT STICKY, PAYING ATTENTION TO THE UNDERSIDE AND ALL THE STAINLESS STEEL SURFACES (SERVICE WELL).",
+          "title_es": "DESARMÉ EL WELL DE ARRIBA A ABAJO, DEJÁNDOLO LIMPIO, SECO Y SIN PEGOSTE, PONIENDO ATENCIÓN AL FONDO Y A TODAS LAS SUPERFICIES DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well broken down: underside and stainless clean and dry"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED THE BAR TOP GRATES TO THE RIGHT AND LEFT OF THE WELL, ESPECIALLY UNDER THE SUGAR AND SALT PLATES (SERVICE WELL).",
+          "title_es": "LIMPIÉ LOS GRATES DEL BARTOP A LA DERECHA Y A LA IZQUIERDA DEL WELL, SOBRE TODO DEBAJO DE LOS PLATOS DE SAL Y AZÚCAR.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I HANDED THE LEMON JUICE, LIME JUICE AND OPEN CAVA TO THE BARBACK (SERVICE WELL).",
+          "title_es": "LE ENTREGUÉ EL JUGO DE LIMÓN AMARILLO, EL JUGO DE LIMÓN VERDE Y LA CAVA ABIERTA AL BARBACK.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I PULLED ALL THE GARNISH, THREW AWAY THE PERISHABLES, CHANGED OUT THE STURDY GARNISH CONTAINERS INTO THE REFRIGERATOR, AND WIPED THE BAR GARNISH BOX (SERVICE WELL).",
+          "title_es": "SAQUÉ TODO EL GARNISH, TIRÉ LOS PERECEDEROS, CAMBIÉ LOS CONTENEDORES DE GARNISH RESISTENTE AL REFRIGERADOR Y LIMPIÉ LA CAJA DE GARNISH DE LA BARRA.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I MARRIED AND FILLED THE SYRUPS, WASHED AND CHANGED THE POUR SPOUTS, DETAILED THE BOTTLES AND SCRUBBED THEM INSIDE WHEN EMPTY (SERVICE WELL).",
+          "title_es": "JUNTÉ Y LLENÉ LOS JARABES, LAVÉ Y CAMBIÉ LOS POUR SPOUTS, DETALLÉ LAS BOTELLAS Y LAS TALLÉ POR DENTRO CUANDO ESTABAN VACÍAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The syrups filled, pour spouts changed, bottles detailed"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED THE SYRUP RAIL AND RAN THE MAT THROUGH THE DISHWASHER (SERVICE WELL).",
+          "title_es": "LIMPIÉ EL RIEL DE JARABES Y PASÉ EL TAPETE POR EL LAVAPLATOS.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I STORED THE PERISHABLE SYRUPS IN THE REFRIGERATOR (SERVICE WELL).",
+          "title_es": "GUARDÉ LOS JARABES PERECEDEROS EN EL REFRIGERADOR.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I DETAILED AND CAPPED THE BITTER BOTTLES (SERVICE WELL).",
+          "title_es": "DETALLÉ Y TAPÉ LAS BOTELLAS DE BITTERS.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I BURNED THE ICE AND MADE SURE THE STAINLESS STEEL AROUND THE ICE WAS CLEAN, DRY AND NOT STICKY (SERVICE WELL).",
+          "title_es": "QUEMÉ EL HIELO Y ME ASEGURÉ DE QUE EL ACERO INOXIDABLE ALREDEDOR DEL HIELO ESTUVIERA LIMPIO, SECO Y SIN PEGOSTE.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I DETAILED THE SPIRIT BOTTLES, MARRIED THE LOW SPIRITS IN THE SPEED RAILS AND CLEANED THE SPEED RAILS SO THEY WERE NOT STICKY (SERVICE WELL).",
+          "title_es": "DETALLÉ LAS BOTELLAS DE LICOR, JUNTÉ LOS LICORES BAJOS EN LOS SPEED RAILS Y LIMPIÉ LOS SPEED RAILS PARA QUE NO QUEDARAN PEGAJOSOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed rails clean and the spirits detailed"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I WASHED THE BAR TOOLS, MADE SURE THEY WERE CLEAN, DRY AND BACK IN PLACE, AND NOTIFIED THE LEAD IF ANY WERE MISSING (SERVICE WELL).",
+          "title_es": "LAVÉ LAS HERRAMIENTAS DE BARRA, ME ASEGURÉ DE QUE ESTUVIERAN LIMPIAS, SECAS Y EN SU LUGAR, Y LE AVISÉ AL LEAD SI FALTABA ALGUNA.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any bar tools missing, or all present"
+            }
+          ],
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "WHEN CLOSING THE WELL, I SCRUBBED THE UNDERSIDE OF THE WELL AND THE TOOL RINSE SINK WITH A GREEN SCRUBBER (SERVICE WELL).",
+          "title_es": "AL CERRAR EL WELL, TALLÉ EL FONDO DEL WELL Y EL FREGADERO DE ENJUAGUE DE HERRAMIENTAS CON UN SCRUBBER VERDE.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CLEANED UNDER THE GLASSWARE IN THE WELLS AND WASHED THE BLACK MAT, USING A GREEN SCRUBBER WHEN NEEDED (SERVICE WELL).",
+          "title_es": "LIMPIÉ DEBAJO DE LA CRISTALERÍA EN LOS WELLS Y LAVÉ EL TAPETE NEGRO, USANDO UN SCRUBBER VERDE CUANDO HIZO FALTA.",
+          "section": "SERVICE WELL"
+        },
+        {
+          "title": "I CHECKED OUT WITH A LEAD (SERVICE WELL).",
+          "title_es": "ME REPORTÉ CON UN LEAD.",
+          "section": "SERVICE WELL"
         }
       ],
       "room": "Downstairs"

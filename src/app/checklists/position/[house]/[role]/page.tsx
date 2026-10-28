@@ -161,9 +161,16 @@ export default async function PositionPage({
    * the way there is between open and close.
    */
   const byRoom = lists.some((row) => row.room?.trim());
+  // When a roomed position also runs more than one phase — a bartender with an
+  // open and a close in each room — the room alone is not the choice. Two
+  // "Downstairs" rows with nothing to tell open from close is no label at all,
+  // so the phase rides alongside the room. A deep clean, every room the same
+  // phase, keeps the room on its own.
+  const multiPhase = new Set(lists.map((l) => l.phase)).size > 1;
   const ordered = [...lists].sort((a, b) =>
     byRoom
-      ? (a.room ?? "").localeCompare(b.room ?? "")
+      ? (a.room ?? "").localeCompare(b.room ?? "") ||
+        PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase)
       : PHASE_ORDER.indexOf(a.phase) - PHASE_ORDER.indexOf(b.phase),
   );
 
@@ -197,7 +204,18 @@ export default async function PositionPage({
                 {/* A room, or a venue's own label, reads the same in both
                     languages; the phase name is the one that translates. */}
                 {list.room?.trim() ? (
-                  list.room
+                  <>
+                    {list.room}
+                    {multiPhase ? (
+                      <>
+                        {" · "}
+                        <T
+                          en={phaseName(list.phase)}
+                          es={PHASE_ES[list.phase]}
+                        />
+                      </>
+                    ) : null}
+                  </>
                 ) : list.phase_label?.trim() ? (
                   list.phase_label
                 ) : (
