@@ -1,0 +1,89 @@
+STOC checklist onboarding — DRAFT inventory (reviewed, not loaded)
+Source: FOH_BOH_Combined_Checklists.xlsx
+
+TOTALS: 61 lists, 1263 items, 193 photo asks, 17 notes
+  FOH: 43 lists, 908 items
+  HOH: 18 lists, 355 items
+
+LISTS (house | role | phase | room | items | photos | notes):
+  FOH | Deep clean (manager)   | mid   | Seneca            |   4 it |  2 ph |  0 nt
+  FOH | Deep clean (host)      | mid   | Seneca            |  13 it |  5 ph |  0 nt
+  FOH | Deep clean (support/runners) | mid   | Seneca            |  14 it |  3 ph |  0 nt
+  FOH | Deep clean (server)    | mid   | Seneca            |  19 it |  4 ph |  0 nt
+  FOH | MOD                    | open  | -                 |  32 it |  3 ph |  0 nt
+  FOH | MOD                    | mid   | -                 |  23 it |  2 ph |  0 nt
+  FOH | MOD                    | close | -                 |  22 it |  3 ph |  1 nt
+  FOH | MOD weekly             | mid   | -                 |  16 it |  1 ph |  0 nt
+  FOH | Host                   | open  | Seneca            |  24 it |  3 ph |  0 nt
+  FOH | Host                   | close | Seneca            |  23 it |  3 ph |  0 nt
+  FOH | Support                | open  | Seneca            |  38 it |  3 ph |  0 nt
+  FOH | Support                | mid   | Seneca            |  13 it |  3 ph |  0 nt
+  FOH | Support (front)        | close | Seneca            |  22 it |  3 ph |  0 nt
+  FOH | Support (back)         | close | Seneca            |  19 it |  3 ph |  0 nt
+  FOH | Food runner            | close | Seneca            |  13 it |  3 ph |  0 nt
+  FOH | Server                 | open  | Seneca            |  27 it |  3 ph |  0 nt
+  FOH | Server                 | close | Seneca            |  57 it |  4 ph |  0 nt
+  FOH | Sommelier              | open  | -                 |  17 it |  2 ph |  0 nt
+  FOH | Sommelier              | close | -                 |  12 it |  3 ph |  1 nt
+  FOH | Bartender              | open  | Seneca            |  45 it |  4 ph |  0 nt
+  FOH | Bartender              | mid   | Seneca            |  20 it |  3 ph |  0 nt
+  FOH | Bartender              | close | Seneca            |  40 it |  4 ph |  1 nt
+  FOH | Garnish prep           | open  | Seneca            |  18 it |  0 ph |  0 nt
+  FOH | Bar deep clean         | mid   | Seneca            |  12 it |  5 ph |  0 nt
+  FOH | Bar weekly cleaning    | mid   | Seneca            |  14 it |  5 ph |  0 nt
+  FOH | Entrance               | open  | The Reading Club  |  14 it |  2 ph |  0 nt
+  FOH | Floor                  | open  | The Reading Club  |  14 it |  3 ph |  1 nt
+  FOH | Patio                  | open  | The Reading Club  |  12 it |  2 ph |  0 nt
+  FOH | Bartender              | open  | The Reading Club  |  27 it |  4 ph |  1 nt
+  FOH | Coffee                 | open  | The Reading Club  |   8 it |  2 ph |  0 nt
+  FOH | Bartender              | mid   | The Reading Club  |  21 it |  3 ph |  0 nt
+  FOH | Floor                  | mid   | The Reading Club  |   9 it |  3 ph |  0 nt
+  FOH | Coffee                 | close | The Reading Club  |   7 it |  2 ph |  0 nt
+  FOH | Floor                  | close | The Reading Club  |  13 it |  2 ph |  2 nt
+  FOH | Bartender              | close | The Reading Club  |  31 it |  3 ph |  1 nt
+  FOH | Deep clean             | mid   | The Reading Club  |  15 it |  4 ph |  0 nt
+  FOH | Bar deep clean         | mid   | The Reading Club  |  15 it |  4 ph |  0 nt
+  HOH | AM sous                | open  | -                 |  14 it |  2 ph |  0 nt
+  HOH | PM sous                | close | -                 |  18 it |  2 ph |  0 nt
+  HOH | Daily cleaning         | close | -                 |  13 it |  4 ph |  0 nt
+  HOH | Weekly cleaning        | mid   | -                 |  20 it |  6 ph |  0 nt
+  HOH | Monthly cleaning       | mid   | -                 |   5 it |  2 ph |  0 nt
+  HOH | Prep cook              | close | -                 |  21 it |  3 ph |  0 nt
+  HOH | Pastry                 | close | -                 |  28 it |  3 ph |  0 nt
+  HOH | Pasta prep             | close | -                 |  17 it |  3 ph |  0 nt
+  HOH | Pizza                  | close | -                 |  32 it |  3 ph |  2 nt
+  HOH | Grill                  | close | -                 |  33 it |  3 ph |  2 nt
+  HOH | Pantry                 | close | -                 |  30 it |  3 ph |  2 nt
+  HOH | Pasta                  | close | -                 |  32 it |  3 ph |  2 nt
+  HOH | Chef                   | close | -                 |   8 it |  0 ph |  0 nt
+  HOH | Lead line              | close | -                 |   7 it |  0 ph |  0 nt
+  HOH | Dish                   | close | -                 |  29 it |  3 ph |  0 nt
+  HOH | Monthly deep clean     | mid   | -                 |   4 it |  2 ph |  0 nt
+  HOH | Deep clean (by station) | mid   | -                 |  21 it |  6 ph |  0 nt
+  HOH | Weekly deep clean      | mid   | -                 |  23 it |  5 ph |  0 nt
+  FOH | Bar (well)             | open  | Seneca            |  27 it |  5 ph |  0 nt
+  FOH | Bar (well)             | close | Seneca            |  30 it |  5 ph |  1 nt
+  FOH | Service (well)         | close | Seneca            |  18 it |  4 ph |  0 nt
+  FOH | Guest (well)           | close | Seneca            |  17 it |  5 ph |  0 nt
+  FOH | Support (well)         | close | Seneca            |  15 it |  5 ph |  0 nt
+  FOH | Server (weekend)       | close | Seneca            |  58 it |  5 ph |  0 nt
+
+DECISIONS APPLIED (Brian, 2026-10-26):
+  1. Keep BOTH Seneca bar systems: prose Bartender set + well-based set (Bar/Service/Guest/Support (well)).
+  2. Weekend servers kept: regular Server close runs Sun-Thu; new Server (weekend) runs Fri/Sat.
+  3. Weekly/monthly cadence: ASK THE GM in the handoff email (lists left without a day for now).
+  4. Restored two dropped tasks: Host rolled-towels (open+close); Server lemonade dispenser (Sun/Tue/Thu).
+  5. Three TRC bar setup items converted to in-app reference-photo placeholders (manager fills first time).
+  6. Kept both kitchen deep-clean lists (Weekly deep clean + Deep clean by station).
+  7. Cooler temp-log notes removed (temps stay on the paper log).
+
+STILL TO ASK THE GM (cadence; no day in source, currently every night):
+  - FOH | MOD | -
+  - FOH | MOD weekly | -
+  - FOH | Bartender | Seneca
+  - FOH | Bar weekly cleaning | Seneca
+  - FOH | Bartender | The Reading Club
+  - FOH | Floor | The Reading Club
+  - HOH | Monthly cleaning | -
+
+HELD OUT: L19 rain tabs (not STOC-nightly); recipe/order-guide/log/blank tabs (reference, not checklists).
