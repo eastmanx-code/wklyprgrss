@@ -131,6 +131,7 @@ export function CloseChecklist({
   referenceUrls,
   saved,
   carry = true,
+  soloSignoff = false,
   satisfiedEarlier,
 }: {
   slug: string;
@@ -154,6 +155,17 @@ export function CloseChecklist({
    * carry would put the first person's letters on the second person's work.
    */
   carry?: boolean;
+  /**
+   * Whether this list asks for a second signature after the first.
+   *
+   * Off for almost every list: once the work is signed, someone else on the
+   * crew checks it and signs too. On for a list genuinely worked alone, where
+   * no second person is ever in the space to check it — a retail opener, a
+   * closing lead on a quiet night. There the second-signature prompt is noise
+   * that leaves a finished list reading as unfinished, so it is not shown. The
+   * list is complete on the one signature either way; this only hides the ask.
+   */
+  soloSignoff?: boolean;
   /**
    * The night this list is on, as currentNight sees it.
    *
@@ -1515,8 +1527,12 @@ export function CloseChecklist({
                   for is checking a claim that has not been made yet. Its own
                   name box and its own pad: sharing either would let one
                   person's finger stand for both, which is the thing this is
-                  here to stop. */}
-        {locked ? (
+                  here to stop.
+
+                  Not shown on a solo list, where no second person is ever
+                  there to sign and the ask only makes a finished list look
+                  unfinished. */}
+        {locked && !soloSignoff ? (
           <div className="border-divider border-t pt-4">
             {verified ? (
               <p className="label">

@@ -56,7 +56,9 @@ export default async function ChecklistPage({
   // back first. A venue has a handful of lists.
   const { data: listRows } = await db()
     .from("close_checklists")
-    .select("id, house, role, role_es, phase, phase_label, room, carry_initials")
+    .select(
+      "id, house, role, role_es, phase, phase_label, room, carry_initials, solo_signoff",
+    )
     .eq("venue_id", venue)
     .eq("active", true);
 
@@ -73,6 +75,7 @@ export default async function ChecklistPage({
       phase_label: string | null;
       room: string | null;
       carry_initials: boolean;
+      solo_signoff: boolean;
     }[],
     slug,
   );
@@ -241,6 +244,7 @@ export default async function ChecklistPage({
           items={items}
           night={night}
           carry={list.carry_initials}
+          soloSignoff={list.solo_signoff}
           satisfiedEarlier={satisfiedEarlier}
           referenceUrls={Object.fromEntries(
             rows.flatMap((row) =>

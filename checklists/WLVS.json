@@ -104,6 +104,7 @@
       "role": "LEAD",
       "role_es": "LÍDER",
       "phase": "close",
+      "solo_signoff": true,
       "items": [
         {
           "title": "I VERIFIED EVERY CLOSING CHECKLIST WAS COMPLETED AND INITIALED.",
@@ -698,13 +699,34 @@
           ]
         },
         {
-          "title": "I STOCKED THE WINE, CHAMPAGNE AND SODAS IN THE FRONT FRIDGE."
+          "title": "I STOCKED THE WINE, CHAMPAGNE AND SODAS IN THE FRONT FRIDGE.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY"
+          ]
         },
         {
-          "title": "I LAID THE MAT AT THE ENTRANCE TO THE BAR."
+          "title": "I LAID THE MAT AT THE ENTRANCE TO THE BAR.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY"
+          ]
         },
         {
-          "title": "I STOCKED 4 OF EVERY WELL BOTTLE IN THE WATER CLOSET."
+          "title": "I STOCKED 4 OF EVERY WELL BOTTLE IN THE WATER CLOSET.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY"
+          ]
         },
         {
           "title": "I MADE SURE THE SALT SHAKER WAS FILLED."
@@ -713,7 +735,14 @@
           "title": "I CHECKED IN WITH THE OPENING BARBACK TO SEE WHERE THEY NEEDED ASSISTANCE."
         },
         {
-          "title": "I STOCKED FRESH CITRUS, LEMONS, ORANGES, LIMES AND GRAPEFRUITS, FOR PEELS IN EACH WELL IN THE RED TUB."
+          "title": "I STOCKED FRESH CITRUS, LEMONS, ORANGES, LIMES AND GRAPEFRUITS, FOR PEELS IN EACH WELL IN THE RED TUB.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY"
+          ]
         },
         {
           "title": "I REMOVED ALL THE NIPPLES FROM THE BOTTLES IN THE WELL."
@@ -746,7 +775,14 @@
           ]
         },
         {
-          "title": "I GRABBED EVERYTHING NEEDED FROM DOWNSTAIRS: TOWELS, PENNY POUND, CITRUS, LIQUOR, PICKS, FLOOR MAT, SODAS, WINE, CHAMPAGNE, POUR SPOUTS, BITTERS."
+          "title": "I GRABBED EVERYTHING NEEDED FROM DOWNSTAIRS: TOWELS, PENNY POUND, CITRUS, LIQUOR, PICKS, FLOOR MAT, SODAS, WINE, CHAMPAGNE, POUR SPOUTS, BITTERS.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY"
+          ]
         },
         {
           "title": "I MADE SURE EVERYTHING WAS GOOD TO GO BEFORE OPENING."
@@ -1134,6 +1170,7 @@
       "role": "RETAIL",
       "role_es": "VENDEDOR",
       "phase": "open",
+      "solo_signoff": true,
       "items": [
         {
           "title": "I STOCKED THE GIFT BAGS AND WRAPPING PAPER.",
