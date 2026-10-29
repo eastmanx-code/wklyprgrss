@@ -181,13 +181,20 @@ export default async function ChecklistsPage() {
               />
             </p>
             {shortLists.length > 0 ? (
-              <ul className="mt-2 space-y-1">
+              <ul className="mt-3 space-y-2.5">
                 {shortLists.map((l, i) => {
                   const ph = l.phase as "open" | "mid" | "close";
+                  // A hairline where the signed-short rows end and the
+                  // never-signed ones begin, so a long night reads as two
+                  // groups instead of one wall.
+                  const groupBreak =
+                    i > 0 && shortLists[i - 1].state !== l.state;
                   return (
                   <li
                     key={`${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
-                    className="label flex flex-wrap items-baseline gap-x-2"
+                    className={`label flex flex-wrap items-baseline gap-x-2 leading-relaxed${
+                      groupBreak ? " border-divider mt-4 border-t pt-4" : ""
+                    }`}
                   >
                     <span className="text-ink/80">
                       <T
