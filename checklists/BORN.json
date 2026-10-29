@@ -2670,6 +2670,78 @@
       "house": "HOH",
       "role": "BUTCHER",
       "role_es": "CARNICERO",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I COUNTED THE MEAT AND CONSOLIDATED.",
+          "title_es": "CONTÉ LA CARNE Y LA CONSOLIDÉ.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The meat counted and consolidated, pans organized"
+            }
+          ]
+        },
+        {
+          "title": "I SANITIZED THE COUNTERTOPS AND WORK SURFACES.",
+          "title_es": "SANITICÉ LAS SUPERFICIES Y MESAS DE TRABAJO."
+        },
+        {
+          "title": "I BROUGHT THE CUTTING BOARD, A PLASTIC CONTAINER FOR DIRTY TOWELS, AND THE SANITIZER BUCKET.",
+          "title_es": "TRAJE LA TABLA DE CORTE, UN CONTENEDOR DE PLÁSTICO PARA LAS TOALLAS SUCIAS Y LA CUBETA DE SANITIZANTE."
+        },
+        {
+          "title": "I MADE THE PREP LIST.",
+          "title_es": "HICE LA LISTA DE PREP.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The prep list"
+            }
+          ]
+        },
+        {
+          "title": "I ORGANIZED THE WALK-IN.",
+          "title_es": "ORGANICÉ EL WALK-IN.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in organized"
+            }
+          ]
+        },
+        {
+          "title": "I PUT THE MEAT ORDER AWAY.",
+          "title_es": "GUARDÉ EL PEDIDO DE CARNE."
+        },
+        {
+          "title": "I TOOK OUT THE TRASH.",
+          "title_es": "SAQUÉ LA BASURA."
+        },
+        {
+          "title": "I SANITIZED THE BUTCHER ROOM.",
+          "title_es": "SANITICÉ EL CUARTO DE CARNICERO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The butcher room clean and sanitized"
+            }
+          ]
+        },
+        {
+          "title": "I SWEPT AND MOPPED.",
+          "title_es": "BARRÍ Y TRAPEÉ."
+        },
+        {
+          "title": "I COMMUNICATED WITH THE NIGHT BUTCHER ABOUT THE DAY'S ACTIVITIES.",
+          "title_es": "ME COMUNIQUÉ CON EL CARNICERO DE LA NOCHE SOBRE LAS ACTIVIDADES DEL DÍA."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "BUTCHER",
+      "role_es": "CARNICERO",
       "phase": "close",
       "items": [
         {
