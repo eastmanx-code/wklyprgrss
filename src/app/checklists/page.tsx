@@ -128,7 +128,7 @@ export default async function ChecklistsPage() {
           />
         </p>
         <h1
-          className={`text-metric mt-2 font-medium tabular-nums ${fail ? "text-warn" : ""}`}
+          className={`mt-2 text-[44px] font-bold leading-none tabular-nums ${fail ? "text-warn" : ""}`}
         >
           {pct}%{" "}
           <span className="text-muted text-title">
@@ -202,11 +202,12 @@ export default async function ChecklistsPage() {
 
               {neverOpened.length > 0 ? (
                 <div className="mt-6">
-                  <p className="label text-warn">
-                    <T
-                      en="never opened · nobody did these"
-                      es="nunca se abrió · nadie las hizo"
-                    />
+                  <p className="card-title text-warn">
+                    <T en="never opened" es="nunca se abrió" />
+                    <span className="text-muted">
+                      {" · "}
+                      <T en="nobody did these" es="nadie las hizo" />
+                    </span>
                   </p>
                   <ul className="mt-3 space-y-2.5">
                     {neverOpened.map((l, i) => {
@@ -233,11 +234,12 @@ export default async function ChecklistsPage() {
 
               {boxShort.length > 0 ? (
                 <div className="border-divider mt-6 border-t pt-5">
-                  <p className="label text-muted">
-                    <T
-                      en="signed a box short · done, left a box open"
-                      es="firmada incompleta · hecha, quedó una casilla"
-                    />
+                  <p className="text-ink/70 text-body tracking-[0.08em]">
+                    <T en="signed a box short" es="firmada incompleta" />
+                    <span className="text-muted">
+                      {" · "}
+                      <T en="done, left a box open" es="hecha, quedó una casilla" />
+                    </span>
                   </p>
                   <ul className="mt-3 space-y-2.5">
                     {boxShort.map((l, i) => {
@@ -278,7 +280,7 @@ export default async function ChecklistsPage() {
           words the crew reads. Capped, with the rest as a count. On its own
           panel. */}
       <section className="panel mt-4">
-        <p className="label">
+        <p className="card-title">
           <T en="What keeps getting missed" es="Lo que se sigue faltando" />
         </p>
         <div className="mt-3">
