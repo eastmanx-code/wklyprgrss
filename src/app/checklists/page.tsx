@@ -183,7 +183,7 @@ export default async function ChecklistsPage() {
 
               <div className="mt-4 flex gap-2.5">
                 <div className="border-warn/50 bg-warn/5 min-w-0 flex-1 rounded-[6px] border p-4">
-                  <div className="text-warn text-[28px] font-bold leading-none tabular-nums">
+                  <div className="text-warn text-[44px] font-bold leading-none tabular-nums">
                     {neverOpened.length}
                   </div>
                   <p className="label text-muted mt-2">
@@ -191,7 +191,7 @@ export default async function ChecklistsPage() {
                   </p>
                 </div>
                 <div className="border-divider min-w-0 flex-1 rounded-[6px] border p-4">
-                  <div className="text-[28px] font-bold leading-none tabular-nums">
+                  <div className="text-[44px] font-bold leading-none tabular-nums">
                     {boxShort.length}
                   </div>
                   <p className="label text-muted mt-2">
