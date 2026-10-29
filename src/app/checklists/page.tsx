@@ -64,6 +64,7 @@ export default async function ChecklistsPage() {
     return (
       <main className="close-flow mx-auto max-w-2xl pb-6">
         <BackLink href={backHref}>{backLabel}</BackLink>
+        <div className="mt-4">{DoButton}</div>
         <section className="panel mt-4">
           <p className="label">{name}</p>
           <h1 className="text-metric mt-2 font-medium">
@@ -76,7 +77,6 @@ export default async function ChecklistsPage() {
             />
           </p>
         </section>
-        <div className="mt-4">{DoButton}</div>
       </main>
     );
   }
@@ -102,27 +102,23 @@ export default async function ChecklistsPage() {
     : missed
         .filter((m) => m.of > 0 && m.open >= MIN_MISSES && m.open / m.of >= MIN_RATE)
         .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
-  const latestShort = latest
-    ? latest.notSigned.length + latest.notDone.length
-    : 0;
-  // Which lists were short last night, named, each with how it fell short:
-  // signed with something still open, or never signed at all. The count alone
-  // made a leader ask "which two"; this answers it on the spot.
-  const shortLists = latest
-    ? [
-        ...latest.notDone.map((l) => ({ ...l, state: "short" as const })),
-        ...latest.notSigned.map((l) => ({ ...l, state: "unsigned" as const })),
-      ]
-    : [];
+  // Last night, split by how bad the miss was: never opened, where nobody even
+  // started the list, and signed a box short, where someone worked it and left
+  // a box open. The two are not the same failure and should not read the same.
+  const neverOpened = latest?.notSigned ?? [];
+  const boxShort = latest?.notDone ?? [];
+  const latestShort = neverOpened.length + boxShort.length;
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-6">
       <BackLink href={backHref}>{backLabel}</BackLink>
 
-      {/* The month, on one solid panel over the dot grid, the way the rest of
-          the app grounds its content. The question a leader opens with is
-          "are we ok", and the answer is the first thing on the panel: the
-          number, the count under it, the run as one line, last night. */}
+      {/* The one job first. Whoever opens this is here to do their list or to
+          see who didn't; the way in sits at the top either way. */}
+      <div className="mt-4">{DoButton}</div>
+
+      {/* The standing: the number a leader opens with, the count under it, and
+          the month as one line. */}
       <section className="panel mt-4">
         <p className="label">
           {name ? `${name} · ` : ""}
@@ -161,75 +157,122 @@ export default async function ChecklistsPage() {
             />
           </div>
         ) : null}
-
-        {latest ? (
-          <>
-            <p
-              className={`note mt-3 ${latestShort > 0 ? "text-warn" : "text-muted"}`}
-            >
-              <T
-                en={
-                  latestShort > 0
-                    ? `${latestShort} ${latestShort === 1 ? "list" : "lists"} short last night · ${formatNight(latest.night)}`
-                    : `no fails last night · ${formatNight(latest.night)}`
-                }
-                es={
-                  latestShort > 0
-                    ? `${latestShort} ${latestShort === 1 ? "lista" : "listas"} corta anoche · ${formatNight(latest.night)}`
-                    : `sin fallas anoche · ${formatNight(latest.night)}`
-                }
-              />
-            </p>
-            {shortLists.length > 0 ? (
-              <ul className="mt-3 space-y-2.5">
-                {shortLists.map((l, i) => {
-                  const ph = l.phase as "open" | "mid" | "close";
-                  // A hairline where the signed-short rows end and the
-                  // never-signed ones begin, so a long night reads as two
-                  // groups instead of one wall.
-                  const groupBreak =
-                    i > 0 && shortLists[i - 1].state !== l.state;
-                  return (
-                  <li
-                    key={`${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
-                    className={`label flex flex-wrap items-baseline gap-x-2 leading-relaxed${
-                      groupBreak ? " border-divider mt-4 border-t pt-4" : ""
-                    }`}
-                  >
-                    <span className="text-ink/80">
-                      <T
-                        en={[l.role, l.room, phaseName(ph)]
-                          .filter(Boolean)
-                          .join(" · ")}
-                        es={[l.role, l.room, PHASE_ES[ph]]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      />
-                    </span>
-                    <span className="text-muted">
-                      {l.state === "short" ? (
-                        l.by ? (
-                          <>
-                            <T en="signed short by" es="firmada incompleta por" />{" "}
-                            <span className="text-ink">{l.by}</span>
-                          </>
-                        ) : (
-                          <T en="signed short" es="firmada incompleta" />
-                        )
-                      ) : (
-                        <T en="not signed" es="sin firmar" />
-                      )}
-                    </span>
-                  </li>
-                  );
-                })}
-              </ul>
-            ) : null}
-          </>
-        ) : null}
       </section>
 
-      <div className="mt-4">{DoButton}</div>
+      {/* Last night, ranked by how bad the miss was. Never opened — nobody did
+          it — rides the warn accent up top; signed a box short sits under a
+          rule, dimmer and named, because those lists got done. Two counts
+          first, so the shape of the night reads before the detail. */}
+      {latest ? (
+        <section className="panel mt-4">
+          {latestShort === 0 ? (
+            <p className="note text-muted">
+              <T
+                en={`No fails last night · ${formatNight(latest.night)}`}
+                es={`Sin fallas anoche · ${formatNight(latest.night)}`}
+              />
+            </p>
+          ) : (
+            <>
+              <p className="label">
+                <T
+                  en={`last night · ${formatNight(latest.night)}`}
+                  es={`anoche · ${formatNight(latest.night)}`}
+                />
+              </p>
+
+              <div className="mt-4 flex gap-2.5">
+                <div className="border-warn/50 bg-warn/5 min-w-0 flex-1 rounded-[6px] border p-4">
+                  <div className="text-warn text-[28px] font-bold leading-none tabular-nums">
+                    {neverOpened.length}
+                  </div>
+                  <p className="label text-muted mt-2">
+                    <T en="never opened" es="nunca se abrió" />
+                  </p>
+                </div>
+                <div className="border-divider min-w-0 flex-1 rounded-[6px] border p-4">
+                  <div className="text-[28px] font-bold leading-none tabular-nums">
+                    {boxShort.length}
+                  </div>
+                  <p className="label text-muted mt-2">
+                    <T en="signed a box short" es="firmada incompleta" />
+                  </p>
+                </div>
+              </div>
+
+              {neverOpened.length > 0 ? (
+                <div className="mt-6">
+                  <p className="label text-warn">
+                    <T
+                      en="never opened · nobody did these"
+                      es="nunca se abrió · nadie las hizo"
+                    />
+                  </p>
+                  <ul className="mt-3 space-y-2.5">
+                    {neverOpened.map((l, i) => {
+                      const ph = l.phase as "open" | "mid" | "close";
+                      return (
+                        <li
+                          key={`u-${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
+                          className="label border-warn/50 text-ink border-l-2 pl-3 leading-relaxed"
+                        >
+                          <T
+                            en={[l.role, l.room, phaseName(ph)]
+                              .filter(Boolean)
+                              .join(" · ")}
+                            es={[l.role, l.room, PHASE_ES[ph]]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+
+              {boxShort.length > 0 ? (
+                <div className="border-divider mt-6 border-t pt-5">
+                  <p className="label text-muted">
+                    <T
+                      en="signed a box short · done, left a box open"
+                      es="firmada incompleta · hecha, quedó una casilla"
+                    />
+                  </p>
+                  <ul className="mt-3 space-y-2.5">
+                    {boxShort.map((l, i) => {
+                      const ph = l.phase as "open" | "mid" | "close";
+                      return (
+                        <li
+                          key={`s-${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
+                          className="label text-muted flex flex-wrap items-baseline gap-x-2 pl-3 leading-relaxed"
+                        >
+                          <span>
+                            <T
+                              en={[l.role, l.room, phaseName(ph)]
+                                .filter(Boolean)
+                                .join(" · ")}
+                              es={[l.role, l.room, PHASE_ES[ph]]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            />
+                          </span>
+                          {l.by ? (
+                            <span>
+                              <T en="by" es="por" />{" "}
+                              <span className="text-ink/70">{l.by}</span>
+                            </span>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+            </>
+          )}
+        </section>
+      ) : null}
 
       {/* What keeps getting missed: the chronic ones, worst rate first, in the
           words the crew reads. Capped, with the rest as a count. On its own
