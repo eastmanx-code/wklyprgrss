@@ -5,12 +5,14 @@ import { useState, useTransition } from "react";
 import { masterGradeAll, type MasterGradeResult } from "@/app/admin/actions";
 
 /**
- * One-tap grade-all, behind the owner's code, on the hidden /admin/master page.
+ * One-tap finish-the-week, behind the owner's code, on the hidden
+ * /admin/master page.
  *
  * Tapping opens a code box rather than firing straight away, so a stray tap
- * grades nothing. On a correct code it closes the finished week for every
- * dining room with the configured name on it, verdicts untouched, then says
- * what it did. A wrong code or an empty gate says so and changes nothing.
+ * does nothing. On a correct code it signs off the dining room's cards that
+ * are filed, done and still unruled, then closes the week for every dining
+ * room with the configured name on it, and says how much of each it did. A
+ * wrong code or an empty gate says so and changes nothing.
  */
 export function MasterGrade() {
   const [open, setOpen] = useState(false);
@@ -63,7 +65,8 @@ export function MasterGrade() {
         </p>
       ) : result ? (
         <p className="label text-ink leading-relaxed">
-          Done · graded {result.boards} dining rooms. Verdicts untouched.
+          Done · signed off {result.approved} cards, graded {result.boards}{" "}
+          dining rooms.
         </p>
       ) : null}
     </div>

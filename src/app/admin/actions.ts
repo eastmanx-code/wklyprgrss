@@ -11,7 +11,7 @@ import { forgetSignedUrl } from "@/lib/photos";
 import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, awaitingReview, boardAutoFailed } from "@/lib/status";
 import { isDeadlinePassed, mostRecentCompletedWeek } from "@/lib/week";
-import { PHOTO_BUCKET, db } from "@/lib/supabase";
+import { PHOTO_BUCKET, db, selectAll } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
 
 export type AdminState = { error: string | null; createdItemId?: string };
@@ -977,18 +977,33 @@ export type MasterGradeResult = {
   error: string | null;
   week?: string;
   boards?: number;
+  approved?: number;
 };
 
 /**
- * Close the owner's finished week in one move: grade every dining room.
+ * Finish the owner's week in one move: rule the dining room, then close it.
  *
- * Grades only, and only the dining room. It never touches a single item's
- * verdict — the approvals and send-backs are the owner's own, made item by item
- * on the scan — and it never puts the owner's name on a kitchen board, because
- * the kitchen is a different walk and a different signature. All it does is the
- * bookkeeping that follows the scan: close the week for every FOH venue at once
- * with the owner's name, the twenty-one taps that were the whole reason it
- * exists, done as one.
+ * REWRITTEN 2026-10-29, previous version in git history. It wrote the grade and
+ * nothing else, on the reasoning that blanket approval "overrode verdicts set
+ * item by item". That is only ever true of a card somebody already ruled on. A
+ * card sitting at pending carries no verdict to override, so the rule threw out
+ * the work and kept the bookkeeping: BABY came back GRADED BY BEASTMAN and PASS
+ * 10/10 with eight of its ten cards still awaiting review. A pass with nothing
+ * behind it is worse than no pass. B: "You graded without submitting all the
+ * clicks."
+ *
+ * So it now does what a venue's own Approve all does, across every dining room
+ * at once, on exactly that rule: the newest card of the graded week, still
+ * pending, whose filer called the work done. A card already approved or sent
+ * back keeps the verdict it has. A card asking for another cycle is not done
+ * and is never signed off, because that one is a judgment and it stays the
+ * owner's.
+ *
+ * The dining room only. The kitchen is a different walk and a different
+ * signature, and this never writes to it.
+ *
+ * The verdicts go in before the grade. If the sign-off fails the week stays
+ * open, because a closed week standing over unruled cards is the fault above.
  *
  * Behind the master code, which is the gate: cleared, this refuses to run.
  * Reversible: any grade can still be lifted per venue afterwards.
@@ -1022,13 +1037,72 @@ export async function masterGradeAll(pin: string): Promise<MasterGradeResult> {
     .select("id")
     .eq("active", true)
     .contains("houses", [house]);
-  const rows = ((venueRows ?? []) as { id: string }[]).map((venue) => ({
-    venue_id: venue.id,
+  const venueIds = ((venueRows ?? []) as { id: string }[]).map((row) => row.id);
+  if (venueIds.length === 0) return { error: "No venues to grade." };
+
+  // Every dining-room card these venues have ever carried, retired ones too. A
+  // board that rebuilds its ten retires last week's cards once the deadline
+  // passes, and the week being graded was filed against those.
+  const items = await selectAll<{ id: string }>((from, to) =>
+    db()
+      .from("items")
+      .select("id")
+      .in("venue_id", venueIds)
+      .eq("house", house)
+      .range(from, to),
+  );
+  const dining = new Set(items.map((item) => item.id));
+
+  // The graded week's filings, paged. One week across twenty-one dining rooms
+  // sits well inside a single page today, and a silent truncation at a thousand
+  // rows would read here as "nothing left to approve".
+  type Filed = {
+    id: string;
+    item_id: string;
+    review: string;
+    progress: string;
+    created_at: string;
+  };
+  const filed = await selectAll<Filed>((from, to) =>
+    db()
+      .from("submissions")
+      .select("id, item_id, review, progress, created_at")
+      .eq("week_start", week)
+      .is("cleared_at", null)
+      .range(from, to),
+  );
+
+  // Newest per card, which is the rule the score is read on, so what gets
+  // signed off and what gets counted can never be two different sets.
+  const newest = new Map<string, Filed>();
+  for (const row of filed) {
+    if (!dining.has(row.item_id)) continue;
+    const held = newest.get(row.item_id);
+    if (!held || row.created_at > held.created_at) newest.set(row.item_id, row);
+  }
+
+  const approvable = [...newest.values()]
+    .filter((row) => row.review === "pending" && row.progress === "done")
+    .map((row) => row.id);
+
+  if (approvable.length > 0) {
+    const { error } = await db()
+      .from("submissions")
+      .update({ review: "approved", reviewed_at: new Date().toISOString() })
+      .in("id", approvable);
+    // The grade is the claim that these cards were ruled on. If the ruling did
+    // not land, the claim must not land either.
+    if (error) {
+      return { error: "Could not sign the cards off. Nothing graded." };
+    }
+  }
+
+  const rows = venueIds.map((venueId) => ({
+    venue_id: venueId,
     week_start: week,
     house,
     graded_by: grader,
   }));
-  if (rows.length === 0) return { error: "No venues to grade." };
 
   await db()
     .from("graded_weeks")
@@ -1037,5 +1111,5 @@ export async function masterGradeAll(pin: string): Promise<MasterGradeResult> {
   revalidatePath("/admin");
   revalidatePath("/venue");
   revalidatePath("/board");
-  return { error: null, week, boards: rows.length };
+  return { error: null, week, boards: rows.length, approved: approvable.length };
 }
