@@ -10,7 +10,7 @@ import { findOrphans, removeOrphans } from "@/lib/orphans";
 import { forgetSignedUrl } from "@/lib/photos";
 import { getSession, mayGrade, mayReachVenue } from "@/lib/session";
 import { ITEM_COLUMNS, awaitingReview, boardAutoFailed } from "@/lib/status";
-import { isDeadlinePassed } from "@/lib/week";
+import { isDeadlinePassed, mostRecentCompletedWeek } from "@/lib/week";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import type { House, Item } from "@/lib/types";
 
@@ -922,4 +922,159 @@ export async function setMaintenanceLock(
   revalidatePath("/admin");
   revalidatePath("/admin/codes");
   return { error: null, locked, message: message.trim() || null };
+}
+
+/**
+ * Whether the master grade-all gate has been set up.
+ *
+ * Reads only whether a code and a name exist, never the code itself, so the
+ * admin screen can say "set" or "not set" without the PIN crossing the wire.
+ */
+export async function masterGradeConfigured(): Promise<{
+  set: boolean;
+  grader: string | null;
+}> {
+  if (!(await isAdmin())) return { set: false, grader: null };
+  const { data } = await db()
+    .from("master_grade")
+    .select("pin, grader")
+    .maybeSingle();
+  const row = data as { pin: string | null; grader: string | null } | null;
+  return {
+    set: Boolean(row?.pin && row.grader),
+    grader: row?.grader?.trim() || null,
+  };
+}
+
+/**
+ * Set or change the master grade code and the name it stamps.
+ *
+ * The one place the code is written, and only an admin reaches it. Six digits
+ * like every other PIN in the app; the name is whatever goes on the record when
+ * the button is pressed.
+ */
+export async function setMasterGradePin(
+  _prev: AdminState,
+  formData: FormData,
+): Promise<AdminState> {
+  if (!(await isAdmin())) return { error: "Not signed in." };
+  const pin = String(formData.get("pin") ?? "").trim();
+  const grader = String(formData.get("grader") ?? "").trim();
+  if (!/^\d{6}$/.test(pin)) return { error: "Code must be 6 digits." };
+  if (!grader) return { error: "Put the name it should stamp." };
+  const { error } = await db()
+    .from("master_grade")
+    .upsert(
+      { id: true, pin, grader, updated_at: new Date().toISOString() },
+      { onConflict: "id" },
+    );
+  if (error) return { error: "That didn't save. Try again." };
+  revalidatePath("/admin/codes");
+  return { error: null };
+}
+
+export type MasterGradeResult = {
+  error: string | null;
+  week?: string;
+  approved?: number;
+  boards?: number;
+};
+
+/**
+ * Grade the whole company's finished week in one move.
+ *
+ * Behind the master code, not the admin session alone: every admin can see the
+ * button, only the owner's code runs it. For the most recent finished week it
+ * approves every item a venue filed and still has waiting, across both houses,
+ * then closes the week for every venue with the configured name on it — the
+ * twenty-plus boards of bookkeeping that follow a scan, done at once.
+ *
+ * Reversible: a verdict or a grade can still be changed per venue afterwards.
+ */
+export async function masterGradeAll(pin: string): Promise<MasterGradeResult> {
+  if (!(await isAdmin())) return { error: "Not signed in." };
+
+  const { data: cfg } = await db()
+    .from("master_grade")
+    .select("pin, grader")
+    .maybeSingle();
+  const stored = cfg as { pin: string | null; grader: string | null } | null;
+  if (!stored?.pin || !stored.grader) {
+    return { error: "No master code set yet. Set it in Admin first." };
+  }
+  if (pin.trim() !== stored.pin) return { error: "Wrong code." };
+  const grader = stored.grader.trim();
+
+  const week = mostRecentCompletedWeek();
+  // The most recent finished week is past its deadline by definition; this is
+  // belt and braces so a clock edge can never grade a week still being filed.
+  if (!isDeadlinePassed(week)) return { error: "No finished week to grade yet." };
+
+  const { data: venueRows } = await db()
+    .from("venues")
+    .select("id, houses")
+    .eq("active", true);
+  const venues = (venueRows ?? []) as { id: string; houses: House[] }[];
+
+  const now = new Date().toISOString();
+  let approved = 0;
+
+  // Approve what is filed and still waiting, per venue and house — the same
+  // newest-per-item rule the single-venue button uses, so a superseded row or
+  // one marked for another cycle is never signed off.
+  for (const venue of venues) {
+    for (const house of venue.houses) {
+      const items = await itemsFor(venue.id, house);
+      const itemIds = items.map((item) => item.id);
+      if (itemIds.length === 0) continue;
+      const { data: subs } = await db()
+        .from("submissions")
+        .select("id, item_id, review, progress, created_at")
+        .in("item_id", itemIds)
+        .is("cleared_at", null)
+        .order("created_at", { ascending: false });
+      const newest = new Map<
+        string,
+        { id: string; review: string; progress: string }
+      >();
+      for (const row of (subs ?? []) as {
+        id: string;
+        item_id: string;
+        review: string;
+        progress: string;
+      }[]) {
+        if (!newest.has(row.item_id)) newest.set(row.item_id, row);
+      }
+      const approvable = [...newest.values()]
+        .filter((row) => row.review === "pending" && row.progress === "done")
+        .map((row) => row.id);
+      if (approvable.length > 0) {
+        await db()
+          .from("submissions")
+          .update({ review: "approved", reviewed_at: now })
+          .in("id", approvable);
+        approved += approvable.length;
+      }
+    }
+  }
+
+  // Close the week for every venue and house in one upsert, the name on all.
+  const rows = venues.flatMap((venue) =>
+    venue.houses.map((house) => ({
+      venue_id: venue.id,
+      week_start: week,
+      house,
+      graded_by: grader,
+    })),
+  );
+  if (rows.length > 0) {
+    await db()
+      .from("graded_weeks")
+      .upsert(rows, { onConflict: "venue_id,week_start,house" });
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/venue");
+  revalidatePath("/board");
+  return { error: null, week, approved, boards: rows.length };
 }
