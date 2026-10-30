@@ -5,13 +5,12 @@ import { useState, useTransition } from "react";
 import { masterGradeAll, type MasterGradeResult } from "@/app/admin/actions";
 
 /**
- * The one-tap grade-all, behind the owner's code, in the corner menu.
+ * One-tap grade-all, behind the owner's code, on the hidden /admin/master page.
  *
- * Every admin sees the button; only the master code runs it. Tapping opens a
- * code box rather than firing straight away, so a stray tap grades nothing. On
- * a correct code it approves everything filed and closes the finished week for
- * every venue with the configured name on it, then says what it did. A wrong
- * code or an empty gate says so and changes nothing.
+ * Tapping opens a code box rather than firing straight away, so a stray tap
+ * grades nothing. On a correct code it closes the finished week for every
+ * dining room with the configured name on it, verdicts untouched, then says
+ * what it did. A wrong code or an empty gate says so and changes nothing.
  */
 export function MasterGrade() {
   const [open, setOpen] = useState(false);
@@ -31,7 +30,7 @@ export function MasterGrade() {
   if (!open) {
     return (
       <button type="button" className="btn-ghost" onClick={() => setOpen(true)}>
-        Master grade
+        Run
       </button>
     );
   }
@@ -47,7 +46,7 @@ export function MasterGrade() {
         autoComplete="off"
         autoFocus
         placeholder="Code"
-        aria-label="Master grade code"
+        aria-label="Dev code"
         className="field w-full tracking-[0.3em]"
       />
       <button
@@ -56,7 +55,7 @@ export function MasterGrade() {
         onClick={run}
         disabled={pending || pin.length !== 6}
       >
-        {pending ? "Grading…" : "Grade FOH · stamp me"}
+        {pending ? "Working…" : "Run"}
       </button>
       {result?.error ? (
         <p role="alert" className="label text-warn leading-relaxed">

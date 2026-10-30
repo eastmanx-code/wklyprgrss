@@ -143,10 +143,7 @@ export default async function AdminCodesPage() {
       </section>
 
       <section className="mt-12">
-        <h2 className="card-title">Master grade</h2>
-        <p className="label text-muted mt-1.5">
-          The code for one-tap grade-all from the corner menu · owner only
-        </p>
+        <h2 className="card-title">Dev code</h2>
         <hr className="border-divider my-4 border-0 border-t" />
         <MasterGradeSetup set={masterGrade.set} grader={masterGrade.grader} />
       </section>
