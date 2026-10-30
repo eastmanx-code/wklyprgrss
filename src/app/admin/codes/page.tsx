@@ -2,8 +2,10 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { masterGradeConfigured } from "@/app/admin/actions";
 import { AdminPins, type CodeVenue } from "@/components/admin/AdminPins";
 import { MaintenanceToggle } from "@/components/admin/MaintenanceToggle";
+import { MasterGradeSetup } from "@/components/admin/MasterGradeSetup";
 import { OrphanSweep } from "@/components/admin/OrphanSweep";
 import { SignupLinks } from "@/components/admin/SignupLinks";
 import { VenuePinForm } from "@/components/admin/VenuePinForm";
@@ -48,6 +50,7 @@ export default async function AdminCodesPage() {
   const origin = host ? `${proto}://${host}` : "";
 
   const maintenance = await getMaintenance();
+  const masterGrade = await masterGradeConfigured();
 
   return (
     <main className="mx-auto max-w-2xl">
@@ -137,6 +140,15 @@ export default async function AdminCodesPage() {
             open: venue.signup_open,
           }))}
         />
+      </section>
+
+      <section className="mt-12">
+        <h2 className="card-title">Master grade</h2>
+        <p className="label text-muted mt-1.5">
+          The code for one-tap grade-all from the corner menu · owner only
+        </p>
+        <hr className="border-divider my-4 border-0 border-t" />
+        <MasterGradeSetup set={masterGrade.set} grader={masterGrade.grader} />
       </section>
 
       {/* Housekeeping, on the screen that already holds the things only an

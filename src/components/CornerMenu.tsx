@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { MasterGrade } from "./admin/MasterGrade";
 import { SectionNav } from "./SectionNav";
 import { ThemeToggle } from "./ThemeToggle";
 import { EditThisList, HelpLink } from "@/components/checklists/EditThisList";
@@ -93,6 +94,10 @@ export async function CornerMenu() {
             <LangSwitch />
             <ThemeToggle />
           </div>
+
+          {/* The owner's one-tap grade-all. Only an admin sees it, and only the
+              master code runs it, so it sits quietly among the settings. */}
+          {isAdmin ? <MasterGrade /> : null}
 
           {/* Group three: the way out, at the foot where a reader expects it. */}
           {session ? (
