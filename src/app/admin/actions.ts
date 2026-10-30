@@ -976,20 +976,22 @@ export async function setMasterGradePin(
 export type MasterGradeResult = {
   error: string | null;
   week?: string;
-  approved?: number;
   boards?: number;
 };
 
 /**
- * Grade the whole company's finished week in one move.
+ * Close the owner's finished week in one move: grade every dining room.
  *
- * Behind the master code, not the admin session alone: every admin can see the
- * button, only the owner's code runs it. For the most recent finished week it
- * approves every item a venue filed and still has waiting, across both houses,
- * then closes the week for every venue with the configured name on it — the
- * twenty-plus boards of bookkeeping that follow a scan, done at once.
+ * Grades only, and only the dining room. It never touches a single item's
+ * verdict — the approvals and send-backs are the owner's own, made item by item
+ * on the scan — and it never puts the owner's name on a kitchen board, because
+ * the kitchen is a different walk and a different signature. All it does is the
+ * bookkeeping that follows the scan: close the week for every FOH venue at once
+ * with the owner's name, the twenty-one taps that were the whole reason it
+ * exists, done as one.
  *
- * Reversible: a verdict or a grade can still be changed per venue afterwards.
+ * Behind the master code, which is the gate: cleared, this refuses to run.
+ * Reversible: any grade can still be lifted per venue afterwards.
  */
 export async function masterGradeAll(pin: string): Promise<MasterGradeResult> {
   if (!(await isAdmin())) return { error: "Not signed in." };
@@ -1000,81 +1002,40 @@ export async function masterGradeAll(pin: string): Promise<MasterGradeResult> {
     .maybeSingle();
   const stored = cfg as { pin: string | null; grader: string | null } | null;
   if (!stored?.pin || !stored.grader) {
-    return { error: "No master code set yet. Set it in Admin first." };
+    return { error: "No master code set. Set it in Admin first." };
   }
   if (pin.trim() !== stored.pin) return { error: "Wrong code." };
   const grader = stored.grader.trim();
 
   const week = mostRecentCompletedWeek();
-  // The most recent finished week is past its deadline by definition; this is
-  // belt and braces so a clock edge can never grade a week still being filed.
+  // The most recent finished week is past its deadline by definition; belt and
+  // braces so a clock edge can never grade a week still being filed.
   if (!isDeadlinePassed(week)) return { error: "No finished week to grade yet." };
 
+  // The dining room only. The owner walks FOH; the kitchen is someone else's
+  // walk, so this never grades HOH and never signs the owner's name to it.
+  const house: House = "FOH";
+
+  // Only venues that run the dining room, so a bar with no FOH is never keyed.
   const { data: venueRows } = await db()
     .from("venues")
-    .select("id, houses")
-    .eq("active", true);
-  const venues = (venueRows ?? []) as { id: string; houses: House[] }[];
+    .select("id")
+    .eq("active", true)
+    .contains("houses", [house]);
+  const rows = ((venueRows ?? []) as { id: string }[]).map((venue) => ({
+    venue_id: venue.id,
+    week_start: week,
+    house,
+    graded_by: grader,
+  }));
+  if (rows.length === 0) return { error: "No venues to grade." };
 
-  const now = new Date().toISOString();
-  let approved = 0;
-
-  // Approve what is filed and still waiting, per venue and house — the same
-  // newest-per-item rule the single-venue button uses, so a superseded row or
-  // one marked for another cycle is never signed off.
-  for (const venue of venues) {
-    for (const house of venue.houses) {
-      const items = await itemsFor(venue.id, house);
-      const itemIds = items.map((item) => item.id);
-      if (itemIds.length === 0) continue;
-      const { data: subs } = await db()
-        .from("submissions")
-        .select("id, item_id, review, progress, created_at")
-        .in("item_id", itemIds)
-        .is("cleared_at", null)
-        .order("created_at", { ascending: false });
-      const newest = new Map<
-        string,
-        { id: string; review: string; progress: string }
-      >();
-      for (const row of (subs ?? []) as {
-        id: string;
-        item_id: string;
-        review: string;
-        progress: string;
-      }[]) {
-        if (!newest.has(row.item_id)) newest.set(row.item_id, row);
-      }
-      const approvable = [...newest.values()]
-        .filter((row) => row.review === "pending" && row.progress === "done")
-        .map((row) => row.id);
-      if (approvable.length > 0) {
-        await db()
-          .from("submissions")
-          .update({ review: "approved", reviewed_at: now })
-          .in("id", approvable);
-        approved += approvable.length;
-      }
-    }
-  }
-
-  // Close the week for every venue and house in one upsert, the name on all.
-  const rows = venues.flatMap((venue) =>
-    venue.houses.map((house) => ({
-      venue_id: venue.id,
-      week_start: week,
-      house,
-      graded_by: grader,
-    })),
-  );
-  if (rows.length > 0) {
-    await db()
-      .from("graded_weeks")
-      .upsert(rows, { onConflict: "venue_id,week_start,house" });
-  }
+  await db()
+    .from("graded_weeks")
+    .upsert(rows, { onConflict: "venue_id,week_start,house" });
 
   revalidatePath("/admin");
   revalidatePath("/venue");
   revalidatePath("/board");
-  return { error: null, week, approved, boards: rows.length };
+  return { error: null, week, boards: rows.length };
 }

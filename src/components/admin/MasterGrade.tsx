@@ -56,7 +56,7 @@ export function MasterGrade() {
         onClick={run}
         disabled={pending || pin.length !== 6}
       >
-        {pending ? "Grading…" : "Grade all · stamp me"}
+        {pending ? "Grading…" : "Grade FOH · stamp me"}
       </button>
       {result?.error ? (
         <p role="alert" className="label text-warn leading-relaxed">
@@ -64,7 +64,7 @@ export function MasterGrade() {
         </p>
       ) : result ? (
         <p className="label text-ink leading-relaxed">
-          Done · approved {result.approved}, graded {result.boards} boards.
+          Done · graded {result.boards} dining rooms. Verdicts untouched.
         </p>
       ) : null}
     </div>

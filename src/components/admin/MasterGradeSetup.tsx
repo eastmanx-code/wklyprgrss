@@ -38,31 +38,32 @@ export function MasterGradeSetup({
       </div>
 
       <p className="note text-muted leading-relaxed">
-        The code that unlocks one-tap grade-all from the corner menu, and the
-        name written on every board it closes. Only you have the code; every
-        admin sees the button and no one else can run it.
+        The code that unlocks one-tap grade-all, and the name written on every
+        dining room it closes. Run it at <span className="text-ink">/admin/master</span>,
+        a page kept off the menu — only your code works it. Clear the code to
+        turn it off.
       </p>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="space-y-3">
         <label className="block">
-          <span className="label text-muted">Code · 6 digits</span>
+          <span className="label text-muted block">Code · 6 digits</span>
           <input
             name="pin"
             inputMode="numeric"
             autoComplete="off"
             maxLength={6}
             placeholder="● ● ● ● ● ●"
-            className="field mt-1.5 w-36 tracking-[0.3em]"
+            className="field mt-1.5 block w-36 tracking-[0.3em]"
           />
         </label>
-        <label className="block min-w-0 flex-1">
-          <span className="label text-muted">Name it stamps</span>
+        <label className="block">
+          <span className="label text-muted block">Name it stamps</span>
           <input
             name="grader"
             defaultValue={grader ?? ""}
             autoComplete="name"
             placeholder="Who is grading"
-            className="field mt-1.5 w-full"
+            className="field mt-1.5 block w-full"
           />
         </label>
       </div>
