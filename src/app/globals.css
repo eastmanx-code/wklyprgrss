@@ -212,11 +212,23 @@
   min-height: 0;
 }
 
-/* Everything else is a full-width row; this one is a square glyph, and a
-   square stretched to the menu's width is a hole at the bottom of it. */
-.ww-menu-items > .ww-menu-theme {
+/* Language and theme share one row: the language pair fills it and the theme
+   sits as a square at the end, so the toggle is no longer a lone button on an
+   otherwise empty line. */
+.ww-menu-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.ww-menu-row > [role="group"] {
+  flex: 1;
+}
+.ww-menu-row > [role="group"] > button {
+  flex: 1;
+}
+.ww-menu-row > .ww-menu-theme {
   width: auto;
-  align-self: flex-end;
+  flex: 0 0 auto;
 }
 
 html {
