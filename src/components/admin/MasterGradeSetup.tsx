@@ -5,13 +5,12 @@ import { useActionState } from "react";
 import { setMasterGradePin, type AdminState } from "@/app/admin/actions";
 
 /**
- * Set or change the master grade code, on the admin screen only.
+ * Set or change the dev code, on the admin screen only.
  *
  * The code never travels here from the server — the page passes only whether
- * one is set and the name it stamps — so this is write-only. Six digits, the
- * same shape as every other PIN, and the name that goes on every board the one
- * tap closes. The page re-renders from the live row after a save, so the line
- * above the form always tells the truth.
+ * one is set and the stored name — so this is write-only. Six digits, the same
+ * shape as every other PIN. The page re-renders from the live row after a save,
+ * so the line above the form always tells the truth.
  */
 export function MasterGradeSetup({
   set,
@@ -32,17 +31,8 @@ export function MasterGradeSetup({
           aria-hidden
           className={`size-2.5 rounded-full ${set ? "bg-warn" : "bg-muted/50"}`}
         />
-        <p className="label">
-          {set ? `Set · stamps ${grader}` : "Not set yet"}
-        </p>
+        <p className="label">{set ? "Set" : "Not set"}</p>
       </div>
-
-      <p className="note text-muted leading-relaxed">
-        The code that unlocks one-tap grade-all, and the name written on every
-        dining room it closes. Run it at <span className="text-ink">/admin/master</span>,
-        a page kept off the menu — only your code works it. Clear the code to
-        turn it off.
-      </p>
 
       <div className="space-y-3">
         <label className="block">
@@ -57,12 +47,12 @@ export function MasterGradeSetup({
           />
         </label>
         <label className="block">
-          <span className="label text-muted block">Name it stamps</span>
+          <span className="label text-muted block">Name</span>
           <input
             name="grader"
             defaultValue={grader ?? ""}
             autoComplete="name"
-            placeholder="Who is grading"
+            placeholder="Name"
             className="field mt-1.5 block w-full"
           />
         </label>
