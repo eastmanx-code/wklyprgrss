@@ -86,9 +86,13 @@ export async function CornerMenu() {
 
           <HelpLink />
 
-          <LangSwitch />
-
-          <ThemeToggle />
+          {/* Language and theme on one row: the language pair fills it and the
+              theme sits as a square at the end, rather than the toggle alone on
+              an empty line below. */}
+          <div className="ww-menu-row">
+            <LangSwitch />
+            <ThemeToggle />
+          </div>
 
           {/* Group three: the way out, at the foot where a reader expects it. */}
           {session ? (
