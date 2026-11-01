@@ -63,7 +63,12 @@ export function MembershipCurve({
 
   const last = points[points.length - 1];
   const busiest = points.reduce((a, b) => (b.joined > a.joined ? b : a), points[0]);
-  const top = Math.max(...quarters.map((p) => p.total)) || 1;
+  // HEADROOM. Scaling to the maximum puts the newest reading on the top edge,
+  // where the line has nowhere to go and looks capped rather than current.
+  // Round up past it to a clean number instead.
+  const peak = Math.max(...quarters.map((p) => p.total)) || 1;
+  const step = peak > 2000 ? 500 : peak > 400 ? 100 : peak > 100 ? 50 : 10;
+  const top = Math.ceil((peak * 1.12) / step) * step;
 
   const series = [{ month: points[0].month, total: 0 }, ...quarters];
   const x = (i: number) => (i / (series.length - 1)) * W;
