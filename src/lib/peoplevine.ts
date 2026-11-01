@@ -281,7 +281,9 @@ export async function snapshot(): Promise<Snapshot> {
     .select("month, dues_collected, pos_spend, other_collected")
     .order("month", { ascending: true });
 
-  const months = ((revenueRows ?? []) as RevenueMonth[]).map((m) => ({
+  // Named revMonths, not months: `months` is already the growth curve's list
+  // of YYYY-MM strings a few lines above and the two collided.
+  const revMonths = ((revenueRows ?? []) as RevenueMonth[]).map((m) => ({
     month: m.month,
     dues_collected: Number(m.dues_collected ?? 0),
     pos_spend: Number(m.pos_spend ?? 0),
@@ -291,17 +293,17 @@ export async function snapshot(): Promise<Snapshot> {
   // The month in progress is not a month. Comparing a part month against full
   // ones draws a collapse that has not happened.
   const nowKey = new Date().toISOString().slice(0, 7);
-  const complete = months.filter((m) => m.month !== nowKey);
-  const revenue: Revenue | null = months.length
+  const complete = revMonths.filter((m) => m.month !== nowKey);
+  const revenue: Revenue | null = revMonths.length
     ? {
-        months,
-        yearDues: months
+        months: revMonths,
+        yearDues: revMonths
           .filter((m) => m.month.startsWith(thisYear))
           .reduce((n, m) => n + m.dues_collected, 0),
-        yearPos: months
+        yearPos: revMonths
           .filter((m) => m.month.startsWith(thisYear))
           .reduce((n, m) => n + m.pos_spend, 0),
-        yearOther: months
+        yearOther: revMonths
           .filter((m) => m.month.startsWith(thisYear))
           .reduce((n, m) => n + m.other_collected, 0),
         lastFullMonth: complete.length ? complete[complete.length - 1] : null,
