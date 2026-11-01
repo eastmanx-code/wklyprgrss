@@ -57,7 +57,7 @@ export function MembershipCurve({
   return (
     <div className="min-w-0">
       <div className="flex gap-3">
-        <div className="bg-inset min-w-0 flex-1 rounded-[4px] p-1">
+        <div className="bg-inset min-w-0 flex-1 p-1">
           <svg
             viewBox={`0 0 ${W} ${H}`}
             preserveAspectRatio="none"

@@ -1,4 +1,3 @@
-import { Dial } from "./Dial";
 import { MembershipCurve } from "./MembershipCurve";
 import type { Snapshot } from "@/lib/peoplevine";
 
@@ -97,8 +96,10 @@ function Panel({
   className?: string;
   children: React.ReactNode;
 }) {
+  // Square corners. B wanted it more angular, and a board of numbers reads
+  // harder when every block is a lozenge.
   return (
-    <section className={`panel ${className}`}>
+    <section className={`panel rounded-none ${className}`}>
       <header className="flex flex-wrap items-baseline justify-between gap-x-4">
         <h2 className="card-title">{title}</h2>
         {right ? <p className="label">{right}</p> : null}
@@ -135,7 +136,7 @@ function PersonRow({
   bad?: boolean;
 }) {
   return (
-    <li className="bg-inset flex items-baseline gap-x-3 rounded-[4px] px-3 py-3">
+    <li className="bg-inset flex items-baseline gap-x-3 px-3 py-3">
       {/* ONE LINE PER PERSON. Three parts with one shrinking part: the name
           never clips because the name is the point, the figure never moves
           because the eye scans that column, and the detail in the middle
@@ -174,7 +175,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
   const rejected = byStage("REJECTED");
 
   return (
-    <main>
+    <main className="relative left-1/2 w-screen max-w-[1800px] -translate-x-1/2 px-4 lg:px-8">
       {/* The dashboard's header: eyebrow, the one number that matters, then a
           dense meta line rather than three quiet cards doing the same job in
           five times the space. */}
@@ -209,65 +210,56 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         {/* The hero band, the same shape as a house on the weekly dashboard:
             ring, plot, stat cluster, one row. Two panels were doing this job
             and neither carried any weight on its own. */}
+        {/* ONE ROW OF FIGURES, THEN THE LINE. The ring is gone: B, 2026-10-31,
+            "the 23% is not a really helpful number so doesnt need to be a
+            highlight". Members as a share of everyone who ever applied is not
+            a rate anybody acts on, and it was taking the largest block on the
+            page to say so. */}
         <Panel
           className="col-span-12"
           title="Membership"
-          hint={`${count(onFile)} people have applied since ${snap.growth.length ? snap.growth[0].month.slice(0, 4) : "launch"} · everyone counts at the stage they sit at today`}
+          hint={`${count(onFile)} people have applied since ${snap.growth.length ? snap.growth[0].month.slice(0, 4) : "launch"}`}
           right={flatMonths > 0 ? `nobody joined in ${count(flatMonths)} months` : undefined}
         >
-          <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
-            <div>
-              <Dial
-                percent={onFile ? Math.round((snap.members / onFile) * 100) : 0}
-                tone="var(--ink)"
-                caption={`${count(snap.members)} of ${count(onFile)} who applied`}
-                size={200}
-              />
-              <p className="label mt-1 text-center">
-                {count(snap.formerMembers)} more joined and left
-              </p>
-            </div>
-
-            {snap.growth.length > 1 ? (
-              <MembershipCurve points={snap.growth} flatMonths={flatMonths} />
-            ) : (
-              <div />
-            )}
-
-            <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-              <Stat
-                label="New"
-                value={count(applied?.people ?? 0)}
-                sub={`${count(applied?.live ?? 0)} in 90 days`}
-              />
-              <Stat
-                label="Maybe"
-                value={count(review?.people ?? 0)}
-                sub={`${count(review?.live ?? 0)} in 90 days`}
-              />
-              <Stat
-                label="Approved by CH"
-                value={count(flagged?.people ?? 0)}
-                accent={(flagged?.people ?? 0) > 0}
-                sub={overAYear ? `${count(overAYear)} over a year` : "none stuck"}
-              />
-              <Stat
-                label="Members"
-                value={count(snap.members)}
-                sub={`${count(snap.formerMembers)} former`}
-              />
-              <Stat
-                label="Rejected"
-                value={count(rejected?.people ?? 0)}
-                sub="all time"
-              />
-              <Stat
-                label="Applied this week"
-                value={count(snap.newThisWeek)}
-                sub="last seven days"
-              />
-            </div>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
+            <Stat
+              label="Members"
+              value={count(snap.members)}
+              sub={`${count(snap.formerMembers)} former`}
+            />
+            <Stat
+              label="Approved by CH"
+              value={count(flagged?.people ?? 0)}
+              accent={(flagged?.people ?? 0) > 0}
+              sub={overAYear ? `${count(overAYear)} over a year` : "none stuck"}
+            />
+            <Stat
+              label="New"
+              value={count(applied?.people ?? 0)}
+              sub={`${count(applied?.live ?? 0)} in 90 days`}
+            />
+            <Stat
+              label="Maybe"
+              value={count(review?.people ?? 0)}
+              sub={`${count(review?.live ?? 0)} in 90 days`}
+            />
+            <Stat
+              label="Rejected"
+              value={count(rejected?.people ?? 0)}
+              sub="all time"
+            />
+            <Stat
+              label="Applied this week"
+              value={count(snap.newThisWeek)}
+              sub="last seven days"
+            />
           </div>
+
+          {snap.growth.length > 1 ? (
+            <div className="mt-8">
+              <MembershipCurve points={snap.growth} flatMonths={flatMonths} />
+            </div>
+          ) : null}
         </Panel>
 
         {/* Then the names. Longest wait first, because the oldest one has been
@@ -367,7 +359,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         ) : null}
 
         {snap.needsChecking > 0 ? (
-          <section className="panel-quiet col-span-12">
+          <section className="panel-quiet col-span-12 rounded-none">
             <p className="label">Needs checking</p>
             <p className="attest mt-2">
               {count(snap.needsChecking)} people are marked onboarded on the
