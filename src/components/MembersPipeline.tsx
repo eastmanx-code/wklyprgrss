@@ -1,3 +1,4 @@
+import { MembershipCurve } from "./MembershipCurve";
 import type { Snapshot } from "@/lib/peoplevine";
 
 /**
@@ -68,8 +69,10 @@ function Stat({
   return (
     <div className="min-w-0">
       <p className="label">{label}</p>
+      {/* A size above the dashboard's 28px stat. These are the figures the
+          page exists to show and at 28px they read as a caption. */}
       <p
-        className={`text-metric mt-1 leading-[1.2] tracking-normal tabular-nums ${
+        className={`mt-1 text-[40px] leading-[1.1] tracking-normal tabular-nums ${
           accent ? "text-warn" : "text-ink"
         }`}
       >
@@ -151,8 +154,14 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
   const queue = snap.waitingOnIntro;
   const overAYear = queue.filter((q) => q.days >= 365).length;
   const longest = queue.length ? queue[0].days : 0;
-  const liveTotal = snap.stages.reduce((n, s) => n + s.live, 0);
   const byStage = (stage: string) => snap.stages.find((s) => s.stage === stage);
+  const onFile = snap.stages.reduce((n, s) => n + s.people, 0);
+  // Months at the end of the curve where nobody joined. This is the stall,
+  // stated as a number rather than left for the eye to find in the line.
+  let flatMonths = 0;
+  for (let i = snap.growth.length - 1; i >= 0 && snap.growth[i].joined === 0; i -= 1) {
+    flatMonths += 1;
+  }
 
   const applied = byStage("APPLIED");
   const review = byStage("REVIEW");
@@ -178,8 +187,8 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           ) : null}
           {overAYear > 0 ? `${count(overAYear)} over a year · ` : ""}
           {longest > 0 ? `longest ${count(longest)} days · ` : ""}
-          {count(snap.newThisWeek)} applied this week · {count(liveTotal)} live inside
-          90 days · {count(snap.formerMembers)} former · pulled {pacific(snap.pulledAt)}
+          {count(snap.newThisWeek)} applied this week · {count(onFile)} people on file
+          · {count(snap.formerMembers)} former · pulled {pacific(snap.pulledAt)}
         </p>
       </header>
 
@@ -187,22 +196,27 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         {/* THE SHAPE OF IT, FIRST. B put the pipeline above the names: the
             stage counts are what he scans, the names are what he acts on once
             he has seen them. */}
+        {/* ALL TIME IS THE FIGURE, RECENT IS THE FOOTNOTE. It was the other way
+            round and Maybe read "0" against 485 people actually sitting there,
+            because none of them applied inside 90 days. B: "90 days is maybe
+            irrelevant and show all time". The 90 day cut was hiding the number
+            rather than focusing it. */}
         <Panel
           className="col-span-12"
           title="Pipeline"
-          hint="Live means they applied inside 90 days. Everyone counts the whole history."
-          right={`${count(liveTotal)} live`}
+          hint="Everyone on file, at the stage they are sitting at today."
+          right={`${count(onFile)} people`}
         >
           <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               label="New"
-              value={count(applied?.live ?? 0)}
-              sub={`${count(applied?.people ?? 0)} all time`}
+              value={count(applied?.people ?? 0)}
+              sub={`${count(applied?.live ?? 0)} in the last 90 days`}
             />
             <Stat
               label="Maybe"
-              value={count(review?.live ?? 0)}
-              sub={`${count(review?.people ?? 0)} all time`}
+              value={count(review?.people ?? 0)}
+              sub={`${count(review?.live ?? 0)} in the last 90 days`}
             />
             <Stat
               label="Approved by CH"
@@ -222,6 +236,16 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             />
           </div>
         </Panel>
+
+        {snap.growth.length > 1 ? (
+          <Panel
+            className="col-span-12"
+            title="Members over time"
+            right={flatMonths > 0 ? `flat ${count(flatMonths)} months` : undefined}
+          >
+            <MembershipCurve points={snap.growth} flatMonths={flatMonths} />
+          </Panel>
+        ) : null}
 
         {/* Then the names. Longest wait first, because the oldest one has been
             invisible the longest. */}

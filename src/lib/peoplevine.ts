@@ -88,9 +88,29 @@ export type Decline = {
   tries: number;
 };
 
+export type GrowthPoint = {
+  /** YYYY-MM */
+  month: string;
+  /** Members who joined in that month and are still members. */
+  joined: number;
+  /** Running total of those. */
+  total: number;
+};
+
 export type Snapshot = {
   pulledAt: string | null;
   members: number;
+  /**
+   * Today's members by the month they joined, running to the current total.
+   *
+   * IT IS NOT A HISTORY OF HEADCOUNT AND MUST NOT BE LABELLED AS ONE.
+   * PeopleVine records member_since and nothing for the day a membership
+   * ended, so anyone who has left is simply absent from this line. The curve
+   * therefore reads low in the early years and is exact only at today's end,
+   * where it lands on the real 555. What it does show honestly is when the
+   * people who are still here arrived, and that is where the stall is visible.
+   */
+  growth: GrowthPoint[];
   formerMembers: number;
   waitingOnIntro: Waiting[];
   newThisWeek: number;
@@ -168,6 +188,35 @@ export async function snapshot(): Promise<Snapshot> {
 
   const members = people.filter((p) => p.is_member).length;
   const formerMembers = people.filter((p) => !p.is_member && p.was_member).length;
+
+  // Today's members, bucketed by the month they joined, then run forward.
+  // Months with nobody joining are filled in: dropping them would space the
+  // axis by event rather than by time and draw a flat stretch as a climb.
+  const perMonth = new Map<string, number>();
+  for (const p of people) {
+    if (!p.is_member || !p.member_since) continue;
+    const key = p.member_since.slice(0, 7);
+    perMonth.set(key, (perMonth.get(key) ?? 0) + 1);
+  }
+  const growth: GrowthPoint[] = [];
+  const months = [...perMonth.keys()].sort();
+  if (months.length) {
+    const [fy, fm] = months[0].split("-").map(Number);
+    const cursor = new Date(Date.UTC(fy, fm - 1, 1));
+    const end = new Date();
+    let running = 0;
+    while (
+      cursor.getUTCFullYear() < end.getUTCFullYear() ||
+      (cursor.getUTCFullYear() === end.getUTCFullYear() &&
+        cursor.getUTCMonth() <= end.getUTCMonth())
+    ) {
+      const key = `${cursor.getUTCFullYear()}-${String(cursor.getUTCMonth() + 1).padStart(2, "0")}`;
+      const joined = perMonth.get(key) ?? 0;
+      running += joined;
+      growth.push({ month: key, joined, total: running });
+      cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+    }
+  }
 
   // THE QUEUE. B approved these people and nobody has walked them in. Anyone
   // who has since become a member is not waiting, which is why membership is
@@ -296,6 +345,7 @@ export async function snapshot(): Promise<Snapshot> {
   return {
     pulledAt,
     members,
+    growth,
     formerMembers,
     waitingOnIntro,
     newThisWeek,
