@@ -175,7 +175,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
   const rejected = byStage("REJECTED");
 
   return (
-    <main className="relative left-1/2 w-screen max-w-[1800px] -translate-x-1/2 px-4 lg:px-8">
+    <main>
       {/* The dashboard's header: eyebrow, the one number that matters, then a
           dense meta line rather than three quiet cards doing the same job in
           five times the space. */}

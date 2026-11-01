@@ -162,17 +162,30 @@ const SURNAME_HEAD =
  * "Adolfo Lopez Cervantes" to "Adolfo Cervantes" does not shorten his name, it
  * changes it.
  */
+/** Jr, Sr, III and the rest. A suffix is not a surname. */
+const SUFFIX = /^(jr|jnr|sr|snr|ii|iii|iv|v|md|phd|dds|esq)\.?$/i;
+
 function tidyName(raw: string | null, id: number): string {
   const name = (raw ?? "").replace(/\s+/g, " ").trim();
   if (!name) return `Customer ${id}`;
   const parts = name.split(" ").filter(Boolean);
   if (parts.length <= 2) return name;
 
-  const lastTwo = parts[parts.length - 2];
-  if (COMPOUND_SURNAME.test(lastTwo) || SURNAME_HEAD.test(lastTwo)) {
-    return `${parts[0]} ${lastTwo} ${parts[parts.length - 1]}`;
+  // PULL THE SUFFIX OFF FIRST. Taking the last word as the surname turned Jim
+  // Madaffer Jr into "Jim Jr", which is not a shorter name, it is the wrong
+  // person. Found on the live page 2026-10-31.
+  let suffix = "";
+  const core = [...parts];
+  if (SUFFIX.test(core[core.length - 1]) && core.length > 2) {
+    suffix = " " + core.pop();
   }
-  return `${parts[0]} ${parts[parts.length - 1]}`;
+  if (core.length <= 2) return core.join(" ") + suffix;
+
+  const lastTwo = core[core.length - 2];
+  if (COMPOUND_SURNAME.test(lastTwo) || SURNAME_HEAD.test(lastTwo)) {
+    return `${core[0]} ${lastTwo} ${core[core.length - 1]}${suffix}`;
+  }
+  return `${core[0]} ${core[core.length - 1]}${suffix}`;
 }
 
 export async function snapshot(): Promise<Snapshot> {
