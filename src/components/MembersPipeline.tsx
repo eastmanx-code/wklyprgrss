@@ -236,7 +236,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
               thing on the page after the queue.
               Rejected came off. 531 people we said no to years ago is not a
               number anybody acts on. */}
-          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
             <Stat
               label="Members"
               value={count(snap.members)}
@@ -262,11 +262,6 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
               label="Applied this week"
               value={count(snap.newThisWeek)}
               sub="last seven days"
-            />
-            <Stat
-              label="Former members"
-              value={count(snap.formerMembers)}
-              sub={`of ${count(snap.members + snap.formerMembers)} who ever joined`}
             />
           </div>
 
