@@ -107,9 +107,17 @@ function Panel({
 }
 
 /**
- * One person. The name takes the row and wraps if it must; the figure holds
- * the right edge. A wait past a year, or four figures owed, takes the warn bar
- * the dashboard gives a fail.
+ * One person: name and detail on the left, figure pinned right.
+ *
+ * TWO COLUMNS, NOT A WRAPPING ROW. As one flex-wrap row the amount was pushed
+ * onto a line of its own the moment a long name and its note filled the width,
+ * which left half the list with the figure dangling under it. The left column
+ * is min-w-0 so the NOTE wraps under the name, never the name itself and never
+ * the figure. B: "cant hide names".
+ *
+ * No full warn bar here. On the weekly board a yellow bar means that venue
+ * failed, and on a list of twelve debtors it made three rows shout while the
+ * rest got harder to read. The figure carries the warn colour instead.
  */
 function PersonRow({
   name,
@@ -123,22 +131,14 @@ function PersonRow({
   bad?: boolean;
 }) {
   return (
-    <li
-      className={`bg-inset flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-[4px] px-3 py-3 ${
-        bad ? "bg-warn text-on-warn" : ""
-      }`}
-    >
-      <span
-        className={`text-title tracking-normal ${bad ? "text-on-warn" : "text-ink"}`}
-      >
-        {name}
+    <li className="bg-inset flex items-baseline gap-x-4 rounded-[4px] px-3 py-3">
+      <span className="min-w-0 flex-1">
+        <span className="text-title text-ink tracking-normal">{name}</span>
+        {note ? <span className="label ml-2">{note}</span> : null}
       </span>
-      {note ? (
-        <span className={`label shrink-0 ${bad ? "text-on-warn" : ""}`}>{note}</span>
-      ) : null}
       <span
-        className={`text-title ml-auto shrink-0 text-right tracking-normal tabular-nums ${
-          bad ? "text-on-warn" : "text-ink"
+        className={`text-title shrink-0 text-right tracking-normal tabular-nums ${
+          bad ? "text-warn" : "text-ink"
         }`}
       >
         {value}
