@@ -97,9 +97,38 @@ export type GrowthPoint = {
   total: number;
 };
 
+export type Program = {
+  program_id: number;
+  title: string | null;
+  monthly_price: number | null;
+  active_members: number;
+  failed_members: number;
+  suspended_members: number;
+  monthly_dues: number | null;
+  dues_at_risk: number | null;
+};
+
+export type Dues = {
+  monthly: number;
+  annual: number;
+  atRisk: number;
+  failing: number;
+  programs: Program[];
+};
+
 export type Snapshot = {
   pulledAt: string | null;
   members: number;
+  /**
+   * Dues at the posted rate, not money in the bank.
+   *
+   * Active cards times the monthly rate. It knows nothing about comps or
+   * discounts, which is why PeopleVine's own MRR for Regular reads lower than
+   * 430 times $200. The rates are transcribed from the control panel because
+   * the API does not carry a price, and the transcription lives in
+   * bst-ops/peoplevine/pull_peoplevine_dues.py with the date it was read.
+   */
+  dues: Dues | null;
   /** The most recent join date. The stall shows up here before anywhere else. */
   newestMemberOn: string | null;
   /**
@@ -223,6 +252,24 @@ export async function snapshot(): Promise<Snapshot> {
       )
       .range(from, to),
   );
+
+  const { data: programRows } = await client
+    .from("peoplevine_programs")
+    .select(
+      "program_id, title, monthly_price, active_members, failed_members, suspended_members, monthly_dues, dues_at_risk",
+    )
+    .order("monthly_dues", { ascending: false, nullsFirst: false });
+
+  const programs = (programRows ?? []) as Program[];
+  const dues: Dues | null = programs.length
+    ? {
+        monthly: programs.reduce((n, p) => n + Number(p.monthly_dues ?? 0), 0),
+        annual: programs.reduce((n, p) => n + Number(p.monthly_dues ?? 0), 0) * 12,
+        atRisk: programs.reduce((n, p) => n + Number(p.dues_at_risk ?? 0), 0),
+        failing: programs.reduce((n, p) => n + (p.failed_members ?? 0), 0),
+        programs: programs.filter((p) => (p.monthly_price ?? 0) > 0),
+      }
+    : null;
 
   const { data: freshest } = await client
     .from("peoplevine_people")
@@ -397,6 +444,7 @@ export async function snapshot(): Promise<Snapshot> {
   return {
     pulledAt,
     members,
+    dues,
     newestMemberOn,
     growth,
     formerMembers,

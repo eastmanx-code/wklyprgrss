@@ -297,6 +297,60 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           )}
         </Panel>
 
+        {/* DUES AT THE POSTED RATE, NOT MONEY IN THE BANK. Active cards times
+            the rate. It knows nothing about comps, so it reads a little above
+            PeopleVine's own MRR, and the gap is the discounts. The failing
+            figure is the one to act on: those are memberships the card is
+            declining, which still read as members everywhere else. */}
+        {snap.dues ? (
+          <Panel
+            className="col-span-12"
+            title="Dues"
+            hint="Active memberships at the posted rate. Comps and discounts are not in it."
+            right={`${count(snap.dues.programs.length)} paid programs`}
+          >
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3">
+              <Stat
+                label="Monthly dues"
+                value={money(snap.dues.monthly)}
+                sub="at the posted rate"
+              />
+              <Stat
+                label="Annual run rate"
+                value={money(snap.dues.annual)}
+                sub="twelve months at today's roll"
+              />
+              <Stat
+                label="Failing"
+                value={money(snap.dues.atRisk)}
+                accent={snap.dues.atRisk > 0}
+                sub={`${count(snap.dues.failing)} memberships, ${money(snap.dues.atRisk * 12)} a year`}
+              />
+            </div>
+
+            <ul className="mt-6 flex flex-col gap-2">
+              {snap.dues.programs.map((p) => (
+                <li
+                  key={p.program_id}
+                  className="bg-inset flex items-baseline gap-x-3 px-3 py-3"
+                >
+                  <span className="text-title text-ink shrink-0 tracking-normal">
+                    {p.title ?? `Program ${p.program_id}`}
+                  </span>
+                  <span className="label min-w-0 flex-1 truncate">
+                    {count(p.active_members)} active at{" "}
+                    {exact(Number(p.monthly_price ?? 0))} a month
+                    {p.failed_members ? ` · ${count(p.failed_members)} failing` : ""}
+                  </span>
+                  <span className="text-title text-ink shrink-0 text-right tracking-normal tabular-nums">
+                    {money(Number(p.monthly_dues ?? 0) * 12)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        ) : null}
+
         <Panel
           className="col-span-12"
           title="Money"
