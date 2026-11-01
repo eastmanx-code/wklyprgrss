@@ -26,6 +26,13 @@ const exact = (n: number) =>
 
 const count = (n: number) => n.toLocaleString("en-US");
 
+function monthName(month: string): string {
+  const [y, m] = month.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, 1))
+    .toLocaleDateString("en-US", { timeZone: "UTC", month: "short", year: "2-digit" })
+    .toUpperCase();
+}
+
 function pacific(iso: string | null): string {
   if (!iso) return "not pulled yet";
   const d = new Date(iso);
@@ -347,6 +354,84 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
                   </span>
                 </li>
               ))}
+            </ul>
+          </Panel>
+        ) : null}
+
+        {/* COLLECTED, NOT THE ROLL. The Dues panel above says what the
+            membership is worth at the posted rate. This says what came in.
+            They differ and the gap is the point: September collected $150,420
+            of membership money against an $88,927 roll, because 773 charges
+            landed on 457 people as arrears were caught up on the 95 cards in
+            failed billing.
+            THE SPLIT IS ON THE TRANSACTION TYPE, NOT ON HOW IT WAS PAID.
+            Bucketing every card charge as dues read $256,607 for September,
+            because members charge food and drink to their account and are
+            billed monthly on the same card. */}
+        {snap.revenue && snap.revenue.months.length > 0 ? (
+          <Panel
+            className="col-span-12"
+            title="Collected"
+            hint="Money that actually landed, from the transaction ledger. Dues, the till, and everything else billed."
+            right={`${count(snap.revenue.months.length)} months`}
+          >
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
+              <Stat
+                label="Dues this year"
+                value={money(snap.revenue.yearDues)}
+                sub="membership charges collected"
+              />
+              <Stat
+                label="Food and drink this year"
+                value={money(snap.revenue.yearPos)}
+                sub="rung up at the club"
+              />
+              <Stat
+                label="Other billing this year"
+                value={money(snap.revenue.yearOther)}
+                sub="house accounts and invoices"
+              />
+              <Stat
+                label="Last full month"
+                value={
+                  snap.revenue.lastFullMonth
+                    ? money(
+                        snap.revenue.lastFullMonth.dues_collected +
+                          snap.revenue.lastFullMonth.pos_spend +
+                          snap.revenue.lastFullMonth.other_collected,
+                      )
+                    : "0"
+                }
+                sub={
+                  snap.revenue.lastFullMonth
+                    ? monthName(snap.revenue.lastFullMonth.month)
+                    : undefined
+                }
+              />
+            </div>
+
+            <ul className="mt-6 flex flex-col gap-2">
+              {[...snap.revenue.months]
+                .reverse()
+                .slice(0, 13)
+                .map((m) => (
+                  <li
+                    key={m.month}
+                    className="bg-inset flex items-baseline gap-x-3 px-3 py-3"
+                  >
+                    <span className="text-title text-ink w-24 shrink-0 tracking-normal tabular-nums">
+                      {monthName(m.month)}
+                    </span>
+                    <span className="label min-w-0 flex-1 truncate">
+                      dues {money(m.dues_collected)} · food and drink{" "}
+                      {money(m.pos_spend)}
+                      {m.other_collected ? ` · other ${money(m.other_collected)}` : ""}
+                    </span>
+                    <span className="text-title text-ink shrink-0 text-right tracking-normal tabular-nums">
+                      {money(m.dues_collected + m.pos_spend + m.other_collected)}
+                    </span>
+                  </li>
+                ))}
             </ul>
           </Panel>
         ) : null}

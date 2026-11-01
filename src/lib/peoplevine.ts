@@ -97,6 +97,23 @@ export type GrowthPoint = {
   total: number;
 };
 
+export type RevenueMonth = {
+  month: string;
+  dues_collected: number;
+  pos_spend: number;
+  other_collected: number;
+};
+
+export type Revenue = {
+  months: RevenueMonth[];
+  /** Calendar year to date. */
+  yearDues: number;
+  yearPos: number;
+  yearOther: number;
+  /** The most recent complete month, for a like for like line. */
+  lastFullMonth: RevenueMonth | null;
+};
+
 export type Program = {
   program_id: number;
   title: string | null;
@@ -128,6 +145,12 @@ export type Snapshot = {
    * the API does not carry a price, and the transcription lives in
    * bst-ops/peoplevine/pull_peoplevine_dues.py with the date it was read.
    */
+  /**
+   * Money actually collected, by month, from the transaction ledger.
+   * Separate from `dues`, which is the roll at the posted rate. Collected can
+   * run above the roll when arrears are caught up, and that gap is the point.
+   */
+  revenue: Revenue | null;
   dues: Dues | null;
   /** The most recent join date. The stall shows up here before anywhere else. */
   newestMemberOn: string | null;
@@ -252,6 +275,38 @@ export async function snapshot(): Promise<Snapshot> {
       )
       .range(from, to),
   );
+
+  const { data: revenueRows } = await client
+    .from("peoplevine_revenue")
+    .select("month, dues_collected, pos_spend, other_collected")
+    .order("month", { ascending: true });
+
+  const months = ((revenueRows ?? []) as RevenueMonth[]).map((m) => ({
+    month: m.month,
+    dues_collected: Number(m.dues_collected ?? 0),
+    pos_spend: Number(m.pos_spend ?? 0),
+    other_collected: Number(m.other_collected ?? 0),
+  }));
+  const thisYear = String(new Date().getFullYear());
+  // The month in progress is not a month. Comparing a part month against full
+  // ones draws a collapse that has not happened.
+  const nowKey = new Date().toISOString().slice(0, 7);
+  const complete = months.filter((m) => m.month !== nowKey);
+  const revenue: Revenue | null = months.length
+    ? {
+        months,
+        yearDues: months
+          .filter((m) => m.month.startsWith(thisYear))
+          .reduce((n, m) => n + m.dues_collected, 0),
+        yearPos: months
+          .filter((m) => m.month.startsWith(thisYear))
+          .reduce((n, m) => n + m.pos_spend, 0),
+        yearOther: months
+          .filter((m) => m.month.startsWith(thisYear))
+          .reduce((n, m) => n + m.other_collected, 0),
+        lastFullMonth: complete.length ? complete[complete.length - 1] : null,
+      }
+    : null;
 
   const { data: programRows } = await client
     .from("peoplevine_programs")
@@ -445,6 +500,7 @@ export async function snapshot(): Promise<Snapshot> {
     pulledAt,
     members,
     dues,
+    revenue,
     newestMemberOn,
     growth,
     formerMembers,
