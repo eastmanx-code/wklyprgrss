@@ -125,12 +125,15 @@ function tidyName(raw: string | null, id: number): string {
 export async function snapshot(): Promise<Snapshot> {
   const client = db();
 
+  // The select string has to be ONE literal. Concatenating it with + leaves
+  // the client unable to infer the row type and the builder comes back as
+  // GenericStringError[], which fails the build with nothing obviously wrong
+  // on the line. Every other caller in this repo passes a single literal.
   const people = await selectAll<Person>((from, to) =>
     client
       .from("peoplevine_people")
       .select(
-        "customer_id,full_name,email,mobile,stage,stage_since,applied_on," +
-          "member_since,app_status_raw,is_member,was_member",
+        "customer_id, full_name, email, mobile, stage, stage_since, applied_on, member_since, app_status_raw, is_member, was_member",
       )
       .range(from, to),
   );
@@ -147,7 +150,9 @@ export async function snapshot(): Promise<Snapshot> {
   }>((from, to) =>
     client
       .from("peoplevine_billing")
-      .select("customer_id,full_name,status,amount,amount_due,charged_on,brand,last_four")
+      .select(
+        "customer_id, full_name, status, amount, amount_due, charged_on, brand, last_four",
+      )
       .range(from, to),
   );
 
@@ -219,8 +224,6 @@ export async function snapshot(): Promise<Snapshot> {
   const needsChecking = people.filter(
     (p) => p.app_status_raw === "onboarded" && !p.is_member && !p.was_member,
   ).length;
-
-  const memberById = new Map(people.map((p) => [p.customer_id, p]));
 
   const open = billing.filter((b) => b.status === "invoiced");
   const aged = open.filter((b) => (daysSince(b.charged_on) ?? 0) > 90);
