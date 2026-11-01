@@ -163,31 +163,9 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Figure value={snap.formerMembers} />
         </Card>
 
-        {/* THE POINT OF THE PAGE. Longest wait first, because the oldest one
-            has been invisible the longest. */}
-        <section className="panel col-span-12">
-          <header className="flex min-h-12 flex-wrap items-baseline justify-between gap-x-4">
-            <h2 className="card-title">Waiting on an intro</h2>
-            <p className="label">{queue.length} people, longest first</p>
-          </header>
-          <hr className="border-divider my-4 border-0 border-t" />
-          {queue.length === 0 ? (
-            <p className="note text-muted">Nobody is waiting.</p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {queue.map((q) => (
-                <WaitRow
-                  key={q.customer_id}
-                  name={q.name}
-                  note={q.appliedOn ? `applied ${shortDate(q.appliedOn)}` : undefined}
-                  right={`${q.days.toLocaleString("en-US")} days`}
-                  bad={q.days >= 365}
-                />
-              ))}
-            </ul>
-          )}
-        </section>
-
+        {/* THE SHAPE OF IT, FIRST. B put the pipeline above the queue: the
+            stage counts are what he scans, and the names are what he acts on
+            once he has seen them. */}
         <section className="panel col-span-12">
           <header className="flex min-h-12 flex-wrap items-baseline justify-between gap-x-4">
             <h2 className="card-title">Pipeline</h2>
@@ -222,6 +200,31 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             ))}
           </ul>
           <p className="label mt-3">Live, then everyone at that stage</p>
+        </section>
+
+        {/* Then the names. Longest wait first, because the oldest one has been
+            invisible the longest. */}
+        <section className="panel col-span-12">
+          <header className="flex min-h-12 flex-wrap items-baseline justify-between gap-x-4">
+            <h2 className="card-title">Waiting on an intro</h2>
+            <p className="label">{queue.length} people, longest first</p>
+          </header>
+          <hr className="border-divider my-4 border-0 border-t" />
+          {queue.length === 0 ? (
+            <p className="note text-muted">Nobody is waiting.</p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {queue.map((q) => (
+                <WaitRow
+                  key={q.customer_id}
+                  name={q.name}
+                  note={q.appliedOn ? `applied ${shortDate(q.appliedOn)}` : undefined}
+                  right={`${q.days.toLocaleString("en-US")} days`}
+                  bad={q.days >= 365}
+                />
+              ))}
+            </ul>
+          )}
         </section>
 
         <Card
@@ -292,7 +295,11 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
                 <WaitRow
                   key={`${d.name}-${d.when}-${i}`}
                   name={d.name}
-                  note={[shortDate(d.when), d.lastFour ? `•••• ${d.lastFour}` : ""]
+                  note={[
+                    shortDate(d.when),
+                    d.lastFour ? `${d.brand ?? "card"} ${d.lastFour}` : "",
+                    d.tries > 1 ? `${d.tries} tries` : "",
+                  ]
                     .filter(Boolean)
                     .join(" · ")}
                   right={exact(d.amount)}

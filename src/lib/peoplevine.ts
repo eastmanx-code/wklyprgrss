@@ -83,6 +83,9 @@ export type Decline = {
   when: string;
   brand: string | null;
   lastFour: string | null;
+  /** How many attempts this is. A gateway retries, and three rows for one
+      charge reads as three members in trouble instead of one. */
+  tries: number;
 };
 
 export type Snapshot = {
@@ -256,7 +259,12 @@ export async function snapshot(): Promise<Snapshot> {
     (b) => notHouse(b) && (daysSince(b.charged_on) ?? 9999) <= 30,
   );
 
-  const declined = billing
+  // ONE DECLINE PER PERSON PER CARD, NOT ONE PER ATTEMPT. A gateway retries a
+  // failed charge, so the raw rows showed the same member three times on the
+  // same day for the same amount, which reads as three members in trouble
+  // rather than one card that needs replacing. Attempts are counted instead,
+  // and the amount shown is the charge, never the sum of the retries.
+  const declinedRaw = billing
     .filter(
       (b) =>
         b.status === "declined" &&
@@ -264,6 +272,26 @@ export async function snapshot(): Promise<Snapshot> {
         (daysSince(b.charged_on) ?? 9999) <= 30,
     )
     .sort((a, b) => Date.parse(b.charged_on ?? "") - Date.parse(a.charged_on ?? ""));
+
+  const declinedBy = new Map<string, Decline>();
+  for (const b of declinedRaw) {
+    const name = tidyName(b.full_name, b.customer_id ?? 0);
+    const key = `${b.customer_id ?? name}|${b.last_four ?? ""}|${Number(b.amount ?? 0)}`;
+    const seen = declinedBy.get(key);
+    if (seen) {
+      seen.tries += 1;
+      continue;
+    }
+    declinedBy.set(key, {
+      name,
+      amount: Number(b.amount ?? 0),
+      when: b.charged_on ?? "",
+      brand: b.brand,
+      lastFour: b.last_four,
+      tries: 1,
+    });
+  }
+  const declined = [...declinedBy.values()];
 
   return {
     pulledAt,
@@ -277,14 +305,8 @@ export async function snapshot(): Promise<Snapshot> {
     pastDueMembers,
     declines30: {
       count: declined.length,
-      amount: declined.reduce((n, b) => n + Number(b.amount ?? 0), 0),
-      rows: declined.slice(0, 25).map((b) => ({
-        name: tidyName(b.full_name, b.customer_id ?? 0),
-        amount: Number(b.amount ?? 0),
-        when: b.charged_on ?? "",
-        brand: b.brand,
-        lastFour: b.last_four,
-      })),
+      amount: declined.reduce((n, b) => n + b.amount, 0),
+      rows: declined.slice(0, 25),
     },
     openInvoices30: {
       count: recentOpen.length,
