@@ -100,6 +100,8 @@ export type GrowthPoint = {
 export type Snapshot = {
   pulledAt: string | null;
   members: number;
+  /** The most recent join date. The stall shows up here before anywhere else. */
+  newestMemberOn: string | null;
   /**
    * Today's members by the month they joined, running to the current total.
    *
@@ -385,9 +387,17 @@ export async function snapshot(): Promise<Snapshot> {
   }
   const declined = [...declinedBy.values()];
 
+  const newestMemberOn =
+    people
+      .filter((p) => p.is_member && p.member_since)
+      .map((p) => p.member_since as string)
+      .sort()
+      .pop() ?? null;
+
   return {
     pulledAt,
     members,
+    newestMemberOn,
     growth,
     formerMembers,
     waitingOnIntro,

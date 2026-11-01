@@ -172,7 +172,10 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
   const applied = byStage("APPLIED");
   const review = byStage("REVIEW");
   const flagged = byStage("FLAGGED");
-  const rejected = byStage("REJECTED");
+  // Applied and never got an answer: nobody opened it, or somebody opened it
+  // and never decided. From the applicant's side those are the same thing.
+  const noAnswer = (applied?.people ?? 0) + (review?.people ?? 0);
+  const noAnswerLive = (applied?.live ?? 0) + (review?.live ?? 0);
 
   return (
     <main>
@@ -221,11 +224,27 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           hint={`${count(onFile)} people have applied since ${snap.growth.length ? snap.growth[0].month.slice(0, 4) : "launch"}`}
           right={flatMonths > 0 ? `nobody joined in ${count(flatMonths)} months` : undefined}
         >
-          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-6">
+          {/* WHAT B ACTUALLY DOES WITH THIS PAGE DECIDES WHAT IS ON IT.
+              "192 former" under Members was lifetime churn with no date on it,
+              so it could not answer whether anybody is leaving now. The useful
+              line under Members is when the last one joined, which is where
+              the stall shows first.
+              "New 349" was the worst of it. Those are not new. They are
+              applications going back to 2021 that nobody has ever opened, and
+              with Maybe beside them it is 834 people who applied and never got
+              an answer. That is one number, not two, and it is the biggest
+              thing on the page after the queue.
+              Rejected came off. 531 people we said no to years ago is not a
+              number anybody acts on. */}
+          <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
             <Stat
               label="Members"
               value={count(snap.members)}
-              sub={`${count(snap.formerMembers)} former`}
+              sub={
+                snap.newestMemberOn
+                  ? `newest joined ${shortDate(snap.newestMemberOn)}`
+                  : undefined
+              }
             />
             <Stat
               label="Approved by CH"
@@ -234,24 +253,20 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
               sub={overAYear ? `${count(overAYear)} over a year` : "none stuck"}
             />
             <Stat
-              label="New"
-              value={count(applied?.people ?? 0)}
-              sub={`${count(applied?.live ?? 0)} in 90 days`}
-            />
-            <Stat
-              label="Maybe"
-              value={count(review?.people ?? 0)}
-              sub={`${count(review?.live ?? 0)} in 90 days`}
-            />
-            <Stat
-              label="Rejected"
-              value={count(rejected?.people ?? 0)}
-              sub="all time"
+              label="Never answered"
+              value={count(noAnswer)}
+              accent={noAnswer > 0}
+              sub={`${count(noAnswerLive)} of them in 90 days`}
             />
             <Stat
               label="Applied this week"
               value={count(snap.newThisWeek)}
               sub="last seven days"
+            />
+            <Stat
+              label="Former members"
+              value={count(snap.formerMembers)}
+              sub={`of ${count(snap.members + snap.formerMembers)} who ever joined`}
             />
           </div>
 
