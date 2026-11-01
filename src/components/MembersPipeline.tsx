@@ -1,3 +1,4 @@
+import { Dial } from "./Dial";
 import { MembershipCurve } from "./MembershipCurve";
 import type { Snapshot } from "@/lib/peoplevine";
 
@@ -134,11 +135,15 @@ function PersonRow({
   bad?: boolean;
 }) {
   return (
-    <li className="bg-inset flex items-baseline gap-x-4 rounded-[4px] px-3 py-3">
-      <span className="min-w-0 flex-1">
-        <span className="text-title text-ink tracking-normal">{name}</span>
-        {note ? <span className="label ml-2">{note}</span> : null}
-      </span>
+    <li className="bg-inset flex items-baseline gap-x-3 rounded-[4px] px-3 py-3">
+      {/* ONE LINE PER PERSON. Three parts with one shrinking part: the name
+          never clips because the name is the point, the figure never moves
+          because the eye scans that column, and the detail in the middle
+          truncates if the row is tight. It is the only part that can be lost
+          without losing the row. Letting the whole row wrap put half the list
+          on two lines with the amount adrift. */}
+      <span className="text-title text-ink shrink-0 tracking-normal">{name}</span>
+      {note ? <span className="label min-w-0 flex-1 truncate">{note}</span> : <span className="flex-1" />}
       <span
         className={`text-title shrink-0 text-right tracking-normal tabular-nums ${
           bad ? "text-warn" : "text-ink"
@@ -201,51 +206,69 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             because none of them applied inside 90 days. B: "90 days is maybe
             irrelevant and show all time". The 90 day cut was hiding the number
             rather than focusing it. */}
+        {/* The hero band, the same shape as a house on the weekly dashboard:
+            ring, plot, stat cluster, one row. Two panels were doing this job
+            and neither carried any weight on its own. */}
         <Panel
           className="col-span-12"
-          title="Pipeline"
-          hint="Everyone on file, at the stage they are sitting at today."
-          right={`${count(onFile)} people`}
+          title="Membership"
+          hint={`${count(onFile)} people have applied since ${snap.growth.length ? snap.growth[0].month.slice(0, 4) : "launch"} · everyone counts at the stage they sit at today`}
+          right={flatMonths > 0 ? `nobody joined in ${count(flatMonths)} months` : undefined}
         >
-          <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 lg:grid-cols-5">
-            <Stat
-              label="New"
-              value={count(applied?.people ?? 0)}
-              sub={`${count(applied?.live ?? 0)} in the last 90 days`}
-            />
-            <Stat
-              label="Maybe"
-              value={count(review?.people ?? 0)}
-              sub={`${count(review?.live ?? 0)} in the last 90 days`}
-            />
-            <Stat
-              label="Approved by CH"
-              value={count(flagged?.people ?? 0)}
-              accent={(flagged?.people ?? 0) > 0}
-              sub={overAYear ? `${count(overAYear)} over a year` : "none stuck"}
-            />
-            <Stat
-              label="Members"
-              value={count(snap.members)}
-              sub={`${count(snap.formerMembers)} former`}
-            />
-            <Stat
-              label="Rejected"
-              value={count(rejected?.people ?? 0)}
-              sub="all time"
-            />
+          <div className="grid gap-6 lg:grid-cols-[200px_minmax(0,1fr)_auto]">
+            <div>
+              <Dial
+                percent={onFile ? Math.round((snap.members / onFile) * 100) : 0}
+                tone="var(--ink)"
+                caption={`${count(snap.members)} of ${count(onFile)} who applied`}
+                size={200}
+              />
+              <p className="label mt-1 text-center">
+                {count(snap.formerMembers)} more joined and left
+              </p>
+            </div>
+
+            {snap.growth.length > 1 ? (
+              <MembershipCurve points={snap.growth} flatMonths={flatMonths} />
+            ) : (
+              <div />
+            )}
+
+            <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+              <Stat
+                label="New"
+                value={count(applied?.people ?? 0)}
+                sub={`${count(applied?.live ?? 0)} in 90 days`}
+              />
+              <Stat
+                label="Maybe"
+                value={count(review?.people ?? 0)}
+                sub={`${count(review?.live ?? 0)} in 90 days`}
+              />
+              <Stat
+                label="Approved by CH"
+                value={count(flagged?.people ?? 0)}
+                accent={(flagged?.people ?? 0) > 0}
+                sub={overAYear ? `${count(overAYear)} over a year` : "none stuck"}
+              />
+              <Stat
+                label="Members"
+                value={count(snap.members)}
+                sub={`${count(snap.formerMembers)} former`}
+              />
+              <Stat
+                label="Rejected"
+                value={count(rejected?.people ?? 0)}
+                sub="all time"
+              />
+              <Stat
+                label="Applied this week"
+                value={count(snap.newThisWeek)}
+                sub="last seven days"
+              />
+            </div>
           </div>
         </Panel>
-
-        {snap.growth.length > 1 ? (
-          <Panel
-            className="col-span-12"
-            title="Members over time"
-            right={flatMonths > 0 ? `flat ${count(flatMonths)} months` : undefined}
-          >
-            <MembershipCurve points={snap.growth} flatMonths={flatMonths} />
-          </Panel>
-        ) : null}
 
         {/* Then the names. Longest wait first, because the oldest one has been
             invisible the longest. */}
@@ -309,7 +332,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
                 <PersonRow
                   key={`${r.customer_id}-${r.name}`}
                   name={r.name}
-                  note={`${count(r.invoices)} ${r.invoices === 1 ? "invoice" : "invoices"} · oldest ${count(r.oldestDays)} days`}
+                  note={`${count(r.invoices)} ${r.invoices === 1 ? "invoice" : "invoices"} · ${count(r.oldestDays)} days`}
                   value={exact(r.pastDue)}
                   bad={r.pastDue >= 1000}
                 />
