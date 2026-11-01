@@ -32,6 +32,15 @@ export const ADMIN_PINS = (): string[] =>
     .map((pin) => pin.trim())
     .filter(Boolean);
 
+/**
+ * The secret in /members/<key>, which is how the membership board is shared
+ * without issuing a login. OPTIONAL ON PURPOSE: unset means the shared route
+ * 404s, so a missing variable cannot put member names and balances on an open
+ * URL. The signed in route at /members does not use it.
+ */
+export const MEMBERS_VIEW_KEY = (): string | null =>
+  process.env.MEMBERS_VIEW_KEY?.trim() || null;
+
 /** 0 = Sunday .. 6 = Saturday, Pacific. */
 export const DEADLINE_DAY = () => requiredInt("DEADLINE_DAY", 0, 6);
 /** 0-23, Pacific. */
