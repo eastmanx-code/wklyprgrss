@@ -363,9 +363,6 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
                 />
               ))}
             </ul>
-            <p className="label mt-3">
-              A card only shows here once something tried to bill it
-            </p>
           </Panel>
         ) : null}
 

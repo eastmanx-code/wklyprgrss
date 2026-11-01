@@ -140,9 +140,39 @@ function daysSince(iso: string | null): number | null {
  */
 const HOUSE_ACCOUNT = /^walk\s?-?\s?in customer$/i;
 
+/**
+ * Spanish and Portuguese compound surnames, where the last TWO words are the
+ * family name and dropping either one renames the person. Lopez Cervantes is
+ * not Adolfo's middle name.
+ */
+const COMPOUND_SURNAME =
+  /^(de|del|de la|de los|la|las|los|van|von|da|das|dos|di|du|el|al|bin|ibn|mac|mc|o|st|san|santa)$/i;
+
+const SURNAME_HEAD =
+  /^(lopez|garcia|martinez|rodriguez|hernandez|gonzalez|perez|sanchez|ramirez|torres|flores|rivera|gomez|diaz|cruz|morales|reyes|gutierrez|ortiz|chavez|ruiz|alvarez|castillo|jimenez|vargas|romero|herrera|medina|aguilar|silva|santos|costa|ferreira|oliveira|souza|pereira|carvalho)$/i;
+
+/**
+ * The name as it goes on the board.
+ *
+ * MIDDLE NAMES COME OUT. B, 2026-10-31: "cut middle names perhaps?" Three and
+ * four word names were the rows that ran long, and a middle name is the part
+ * nobody needs to recognise somebody.
+ *
+ * A COMPOUND SURNAME IS NOT A MIDDLE NAME and keeps both words. Trimming
+ * "Adolfo Lopez Cervantes" to "Adolfo Cervantes" does not shorten his name, it
+ * changes it.
+ */
 function tidyName(raw: string | null, id: number): string {
   const name = (raw ?? "").replace(/\s+/g, " ").trim();
-  return name || `Customer ${id}`;
+  if (!name) return `Customer ${id}`;
+  const parts = name.split(" ").filter(Boolean);
+  if (parts.length <= 2) return name;
+
+  const lastTwo = parts[parts.length - 2];
+  if (COMPOUND_SURNAME.test(lastTwo) || SURNAME_HEAD.test(lastTwo)) {
+    return `${parts[0]} ${lastTwo} ${parts[parts.length - 1]}`;
+  }
+  return `${parts[0]} ${parts[parts.length - 1]}`;
 }
 
 export async function snapshot(): Promise<Snapshot> {
