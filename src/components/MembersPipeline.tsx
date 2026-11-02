@@ -99,12 +99,15 @@ function Panel({
   title,
   hint,
   right,
+  csv,
   className = "",
   children,
 }: {
   title: string;
   hint?: string;
   right?: string;
+  /** The export section name, which puts a download on this panel. */
+  csv?: string;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -114,7 +117,20 @@ function Panel({
     <section className={`panel rounded-none ${className}`}>
       <header className="flex flex-wrap items-baseline justify-between gap-x-4">
         <h2 className="card-title">{title}</h2>
-        {right ? <p className="label">{right}</p> : null}
+        <div className="flex items-baseline gap-x-4">
+          {right ? <p className="label">{right}</p> : null}
+          {/* A plain link, not a button: it is a GET that returns a file, so
+              it opens in a new tab, survives a right click, and needs no
+              javascript to work. */}
+          {csv ? (
+            <a
+              href={`/members/export?section=${csv}`}
+              className="label hover:text-ink underline underline-offset-4"
+            >
+              CSV
+            </a>
+          ) : null}
+        </div>
       </header>
       {hint ? <p className="label mt-2">{hint}</p> : null}
       <hr className="border-divider my-4 border-0 border-t" />
@@ -259,6 +275,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         <Panel
           className="col-span-12"
           title="Membership"
+            csv="pipeline"
           hint={`${count(onFile)} people have applied since ${snap.growth.length ? snap.growth[0].month.slice(0, 4) : "launch"}`}
           right={flatMonths > 0 ? `nobody joined in ${count(flatMonths)} months` : undefined}
         >
@@ -315,6 +332,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         <Panel
           className="col-span-12"
           title="Waiting on an intro"
+            csv="waiting"
           hint="Approved by CH. Nobody has invited them in."
           right={`${count(queue.length)} people, longest first`}
         >
@@ -344,6 +362,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12"
             title="Dues"
+            csv="programs"
             hint="Active memberships at the posted rate. Comps and discounts are not in it."
             right={`${count(snap.dues.programs.length)} paid programs`}
           >
@@ -403,6 +422,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12"
             title="Failing, still coming in"
+            csv="failing-active"
             hint="Billing has failed and they have spent at the club inside six months. Call these."
             right={`${count(snap.dues.failingActive.length)} people · ${money(
               snap.dues.failingActive.reduce((n, f) => n + f.monthlyPrice * 12, 0),
@@ -420,6 +440,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12"
             title="Failing, not seen"
+            csv="failing-dormant"
             hint="Billing has failed and nothing has been spent at the club in six months. Close these."
             right={`${count(snap.dues.failingDormant.length)} people`}
           >
@@ -450,6 +471,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12"
             title="Collected"
+            csv="revenue"
             hint="Money that actually landed, from the transaction ledger. Dues, the till, and everything else billed."
             right={`${count(snap.revenue.months.length)} months`}
           >
@@ -550,6 +572,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12 lg:col-span-6"
             title="Who owes it"
+            csv="past-due"
             right="Over 90 days"
           >
             <ul className="flex flex-col gap-2">
@@ -570,6 +593,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <Panel
             className="col-span-12 lg:col-span-6"
             title="Declined"
+            csv="declines"
             right="Last 30 days"
           >
             <ul className="flex flex-col gap-2">
