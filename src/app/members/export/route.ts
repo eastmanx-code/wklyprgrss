@@ -65,9 +65,14 @@ export async function GET(request: Request) {
   if (session?.role !== "admin") {
     // The same door the page uses. This carries member names and balances, so
     // it is not a public URL just because it returns a file.
-    return NextResponse.redirect(
-      new URL(notAdminGoesTo(Boolean(session)), request.url),
-    );
+    //
+    // The search string is rebuilt rather than inherited: redirecting with the
+    // request URL as the base carried ?section=waiting onto the login page,
+    // which told the door nothing and stranded whoever clicked. Send them to
+    // the board, not back to a file download they have no session for.
+    const door = new URL(notAdminGoesTo(Boolean(session)), request.url);
+    door.search = door.pathname === "/admin/login" ? "?next=/members" : "";
+    return NextResponse.redirect(door);
   }
 
   const asked = new URL(request.url).searchParams.get("section") ?? "";
