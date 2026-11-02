@@ -364,7 +364,6 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             title="Dues"
             csv="programs"
             hint="Active memberships at the posted rate. Comps and discounts are not in it."
-            right={`${count(snap.dues.programs.length)} paid programs`}
           >
             <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-3">
               <Stat
@@ -397,27 +396,6 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
               while a card sits failed, so these are memberships that have
               stopped collecting, not debt.
             </p>
-
-            <ul className="mt-6 flex flex-col gap-2">
-              {snap.dues.programs.map((p) => (
-                <li
-                  key={p.program_id}
-                  className="bg-inset flex items-baseline gap-x-3 px-3 py-3"
-                >
-                  <span className="text-title text-ink shrink-0 tracking-normal">
-                    {p.title ?? `Program ${p.program_id}`}
-                  </span>
-                  <span className="label min-w-0 flex-1 truncate">
-                    {count(p.active_members)} active at{" "}
-                    {exact(Number(p.monthly_price ?? 0))} a month
-                    {p.failed_members ? ` · ${count(p.failed_members)} failing` : ""}
-                  </span>
-                  <span className="text-title text-ink shrink-0 text-right tracking-normal tabular-nums">
-                    {money(Number(p.monthly_dues ?? 0) * 12)}
-                  </span>
-                </li>
-              ))}
-            </ul>
           </Panel>
         ) : null}
 
