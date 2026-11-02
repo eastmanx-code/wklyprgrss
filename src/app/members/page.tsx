@@ -15,8 +15,13 @@ export const dynamic = "force-dynamic";
  * form is /members/<key>, which needs no login. This one is the signed in door.
  */
 export default async function MembersPage() {
+  // Carry the destination to the door. Nothing links to this page, so landing
+  // on the dashboard after signing in leaves no way back to it.
   const session = await getSession();
-  if (session?.role !== "admin") redirect(notAdminGoesTo(Boolean(session)));
+  if (session?.role !== "admin") {
+    const door = notAdminGoesTo(Boolean(session));
+    redirect(door === "/admin/login" ? "/admin/login?next=/members" : door);
+  }
 
   const snap = await snapshot();
   return <MembersPipeline snap={snap} />;
