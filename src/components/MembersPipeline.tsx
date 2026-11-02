@@ -370,6 +370,51 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           </Panel>
         ) : null}
 
+        {/* THE CHASE LIST. The count was on the page before this and nobody
+            can ring a count. Oldest failure first, because the oldest is the
+            one that has been invisible longest: the top of this list has been
+            failing since April 2023.
+            ALL OF THEM STILL COUNT AS MEMBERS. That is the point. The 555 on
+            the top of this page includes these 97, so one member in six on the
+            roll is not paying. */}
+        {snap.dues && snap.dues.failingCards.length > 0 ? (
+          <Panel
+            className="col-span-12"
+            title="Billing failing"
+            hint="Still on the member roll, card declining. Oldest failure first."
+            right={`${count(snap.dues.failingCards.length)} memberships · ${money(snap.dues.atRisk * 12)} a year`}
+          >
+            <ul className="flex flex-col gap-2">
+              {snap.dues.failingCards.slice(0, 25).map((f) => (
+                <li
+                  key={`${f.customer_id}-${f.since ?? ""}`}
+                  className="bg-inset flex items-baseline gap-x-3 px-3 py-3"
+                >
+                  <span className="text-title text-ink shrink-0 tracking-normal">
+                    {f.name}
+                  </span>
+                  <span className="label min-w-0 flex-1 truncate">
+                    {f.program ?? "membership"} · {exact(f.monthlyPrice)} a month
+                    {f.since ? ` · failing since ${shortDate(f.since)}` : ""}
+                  </span>
+                  <span
+                    className={`text-title shrink-0 text-right tracking-normal tabular-nums ${
+                      (f.days ?? 0) >= 365 ? "text-warn" : "text-ink"
+                    }`}
+                  >
+                    {f.days === null ? "" : `${count(f.days)} days`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {snap.dues.failingCards.length > 25 ? (
+              <p className="label mt-3">
+                {count(snap.dues.failingCards.length - 25)} more below the first 25
+              </p>
+            ) : null}
+          </Panel>
+        ) : null}
+
         {/* COLLECTED, NOT THE ROLL. The Dues panel above says what the
             membership is worth at the posted rate. This says what came in.
             They differ and the gap is the point: September collected $150,420

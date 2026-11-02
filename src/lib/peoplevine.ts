@@ -125,12 +125,26 @@ export type Program = {
   dues_at_risk: number | null;
 };
 
+export type FailingCard = {
+  customer_id: number;
+  name: string;
+  email: string | null;
+  program: string | null;
+  monthlyPrice: number;
+  since: string | null;
+  days: number | null;
+  /** Still on the member roll despite the billing failing. */
+  stillAMember: boolean;
+};
+
 export type Dues = {
   monthly: number;
   annual: number;
   atRisk: number;
   failing: number;
   programs: Program[];
+  /** Who, oldest failure first. The count is not actionable; the list is. */
+  failingCards: FailingCard[];
 };
 
 export type Snapshot = {
@@ -317,6 +331,32 @@ export async function snapshot(): Promise<Snapshot> {
     )
     .order("monthly_dues", { ascending: false, nullsFirst: false });
 
+  const { data: failingRows } = await client
+    .from("peoplevine_failing_cards")
+    .select("customer_id, program_title, monthly_price, failing_since")
+    .order("failing_since", { ascending: true, nullsFirst: false });
+
+  // Names live on the people table, not on the card, so they are joined here
+  // rather than copied at pull time: a name that is copied goes stale.
+  const failingCards: FailingCard[] = ((failingRows ?? []) as {
+    customer_id: number;
+    program_title: string | null;
+    monthly_price: number | null;
+    failing_since: string | null;
+  }[]).map((r) => {
+    const who = people.find((p) => p.customer_id === r.customer_id);
+    return {
+      customer_id: r.customer_id,
+      name: tidyName(who?.full_name ?? null, r.customer_id),
+      email: who?.email ?? null,
+      program: r.program_title,
+      monthlyPrice: Number(r.monthly_price ?? 0),
+      since: r.failing_since,
+      days: daysSince(r.failing_since),
+      stillAMember: Boolean(who?.is_member),
+    };
+  });
+
   const programs = (programRows ?? []) as Program[];
   const dues: Dues | null = programs.length
     ? {
@@ -325,6 +365,7 @@ export async function snapshot(): Promise<Snapshot> {
         atRisk: programs.reduce((n, p) => n + Number(p.dues_at_risk ?? 0), 0),
         failing: programs.reduce((n, p) => n + (p.failed_members ?? 0), 0),
         programs: programs.filter((p) => (p.monthly_price ?? 0) > 0),
+        failingCards,
       }
     : null;
 
