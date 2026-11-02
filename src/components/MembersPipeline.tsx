@@ -388,6 +388,16 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
               />
             </div>
 
+            {/* The two facts that stop the failing figures reading as a hole
+                in the revenue. Without them a reader assumes somebody is
+                getting in free and that there is money owed. Neither is true. */}
+            <p className="label mt-4 leading-relaxed">
+              A failed card blocks check-in immediately with no grace period,
+              and PeopleVine stops retrying after day seven. Nothing is owed
+              while a card sits failed, so these are memberships that have
+              stopped collecting, not debt.
+            </p>
+
             <ul className="mt-6 flex flex-col gap-2">
               {snap.dues.programs.map((p) => (
                 <li
@@ -421,9 +431,9 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         {snap.dues && snap.dues.failingActive.length > 0 ? (
           <Panel
             className="col-span-12"
-            title="Failing, still coming in"
+            title="Failing, still spending"
             csv="failing-active"
-            hint="Billing has failed and they have spent at the club inside six months. Call these."
+            hint="Billing has failed and they have spent at the club inside the last six months. A failed card already blocks check-in."
             right={`${count(snap.dues.failingActive.length)} people · ${money(
               snap.dues.failingActive.reduce((n, f) => n + f.monthlyPrice * 12, 0),
             )} a year`}
@@ -439,9 +449,9 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         {snap.dues && snap.dues.failingDormant.length > 0 ? (
           <Panel
             className="col-span-12"
-            title="Failing, not seen"
+            title="Failing, not spending"
             csv="failing-dormant"
-            hint="Billing has failed and nothing has been spent at the club in six months. Close these."
+            hint="Billing has failed and nothing has been spent at the club in six months. No balance accrues while a card is failed."
             right={`${count(snap.dues.failingDormant.length)} people`}
           >
             <ul className="flex flex-col gap-2">
