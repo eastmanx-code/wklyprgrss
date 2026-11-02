@@ -39,7 +39,8 @@ function pacific(iso: string | null): string {
   if (Number.isNaN(d.getTime())) return "not pulled yet";
   return d.toLocaleString("en-US", {
     timeZone: "America/Los_Angeles",
-    weekday: "short",
+    month: "numeric",
+    day: "numeric",
     hour: "numeric",
     minute: "2-digit",
   });
@@ -67,11 +68,15 @@ function Stat({
   value,
   sub,
   accent = false,
+  money: isMoney = false,
 }: {
   label: string;
   value: React.ReactNode;
   sub?: string;
   accent?: boolean;
+  /** Dollar figures take a smaller size: "$2,046,018" at 40px in a four
+      column row runs straight into its neighbour, where "555" has room. */
+  money?: boolean;
 }) {
   return (
     <div className="min-w-0">
@@ -79,7 +84,7 @@ function Stat({
       {/* A size above the dashboard's 28px stat. These are the figures the
           page exists to show and at 28px they read as a caption. */}
       <p
-        className={`mt-1 text-[40px] leading-[1.1] tracking-normal tabular-nums ${
+        className={`mt-1 ${isMoney ? "text-[28px]" : "text-[40px]"} leading-[1.1] tracking-normal tabular-nums ${
           accent ? "text-warn" : "text-ink"
         }`}
       >
@@ -194,6 +199,10 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
         <h1 className="text-metric mt-2 tracking-normal">
           {count(snap.members)} members
         </h1>
+        {/* ITS OWN LINE. Buried at the end of the meta run nobody read it,
+            and on a page of money figures the first question is how old they
+            are. */}
+        <p className="label mt-2">Data pulled {pacific(snap.pulledAt)} Pacific</p>
         <p className="label mt-2 leading-relaxed">
           {queue.length > 0 ? (
             <>
@@ -204,7 +213,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           {overAYear > 0 ? `${count(overAYear)} over a year · ` : ""}
           {longest > 0 ? `longest ${count(longest)} days · ` : ""}
           {count(snap.newThisWeek)} applied this week · {count(onFile)} people on file
-          · {count(snap.formerMembers)} former · pulled {pacific(snap.pulledAt)}
+          · {count(snap.formerMembers)} former
         </p>
       </header>
 
@@ -316,19 +325,22 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             hint="Active memberships at the posted rate. Comps and discounts are not in it."
             right={`${count(snap.dues.programs.length)} paid programs`}
           >
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-3">
               <Stat
                 label="Monthly dues"
+              money
                 value={money(snap.dues.monthly)}
                 sub="at the posted rate"
               />
               <Stat
                 label="Annual run rate"
+              money
                 value={money(snap.dues.annual)}
                 sub="twelve months at today's roll"
               />
               <Stat
                 label="Failing"
+              money
                 value={money(snap.dues.atRisk)}
                 accent={snap.dues.atRisk > 0}
                 sub={`${count(snap.dues.failing)} memberships, ${money(snap.dues.atRisk * 12)} a year`}
@@ -375,24 +387,28 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             hint="Money that actually landed, from the transaction ledger. Dues, the till, and everything else billed."
             right={`${count(snap.revenue.months.length)} months`}
           >
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
+            <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
               <Stat
                 label="Dues this year"
+              money
                 value={money(snap.revenue.yearDues)}
                 sub="membership charges collected"
               />
               <Stat
                 label="Food and drink this year"
+              money
                 value={money(snap.revenue.yearPos)}
                 sub="rung up at the club"
               />
               <Stat
                 label="Other billing this year"
+              money
                 value={money(snap.revenue.yearOther)}
                 sub="house accounts and invoices"
               />
               <Stat
                 label="Last full month"
+              money
                 value={
                   snap.revenue.lastFullMonth
                     ? money(
@@ -444,6 +460,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3">
             <Stat
               label="Past due"
+              money
               value={money(snap.pastDueTotal)}
               accent={snap.pastDueTotal > 0}
               sub={`${count(snap.pastDueMembers.length)} people, over 90 days`}
@@ -456,6 +473,7 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
             />
             <Stat
               label="Billed this month"
+              money
               value={money(snap.openInvoices30.amount)}
               sub={`${count(snap.openInvoices30.count)} open invoices`}
             />

@@ -88,7 +88,16 @@ export async function adminLogin(
   if (!holder) return { error: GENERIC_ERROR };
 
   await openFor(holder);
-  redirect("/home");
+  // Land where they were going. A screen that sends you to the door and then
+  // drops you on the home page has made you navigate twice for no reason, and
+  // on a page nobody links to, like the membership board, there is no second
+  // route back to it.
+  //
+  // ADMINS ONLY. A manager code reaching an admin screen is bounced straight
+  // back out, so honouring the destination for them would be a round trip to
+  // the same door. They keep going home.
+  const next = String(formData.get("next") ?? "");
+  redirect(holder.kind === "admin" ? safeNext(next, "/admin") : "/home");
 }
 
 /**
