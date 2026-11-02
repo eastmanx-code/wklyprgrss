@@ -133,6 +133,9 @@ export type FailingCard = {
   monthlyPrice: number;
   since: string | null;
   days: number | null;
+  /** Last till transaction: somebody physically spending at the club. */
+  lastVisit: string | null;
+  lastVisitDays: number | null;
   /** Still on the member roll despite the billing failing. */
   stillAMember: boolean;
 };
@@ -143,8 +146,16 @@ export type Dues = {
   atRisk: number;
   failing: number;
   programs: Program[];
-  /** Who, oldest failure first. The count is not actionable; the list is. */
-  failingCards: FailingCard[];
+  /**
+   * Who, split by whether they are still turning up.
+   *
+   * B, 2026-11-02: "failing and never having been in in years is irrelevant".
+   * A card failing since 2023 with a bar tab last week is somebody drinking on
+   * a membership that stopped paying. The same card with no activity is a dead
+   * record to close. Two different jobs for two different people.
+   */
+  failingActive: FailingCard[];
+  failingDormant: FailingCard[];
 };
 
 export type Snapshot = {
@@ -338,6 +349,17 @@ export async function snapshot(): Promise<Snapshot> {
 
   // Names live on the people table, not on the card, so they are joined here
   // rather than copied at pull time: a name that is copied goes stale.
+  const { data: seenRows } = await client
+    .from("peoplevine_last_seen")
+    .select("customer_id, last_visit_on, last_transaction_on");
+  const seenBy = new Map(
+    ((seenRows ?? []) as {
+      customer_id: number;
+      last_visit_on: string | null;
+      last_transaction_on: string | null;
+    }[]).map((r) => [r.customer_id, r]),
+  );
+
   const failingCards: FailingCard[] = ((failingRows ?? []) as {
     customer_id: number;
     program_title: string | null;
@@ -345,7 +367,11 @@ export async function snapshot(): Promise<Snapshot> {
     failing_since: string | null;
   }[]).map((r) => {
     const who = people.find((p) => p.customer_id === r.customer_id);
+    const seen = seenBy.get(r.customer_id);
+    const lastVisit = seen?.last_visit_on ?? null;
     return {
+      lastVisit,
+      lastVisitDays: daysSince(lastVisit),
       customer_id: r.customer_id,
       name: tidyName(who?.full_name ?? null, r.customer_id),
       email: who?.email ?? null,
@@ -365,7 +391,14 @@ export async function snapshot(): Promise<Snapshot> {
         atRisk: programs.reduce((n, p) => n + Number(p.dues_at_risk ?? 0), 0),
         failing: programs.reduce((n, p) => n + (p.failed_members ?? 0), 0),
         programs: programs.filter((p) => (p.monthly_price ?? 0) > 0),
-        failingCards,
+        // Still turning up is the chase list. Sorted by the longest running
+        // failure, because that is the most money already gone.
+        failingActive: failingCards
+          .filter((f) => f.lastVisitDays !== null && f.lastVisitDays <= 180)
+          .sort((a, b) => (b.days ?? 0) - (a.days ?? 0)),
+        failingDormant: failingCards
+          .filter((f) => f.lastVisitDays === null || f.lastVisitDays > 180)
+          .sort((a, b) => (b.days ?? 0) - (a.days ?? 0)),
       }
     : null;
 

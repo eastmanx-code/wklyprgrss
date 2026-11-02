@@ -1,5 +1,5 @@
 import { MembershipCurve } from "./MembershipCurve";
-import type { Snapshot } from "@/lib/peoplevine";
+import type { FailingCard, Snapshot } from "@/lib/peoplevine";
 
 /**
  * The Reading Club membership board.
@@ -163,6 +163,28 @@ function PersonRow({
         }`}
       >
         {value}
+      </span>
+    </li>
+  );
+}
+
+function FailingRow({ card }: { card: FailingCard }) {
+  return (
+    <li className="bg-inset flex items-baseline gap-x-3 px-3 py-3">
+      <span className="text-title text-ink shrink-0 tracking-normal">{card.name}</span>
+      <span className="label min-w-0 flex-1 truncate">
+        {card.program ?? "membership"} · {exact(card.monthlyPrice)} a month
+        {card.since ? ` · failing since ${shortDate(card.since)}` : ""}
+        {card.lastVisit
+          ? ` · last in ${shortDate(card.lastVisit)}`
+          : " · not seen in the window"}
+      </span>
+      <span
+        className={`text-title shrink-0 text-right tracking-normal tabular-nums ${
+          (card.days ?? 0) >= 365 ? "text-warn" : "text-ink"
+        }`}
+      >
+        {card.days === null ? "" : `${card.days.toLocaleString("en-US")} days`}
       </span>
     </li>
   );
@@ -370,46 +392,45 @@ export function MembersPipeline({ snap }: { snap: Snapshot }) {
           </Panel>
         ) : null}
 
-        {/* THE CHASE LIST. The count was on the page before this and nobody
-            can ring a count. Oldest failure first, because the oldest is the
-            one that has been invisible longest: the top of this list has been
-            failing since April 2023.
-            ALL OF THEM STILL COUNT AS MEMBERS. That is the point. The 555 on
-            the top of this page includes these 97, so one member in six on the
-            roll is not paying. */}
-        {snap.dues && snap.dues.failingCards.length > 0 ? (
+        {/* TWO LISTS, NOT ONE. B, 2026-11-02: "failing and never having been
+            in in years is irrelevant". Somebody failing since 2023 who was in
+            last week is drinking on a membership that stopped paying, and
+            that is a phone call today. Somebody failing since 2023 who has not
+            been seen is a record to close. Same status, opposite jobs.
+            Last visit is a till transaction, not a billing attempt: being
+            charged is not the same as turning up. */}
+        {snap.dues && snap.dues.failingActive.length > 0 ? (
           <Panel
             className="col-span-12"
-            title="Billing failing"
-            hint="Still on the member roll, card declining. Oldest failure first."
-            right={`${count(snap.dues.failingCards.length)} memberships · ${money(snap.dues.atRisk * 12)} a year`}
+            title="Failing, still coming in"
+            hint="Billing has failed and they have spent at the club inside six months. Call these."
+            right={`${count(snap.dues.failingActive.length)} people · ${money(
+              snap.dues.failingActive.reduce((n, f) => n + f.monthlyPrice * 12, 0),
+            )} a year`}
           >
             <ul className="flex flex-col gap-2">
-              {snap.dues.failingCards.slice(0, 25).map((f) => (
-                <li
-                  key={`${f.customer_id}-${f.since ?? ""}`}
-                  className="bg-inset flex items-baseline gap-x-3 px-3 py-3"
-                >
-                  <span className="text-title text-ink shrink-0 tracking-normal">
-                    {f.name}
-                  </span>
-                  <span className="label min-w-0 flex-1 truncate">
-                    {f.program ?? "membership"} · {exact(f.monthlyPrice)} a month
-                    {f.since ? ` · failing since ${shortDate(f.since)}` : ""}
-                  </span>
-                  <span
-                    className={`text-title shrink-0 text-right tracking-normal tabular-nums ${
-                      (f.days ?? 0) >= 365 ? "text-warn" : "text-ink"
-                    }`}
-                  >
-                    {f.days === null ? "" : `${count(f.days)} days`}
-                  </span>
-                </li>
+              {snap.dues.failingActive.slice(0, 25).map((f) => (
+                <FailingRow key={`a-${f.customer_id}-${f.since ?? ""}`} card={f} />
               ))}
             </ul>
-            {snap.dues.failingCards.length > 25 ? (
+          </Panel>
+        ) : null}
+
+        {snap.dues && snap.dues.failingDormant.length > 0 ? (
+          <Panel
+            className="col-span-12"
+            title="Failing, not seen"
+            hint="Billing has failed and nothing has been spent at the club in six months. Close these."
+            right={`${count(snap.dues.failingDormant.length)} people`}
+          >
+            <ul className="flex flex-col gap-2">
+              {snap.dues.failingDormant.slice(0, 15).map((f) => (
+                <FailingRow key={`d-${f.customer_id}-${f.since ?? ""}`} card={f} />
+              ))}
+            </ul>
+            {snap.dues.failingDormant.length > 15 ? (
               <p className="label mt-3">
-                {count(snap.dues.failingCards.length - 25)} more below the first 25
+                {count(snap.dues.failingDormant.length - 15)} more
               </p>
             ) : null}
           </Panel>
