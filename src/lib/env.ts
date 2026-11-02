@@ -32,17 +32,6 @@ export const ADMIN_PINS = (): string[] =>
     .map((pin) => pin.trim())
     .filter(Boolean);
 
-/**
- * The secret in /members/<key>: the membership board on a link that needs no
- * login, for review.
- *
- * OPTIONAL ON PURPOSE. Unset means that route 404s, so a missing variable
- * cannot put member names and balances on an open URL. It lives in the Netlify
- * environment and never in the repo, which is public.
- */
-export const MEMBERS_VIEW_KEY = (): string | null =>
-  process.env.MEMBERS_VIEW_KEY?.trim() || null;
-
 /** 0 = Sunday .. 6 = Saturday, Pacific. */
 export const DEADLINE_DAY = () => requiredInt("DEADLINE_DAY", 0, 6);
 /** 0-23, Pacific. */
