@@ -6,11 +6,14 @@ import { adminLogin, type FormState } from "@/app/actions";
 
 const initialState: FormState = { error: null };
 
-export function AdminLoginForm() {
+export function AdminLoginForm({ next }: { next?: string }) {
   const [state, formAction, pending] = useActionState(adminLogin, initialState);
 
   return (
     <form action={formAction} className="panel space-y-6 p-6">
+      {/* Where they were headed before the door stopped them. Checked server
+          side by safeNext, never trusted as given. */}
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <div className="space-y-3">
         <label className="label" htmlFor="pin">
           Admin PIN

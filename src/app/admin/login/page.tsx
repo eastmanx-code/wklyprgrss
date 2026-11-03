@@ -2,18 +2,23 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AdminLoginForm } from "@/components/AdminLoginForm";
-import { APP_NAME } from "@/lib/app";
+import { APP_NAME, safeNext } from "@/lib/app";
 import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminLoginPage() {
+export default async function AdminLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   // Whoever is already through this door goes where their code takes them. It
   // used to only send admins on, so a manager who came back to this screen was
   // shown a sign in form for the session they were holding, which reads as
   // having been logged out.
+  const { next } = await searchParams;
   const session = await getSession();
-  if (session?.role === "admin") redirect("/admin");
+  if (session?.role === "admin") redirect(safeNext(next, "/admin"));
   if (session?.role === "manager") redirect("/home");
 
   return (
@@ -29,7 +34,7 @@ export default async function AdminLoginPage() {
         <h1 className="mt-2 text-metric font-medium">Manager</h1>
       </header>
 
-      <AdminLoginForm />
+      <AdminLoginForm next={next} />
 
       {/* Below the card, centred — above the title it hangs off to one side
           and breaks the column everything else lines up on. */}
