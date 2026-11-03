@@ -7436,6 +7436,172 @@
           ]
         }
       ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead host MOD",
+      "role_es": "Anfitrión encargado",
+      "phase": "open",
+      "solo_signoff": true,
+      "items": [
+        {
+          "title": "I RETRIEVED ALL PACKAGES FROM THE SECURITY DESK AND RETRIEVED NEWSPAPERS IF AVAILABLE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED OUR MAILBOX (AT THE FRONT OF THE LOADING DOCK, BOX #11) FOR MAIL AND MAGAZINES. THE KEYS ARE ON THE WALL IN THE OFFICE AND GO BACK THERE. I PUT THE MAIL ON THE DESK IN THE OFFICE AND DISTRIBUTED THE MAGAZINES TO THE TRC PERIODICALS TABLE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED ALL STAFF WERE PRESENT, REVIEWED THE ROSTER FOR THE DAY, AND MADE THE APPROPRIATE ADJUSTMENTS TO THE SCHEDULE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I WALKED THE SPACE TO CHECK THE NIGHT CLEANERS' WORK AND SENT PHOTOS AND FOLLOW-UP AS NEEDED.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The space after the night cleaners: floors, surfaces and glass clean, with any miss photographed."
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL AIR CONDITIONING WAS ON AND SET CORRECTLY: OFFICE CONTROLLERS ON 76 AND THE TRC THERMOSTATS ON 74, WITH THE HOST STAND ON 72.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I TURNED ON THE CRICKETS, ON REPEAT AT 100% VOLUME, THEN ADJUSTED THE MAIN VOLUME FROM THE HOST STAND AND WALKED INTO THE VESTIBULE TO CONFIRM IT SOUNDED CORRECT. I FIXED THE PLANTS WHILE THERE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED BOTH DOWNSTAIRS SENECA SIGNS WERE WIPED DOWN BY 10:30AM AND THE ROOF WAS CLEAN AND FREE OF DEBRIS (POWERWASHED IF NEEDED).",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both downstairs Seneca signs wiped down and the roof clean and clear of debris."
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED WITH KITCHEN LEADERSHIP FOR ANY MENU EDITS FOR THE DAY IN BOTH LOCATIONS AND UPDATED THE POS WITH COUNTS AND 86'D ITEMS.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "USING ITUNES REMOTE, I SET THE VOLUMES AND WALKED THE SPACE TO CONFIRM THEY WERE AT AN APPROPRIATE LEVEL.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "USING ITUNES REMOTE, I TURNED ON THE \"TRC 2026\" PLAYLIST IN TRC, SET THE VOLUMES, AND WALKED THE SPACE TO CONFIRM THEY WERE AT AN APPROPRIATE LEVEL.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED ALL LIGHTS IN BOTH SPACES WERE SET TO THE APPROPRIATE DAYTIME SETTINGS FOR THE AMBIENT LIGHT THAT DAY.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I CHECKED THE CRACK IN THE MAIN DINING ROOM AND THE PDR DOOR TO ENSURE THEY WERE CLEAN AND CLEAR, AND THAT NO MENUS WERE STUCK UNDER THE BOOTHS. I RESOLVED AS NEEDED.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The main dining room crack and the PDR door clean and clear, nothing stuck under the booths."
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED THE PDR DOOR WAS WIPED FREE OF SMUDGES AND RESIDUE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED THE RC BOOK DOOR WAS SET CORRECTLY, MR2'S DOOR WAS SHUT PROPERLY, AND RC'S MAIN DOOR WAS LATCHED, AND I TESTED EACH DOOR ONCE FOR PROPER USE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I TOLD THE REST OF THE LEADERSHIP TEAM, VIA THE GROUP CHAT, ANYTHING I WOULD NEED AN ASSIST WITH FOR THE DAY BEFORE STEPPING INTO SERVICE.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "IF THERE WERE ANY REPAIR OR MAINTENANCE NEEDS, I CONTACTED THE APPROPRIATE PERSON FROM THE R+M VENDOR LIST.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED NOTHING WAS BEING STORED ON THE RUBBER ROOF OR IN THE STAIRWELL ACCESS BETWEEN THE ELEVATORS AND THE BOARDWALK.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "I ENSURED THE BOARDWALK WAS ORGANIZED AND ALL LOOSE ITEMS WERE IN THEIR HOMES ON THE METRO SHELVES OR THEIR DESIGNATED SPACE. I HAD THE SUPPORT/DISH TEAMS SWEEP, MOP, AND REPLACE MATS AS NEEDED.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The boardwalk organized, loose items in their homes on the metro shelves, mats down."
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL FOH OPENING STAFF TOOK THEIR BREAKS BEFORE OPEN AND CHECKED WITH BOH LEADERSHIP ABOUT OPENING CREW BREAKS.",
+          "days": [
+            "MONDAY",
+            "TUESDAY"
+          ]
+        }
+      ]
     }
   ]
 }
