@@ -26,16 +26,28 @@ type Row = {
   role: string;
   role_es: string | null;
   phase: Phase;
+  /** Which part of the building this list belongs to, e.g. The Reading Club. */
+  room: string | null;
 };
 
+/** The room a list sits in, blank normalised to none. */
+const roomOf = (row: { room: string | null }): string | null =>
+  row.room && row.room.trim() ? row.room.trim() : null;
+
 /**
- * The clipboard. Front of house or heart of house, then the role, then open,
- * mid or close — you flip to yours rather than scrolling one long list.
+ * The clipboard. Front of house or heart of house, then the venue it belongs
+ * to, then the role — you flip to yours rather than scrolling one long list.
  *
  * This is the "do the work" area, one tap off the stats. The dash a shift
  * lands on reports the month; this is where tonight's lists get ticked and
  * signed. Built from the venue's own rows: a venue writes the roles it runs,
  * and an empty clipboard says so plainly and offers the way to start one.
+ *
+ * The positions are grouped by room where the building runs more than one, so
+ * a space that shares one app login — Seneca and The Reading Club under STOC —
+ * reads as two blocks, each with only its own tabs. Before this they were one
+ * alphabetical run with nothing naming the venue, and the crew of the room
+ * whose tabs did not say its name walked past them.
  */
 export default async function DoChecklistsPage() {
   const session = await getSession();
@@ -49,7 +61,7 @@ export default async function DoChecklistsPage() {
   const { data: listRows } = venue
     ? await db()
         .from("close_checklists")
-        .select("id, house, role, role_es, phase")
+        .select("id, house, role, role_es, phase, room")
         .eq("venue_id", venue)
         .eq("active", true)
     : { data: [] };
@@ -84,11 +96,17 @@ export default async function DoChecklistsPage() {
     }
   }
 
-  /** Every list under this position is signed. */
-  const positionDone = (house: House, role: string) =>
-    lists
-      .filter((l) => l.house === house && l.role === role)
-      .every((l) => signed.has(l.id));
+  // The lists under one position, scoped to the room it is shown in. A role
+  // that runs in two rooms — a bar deep clean in both Seneca and The Reading
+  // Club — is two chips, and each reads only its own room's state.
+  const listsFor = (house: House, role: string, room: string | null) =>
+    lists.filter(
+      (l) => l.house === house && l.role === role && roomOf(l) === room,
+    );
+
+  /** Every list under this position, in this room, is signed. */
+  const positionDone = (house: House, role: string, room: string | null) =>
+    listsFor(house, role, room).every((l) => signed.has(l.id));
 
   const status = new Map(
     (await closeStatus(night)).map((row) => [row.checklist_id, row]),
@@ -96,10 +114,9 @@ export default async function DoChecklistsPage() {
   const positionNote = (
     house: House,
     role: string,
+    room: string | null,
   ): { en: string; es: string; urgent: boolean } | null => {
-    const open = lists.filter(
-      (l) => l.house === house && l.role === role && !signed.has(l.id),
-    );
+    const open = listsFor(house, role, room).filter((l) => !signed.has(l.id));
     const rows = open.map((l) => status.get(l.id)).filter(Boolean);
     const ticked = rows.reduce((n, r) => n + (r?.ticked ?? 0), 0);
     const total = rows.reduce((n, r) => n + (r?.items_on_list ?? 0), 0);
@@ -113,11 +130,28 @@ export default async function DoChecklistsPage() {
     };
   };
 
-  const positionsIn = (house: House) => {
-    const roles = [
-      ...new Set(lists.filter((l) => l.house === house).map((l) => l.role)),
-    ];
-    return roles.sort((a, b) => a.localeCompare(b));
+  // The venues in a house, then the roles in each. A house with no rooms —
+  // the kitchen, run as one — comes back as a single group with no name, which
+  // renders exactly as the flat list always did. The nameless group (positions
+  // that run the whole building, like the MOD) sorts first; named rooms follow
+  // alphabetically, since there is no running order between them.
+  type Group = { room: string | null; roles: string[] };
+  const groupsIn = (house: House): Group[] => {
+    const inHouse = lists.filter((l) => l.house === house);
+    const rooms = [...new Set(inHouse.map(roomOf))].sort((a, b) => {
+      if (a === b) return 0;
+      if (a === null) return -1;
+      if (b === null) return 1;
+      return a.localeCompare(b);
+    });
+    return rooms.map((room) => ({
+      room,
+      roles: [
+        ...new Set(
+          inHouse.filter((l) => roomOf(l) === room).map((l) => l.role),
+        ),
+      ].sort((a, b) => a.localeCompare(b)),
+    }));
   };
 
   return (
@@ -153,55 +187,70 @@ export default async function DoChecklistsPage() {
         </section>
       ) : (
         <div className="mb-5 space-y-5">
-          {(["FOH", "HOH"] as House[]).map((house) =>
-            positionsIn(house).length === 0 ? null : (
+          {(["FOH", "HOH"] as House[]).map((house) => {
+            const groups = groupsIn(house);
+            if (groups.length === 0) return null;
+            return (
               <section key={house} className="panel">
                 <h2 className="card-title">
                   <T en={houseName(house)} es={HOUSE_ES[house]} />
                 </h2>
 
-                <ul className="mt-4 space-y-2">
-                  {positionsIn(house).map((role) => (
-                    <li key={role}>
-                      <Link
-                        href={`/checklists/position/${house.toLowerCase()}/${roleSlug(role)}`}
-                        className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
-                          positionDone(house, role)
-                            ? "bg-inset text-muted ring-divider ring-1 ring-inset"
-                            : "bg-warn text-on-warn hover:bg-warn/90"
-                        }`}
-                      >
-                        <span className="text-body tracking-[0.08em]">
-                          <T en={role} es={roleEs.get(role) ?? role} />
-                        </span>
-                        {positionDone(house, role) ? (
-                          <span className="label">
-                            <T en="Signed" es="Firmada" />
-                          </span>
-                        ) : positionNote(house, role) ? (
-                          <span
-                            className={`label ${
-                              positionNote(house, role)!.urgent
-                                ? "font-medium"
-                                : ""
-                            }`}
-                          >
-                            <T
-                              en={positionNote(house, role)!.en}
-                              es={positionNote(house, role)!.es}
-                            />
-                            <span aria-hidden> →</span>
-                          </span>
-                        ) : (
-                          <span aria-hidden>→</span>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                {groups.map((group, gi) => (
+                  <div
+                    key={group.room ?? "_general"}
+                    className={gi === 0 ? "mt-4" : "mt-6"}
+                  >
+                    {/* The room names itself in both languages, the same as a
+                        room does deeper in. A house run as one room has no name
+                        here and the block reads as the plain list it was. */}
+                    {group.room ? (
+                      <p className="label text-muted mb-2 tracking-[0.12em]">
+                        {group.room}
+                      </p>
+                    ) : null}
+
+                    <ul className="space-y-2">
+                      {group.roles.map((role) => {
+                        const done = positionDone(house, role, group.room);
+                        const note = positionNote(house, role, group.room);
+                        return (
+                          <li key={`${group.room ?? ""}-${role}`}>
+                            <Link
+                              href={`/checklists/position/${house.toLowerCase()}/${roleSlug(role)}`}
+                              className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
+                                done
+                                  ? "bg-inset text-muted ring-divider ring-1 ring-inset"
+                                  : "bg-warn text-on-warn hover:bg-warn/90"
+                              }`}
+                            >
+                              <span className="text-body tracking-[0.08em]">
+                                <T en={role} es={roleEs.get(role) ?? role} />
+                              </span>
+                              {done ? (
+                                <span className="label">
+                                  <T en="Signed" es="Firmada" />
+                                </span>
+                              ) : note ? (
+                                <span
+                                  className={`label ${note.urgent ? "font-medium" : ""}`}
+                                >
+                                  <T en={note.en} es={note.es} />
+                                  <span aria-hidden> →</span>
+                                </span>
+                              ) : (
+                                <span aria-hidden>→</span>
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
               </section>
-            ),
-          )}
+            );
+          })}
         </div>
       )}
 
