@@ -76,6 +76,9 @@ export default async function AdminDashboardPage() {
           <Link href="/admin/report" className="btn-ghost">
             Report
           </Link>
+          <Link href="/admin/tasks" className="btn-ghost">
+            CH Tasks
+          </Link>
           <Link href="/admin/codes" className="btn-ghost">
             Codes
           </Link>
