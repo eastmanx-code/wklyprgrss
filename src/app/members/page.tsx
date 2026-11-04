@@ -11,8 +11,20 @@ export const dynamic = "force-dynamic";
  * The Reading Club membership board, for whoever is signed in as admin.
  *
  * Deliberately not in the menu. B, 2026-10-31: "On the site is fine but doesnt
- * need to be linked direct" and "I can have just a link I share". The shareable
- * form is /members/<key>, which needs no login. This one is the signed in door.
+ * need to be linked direct" and "I can have just a link I share". This one is
+ * the signed in door.
+ *
+ * THERE ARE TWO DOORS TO THIS BOARD, NOT THREE. Corrected 2026-11-03. This
+ * comment used to say the shareable form was /members/<key>, needing no login.
+ * THAT ROUTE DOES NOT EXIST. src/app/members holds this page and export/ and
+ * nothing else, so anyone reading this and handing out a /members/<key> link
+ * was handing out a 404.
+ *
+ * The two that exist:
+ *   /members   this page, admin session required.
+ *   /recon     the same board on an open URL, no login, noindex. B asked for
+ *              it twice having been told what it carries. It is the link that
+ *              goes to people who should not have to sign in.
  */
 export default async function MembersPage() {
   // Carry the destination to the door. Nothing links to this page, so landing

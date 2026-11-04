@@ -368,7 +368,27 @@ export async function snapshot(): Promise<Snapshot> {
   }[]).map((r) => {
     const who = people.find((p) => p.customer_id === r.customer_id);
     const seen = seenBy.get(r.customer_id);
-    const lastVisit = seen?.last_visit_on ?? null;
+    // THE MOST RECENT OF EITHER SIGNAL, NEVER last_visit_on ALONE.
+    //
+    // Fixed 2026-11-03. This read last_visit_on only, and that column is
+    // populated for 221 of 493 people while last_transaction_on is populated
+    // for all 493. So a null meant "no check-in on record", and the filter
+    // below read it as "has not been in", which is a fact about the check-in
+    // data and not about the person.
+    //
+    // It put 4 people in "Failing, still spending" worth $9,600 a year when
+    // the real figure was 16 people worth $36,300. The board understated the
+    // live chase list fourfold and the dead list absorbed the difference,
+    // which is the wrong direction to be wrong in: it made the problem look
+    // smaller and older than it is.
+    //
+    // A till transaction proves they were here. A check-in proves they were
+    // here. Either one counts, so take whichever is later.
+    const lastVisit =
+      [seen?.last_visit_on ?? null, seen?.last_transaction_on ?? null]
+        .filter((d): d is string => Boolean(d))
+        .sort()
+        .pop() ?? null;
     return {
       lastVisit,
       lastVisitDays: daysSince(lastVisit),
