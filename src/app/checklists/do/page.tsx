@@ -29,11 +29,24 @@ type Row = {
   phase: Phase;
   /** Which part of the building this list belongs to, e.g. The Reading Club. */
   room: string | null;
+  /** A venue's own menu cluster, overriding the room for grouping only. */
+  menu_group: string | null;
 };
 
-/** The room a list sits in, blank normalised to none. */
-const roomOf = (row: { room: string | null }): string | null =>
-  row.room && row.room.trim() ? row.room.trim() : null;
+/**
+ * The block a list sits under in the menu: its own menu_group if a venue set
+ * one, otherwise the room it belongs to. This is what lets STOC pull its bar
+ * tabs into a "Seneca Bar" group without moving any list out of its room.
+ */
+const groupOf = (row: {
+  menu_group: string | null;
+  room: string | null;
+}): string | null => {
+  const named = row.menu_group?.trim();
+  if (named) return named;
+  const room = row.room?.trim();
+  return room || null;
+};
 
 /**
  * The clipboard. Front of house or heart of house, then the venue it belongs
@@ -66,7 +79,7 @@ export default async function DoChecklistsPage() {
   const { data: listRows } = venue
     ? await db()
         .from("close_checklists")
-        .select("id, house, role, role_es, phase, room")
+        .select("id, house, role, role_es, phase, room, menu_group")
         .eq("venue_id", venue)
         .eq("active", true)
     : { data: [] };
@@ -106,7 +119,7 @@ export default async function DoChecklistsPage() {
   // Club — is two chips, and each reads only its own room's state.
   const listsFor = (house: House, role: string, room: string | null) =>
     lists.filter(
-      (l) => l.house === house && l.role === role && roomOf(l) === room,
+      (l) => l.house === house && l.role === role && groupOf(l) === room,
     );
 
   /** Every list under this position, in this room, is signed. */
@@ -143,7 +156,7 @@ export default async function DoChecklistsPage() {
   type Group = { room: string | null; roles: string[] };
   const groupsIn = (house: House): Group[] => {
     const inHouse = lists.filter((l) => l.house === house);
-    const rooms = [...new Set(inHouse.map(roomOf))].sort((a, b) => {
+    const rooms = [...new Set(inHouse.map(groupOf))].sort((a, b) => {
       if (a === b) return 0;
       if (a === null) return -1;
       if (b === null) return 1;
@@ -153,7 +166,7 @@ export default async function DoChecklistsPage() {
       room,
       roles: [
         ...new Set(
-          inHouse.filter((l) => roomOf(l) === room).map((l) => l.role),
+          inHouse.filter((l) => groupOf(l) === room).map((l) => l.role),
         ),
       ].sort((a, b) => a.localeCompare(b)),
     }));
