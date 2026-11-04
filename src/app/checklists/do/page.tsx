@@ -11,6 +11,7 @@ import {
   type Phase,
 } from "@/lib/checklists";
 import { boardNight } from "@/lib/active-night";
+import { openCount } from "@/lib/ch-tasks";
 import { closeStatus } from "@/lib/close-status";
 import { formatNight, formatNightEs } from "@/lib/night";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
@@ -57,6 +58,10 @@ export default async function DoChecklistsPage() {
   // An admin who has not picked a building yet gets the list of them.
   if (!venue && session.role === "admin") redirect("/checklists/locations");
   const venueName = venue ? await closeVenueName(venue) : null;
+
+  // CH Tasks are the MOD's walk-around punch list, so the way in shows for
+  // managers only, not the whole crew on the venue code.
+  const chOpen = mayManage(session) && venue ? await openCount(venue) : 0;
 
   const { data: listRows } = venue
     ? await db()
@@ -176,6 +181,23 @@ export default async function DoChecklistsPage() {
           />
         </p>
       </header>
+
+      {mayManage(session) ? (
+        <Link
+          href="/checklists/tasks"
+          className="mb-5 flex min-h-14 items-center justify-between gap-3 rounded-[6px] px-5 py-4 text-title tracking-[0.02em] ring-1 ring-inset ring-divider hover:bg-inset"
+        >
+          <span>
+            <T en="CH Tasks" es="Tareas CH" />
+            {chOpen > 0 ? (
+              <span className="label text-muted ml-2 tabular-nums">
+                {chOpen} <T en="open" es="abiertas" />
+              </span>
+            ) : null}
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      ) : null}
 
       {lists.length === 0 ? (
         <section className="panel mb-5">
