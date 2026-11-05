@@ -8,8 +8,9 @@ import { PHASE_ES, phaseName } from "@/lib/checklists";
 import { BackLink } from "@/components/ui";
 import { formatNight } from "@/lib/night";
 import { venueRollup } from "@/lib/rollup";
+import { openCount } from "@/lib/ch-tasks";
 import { closeVenueId, closeVenueName } from "@/lib/close-venue";
-import { getSession } from "@/lib/session";
+import { getSession, mayManage } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -35,9 +36,13 @@ export default async function ChecklistsPage() {
     redirect("/");
   }
 
-  const [name, report] = await Promise.all([
+  const [name, report, chOpen] = await Promise.all([
     closeVenueName(venue),
     venueRollup(venue),
+    // CH Tasks are the MOD's, so this is for managers only. It rides at the very
+    // top of the screen because an owner's walk-around flag has to be the first
+    // thing seen, not a tap down inside the checklists.
+    mayManage(session) ? openCount(venue) : Promise.resolve(0),
   ]);
 
   const backHref = session.role === "admin" ? "/checklists/locations" : "/home";
@@ -58,12 +63,37 @@ export default async function ChecklistsPage() {
     </Link>
   );
 
+  // The owner's walk-around list, pinned above everything for a manager. Lit on
+  // the warn accent when something is open so it cannot be walked past, quiet
+  // when the board is clear. The crew on the venue code never see it.
+  const ChBanner = mayManage(session) ? (
+    <Link
+      href="/checklists/tasks"
+      className={`mt-4 flex min-h-14 items-center justify-between gap-3 rounded-[6px] px-5 py-4 text-title tracking-[0.02em] ${
+        chOpen > 0
+          ? "bg-warn text-on-warn hover:bg-warn/90"
+          : "ring-divider ring-1 ring-inset hover:bg-inset"
+      }`}
+    >
+      <span>
+        <T en="CH Tasks" es="Tareas CH" />
+        {chOpen > 0 ? (
+          <span className="label ml-2 tabular-nums">
+            {chOpen} <T en="open" es="abiertas" />
+          </span>
+        ) : null}
+      </span>
+      <span aria-hidden>→</span>
+    </Link>
+  ) : null;
+
   // Nothing signed off yet. One honest line and the way in, not a page of
   // confident zeroes.
   if (!report) {
     return (
       <main className="close-flow mx-auto max-w-2xl pb-6">
         <BackLink href={backHref}>{backLabel}</BackLink>
+        {ChBanner}
         <div className="mt-4">{DoButton}</div>
         <section className="panel mt-4">
           <p className="label">{name}</p>
@@ -113,8 +143,9 @@ export default async function ChecklistsPage() {
     <main className="close-flow mx-auto max-w-2xl pb-6">
       <BackLink href={backHref}>{backLabel}</BackLink>
 
-      {/* The one job first. Whoever opens this is here to do their list or to
-          see who didn't; the way in sits at the top either way. */}
+      {/* CH Tasks on top of everything for a manager, then the one job: do the
+          list or see who didn't. */}
+      {ChBanner}
       <div className="mt-4">{DoButton}</div>
 
       {/* The standing: the number a leader opens with, the count under it, and
