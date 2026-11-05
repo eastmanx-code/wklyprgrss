@@ -5,6 +5,7 @@ import { CompanyHero } from "@/components/CompanyHero";
 import { NarrativeStrip } from "@/components/NarrativeStrip";
 import { VenueRows } from "@/components/VenueRows";
 import { CarryAll } from "@/components/admin/CarryAll";
+import { openCountsByVenue } from "@/lib/ch-tasks";
 import { notAdminGoesTo } from "@/lib/app";
 import { getSession } from "@/lib/session";
 import { carriedByHouse, getDashboard, gradersByHouse } from "@/lib/status";
@@ -29,6 +30,13 @@ export default async function AdminDashboardPage() {
   if (session?.role !== "admin") redirect(notAdminGoesTo(Boolean(session)));
 
   const { weekStart, rows, byHouse } = await getDashboard();
+
+  // Open CH Tasks across every venue, so a walk-around flag waiting on a MOD
+  // rides at the very top of the dashboard instead of behind a tab.
+  const chOpen = [...(await openCountsByVenue()).values()].reduce(
+    (a, b) => a + b,
+    0,
+  );
 
   // The finished week, and whether it has been closed for everyone. Grading is
   // the thing every venue is waiting on before it can reset.
@@ -57,6 +65,19 @@ export default async function AdminDashboardPage() {
 
   return (
     <main>
+      {chOpen > 0 ? (
+        <Link
+          href="/admin/tasks"
+          className="bg-warn text-on-warn hover:bg-warn/90 mb-5 flex min-h-14 items-center justify-between gap-3 rounded-[6px] px-5 py-4 text-title tracking-[0.02em]"
+        >
+          <span>
+            CH Tasks
+            <span className="label ml-2 tabular-nums">{chOpen} open</span>
+          </span>
+          <span aria-hidden>→</span>
+        </Link>
+      ) : null}
+
       <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="label">
