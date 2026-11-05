@@ -1,0 +1,1196 @@
+{
+  "venue": "CRFT",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "General",
+      "role_es": "General",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Open all windows and garage doors, monkey has the key!\n• Keep windows behind the 20's closed if experiencing windy weather"
+        },
+        {
+          "title": "Set up upper deck outside:\n• 2 two-tops to create 17 & 18            • 1 four-top to create table 19"
+        },
+        {
+          "title": "Set up upper deck inside:\n• 3 two-tops along the green bench to create tables 21-23.            \n• 1 four-top on the opposite side to create table 24."
+        },
+        {
+          "title": "Set up barstools on the outside of K-bar, being mindful of spacing.\nWipe down hand rails surronding the 20's."
+        },
+        {
+          "title": "Slide plants onto the corners of the windows at 11, 13, 14, and 16.\nMake sure plants are not pressed up agains the brick wall or in the walk way."
+        },
+        {
+          "title": "Place all red chairs at the tables. Bring down brown chairs on table 32 and set up."
+        },
+        {
+          "title": "Check stock on the following items: mats, bar towels, polishing towels, to go supplies, toilet paper, handsoap, napkins, candle oil & trash can liners. Make a list of what you need, and head down to P3 Storage to grab anything needed to get us through the entire shift.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The list of what's low and needs to be pulled from P3 storage"
+            }
+          ]
+        },
+        {
+          "title": "Set up server station with a folded white towels &  polishing towels.\n• Large Runner mat at expo window\n• 3'x5' mats at entrance to kitchen and entrance to K-bar"
+        },
+        {
+          "title": "Set up sanitizer bottles and towels on the server credenza. Sani bottles should be refilled daily before service, validated using sani test strips to be between 250 - 400ppm, and labeled to include date and time.                                                            Set up Beech bar, K-bar and host stand with 1 bottle and 1 towel.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The sani bottles filled, labeled with date and time, and strip-tested to 250-400ppm"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down all tables.\n• Use santizer-soaked rag for all tables.\n• Use couch brush (located in bottome drawer of host stand) for the couch (40's) and wipe the bases of these tables with the other brush"
+        },
+        {
+          "title": "Fill and reset all lanterns in place. Make sure the wick is in place to light when it's time.\n• 1 small lantern on 17-19, 21-26, 41-45 • 1 large \"hurricane\" lamp on 32 & 33\n• 3 trollers on Beech Bar • 2 large trollers on Party Bar.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lanterns filled and reset in place across the floor and bars"
+            }
+          ]
+        },
+        {
+          "title": "Check that tables are level. Use wobble wedges if needed. Tables in the 40s, as well as the feet of the tables on the upper deck, have adjustable knobs on the bottom to help level out."
+        },
+        {
+          "title": "Make sure backup silverware is polished and sorted.\nRestock expo line with Large spoons, Small spoons, caviar spoons, gold spoons"
+        },
+        {
+          "title": "Clean/polish glass all tables every day- degreaser and a rag does the trick"
+        },
+        {
+          "title": "Place all barmats down in at the water station and set up water glasses and bottles.  Fill about 10 water bottles to start."
+        },
+        {
+          "title": "Re-stock restrooms with toilet paper, seat covers, and soap.\nPlace black mats down in each restroom.\nDetail both restrooms' neon signs",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both restrooms restocked with paper, seat covers and soap, mats down, neon signs detailed"
+            }
+          ]
+        },
+        {
+          "title": "Roll the awnings out"
+        },
+        {
+          "title": "Walk through the dining room with leaf blower and make sure the floor is clear of debris, especially under tables. Use microfiber mop to clean underneath fireplace banquettes (11 - 16)."
+        },
+        {
+          "title": "Walk down Beech St. and check the streetside for any obstructions, messes, or garbage left outside our space (planter boxes, brick sign.. etc)"
+        },
+        {
+          "title": "Turn on Slushy Machine"
+        },
+        {
+          "title": "Using Saddle Soap, I thoroughly cleaned / buffed all leather-topped tables (41 - 45)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The leather-topped tables (41-45) cleaned and buffed"
+            }
+          ]
+        },
+        {
+          "title": "Using the shop vac or stiff bristled couch brush, I cleaned out all nooks / crannies on the sofa / booth seats (41 - 45)"
+        },
+        {
+          "title": "Use Glass cleaner to wipe all mirrors"
+        },
+        {
+          "title": "Check Toast for 86 items, new beers, menu item counts, and technical issues, etc. Make sure banks have been put out in the drawers (check with lead)"
+        },
+        {
+          "title": "Reference Ctuit and write down current roster on the white board."
+        },
+        {
+          "title": "Walk thru of space to check additional needs.\nCheck in with manager, chef, and bartender to see if anything else needs to be done prior to opening."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "General",
+      "role_es": "General",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Make sure all dirty silverware/ramekins are brought back to the dish pit.\nAsk dishwasher to run through.\nPolish all silverware/ramekins and sort accordingly."
+        },
+        {
+          "title": "Wipe down all terminals in service station and all counter surfaces.\nRemove all water bottles and personal belongings from station."
+        },
+        {
+          "title": "Break down water station, Send empty carafes to the bar to run through the dishwasher.\nBring bottles and glassware to the corner of the counter and wrap bottles with plastic."
+        },
+        {
+          "title": "Clean both server/POS stations, the entire surface wiped down, countertop organized\nDrawers and cabinets below should be restocked and organized.\n(To go items, wet naps, thermal paper)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both server/POS stations wiped down and the drawers below restocked and organized"
+            }
+          ]
+        },
+        {
+          "title": "Run service trays and beverage mats through the dishwasher and place back on service rack"
+        },
+        {
+          "title": "Refill all sanitizer spray bottles and consolidate on table 33.\nRemove all lanters from tables/bars and consolidate on table 33.\nDouble check the lantern on the mantle - put the fire out.\nPolish lanterns and clean bulbs.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Sani bottles refilled and all lanterns consolidated on table 33, fires out"
+            }
+          ]
+        },
+        {
+          "title": "Fill and reset all lanterns in place. Make sure the wick is in place to light when it's time.\n• 1 small lantern on 17-19, 21-26, 41-45 • 1 large \"hurricane\" lamp on 32 & 33\n• 3 trollers on Beech Bar • 2 large trollers on Party Bar."
+        },
+        {
+          "title": "Every 2 weeks, on prescribed day, empty SS machine, clean all surfaces / behind / under"
+        },
+        {
+          "title": "Return iPads to the electrical room and charge"
+        },
+        {
+          "title": "Empty out all trash and make a trash run to P1.\n• Make sure all empty boxes from the back hallway are brought down\n• Make sure all towels are brought down\n• Make sure all broken glass and bottles are brought down\n• Used floor mats go downstairs per schedule on the white board"
+        },
+        {
+          "title": "Wipe down all tables throughout the restaurant"
+        },
+        {
+          "title": "Wipe down the Ice cream machine and turn night mode on.",
+          "days": [
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Return all menus to the host stand.\nMake sure phone is charging"
+        },
+        {
+          "title": "Complete checkout and cash owed slips and hand to MOD.\n(make sure money is faced and organized!)"
+        },
+        {
+          "title": "Return iPads to the electrical room and charge\nPause music and yelp reviews."
+        },
+        {
+          "title": "Place chairs at 32 above the table. Stack all red chairs."
+        },
+        {
+          "title": "Wipe down brass and wood ledge adjacent to T26"
+        },
+        {
+          "title": "Slide plants between fire tables.\nBring in tables 17-19.\nClose all windows. Roll the awnings back up."
+        },
+        {
+          "title": "Do a final check at the dishpit for silverware/ramekins.\nPolish, restock and wrap with plastic."
+        },
+        {
+          "title": "Return the monkey to the host stand.\nTurn off the lamp at the server station."
+        },
+        {
+          "title": "Wipe down the marble on entire pass/wipe under all equipment",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The marble pass wiped down and wiped clean under all equipment"
+            }
+          ]
+        },
+        {
+          "title": "Turn Slushy Machine to drip mode"
+        },
+        {
+          "title": "Scrub under shelves at pass, detail glass and black metal glass framing above pass",
+          "days": [
+            "THURSDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the shelves at the pass scrubbed, and the glass and black metal framing above the pass detailed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Make sure K bar is set up for weekend service - rails fully stocked, caddys full, squeeze bottles filled, wells have full tool setup, and ensure k is set up for smooth open",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Turn off fans, wrap cord, and put them away in server station"
+        },
+        {
+          "title": "Note any wack closing but be nice about it"
+        },
+        {
+          "title": "Go through liquor cabinet, beer cans, and ALL wines, make sure it was stocked",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The liquor cabinet, beer cans and wines stocked"
+            }
+          ]
+        },
+        {
+          "title": "Bag & place trash bins in their appropriate spots, and milk crates at each well"
+        },
+        {
+          "title": "Remove plastic wrap and nips from well. Set out dry garnishes and bitters per mis en place to reset well for service"
+        },
+        {
+          "title": "Make sure dehydrated fruit garnishes are stocked - lime wheels, lemon wheels, orange slices"
+        },
+        {
+          "title": "Set up salt, Tajín, and sugar for each well"
+        },
+        {
+          "title": "Set out zesting fruit [2 grapefruit 4-5 lemons and oranges each well]."
+        },
+        {
+          "title": "Fill back bar cambro with more zesting fruit from the walk in, place smaller cambro on top for peeled citrus"
+        },
+        {
+          "title": "Put out cocktail batches, sweet vermouth, dry vermouth, buff cream, spro mod"
+        },
+        {
+          "title": "Put out juices/syrups for speed rail [lemon lime simple OJ pinapple] ALWAYS CHECK QUALITY, dump any citrus thats over 3 days old",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The juices and syrups set out on the speed rail, quality checked"
+            }
+          ]
+        },
+        {
+          "title": "Place cheater caddies at each well"
+        },
+        {
+          "title": "Pull out squeeze bottle syrups - check quality ALWAYS"
+        },
+        {
+          "title": "Pull out perishable garnishes from low boi [cherries, olives, dahlia, orchids, mint, berries, rosemary, cilantro]"
+        },
+        {
+          "title": "Put lime wedges, lemons, cucumbers, orange slices, grapefruit, raspberries,into SMALL acrylic garnish cups for each well"
+        },
+        {
+          "title": "Place coasters in berry garnish cup to avoid mold"
+        },
+        {
+          "title": "Check quality of backup garnish delis in fridge - if lime wheels, orange slices are going bad put in dehydrator instead of tossing."
+        },
+        {
+          "title": "Turn on slushie machine (ensure it's at level 6)"
+        },
+        {
+          "title": "Ice wells 30-45 min before service"
+        },
+        {
+          "title": "Fill KD ice at the bottom of garnish caddie topped with pebble ice"
+        },
+        {
+          "title": "Set up garnish caddies | Check quality and stock garnishes for open wells: cherries, olives, marshmallow, fruit pebbs, star anise, flowers, nutmeg, cinnamon, lime wedges, cucumbers, GF, berries, lemon wedges, orange slices, rosemary, cilantro,  and mint (in deli with cold water).",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish caddies set up and fully stocked for open wells"
+            }
+          ]
+        },
+        {
+          "title": "Put soda water in mixing spoon glasses"
+        },
+        {
+          "title": "Check how many big rock ice we have in freezer for service and make sure there's bags at K bar for Thurs-Sunday (NEVER BLOCK VENT) overflow to K or kitchen freezer"
+        },
+        {
+          "title": "Always remove stickers from used delis and bring emptys to dish pit bucket, do not let deli's accumulate behind the bar"
+        },
+        {
+          "title": "Check dishwasher fluids, replace if empty"
+        },
+        {
+          "title": "Place white towel at each well and have a few of both micro fibers and white towels, place sani bottle behind bar",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A white towel and sani bottle set at each well, extra micro fibers and white towels on hand"
+            }
+          ]
+        },
+        {
+          "title": "Stock silverware, share plates, and napkins at Beech and K Bar"
+        },
+        {
+          "title": "Grab handhelds and place by each well in \"toast coffin\", fri-sat k bar - and make sure connected to wifi"
+        },
+        {
+          "title": "Put out water jugs on bar top for re-filling at each bar"
+        },
+        {
+          "title": "Write any 86d bar items on white board"
+        },
+        {
+          "title": "Detail bar top & stools. Check the presentation of the bar from guests perspective.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top and stools detailed, seen from the guest's side"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Fill out par sheet and place order accordingly | Vesta Sun-Friday , Specialty Saturday"
+        },
+        {
+          "title": "CHECK Quality, dump citrus garnishes (limes, lemons, oranges, grapefruit, cucumbers) and dump salt, Tajín, and sugar."
+        },
+        {
+          "title": "Pull Cheaters, run cheater caddie thru dish, wipe all cheaters, refill and replace before storing in lowboi"
+        },
+        {
+          "title": "Clean garnish caddy, wipe down coinciding grate"
+        },
+        {
+          "title": "Clean black well caddy, replace low bottles, NEVER fill cream shaker over 3/4 full, place full entire caddy in lowboi above peeling citrus cambro"
+        },
+        {
+          "title": "Gather all tools/tins and salt/tajin/sugar/brulee plates into plastic sink basket, run everything thru dishwasher"
+        },
+        {
+          "title": "Service and K bar marry - in a civil ceremony - batches juices and syrups TO POINT WELL not into low boi back ups (not passion)"
+        },
+        {
+          "title": "Wipe citrus, simple, and agave bottles, after marrying, place in lowboi behind point well"
+        },
+        {
+          "title": "Place sweet vermouth, spro mod, and perishible batches that over 1/4 full or more, refill anything lower after married into other well.\nPoint well places perishable batches behind them in lowboi"
+        },
+        {
+          "title": "Wipe down bitter bottles/tops, fill any low bitters to appropriate height (bottom of neck)"
+        },
+        {
+          "title": "Fill all dehydrated fruit garnish cups"
+        },
+        {
+          "title": "Put dry garnish, bitters, and sprays, etc in garnish caddies and cover completely with plastic wrap"
+        },
+        {
+          "title": "Plastic wrap fruity pebbles and marshmallows You can keep these out in the garnish caddy overnight."
+        },
+        {
+          "title": "Plastic wrap perishable garnishes and put in low boi (cherries,olives, orchids, berries, rosemary, mint)"
+        },
+        {
+          "title": "Burn dat Ice."
+        },
+        {
+          "title": "Take out T ice separator from well wipe and scrub thoroughly - wipe down entire basin of ice well to prevent mold"
+        },
+        {
+          "title": "Wipe under well tops, well grates, above ice well and all bottles. ALL surfaces of well need to be cleaned and wiped down. After drying, wipe hand along to check for stickiness.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every surface of the well wiped down - under well tops, grates, above the ice well and all bottles"
+            }
+          ]
+        },
+        {
+          "title": "Clean well and place all bottles back in well, Replace bottles from doghouse"
+        },
+        {
+          "title": "Fill all empty bottles | batches, syrups etc. Don't marry any batches containing dairy or perishable ingredients."
+        },
+        {
+          "title": "If any cheater is a quarter full or less after you’ve married, empty, clean with bottle brush, and REFILL - NEVER place any bottles in the low boi if they are a quarter empty."
+        },
+        {
+          "title": "Using the same 1/4 full standard as above, refill / empty / clean all squeeze bottles."
+        },
+        {
+          "title": "Put all zesting fruit in low boi cambro, peeled in smaller cambro and brought back to the hall to citrus home"
+        },
+        {
+          "title": "Green scrubby the shit out of entire well-Underneath building grate,underneath all rails-GET CORNERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the well building grate and rails green-scrubbied, corners included"
+            }
+          ]
+        },
+        {
+          "title": "Green scrubby sink and surrounding areas, ensure to green scrubby around water knozzles, sprayer, and both sink basins"
+        },
+        {
+          "title": "Pull liquor AND wine/bubbles accordingly from liquor room if needed"
+        },
+        {
+          "title": "Refill Beer from walk in to lowbois (kbar thurs / friday)"
+        },
+        {
+          "title": "Wipe down and detail hamiltion mixers"
+        },
+        {
+          "title": "Set all washed bar tools back up to get ready for opening bartender to step into the well"
+        },
+        {
+          "title": "Run soda gun holder thru dishwasher, wipe soda hose. Detail soda gun, cap, and hose. Put cap and holder in sani overnight."
+        },
+        {
+          "title": "Run dump bucket strainer and bucket thru dish,  Dump sani down all drains in floor behind beech."
+        },
+        {
+          "title": "Clean and sanitize dish area, run grate and sink basket thru dish, clean and dry area, wipe down walls of trash cubby, and all cubbys near dump bucket"
+        },
+        {
+          "title": "Drain dishwasher and clean both drain grates"
+        },
+        {
+          "title": "Clean under ALL versa mats"
+        },
+        {
+          "title": "Wipe down all low boi doors and gasket crevices"
+        },
+        {
+          "title": "Refill straws, coasters and rotate cups as needed"
+        },
+        {
+          "title": "Wipe down back bar marble",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar marble wiped down"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down bar tops"
+        },
+        {
+          "title": "Detail all well grates"
+        },
+        {
+          "title": "Put up fans directed at wells"
+        },
+        {
+          "title": "USE SPRAY CLEANER AND A FRESH CLEAN RAG AND GO OVER ENTIRETY OF LOWBOIS, GLASS, WELL RAILS, DOING A FINAL ONCE OVER TO ENSURE NO STICKINESS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The final once-over: lowbois, glass and well rails gone over with spray cleaner, no stickiness"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "room": "Bar",
+      "items": [
+        {
+          "title": "Test ALL soft citrus bottles, if bad dump and refill. Dump any delis of soft citrus (GF, orange, pineapple) that are MAX 3 days old.",
+          "section": "MONDAY OPEN",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Take out remaining big cubes (if any) put in k bar freezer and kitchen freezer. Place cube freezer in ECO MODE. (Do not put ice bags in ice machine)",
+          "section": "MONDAY CLOSE",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Make sure back bar bottles are organized and look nice and there aren't doubles and large open spaces",
+          "section": "TUESDAY",
+          "days": [
+            "TUESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back bar bottles organized - no doubles, no large open spaces"
+            }
+          ]
+        },
+        {
+          "title": "SWAB THE DECK inside the point well side lowbois",
+          "section": "WEDNESDAY",
+          "days": [
+            "WEDNESDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Inside the point-well-side lowbois swabbed clean"
+            }
+          ]
+        },
+        {
+          "title": "Put batch bottles syrups juice etc in K fridge, ensure everything is ready for smooth Friday open.\n\nOpen AND Test ALL soft citrus bottles, if bad dump and refill. Dump any delis of soft citrus (GF, orange, pineapple) that are MAX 3 days old.",
+          "section": "THURSDAY",
+          "days": [
+            "THURSDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Batch bottles, syrups and juice in the K fridge, set for a smooth Friday open"
+            }
+          ]
+        },
+        {
+          "title": "Run nips through dishwasher",
+          "section": "FRIDAY",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Clean beer grates, and side triangle grates. green scrubbie with sanitizer to polish brass rail",
+          "section": "SUNDAY",
+          "days": [
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The beer grates and side triangle grates cleaned, brass rail polished"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "close",
+      "room": "K-bar",
+      "items": [
+        {
+          "title": "Dump citrus garnishes (limes, lemons, oranges, grapefruit, cucumbers) and dump salt, Tajín, and sugar.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The citrus garnishes, salt, Tajín and sugar dumped and the caddies clean"
+            }
+          ]
+        },
+        {
+          "title": "BURN DAT ICE",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Plastic wrap perishable garnishes and put in low boi (cherries,olives, rosemary, orchids, berries, mint) Friday - fill and leave at K, Saturday bring to beech",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Plastic wrap fruity pebbles and marshmallows. You can keep these out in the garnish caddy overnight.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Place sweet vermouth, spro mod, and batches that are ¾ full or more, refill anything lower after married into other well.\nFriday - fill and leave at K, Saturday bring to beech",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Fill all empty bottles | batches, syrups etc. Don't marry any batches containing dairy or perishable ingredients.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "If any cheater is a quarter full or less after you’ve married, empty, clean with bottle brush, and REFILL - NEVER place any bottles in the low boi if they are a quarter empty.  Place clean, empty bottles in crate for refill.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down bitter bottles/tops, fill any low bitters to appropriate height (bottom of neck)",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Put dry garnish, bitters,sprays, etc in garnish caddies and cover completely with plastic wrap",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Using the same 1/4 full standard as above, refill / empty / clean all squeeze bottles.  Friday - fill and leave at K, Saturday bring to beech",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Green scrubby sink and surrounding areas, ensure to green scrubby around water knozzles, sprayer, and both sink basins",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Pull liquor from doghouse to refill first pour backup bottles in 4th rack",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Green scrubby the shit out of entire well-Underneath main grate,underneath all rails-GET CORNERS",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the main grate and rails green-scrubbied, corners included"
+            }
+          ]
+        },
+        {
+          "title": "Wipe under well top, above ice well and bottles",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down well rack and speed rail, under well and lip under speed rail, make sure it’s dry, replace bottles, and back up bottles",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well rack and speed rail wiped dry, bottles and backups replaced"
+            }
+          ]
+        },
+        {
+          "title": "Pull versa mat from under Hamilton blend and run thru dish. Scrub and clean under metal grate. Detail and clean Hamilton blender.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Detail soda gun, cap, hose, and holder with sanitizer. Place soda gun in sani overnight in rinse basin.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down bar menus front to back to ensure they're not sticky for the next day.",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Run dump bucket strainer thru dish, green scrubby/sani inside dump bucket and rinse, dump sani down all drains in floor",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Drain dishwasher and clean both drain grates",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "SATURDAY check 4th well for cleanliness(sink, grates, etc) when not in use AND thats everything is restocked",
+          "days": [
+            "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 4th well checked clean and restocked"
+            }
+          ]
+        },
+        {
+          "title": "Green marble behind the beer grates at K bar are wiped down",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The green marble behind the K bar beer grates wiped down"
+            }
+          ]
+        },
+        {
+          "title": "Fill beer cans from walk in (Friday)",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Clean under versa mats",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Take out T ice separator from well wipe and scrub thoroughly - wipe down entire basin of ice well to prevent mold DAILY",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down freezer reach in. Keep clear of debri and dust.",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Wipe down gaskets and lowbois",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Refill straws, coasters and rotate cups as needed",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down bar tops",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The K bar bar tops wiped down"
+            }
+          ]
+        },
+        {
+          "title": "Polish marble bartop under beer taps",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Wipe down terminal screens and handhelds, put handhelds on charger",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "USE GLASS CLEANER AND A FRESH CLEAN RAG AND GO OVER ENTIRETY OF LOWBOIS, GLASS, WELL RAILS, DOING A FINAL ONCE OVER TO ENSURE NO STICKINESS",
+          "days": [
+            "FRIDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Check rolodex for left cards",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Check each others wells",
+          "days": [
+            "THURSDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Bring open wines/prosecco to beech bar, bring all syrup cheaters and squeeze bottles to beech bar so they can be used until K bar is set up again on thurs",
+          "days": [
+            "SATURDAY"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Open the safe, and pull any credit cards out from the previous day, file in the CC box"
+        },
+        {
+          "title": "Pull bar banks form the safe for both venues and make sure they are balanced to $400.  Count prior day's cash and record all info in CTUIT.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Banks balanced to $400 for both venues and the prior day's cash recorded in CTUIT"
+            }
+          ]
+        },
+        {
+          "title": "Place cash in each bar drawer: Beech, K-Bar, False Bar, False Server"
+        },
+        {
+          "title": "Check in and make sure all item availability is accurate in Toast."
+        },
+        {
+          "title": "Check all menus for cleanliness. Wipe down and replace soiled pages as needed"
+        },
+        {
+          "title": "tables, red chairs, and bar stools are straightened. couch is lined up and straightened",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tables, red chairs and bar stools straightened, couch lined up"
+            }
+          ]
+        },
+        {
+          "title": "to-go containers are stocked"
+        },
+        {
+          "title": "No visible Kbar clutter (boxes, bar prep, personal belongings, etc) from any space or seats in the dining room"
+        },
+        {
+          "title": "expo is set up with mise",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The expo set up with mise"
+            }
+          ]
+        },
+        {
+          "title": "Music is playing on level 4 // Yelp reviews playing at right volume"
+        },
+        {
+          "title": "Host stand detailed with Windex [glass] & Murphy's Oil [wood]",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand detailed - glass with Windex, wood with Murphy's Oil"
+            }
+          ]
+        },
+        {
+          "title": "no trash in plants out front, or along bricks. space looks appealing and inviting from ouside. Clean debris from Demand less wall",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front of the space from the street - plants and bricks clear of trash, Demand Less wall clean"
+            }
+          ]
+        },
+        {
+          "title": "No clutter, boxes, dead stock, etc. in office or back hall > Remove if needed"
+        },
+        {
+          "title": "No clutter in Server nook > Remove if needed"
+        },
+        {
+          "title": "check that ice machines are both operating normally > check walls and sink in the area for cleanliness"
+        },
+        {
+          "title": "Check Beech st glass for spots clean daily"
+        },
+        {
+          "title": "awnings are rolled out"
+        },
+        {
+          "title": "Polish wooden ledges on wooden booths"
+        },
+        {
+          "title": "clean exhaust fan cover in restroom",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Polish standpipe and street visible tile",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "clean oil and grease stains outside with enzymatic cleaner",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "Scrub funk around booth seating bases and kick scuffs under tbl 33. Brush out table nooks and crannies",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Detail all Kbar glass, including static parts of hydraulic wall",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Clean all globe lights inside and outside // detail metal framing holding globes",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Using the shop vac, I cleaned out the crack between the wood floor and concrete cove between the front door and big mirror",
+          "days": [
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "barrel is blocking false idol entrance"
+        },
+        {
+          "title": "fire tables turned on if the weather is chilly"
+        },
+        {
+          "title": "Both Neon clocks outside are on and lit up completely."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Make sure all checks are closed"
+        },
+        {
+          "title": "Close out the VOIDS and COMPS tabs"
+        },
+        {
+          "title": "Run checkouts for K-Bar and Beech bar"
+        },
+        {
+          "title": "Close out the day in TOAST and Capture all payments"
+        },
+        {
+          "title": "Re-build bar banks to $400 each ($100 in 20's, 10's, 5's, and 1's)",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Both bar banks rebuilt to $400 each ($100 in 20's, 10's, 5's and 1's)"
+            }
+          ]
+        },
+        {
+          "title": "Separate cash by denomination, all bills face up"
+        },
+        {
+          "title": "Audit final checkout and collect \"Cash-Owed\""
+        },
+        {
+          "title": "Access the tip sheet located in the Google Drive"
+        },
+        {
+          "title": "Fill out all team member hours"
+        },
+        {
+          "title": "Fill out Credit Card Tips (found on main check out in parenthesis)"
+        },
+        {
+          "title": "Fill out Cash Tips (remaining cash after \"Cash-Owed\" is collected)"
+        },
+        {
+          "title": "Gather any remaining credit cards from the bars' card boxes and add to the drop"
+        },
+        {
+          "title": "Drop cash drawers, deposit, cash tips, and checkout in the safe",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Cash drawers, deposit, cash tips and checkout all dropped in the safe"
+            }
+          ]
+        },
+        {
+          "title": "Pause Spofity iPad and bathroom yelps"
+        },
+        {
+          "title": "Turn off all A/C or Heat"
+        },
+        {
+          "title": "Close all awnings"
+        },
+        {
+          "title": "Final walk-thru. Make sure ALL trash, recycling, and bottles are taken down.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The final walk-thru - all trash, recycling and bottles taken down"
+            }
+          ]
+        },
+        {
+          "title": "Check dishpit for cleanliness > Make sure wall is wiped down behind dish machine",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishpit clean and the wall behind the dish machine wiped down"
+            }
+          ]
+        },
+        {
+          "title": "All tables, bartops, and terminals wiped down",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All tables, bartops and terminals wiped down"
+            }
+          ]
+        },
+        {
+          "title": "Ensure door to back hallway is shut and locked, K bar door is locked, and tape is removed from the bathroom hallway entrance.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back hallway door and K bar door shut and locked, tape removed from the bathroom hallway entrance"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
