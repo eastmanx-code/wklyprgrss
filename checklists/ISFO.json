@@ -1,0 +1,1243 @@
+{
+  "venue": "ISFO",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Equip each well with service tools including tins, jiggers, strainers, and spoons."
+        },
+        {
+          "title": "Unwrap the cheater trays from the fridge and set them for service."
+        },
+        {
+          "title": "Transfer all of the spent citrus to the porter fridge."
+        },
+        {
+          "title": "Prepare the ice wells for service."
+        },
+        {
+          "title": "Uncap all of the beer lines."
+        },
+        {
+          "title": "Wash all of the beer caps in the dishwasher and set them aside for the day."
+        },
+        {
+          "title": "Ensure all of the drain grates are properly inserted."
+        },
+        {
+          "title": "Put away all of the beer and liquor deliveries before service begins."
+        },
+        {
+          "title": "Polish all bar stool bases with dry microfiber towel.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar stool bases polished"
+            }
+          ]
+        },
+        {
+          "title": "Assemble the garbage, recycling, and glassware stations behind the service well."
+        },
+        {
+          "title": "Turn on the dishwasher."
+        },
+        {
+          "title": "Fill the dishwasher and verify all of the chemical levels."
+        },
+        {
+          "title": "Place the bus tubs under the second and third wells."
+        },
+        {
+          "title": "Fill any empty cheater bottles, starting with the juices."
+        },
+        {
+          "title": "Refill the bitter bottles."
+        },
+        {
+          "title": "Pull five (5) of each hot sauce, Tabasco, red, and green, and reset for the day."
+        },
+        {
+          "title": "Fill the fruit bowls for zesting with oranges, lemons, and one (1) grapefruit in each bowl."
+        },
+        {
+          "title": "Clean the service freezer and restock one (1) bottle each of Manhattan, Negroni, Martini, Birthday, and two (2) bags of backup rocks."
+        },
+        {
+          "title": "Ensure all of the silverware, plates, and other service items are fully stocked before service."
+        },
+        {
+          "title": "Restock the polishing towels and bar rags."
+        },
+        {
+          "title": "Place the sparkling and dry vermouth in pebble ice."
+        },
+        {
+          "title": "Set up all of the garnish trays, starting with the service well, including mint, orange, cucumber, strawberries, blackberries, lemon, lime, grapefruit, pineapple, olives, half limes, lime wheels, and cherries.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish trays fully set at each well"
+            }
+          ]
+        },
+        {
+          "title": "Place all of the juice and modifier bottles in their designated stations, including lime, lemon, orange, pineapple, and grapefruit."
+        },
+        {
+          "title": "Unwrap all of the bottles and dry garnishes at each station."
+        },
+        {
+          "title": "Double-check all of the backup beers and wines and ensure fridges and backup stock are full for service.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The beer and wine fridges stocked for service"
+            }
+          ]
+        },
+        {
+          "title": "Communicate any low stock items to the onsite manager.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The low-stock items passed to the manager"
+            }
+          ]
+        },
+        {
+          "title": "Communicate any 86'ed items to the onsite manager.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The 86'd items passed to the manager"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Confirm all of the servers have completed last call."
+        },
+        {
+          "title": "Perform last call for all of the bar guests."
+        },
+        {
+          "title": "Close out all of the remaining tabs as soon as possible."
+        },
+        {
+          "title": "Clean and dry the inside of the ice well."
+        },
+        {
+          "title": "Clean and dry all of the liquor bottle rails with sanitizer, including underneath the racks."
+        },
+        {
+          "title": "Wipe down the gaskets inside the cooler doors, then wipe the handles and trim."
+        },
+        {
+          "title": "Wipe down the top and bottom of the glass fridge doors."
+        },
+        {
+          "title": "Wipe down the bar top with sanitizer and fill the Cambro in the back sink.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top wiped down clean"
+            }
+          ]
+        },
+        {
+          "title": "Clean inside the pillar by the wine glasses, remove any debris, and wipe the area."
+        },
+        {
+          "title": "Clean all debris off tops of barstools."
+        },
+        {
+          "title": "Throw away all of the garnish except olives and mint."
+        },
+        {
+          "title": "Burn all of the remaining ice in the well."
+        },
+        {
+          "title": "Place any zested fruit in the porter fridge."
+        },
+        {
+          "title": "Wipe down and put away all of the juice and syrup bottles."
+        },
+        {
+          "title": "Wipe all of the liquor bottles and caps."
+        },
+        {
+          "title": "Return the liquor bottles and caps to the rails after cleaning."
+        },
+        {
+          "title": "Pull all of the hot sauce and put it away in the fridge for the night."
+        },
+        {
+          "title": "Restage all of the tools once the station is clean."
+        },
+        {
+          "title": "Guest facing trash bins checked for condition, wiped, lids and sides"
+        },
+        {
+          "title": "Wipe and return all of the liquor bottles to the shelves and push them to the front for next day's service.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The liquor bottles wiped and faced to the front"
+            }
+          ]
+        },
+        {
+          "title": "Run all of the bar tools through the dishwasher."
+        },
+        {
+          "title": "Remove and clean all of the garnish boxes and run small enough items through the dishwasher."
+        },
+        {
+          "title": "Remove the tool rinser, then wipe and dry the inside."
+        },
+        {
+          "title": "Remove the tin rinser and scrub underneath using brushes before resetting."
+        },
+        {
+          "title": "Wash the soda gun and nozzle with a brush, then uncap and clean thoroughly."
+        },
+        {
+          "title": "Mixer foot clip pulled and detailed, no grime in the clip. Blade removed and cleaned."
+        },
+        {
+          "title": "Place the gun top in a glass with soda on top of the well and not inside the well."
+        },
+        {
+          "title": "Clean thoroughly under all of the bar equipment."
+        },
+        {
+          "title": "Clean and dry each station sink."
+        },
+        {
+          "title": "Wipe down blue bar fans. Grilles are free of dust."
+        },
+        {
+          "title": "Remove all of the drain grates and scrub under them, especially corners where buildup occurs, using brushes.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The drain grates removed and scrubbed underneath"
+            }
+          ]
+        },
+        {
+          "title": "Clean all of the beer drains and grates."
+        },
+        {
+          "title": "Wipe the grate for the third well and clean any sticky areas around it."
+        },
+        {
+          "title": "Pour “Mop and Dry” or bleach down all of the drains to help prevent fruit fly and pest activity."
+        },
+        {
+          "title": "Do the drains show any signs of pest activity?"
+        },
+        {
+          "title": "Assist the barback with any remaining closing tasks."
+        },
+        {
+          "title": "Check out with MOD and report any lows or 86s via WhatsApp.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The lows and 86s reported to the MOD"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Check that EVERY menu is cleaned, take ANY menus with stains or damage out of service."
+        },
+        {
+          "title": "Clean and organize the front desk."
+        },
+        {
+          "title": "Clean and sanitize all of the POS Screens."
+        },
+        {
+          "title": "Wipe down all of the OT monitors."
+        },
+        {
+          "title": "Polish all of the brass surfaces.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The brass surfaces polished"
+            }
+          ]
+        },
+        {
+          "title": "Check all tables for wobbles and correct them with adjustable feet or wedges, and that there are no sharp corners."
+        },
+        {
+          "title": "Perform a full lint roller pass."
+        },
+        {
+          "title": "Horsehair brush pass on all upholstery."
+        },
+        {
+          "title": "Confirm upholstery cleaning brushes are stored in their designated location after each use."
+        },
+        {
+          "title": "Micro-polish all high-gloss and polished surfaces, including slatted booths, raw bar, and metal table bases.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All high-gloss surfaces micro-polished: slatted booths, raw bar, metal table bases"
+            }
+          ]
+        },
+        {
+          "title": "Stock the Dessert Menus, Oyster Cards, Cocktail Menus, Business Cards, and Gift Cards."
+        },
+        {
+          "title": "Cut coasters and oyster cards."
+        },
+        {
+          "title": "Prepare Server Section sheets and post in Porter once approved by the manager."
+        },
+        {
+          "title": "Print out any large party chits."
+        },
+        {
+          "title": "Communicate with MOD if any credit card authorization forms need to be printed out for the day."
+        },
+        {
+          "title": "Put up a new Oyster Board sign."
+        },
+        {
+          "title": "Clean and wipe the outdoor tables."
+        },
+        {
+          "title": "Remove any leftover food and trash from the planters around the restaurant."
+        },
+        {
+          "title": "Straighten the plants, keeping them presentable."
+        },
+        {
+          "title": "Use the leaf blower and sweep the entire patio and sidewalk, including debris under the planter wall and around the patio.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The patio and sidewalk swept clean"
+            }
+          ]
+        },
+        {
+          "title": "Is everything on the patio in good condition?"
+        },
+        {
+          "title": "Wipe front, side and back of the Host Stand. Deep clean Host Stand Drawers; organize and determine what needs to stay and what can be trashed. If in doubt, check with a MOD",
+          "days": [
+            "MONDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand drawers deep-cleaned and organized"
+            }
+          ]
+        },
+        {
+          "title": "Carefully, move OpenTable computers and printers; then clean and dust space behind. Try to bundle up any long cords. Wipe down all OT monitors.",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Spray and wipe down thoroughly the tops of the back rests on the bench seating.",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly? (Monday)",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Spray and clean the mirror under the counter below the raw bar. Also, raw bar stools and the bases.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "Wipe the lamps above the bar, so there is no dust.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "Spray and clean the raw bar's glass encasement.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly? (Tuesday)",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "Wipe and clean all the plant vases around the restaurant.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "Organize and clean the two (2) service stations and shelves. Carefully lift and remove the items if needed, wipe and spray thoroughly. This includes the raw bar terminal and hutch at 54.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly? (Wednesday)",
+          "days": [
+            "WEDNESDAY"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Complete any assigned sidework."
+        },
+        {
+          "title": "Restock the business cards, gift cards, matches, etc."
+        },
+        {
+          "title": "Cut oyster cards, if needed."
+        },
+        {
+          "title": "Remove server section maps from the back hallway and clean all of the floor plans.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The server section maps removed and the floor plans cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Collect all of the menus from the menu holders around the restaurant."
+        },
+        {
+          "title": "Turn off and unplug the fan or heater from below the desk."
+        },
+        {
+          "title": "Tidy the host station.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host station tidy and reset"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down and organize the desk."
+        },
+        {
+          "title": "Clean the trash under the host desk, and empty the trash bin."
+        },
+        {
+          "title": "Sanitize all of the POS screens and highchairs."
+        },
+        {
+          "title": "Check that EVERY menu is cleaned, take ANY menus with stains or damage out of service, and leave a post-it note indicating the clean pile of cocktail books."
+        },
+        {
+          "title": "Update all of the remaining tables on OpenTable, plug in the iPads, and turn all of the iPads off.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All iPads plugged in and turned off"
+            }
+          ]
+        },
+        {
+          "title": "Check with the MOD of the night to confirm the checklist is complete and to let everyone know the closing host is off the floor."
+        },
+        {
+          "title": "Submit all guest notes from mid/closing servers."
+        },
+        {
+          "title": "Update tables on the POS before leaving."
+        },
+        {
+          "title": "Post night report on WhatsApp.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The night report posted"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Turn on all of the lights in dining room and bar.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room and bar lit and set for service"
+            }
+          ]
+        },
+        {
+          "title": "Turn on the music with the correct service period playlist."
+        },
+        {
+          "title": "Confirm the thermostat is set at no lower than 70°F for cooling."
+        },
+        {
+          "title": "Confirm all screens are fully operational and plugged in before services, including the back server area."
+        },
+        {
+          "title": "Ensure the scent machine is upright, plugged in, running and not leaking."
+        },
+        {
+          "title": "Are the light bulbs in good condition and functioning properly?"
+        },
+        {
+          "title": "BAR STOP: Open the drop box and transfer $400 from the bar bank into the bar register. Bring it together with the menus for the bar - leave with bartender to be hung on bar wall with magnets.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The $400 moved into the bar register"
+            }
+          ]
+        },
+        {
+          "title": "HOST STAND STOP: Floor menus to be left at Host Stand. While there, remind the host to print you chits so you can get celebration menus ready. And check and approve floor plans!"
+        },
+        {
+          "title": "PORTER STOP: Hang one menu at Porter (on the wall near floor plans, highlight any new changes, write on a board important updates). Check the AM checklists."
+        },
+        {
+          "title": "Confirm all staff have Taskmaverick codes before service (iPad: 0000 / Mobile KDS: 1654)."
+        },
+        {
+          "title": "Fill in Bathroom-Check checklist for the day."
+        },
+        {
+          "title": "Confirm any food item changes with the chef."
+        },
+        {
+          "title": "Confirm any beer or wine menu changes with the bar."
+        },
+        {
+          "title": "Update Toast with counts, 86'd, and new items."
+        },
+        {
+          "title": "Update the lunch menu on Illustrator, and print a copy to compare with the chef's current items."
+        },
+        {
+          "title": "Print enough menus for today's expected business once the chef confirms everything is correct.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Today's menus printed and ready"
+            }
+          ]
+        }
+      ],
+      "phase_label": "AM"
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Update the OpenTable floor plan until all tables show as finished."
+        },
+        {
+          "title": "Close all of the comps, voids, and tabs."
+        },
+        {
+          "title": "Close the bar cash drawer."
+        },
+        {
+          "title": "Print the Z Report.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The Z report printed"
+            }
+          ]
+        },
+        {
+          "title": "Pull the tills and take everything to the office."
+        },
+        {
+          "title": "Open the drop box, pull all of the server checkouts, and match the checkout sheets to the cash turned in."
+        },
+        {
+          "title": "Sort the bills by denomination, paper-clipping the $100s and $20s into groups of 10 and the $5s and $1s into groups of 20."
+        },
+        {
+          "title": "Set aside $400 for tomorrow's bar cash."
+        },
+        {
+          "title": "Note the cash totals by denomination on a Post-it, and place it inside the cash bank bag.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The cash totals by denomination"
+            }
+          ]
+        },
+        {
+          "title": "Secure all of the receipts from the sales report with a rubber band."
+        },
+        {
+          "title": "Place one or two bank bags in the drop box, and return the key to its lockbox."
+        },
+        {
+          "title": "Close the right drawer by navigating to Cash Drawers, Bar Right Receipt, Close Drawer, pressing the grey button, and selecting Close Drawer again."
+        },
+        {
+          "title": "Take out trash from the office, clean all horizontal surfaces",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The office surfaces cleared and clean"
+            }
+          ]
+        },
+        {
+          "title": "Perform a final walkthrough around dining area to identify any unfinished tasks. Check all stations, confirm they are fully stocked.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room clean and reset at close"
+            }
+          ]
+        },
+        {
+          "title": "Inspect the bar for cleanliness, patio, bathroom hallway, porter, etc."
+        },
+        {
+          "title": "Confirm upholstery and slat vacuuming are complete."
+        },
+        {
+          "title": "Confirm all screens are charged and docked at end of night."
+        },
+        {
+          "title": "Confirm handheld vacuum is charged."
+        },
+        {
+          "title": "Confirm that EVERY menu was cleaned, and that ANY menus with stains or damage was taken out of service."
+        },
+        {
+          "title": "Assist your staff with any remaining tasks."
+        },
+        {
+          "title": "Sign off all of the remaining checklists."
+        },
+        {
+          "title": "Make sure music is off."
+        },
+        {
+          "title": "Verify all of the thermostats are turned off."
+        },
+        {
+          "title": "Ensure all of the employees are clocked out."
+        }
+      ],
+      "phase_label": "PM"
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "PATIO: Set up tables, chairs, & umbrella outside and make sure they are clean."
+        },
+        {
+          "title": "DINING ROOM: Wipe all of the tables. Check for and dusted/dirty chairs, make sure they are clean. set them up nicely.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room tables wiped and set"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down and dust the lights on the Jopsper counter."
+        },
+        {
+          "title": "Polish all the navy blue banquets, including the tops, bottoms, and sides with a polishing rag, ensuring no fingerprints or smudges remain.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The navy banquettes polished, no fingerprints"
+            }
+          ]
+        },
+        {
+          "title": "Spot check upholstery and slat crevices."
+        },
+        {
+          "title": "Polish the pinstripe wood panels between and on the sides."
+        },
+        {
+          "title": "Set the dining room with polished forks and knives"
+        },
+        {
+          "title": "Polish all metal table bases with a microfiber cloth leaving no streaks. Ensure no debris are left in the seam or foot of the bases.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The metal table bases polished, no streaks or debris in the seams"
+            }
+          ]
+        },
+        {
+          "title": "Flag to MOD if any issues."
+        },
+        {
+          "title": "Set up water bottles, pitchers and glasses at bar and side server stations"
+        },
+        {
+          "title": "Bring trays to server station and to the bar."
+        },
+        {
+          "title": "Set up the ice buckets and set up tongs at bar and side server station"
+        },
+        {
+          "title": "Set up the wine buckets with folded linens, ensuring they are clean and shiny."
+        },
+        {
+          "title": "Fill sanitizer bottles and placed them around the restaurant at every station"
+        },
+        {
+          "title": "Checked stations, (paper clips, dessert menus, etc) at all server stations"
+        },
+        {
+          "title": "Complete weekly tasks (if assigned)"
+        },
+        {
+          "title": "Polish all wine stands with a microfiber."
+        },
+        {
+          "title": "Make sure all checklists are completed/signed."
+        },
+        {
+          "title": "Spray and wipe down the tile below the Josper counter, wipe down the stools (the bases too). Clean and wipe all High Chairs.",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Clean and organize the shelves under the Josper station, and all of the items at the expo stations; lift and remove the items if needed, spray and wipe down the entire station thoroughly. Sweep and clean thoroughly under the Josper station.",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Check, wipe and scrub the baseboards throughout the space.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Clean all of the edges down between the wall, the floor, and around the Josper counter; dust and wipe down the walls near the porter.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Is everything functioning properly?",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "Check server station organization, cleaning supplies stored neatly.",
+          "days": [
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down the lights on the Josper counter - polish all of the light fixtures ensuring there is no dust or debris is present.",
+          "days": [
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Wipe down entire wall adjacent to seat 31 and the wall around the corner across from the kitchen expo (leading to bathrooms). Move the planters. Sweep well.",
+          "days": [
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly?",
+          "days": [
+            "SUNDAY"
+          ]
+        }
+      ],
+      "phase_label": "AM"
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Sanitize the server station."
+        },
+        {
+          "title": "Stock the server stations with rubber bands, paper clips, dessert menus, and checkouts."
+        },
+        {
+          "title": "Cover the stations."
+        },
+        {
+          "title": "Refill and restock the hot sauce bottles."
+        },
+        {
+          "title": "Sanitize the hot sauce bottles."
+        },
+        {
+          "title": "Clean and wipe the water station by the bar service well."
+        },
+        {
+          "title": "Wipe the handle of the panic door by the oyster bar."
+        },
+        {
+          "title": "Wipe down and sanitize the Josper counter"
+        },
+        {
+          "title": "Wipe down and sanitize the dessert cart."
+        },
+        {
+          "title": "Wipe down and sanitize the kitchen counter."
+        },
+        {
+          "title": "Wipe down all of the oyster stands."
+        },
+        {
+          "title": "Check and remove any trash behind the credenza."
+        },
+        {
+          "title": "Spray, wipe, and stack the trays. Run black inserts through the dish pit."
+        },
+        {
+          "title": "Brush and lint roll all upholstered chairs/booth seating. No debris, hairs, or crumbs left on booths/chairs.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The booths and chairs brushed and lint-rolled, no debris"
+            }
+          ]
+        },
+        {
+          "title": "Brush all debris off table bases with horse hair brush. No debris left in the base, the foot or the seam where the column meets the base."
+        },
+        {
+          "title": "Wipe down the three (3) metal shelves in front of the kegs and light switches."
+        },
+        {
+          "title": "Reset all of the server stations with glassware, plates, silverware, bowls, and hot sauces.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The server stations reset and stocked"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down all of the tables."
+        },
+        {
+          "title": "Close the large doors."
+        },
+        {
+          "title": "Polish all of the silverware."
+        },
+        {
+          "title": "Fold the napkins."
+        },
+        {
+          "title": "Put the umbrellas away, ensuring no stands are left on the sidewalk."
+        },
+        {
+          "title": "Leave tables 8–14 outside, arranged neatly in a row."
+        },
+        {
+          "title": "Clean and sanitize the toilets, sinks, hand dryer, soap bottles and door handles.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom clean - toilets, sinks and fixtures sanitized"
+            }
+          ]
+        },
+        {
+          "title": "Wipe the mirror, leaving it spotless.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom mirror wiped spotless"
+            }
+          ]
+        },
+        {
+          "title": "Stock the hand soap and toilet paper.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom shrines fully stocked with soap, towels and toilet paper"
+            }
+          ]
+        },
+        {
+          "title": "Empty the trash."
+        },
+        {
+          "title": "Clean glass doors of shrine cabinets."
+        },
+        {
+          "title": "Crevices in bathroom doors need to be dusted"
+        },
+        {
+          "title": "Is everything in good condition and functioning properly?"
+        },
+        {
+          "title": "Clean the shelves in the back hallway, wipe, clean, organize all the bins and discard any unnecessary items.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "Dust off the light fixtures that surround the columns in the center as well as globes with tentacles.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Spray down the mirrors and reflective surfaces throughout the restaurant with glass cleaner and use a micro fiber towel to clean, make sure it is completely streak free. Use glass cleaner on and a bar rag to thoroughly wipe down all the tile on the columns.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly? (Thursday)",
+          "days": [
+            "THURSDAY"
+          ]
+        }
+      ],
+      "phase_label": "PM"
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Set up a sani bottles and towels at every station, and make sure there's a well-stocked supply of extra towels in the back"
+        },
+        {
+          "title": "EXPO mise: lemons, sauces, ramekins, serving spoons (whatever kitchen requires)"
+        },
+        {
+          "title": "RAW BAR mise: mignonette, hr, lemons, cb sauce, ramies, oyster cards & sharpie, mini spoons and forks, stands (all what how kitchen requires)"
+        },
+        {
+          "title": "Polish the bases of the raw bar stools with a microfiber leaving no streaks.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The raw bar stool bases polished, no streaks"
+            }
+          ]
+        },
+        {
+          "title": "Ensure all of the stainless steel in front of raw bar was polished the night prior. Hit with a microfiber if necessary."
+        },
+        {
+          "title": "Ensure backup of all mise"
+        },
+        {
+          "title": "Stock up kids cups and lids at raw bar and porter. Check that water stations are ready for service."
+        },
+        {
+          "title": "Spot sweep the interior of the kitchen-to-floor transition areas. make sure floor is clean."
+        },
+        {
+          "title": "Fill all lanterns (including the 4 talls), change the paper underneath",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All lanterns filled with fresh paper underneath"
+            }
+          ]
+        },
+        {
+          "title": "Make sure all deliveries are taken care of and nothing is left sitting on the floor"
+        },
+        {
+          "title": "Check to make sure there are TO-GO containers in server stations, porter, EXPO"
+        },
+        {
+          "title": "Ensure “bathroom shrines” have sufficient backup for service. Let MOD know if we are low."
+        },
+        {
+          "title": "Make sure the weekly task is completed."
+        },
+        {
+          "title": "Use the leaf blower to sweet the entire patio/sidewalk, including any debris under the planter wall and around the patio surround."
+        },
+        {
+          "title": "Sweep the dumpster room and tidy it up before bringing in the dumpsters in."
+        },
+        {
+          "title": "Bring the dumpsters into the dumpster room. Ask kitchen crew to help (if help is needed). Need to bring in before 11pm."
+        },
+        {
+          "title": "Put 3 mats out on the floor: raw bar entry, bar entry and kitchen entry. Flip the rack in the mop sink"
+        },
+        {
+          "title": "Check the restroom for cleanliness, including the mirrors.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom clean and the mirrors spotless"
+            }
+          ]
+        },
+        {
+          "title": "Stock the toilet paper, hand towels, and soap.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom stocked with toilet paper, hand towels and soap"
+            }
+          ]
+        },
+        {
+          "title": "Is everything in the restroom in good condition and functioning properly?"
+        },
+        {
+          "title": "Thoroughly wipe and clean the tile on the patio, in and out.",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "Make sure all wine buckets and their stands are shiny.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "Checked and clean all umbrella bases",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "Check and detail clean if needed all soap dispensers and bathroom hand dryers",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "Clean all white marble trim and walls in the bathroom halways and around EXPO",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Wipe down the lights on the kitchen counter, ensuring there is no dust or debris is present",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly?",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "Spray down the mirrors and reflective surfaces throughout the restaurant with glass cleaner and use a microfiber towel, make sure it is completely streak free.",
+          "days": [
+            "SATURDAY"
+          ]
+        }
+      ],
+      "phase_label": "AM"
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Make ice tea if needed"
+        },
+        {
+          "title": "Refill empty water bottles at our water station"
+        },
+        {
+          "title": "Restock server stations with TO-GO containers, plastic cutlery, Swedish fish, etc. Confirm only IFS to-bags and containers are in use. Let MOD know if any items are out or running low."
+        },
+        {
+          "title": "Are any items running low?"
+        },
+        {
+          "title": "RAW BAR: Put away the raw bar mise en place."
+        },
+        {
+          "title": "Clean the area, leave the station as chefs require. Wipe the stand (including legs)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The raw bar area cleaned and wiped down"
+            }
+          ]
+        },
+        {
+          "title": "Polish all stainless steel in front of raw bar with a microfiber. Ensure no streaks or debris remain.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The stainless in front of the raw bar polished, no streaks"
+            }
+          ]
+        },
+        {
+          "title": "Ensure the ice trap is properly in the machine."
+        },
+        {
+          "title": "Melt all of the ice and remove debris from the mop sink."
+        },
+        {
+          "title": "Bring the mats to the trash room."
+        },
+        {
+          "title": "EXPO: Label properly and put all of the EXPO mise into the walk in. Leave the station as chefs require."
+        },
+        {
+          "title": "Clean, sanitize and organize the EXPO counter, wipe down the lights, as well as wipe the wall under the counter (if needed)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The expo counter cleaned, sanitized and organized"
+            }
+          ]
+        },
+        {
+          "title": "Wipe down doors, pass, staplers and the tile between the door and EXPO counter"
+        },
+        {
+          "title": "Check restroom hallway for dust and mess, as well as server station near EXPO and make sure it is all clean."
+        },
+        {
+          "title": "Make sure that community tables are wiped thoroughly."
+        },
+        {
+          "title": "Are the light bulbs behind the line and above the expo functioning properly?"
+        },
+        {
+          "title": "Store vermont laterns in porter"
+        },
+        {
+          "title": "Make sure that all the tables are wiped"
+        },
+        {
+          "title": "Handheld vacuum all wood slat crevices and booth seat crevices.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wood slat and booth seat crevices vacuumed clean"
+            }
+          ]
+        },
+        {
+          "title": "Update bar and kitchen that you are about to take trash bins outside, empty our bin near the sink in porter."
+        },
+        {
+          "title": "Vacuum crevices on the floor with missing tile (dining area)"
+        },
+        {
+          "title": "Empty our bin near the sink in porter."
+        },
+        {
+          "title": "Update bar and kitchen that you are about to take trash containers outside and give him time to bring their trash in."
+        },
+        {
+          "title": "Take out the recycling containers. Ask to help if needed."
+        },
+        {
+          "title": "All Patio Cushions have been brought in"
+        },
+        {
+          "title": "Help to bring patio chairs in"
+        },
+        {
+          "title": "Use leaf blower to sweep the patio after all guests have cleared out",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The patio swept clean after close"
+            }
+          ]
+        },
+        {
+          "title": "Close and sweep the porter station"
+        },
+        {
+          "title": "Make sure all tasks are completed, do a walkthrough with MOD before leaving"
+        }
+      ],
+      "phase_label": "PM"
+    }
+  ]
+}
