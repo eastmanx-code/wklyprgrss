@@ -1,0 +1,190 @@
+{
+  "venue": "CRFT",
+  "lists": [
+    {
+      "house": "HOH",
+      "role": "Prep",
+      "role_es": "Preparación",
+      "phase": "open",
+      "items": [
+        { "title": "Turn on all equiptment, making sure it lights correctly. Check pilots if anything doesn't turn on.", "title_es": "Prende todo el equipo y revisa que encienda bien. Si algo no prende, revisa los pilotos." },
+        { "title": "As orders arrive, double check with the delivery driver and correct any mistakes then. Communicate with prep team to make sure they are not missing anything.", "title_es": "Cuando lleguen las órdenes, revísalas con el repartidor y corrige cualquier error ahí mismo. Avísale al equipo de prep si falta algo." },
+        { "title": "Date today's bread on the white label (B&C) & with blue tape (Hommage). Rotate yesterday's to the 911 bin(s).", "title_es": "Fecha el pan de hoy con etiqueta blanca (B&C) y con tape azul (Hommage). Rota el de ayer al bin 911.", "proof": [ { "kind": "photo", "prompt": "The bread dated and yesterday's rotated into the 911 bin" } ] },
+        { "title": "Go over prep list together and prioritize tasks in a timely and most efficient manner. It should be even", "title_es": "Revisen juntos la lista de prep y prioricen las tareas de forma rápida y eficiente. Debe repartirse parejo." },
+        { "title": "Begin prep lists, cleaning as you go. Break down any recycling into black trash cans as it comes. Do not make someone do your job.", "title_es": "Empieza tu prep limpiando mientras trabajas. Rompe el reciclaje en los botes negros conforme sale. No dejes que otro haga tu trabajo." },
+        { "title": "At 11:30, check with the chef or lead, and place any order to correct any mistakes on the primary orders", "title_es": "A las 11:30, checa con el chef o el lead y haz cualquier pedido para corregir errores en las órdenes principales." },
+        { "title": "At the same time as above, go over the list and make sure each list is getting done in the allotted time. If one is not to be completed in time, delegate tasks accordingly to ensure success.", "title_es": "A la misma hora, revisa que cada lista se esté terminando a tiempo. Si una no va a terminar, reparte las tareas para lograrlo." },
+        { "title": "Write notes on white board for the following days prep. This should be anything not completed, anything needed to be ordered, or any notes about leftover prep the following day can use.", "title_es": "Escribe en el pizarrón las notas para el prep del día siguiente: lo que quedó sin terminar, lo que hay que pedir y el prep que sobró para usarse.", "proof": [ { "kind": "note", "prompt": "The whiteboard notes for the next day's prep" } ] },
+        { "title": "Once all tasks are completed, clean the entire prep area as a team, take all trash and recycling down, and check with the MOD before leaving.", "title_es": "Cuando terminen todo, limpien el área de prep en equipo, bajen toda la basura y el reciclaje, y checa con el MOD antes de irte.", "proof": [ { "kind": "photo", "prompt": "The whole prep area clean before leaving" } ] },
+        { "title": "Wipe Down Shelving in prep are, including the bottom of each shelve.", "title_es": "Limpia las repisas del área de prep, incluyendo la parte de abajo de cada repisa.", "proof": [ { "kind": "photo", "prompt": "The prep shelving wiped down, undersides included" } ] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Line cook",
+      "role_es": "Cocinero de línea",
+      "phase": "open",
+      "items": [
+        { "title": "Uncover all of your station prep, removing any plastic wrap and low boy covers for service.", "title_es": "Destapa todo el prep de tu estación, quita el plástico y las tapas de los lowboys para el servicio.", "proof": [ { "kind": "photo", "prompt": "Your station uncovered and set for service" } ] },
+        { "title": "Get a Sanitizer bucket for each station, changing it every 4 hours, or as needed.", "title_es": "Pon un bote de sanitizer en cada estación, cámbialo cada 4 horas o cuando haga falta.", "proof": [ { "kind": "photo", "prompt": "A fresh sani bucket at each station" } ] },
+        { "title": "Go over the prep list written the night before and prioritize based on success.", "title_es": "Revisa la lista de prep que se escribió la noche anterior y prioriza para que salga bien." },
+        { "title": "Notify the chef or MOD about any product missing from your station or from the prep list. ASAP!", "title_es": "Avísale al chef o al MOD de cualquier producto que falte en tu estación o en la lista de prep. ¡De inmediato!" },
+        { "title": "Begin prep lists, set a time for each person to be on break, and for each person to be done with prep.", "title_es": "Empiecen el prep, pongan hora de break para cada quien y hora en que cada quien debe terminar su prep." },
+        { "title": "Get with chef-on-duty to adjust any seasoning/consistency during line check.", "title_es": "Ponte con el chef de turno para ajustar sazón y consistencia durante el line check." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Line cook",
+      "role_es": "Cocinero de línea",
+      "phase": "close",
+      "items": [
+        { "title": "Restock your station, wipe down low boys (inside), double check labels in the walk in.", "title_es": "Resurte tu estación, limpia los lowboys por dentro y revisa las etiquetas en el walk in.", "proof": [ { "kind": "photo", "prompt": "Your station restocked, lowboys wiped inside, walk-in labeled" } ] },
+        { "title": "Make sure all sinks are free from debris, cleaned, & sanitized.", "title_es": "Asegúrate de que todos los sinks estén sin basura, limpios y sanitizados." },
+        { "title": "Consolidate anything on speed racks into designated containers.", "title_es": "Consolida todo lo que esté en los speed racks en sus contenedores designados." },
+        { "title": "Prep lists filled out for the following day. Make sure all orders have been placed.", "title_es": "Llena las listas de prep para el día siguiente. Asegúrate de que todos los pedidos ya se hicieron.", "proof": [ { "kind": "note", "prompt": "The prep list filled out for the next day" } ] },
+        { "title": "Turn off the flat top, salamander, fryer, steamtable and ovens. Spread any coals/embers out on grill to cool. \nDouble check this.", "title_es": "Apaga la plancha, la salamandra, la freidora, el steamtable y los hornos. Esparce las brasas en la parrilla para que se enfríen. Revísalo dos veces.", "proof": [ { "kind": "photo", "prompt": "The flat top, salamander, fryer, steamtable and ovens all off" } ] },
+        { "title": "Scrub down the exterior of the salamander, as well as the walls surrounding each station", "title_es": "Talla el exterior de la salamandra y las paredes alrededor de cada estación." },
+        { "title": "Scrub the stove top and replace the foil underneath.", "title_es": "Talla la plancha y cambia el papel aluminio de abajo.", "proof": [ { "kind": "photo", "prompt": "The stove top scrubbed with fresh foil underneath" } ] },
+        { "title": "Grill brick both flat tops with oil and clean.", "title_es": "Pasa la piedra (grill brick) con aceite a las dos planchas y límpialas." },
+        { "title": "Spider out the fryer, wipe down surfaces.", "title_es": "Saca todo de la freidora con la araña y limpia las superficies." },
+        { "title": "Scrub down doors, faces of all ovens, fryers, and low boys, including walls behind lowboys", "title_es": "Talla las puertas y frentes de todos los hornos, freidoras y lowboys, incluyendo las paredes detrás de los lowboys.", "proof": [ { "kind": "photo", "prompt": "The oven, fryer and lowboy faces and the walls behind them scrubbed" } ] },
+        { "title": "Flip “use first” items on the line into clean 9 pans and containers, cover with plastic.", "title_es": "Pasa los productos de “use first” de la línea a 9 pans y contenedores limpios y tápalos con plástico." },
+        { "title": "Pick up wooden cutting boards, sanitizer them, scrub under surfaces.", "title_es": "Recoge las tablas de madera, sanitízalas y talla por debajo." },
+        { "title": "Check floor drains to make sure they are free from debris. Pour hot water down & spray grate covers on Mondays & Thursdays.", "title_es": "Revisa las coladeras del piso que estén sin basura. Echa agua caliente y lava las rejillas los lunes y jueves." },
+        { "title": "As a team, everyone go into the walk in and make sure everything is consolidated, empty pans are removed, and everything is properly labeled/dated.", "title_es": "En equipo, entren al walk in y asegúrense de que todo esté consolidado, sin pans vacíos y bien etiquetado y fechado.", "proof": [ { "kind": "photo", "prompt": "The walk-in consolidated, empty pans gone, everything labeled and dated" } ] },
+        { "title": "Organize trash: Gather all trash from the back of house, leave one empty trash can for everyone to share.", "title_es": "Organiza la basura: junta toda la basura de la cocina y deja un bote vacío para compartir." },
+        { "title": "Load up the rolling garbage cart, and as a team, take all trash and recycling out.", "title_es": "Carga el carrito de basura y, en equipo, saquen toda la basura y el reciclaje." },
+        { "title": "Sweep the prep area and line. Mop walk-in.", "title_es": "Barre el área de prep y la línea. Trapea el walk in.", "proof": [ { "kind": "photo", "prompt": "The prep area and line swept, walk-in mopped" } ] }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Saute",
+      "role_es": "Sauté",
+      "phase": "close",
+      "items": [
+        { "title": "Restock your station, wipe down low boys (inside and outside), double check everything has labels.", "title_es": "Resurte tu estación, limpia los lowboys por dentro y por fuera, y revisa que todo tenga etiqueta.", "proof": [ { "kind": "photo", "prompt": "The saute station restocked and lowboys wiped inside and out" } ] },
+        { "title": "Clean Walls by flat top. Clean flat top.", "title_es": "Limpia las paredes junto a la plancha. Limpia la plancha.", "proof": [ { "kind": "photo", "prompt": "The flat top and the walls beside it clean" } ] },
+        { "title": "Turn off the flat top, salamander, fryer, and ovens.", "title_es": "Apaga la plancha, la salamandra, la freidora y los hornos.", "proof": [ { "kind": "photo", "prompt": "The flat top, salamander, fryer and ovens off" } ] },
+        { "title": "Scrub the stove top (top and doors and handles) and replace the foil underneath (when needed)", "title_es": "Talla la plancha (superficie, puertas y manijas) y cambia el aluminio de abajo cuando haga falta." },
+        { "title": "Scrub steam table. Inside, outside, underneath.", "title_es": "Talla el steam table por dentro, por fuera y por debajo.", "proof": [ { "kind": "photo", "prompt": "The steam table scrubbed inside, outside and underneath" } ] },
+        { "title": "Make sure no dirty towels or aprons are strewn about.", "title_es": "Asegúrate de que no haya trapos ni mandiles sucios tirados." },
+        { "title": "Check grease trap and place in a pot with water if it needs to be emptied in the morning.", "title_es": "Revisa la trampa de grasa y ponla en una olla con agua si hay que vaciarla en la mañana." },
+        { "title": "Wipe down the salamanders inside and out and its pipes. Change foil every other day", "title_es": "Limpia las salamandras por dentro y por fuera y sus tubos. Cambia el aluminio cada tercer día." },
+        { "title": "Flip “use first” items on the line into clean 9 pans and containers, cover with plastic", "title_es": "Pasa los productos de “use first” de la línea a 9 pans y contenedores limpios y tápalos con plástico." },
+        { "title": "As a team, everyone go into the walk in and make sure everything is consolidated, empty pans are removed, and everything is properly labeled/dated.", "title_es": "En equipo, entren al walk in y asegúrense de que todo esté consolidado, sin pans vacíos y bien etiquetado y fechado.", "proof": [ { "kind": "photo", "prompt": "The walk-in consolidated, empty pans gone, everything labeled and dated" } ] },
+        { "title": "Organize trash: Gather all trash from the back of house, leave one empty trash can for everyone to share.", "title_es": "Organiza la basura: junta toda la basura de la cocina y deja un bote vacío para compartir." },
+        { "title": "Load up the green cart and as a team, take all trash and recycling out.", "title_es": "Carga el carrito verde y, en equipo, saquen toda la basura y el reciclaje." },
+        { "title": "Take turns tidying the walk in, organizing, consolidating, and sweeping", "title_es": "Túrnense para ordenar el walk in: organizar, consolidar y barrer." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Pantry",
+      "role_es": "Garde manger",
+      "phase": "close",
+      "items": [
+        { "title": "Restock your station, wipe down low boys (inside and outside), double check everything has labels.", "title_es": "Resurte tu estación, limpia los lowboys por dentro y por fuera, y revisa que todo tenga etiqueta.", "proof": [ { "kind": "photo", "prompt": "The pantry station restocked and lowboys wiped inside and out" } ] },
+        { "title": "Take turns tidying the walk in, organizing, consolidating, and sweeping", "title_es": "Túrnense para ordenar el walk in: organizar, consolidar y barrer." },
+        { "title": "Sweep the prep area and line.", "title_es": "Barre el área de prep y la línea." },
+        { "title": "Turn off the flat top, salamander, fryer, and ovens.", "title_es": "Apaga la plancha, la salamandra, la freidora y los hornos.", "proof": [ { "kind": "photo", "prompt": "The flat top, salamander, fryer and ovens off" } ] },
+        { "title": "Check greese trap and place in a pot with water if it needs to be emptied in the morning.", "title_es": "Revisa la trampa de grasa y ponla en una olla con agua si hay que vaciarla en la mañana." },
+        { "title": "As a team wipe down the salamander and its pipes.", "title_es": "En equipo, limpien la salamandra y sus tubos." },
+        { "title": "Wipe down shelf above the station. This is to be done Monday / Thursday / Sunday. If it is not that day DO NOT SIGN THIS LINE.", "title_es": "Limpia la repisa de arriba de la estación. Se hace lunes / jueves / domingo. Si no es ese día NO FIRMES ESTA LÍNEA.", "days": ["MONDAY", "THURSDAY", "SUNDAY"], "proof": [ { "kind": "photo", "prompt": "The shelf above the station wiped down" } ] },
+        { "title": "Make sure the Freezer is closed!", "title_es": "¡Asegúrate de que el freezer quede cerrado!" },
+        { "title": "Spider out the fryer, wipe down surfaces.", "title_es": "Saca todo de la freidora con la araña y limpia las superficies." },
+        { "title": "Flip “use first” items on the line into clean 9 pans and containers, cover with plastic.", "title_es": "Pasa los productos de “use first” de la línea a 9 pans y contenedores limpios y tápalos con plástico." },
+        { "title": "Pick up wooden cutting boards, sanitizer them, scrub under surfaces.", "title_es": "Recoge las tablas de madera, sanitízalas y talla por debajo." },
+        { "title": "As a team, everyone go into the walk in and make sure everything is consolidated, empty pans are removed, and everything is properly labeled/dated.", "title_es": "En equipo, entren al walk in y asegúrense de que todo esté consolidado, sin pans vacíos y bien etiquetado y fechado.", "proof": [ { "kind": "photo", "prompt": "The walk-in consolidated, empty pans gone, everything labeled and dated" } ] },
+        { "title": "Make sure no dirty towels or aprons are strewn about.", "title_es": "Asegúrate de que no haya trapos ni mandiles sucios tirados." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Grill",
+      "role_es": "Parrilla",
+      "phase": "close",
+      "items": [
+        { "title": "Restock your station, wipe down low boys (inside and outside), double check everything has labels.", "title_es": "Resurte tu estación, limpia los lowboys por dentro y por fuera, y revisa que todo tenga etiqueta.", "proof": [ { "kind": "photo", "prompt": "The grill station restocked and lowboys wiped inside and out" } ] },
+        { "title": "Scrub grill with metal scrubby", "title_es": "Talla la parrilla con el estropajo de metal.", "proof": [ { "kind": "photo", "prompt": "The grill scrubbed clean" } ] },
+        { "title": "Wipe down wall behind grill to remove the smoke", "title_es": "Limpia la pared detrás de la parrilla para quitar el humo.", "proof": [ { "kind": "photo", "prompt": "The wall behind the grill wiped free of smoke" } ] },
+        { "title": "Check back prep area for anything left out, lable cover or wrap what needs to be take care of.", "title_es": "Revisa el área de prep de atrás por si quedó algo afuera; etiqueta, tapa o envuelve lo que haga falta." },
+        { "title": "Check speedrack for anything that needs to be put away.", "title_es": "Revisa el speedrack por si hay algo que haya que guardar." },
+        { "title": "place 3 cutting boards on your station for the next day", "title_es": "Deja 3 tablas en tu estación para el día siguiente." },
+        { "title": "Change the shellfish containers. Cover the Shellfish and Caviar with fresh ice", "title_es": "Cambia los contenedores de mariscos. Cubre los mariscos y el caviar con hielo fresco.", "proof": [ { "kind": "photo", "prompt": "The shellfish and caviar on fresh ice in clean containers" } ] },
+        { "title": "Wipe down the salamander inside and out and its pipes. Change foil every other day.", "title_es": "Limpia la salamandra por dentro y por fuera y sus tubos. Cambia el aluminio cada tercer día." },
+        { "title": "Flip “use first” items on the line into clean 9 pans and containers, cover with plastic.", "title_es": "Pasa los productos de “use first” de la línea a 9 pans y contenedores limpios y tápalos con plástico." },
+        { "title": "As a team, everyone go into the walk in and make sure everything is consolidated, empty pans are removed, and everything is properly labeled/dated.", "title_es": "En equipo, entren al walk in y asegúrense de que todo esté consolidado, sin pans vacíos y bien etiquetado y fechado.", "proof": [ { "kind": "photo", "prompt": "The walk-in consolidated, empty pans gone, everything labeled and dated" } ] },
+        { "title": "Organize trash: Gather all trash from the back of house, leave one empty trash can for everyone to share.", "title_es": "Organiza la basura: junta toda la basura de la cocina y deja un bote vacío para compartir." },
+        { "title": "Load up the green cart and as a team, take all trash and recycling out.", "title_es": "Carga el carrito verde y, en equipo, saquen toda la basura y el reciclaje." },
+        { "title": "Take turns tidying the walk in, organizing, consolidating, and sweeping", "title_es": "Túrnense para ordenar el walk in: organizar, consolidar y barrer." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "open",
+      "items": [
+        { "title": "CLOCK IN. TURN ON DISH MACHINE. CHECK LEVELS ON ALL CHEMICALS.", "title_es": "Marca entrada. Prende la máquina de lavar. Revisa los niveles de todos los químicos." },
+        { "title": "FILL 3 COMPARTMENT SINKS APPROPRIATELY: DETERGENT/RINSE H2O/SANITIZER", "title_es": "Llena las tres tarjas como va: detergente / agua de enjuague / sanitizer.", "proof": [ { "kind": "photo", "prompt": "The 3-compartment sink filled: detergent, rinse water, sanitizer" } ] },
+        { "title": "FILL & PLACE FRESH, CLEAN SANITIZER BUCKETS ON EACH PREP STATION & DISH", "title_es": "Llena y pon botes de sanitizer limpios en cada estación de prep y en el dish.", "proof": [ { "kind": "photo", "prompt": "A fresh sani bucket on each prep station and at dish" } ] },
+        { "title": "PLACE LINED SLIM JIM TRASH CANS ON EACH PREP STATION & DISH", "title_es": "Pon botes de basura Slim Jim con bolsa en cada estación de prep y en el dish." },
+        { "title": "CHECK-IN & STOW ALL INCOMING ORDERS/PRODUCTS. NOTIFY CHEF SCHEDULED OF ANY SHORTS/ISSUES.", "title_es": "Recibe y guarda todas las órdenes y productos que lleguen. Avísale al chef de turno de cualquier faltante o problema." },
+        { "title": "COMPLETE PREP TASKS IN A TIMELY MANNER. DON'T ALLOW DISHES TO BUILD. BOUNCE BACK & FORTH AS NEEDED.", "title_es": "Haz las tareas de prep a tiempo. No dejes que se acumulen los trastes. Ve y ven entre prep y dish según haga falta." },
+        { "title": "MAKE CERTAIN ALL PREP PRODUCTS ARE LABELED IN WALK-IN & ROTATE BY DATE (FIFO).", "title_es": "Asegúrate de que todo el prep en el walk in esté etiquetado y rótalo por fecha (FIFO).", "proof": [ { "kind": "photo", "prompt": "The walk-in products labeled and rotated by date (FIFO)" } ] },
+        { "title": "MAKE CERTAIN PAPER TOWELS & HANDSOAP REMAIN STOCKED.", "title_es": "Asegúrate de que no falten toallas de papel ni jabón de manos." },
+        { "title": "BRING TOWELS, APRONS, & ANY OTHER NEEDS FROM P3.", "title_es": "Sube trapos, mandiles y lo demás que haga falta de P3." },
+        { "title": "MAINTAIN & ORGANIZE DRY STORAGE IN HALLWAY.", "title_es": "Mantén y organiza el almacén seco del pasillo.", "proof": [ { "kind": "photo", "prompt": "The hallway dry storage organized" } ] },
+        { "title": "CLEAR DIRTY DISH AREA FOR PM DISHWASHER(S). EMPTY DISH MACHINE FILTER.", "title_es": "Deja limpia el área de trastes sucios para el lavaplatos de la tarde. Vacía el filtro de la máquina.", "proof": [ { "kind": "photo", "prompt": "The dirty dish area cleared and the dish machine filter emptied" } ] },
+        { "title": "TAKE ALL TRASH & RECYCLING TO GARAGE FOR DISPOSAL.", "title_es": "Lleva toda la basura y el reciclaje al garaje para tirarlos." },
+        { "title": "TAKE ANY DIRTY LINENS TO GARAGE HAMPER/LOCKER FOR PICKUP FROM ALSCO.", "title_es": "Lleva los trapos sucios al cesto/locker del garaje para que los recoja ALSCO." },
+        { "title": "CHECK-OUT WITH CHEF-ON-DUTY BEFORE CLOCKING OUT.", "title_es": "Checa con el chef de turno antes de marcar salida." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "close",
+      "items": [
+        { "title": "CLOCK IN. CHECK LEVELS ON ALL CHEMICALS.", "title_es": "Marca entrada. Revisa los niveles de todos los químicos." },
+        { "title": "FILL 3 COMPARTMENT SINKS APPROPRIATELY: DETERGENT/RINSE H2O/SANITIZER", "title_es": "Llena las tres tarjas como va: detergente / agua de enjuague / sanitizer.", "proof": [ { "kind": "photo", "prompt": "The 3-compartment sink filled: detergent, rinse water, sanitizer" } ] },
+        { "title": "FILL & PLACE FRESH, CLEAN SANITIZER BUCKETS ON EACH PREP STATION & DISH", "title_es": "Llena y pon botes de sanitizer limpios en cada estación de prep y en el dish." },
+        { "title": "REMOVE & CONSOLIDATE FULL TRASH CANS AS NEEDED.", "title_es": "Saca y consolida los botes de basura llenos conforme haga falta." },
+        { "title": "MAKE CERTAIN PAPER TOWELS & HANDSOAP REMAIN STOCKED.", "title_es": "Asegúrate de que no falten toallas de papel ni jabón de manos." },
+        { "title": "CHECK WITH CHEFS FOR ANY PREP OPPORTUNITIES.", "title_es": "Pregúntale a los chefs si hay algo de prep en que ayudar." },
+        { "title": "BRING, WOOD, TOWELS, APRONS, & ANY OTHER NEEDS FROM P3 AS NEEDED AND TAKE DIWN ALL CARDBOARD.", "title_es": "Sube leña, trapos, mandiles y lo demás que haga falta de P3, y baja todo el cartón." },
+        { "title": "AT CLOSE WIPE DOWN SHELVING, PIPES AND WALLS UNDER/BEHIND THREE COMPARTMENT AND DISH SINKS", "title_es": "Al cierre limpia las repisas, tubos y paredes debajo y detrás de las tres tarjas y del dish.", "proof": [ { "kind": "photo", "prompt": "The shelving, pipes and walls under and behind the sinks wiped down" } ] },
+        { "title": "AT CLOSE-CLEAN GRILL GRATES & CATCH.", "title_es": "Al cierre limpia las rejillas de la parrilla y la charola de grasa.", "proof": [ { "kind": "photo", "prompt": "The grill grates and grease catch cleaned" } ] },
+        { "title": "AT CLOSE-CLEAR DIRTY DISH AREA & SANITIZE ALL SURFACES.", "title_es": "Al cierre despeja el área de trastes sucios y sanitiza todas las superficies.", "proof": [ { "kind": "photo", "prompt": "The dirty dish area cleared and all surfaces sanitized" } ] },
+        { "title": "DEEP-CLEAN & BLEACH CUTTING BOARDS ALWAYS ON WEDNESDAYS, AND ALSO AS NEEDED.", "title_es": "Limpia a fondo y con cloro las tablas SIEMPRE los miércoles, y también cuando haga falta." },
+        { "title": "DE-GREASE & SCRUB SAUTE PANS ALWAYS ON SUNDAYS, AND ALSO WHEN TIME PERMITS.", "title_es": "Desengrasa y talla los sartenes de sauté SIEMPRE los domingos, y también cuando dé tiempo." },
+        { "title": "AT CLOSE-TURN OFF DISH MACHINE & DRAIN. CLEAN MACHINE FILTER.", "title_es": "Al cierre apaga y drena la máquina de lavar. Limpia el filtro de la máquina.", "proof": [ { "kind": "photo", "prompt": "The dish machine off, drained, and the filter clean" } ] },
+        { "title": "MAKE SURE ALL TRASH & RECYCLING TO GARAGE HAS BEEN TAKEN FOR DISPOSAL.", "title_es": "Asegúrate de que toda la basura y el reciclaje ya se llevaron al garaje para tirarlos." },
+        { "title": "MAKE SURE ANY DIRTY LINENS HAVE GONE TO GARAGE HAMPER/LOCKER FOR PICKUP FROM ALSCO.", "title_es": "Asegúrate de que los trapos sucios ya se fueron al cesto/locker del garaje para que los recoja ALSCO." },
+        { "title": "CHECK-OUT WITH MANAGER-ON-DUTY BEFORE CLOCKING OUT.", "title_es": "Checa con el manager de turno antes de marcar salida." }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "mid",
+      "items": [
+        { "title": "Before all of the ovens turn on clean out each oven with degreaser", "title_es": "Antes de que prendan todos los hornos, limpia cada horno con desengrasante.", "proof": [ { "kind": "photo", "prompt": "Each oven cleaned out with degreaser before service" } ] },
+        { "title": "Clean all the trash cans and scrub down the dishmachine and the wall behind it.", "title_es": "Limpia todos los botes de basura y talla la máquina de lavar y la pared de atrás." },
+        { "title": "Deck brush the walkin and mop after", "title_es": "Pasa el cepillo de piso en el walk in y trapea después.", "proof": [ { "kind": "photo", "prompt": "The walk-in floor deck-brushed and mopped" } ] },
+        { "title": "Clean under/around surrounding walls of dish machine/3 compartment sink.", "title_es": "Limpia debajo y alrededor de las paredes de la máquina de lavar y las tres tarjas." },
+        { "title": "Sweep entire back hallway, starting from kitchen entry door to bar walk in. Deck brush and mop after", "title_es": "Barre todo el pasillo de atrás, desde la puerta de la cocina hasta el walk in del bar. Pasa el cepillo de piso y trapea después." },
+        { "title": "Clean the dunnage rachs and the small shelf holding the cleaning supplies", "title_es": "Limpia los dunnage racks y la repisa chica donde van los productos de limpieza." },
+        { "title": "Scrub all pieces soaking from night before. Replace correctly on stove an relight all pilot lights.", "title_es": "Talla todas las piezas que quedaron remojando de la noche anterior. Colócalas bien en la estufa y vuelve a prender todos los pilotos." },
+        { "title": "Clean the whole walk in! Right and Left side as a team. Walls, racks, doors.", "title_es": "¡Limpia todo el walk in! Lado derecho e izquierdo en equipo. Paredes, racks, puertas.", "proof": [ { "kind": "photo", "prompt": "The whole walk-in cleaned - walls, racks and doors, both sides" } ] },
+        { "title": "Organize the dry storage area and chemical shelf, restock from downstairs if needed. It should look like a grocery store shelf.", "title_es": "Organiza el almacén seco y la repisa de químicos, resurte de abajo si hace falta. Debe verse como repisa de super.", "proof": [ { "kind": "photo", "prompt": "The dry storage and chemical shelf organized like a grocery store shelf" } ] },
+        { "title": "Clean the speed racks", "title_es": "Limpia los speed racks." },
+        { "title": "Clean the large trash cans", "title_es": "Limpia los botes de basura grandes." }
+      ]
+    }
+  ]
+}
