@@ -1,0 +1,641 @@
+{
+  "venue": "FLSE",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I ENSURED ALL PREP WAS COMPLETED IN CORRESPONDANCE TO THE PAR SHEET."
+        },
+        {
+          "title": "I TURNED ON THE DISHWASHER AND CHECKED ALL THE DETERGENT LEVELS."
+        },
+        {
+          "title": "I CHECKED #BARNEEDS SLACK AND THE NOTES SECTION OF THE CHECKLIST BINDER FOR ANY RESTOCKING NEEDS."
+        },
+        {
+          "title": "I GRABBED THE LIQUOR RESTOCK LIST AND RESTOCKED ALL DRY GOODS, GLASSWARE AND LIQUOR."
+        },
+        {
+          "title": "I FILLED BOTH ICE WELLS WITH THE APPROPRIATE ICE (CRUSHED ICE ON LEFT) AND FILLED BOTH GARNISH SECTIONS WITH CRUSHED ICE."
+        },
+        {
+          "title": "I SET OUT ALL OF THE FOLLOWING GARNISH:",
+          "detail": [
+            "Deli mint x2, deli lime halves x2, deli orange half moons x2, deli lemon wedges x2, lime wedges x2, pineapple wedges x2, grapefruit quarters x2, marigolds x2, firestix."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both wells set with the full garnish line laid out."
+            }
+          ]
+        },
+        {
+          "title": "I SET OUT THE REMAINING GARNISH: X2 PICKED CHERRIES, X2 WHOLE NUTMEG, X2 CINNAMON STICKS, X2 CHOCO MACADAMIA NUTS."
+        },
+        {
+          "title": "I SET OUT ALL THE FOLLOWING TINCTURES/DRY GOODS: ANGOSTURA, ALMOND EXTRACT, DERB, UBE EXTRACT, TARRO POWDER, MATCHA POWDER, CINNAMON SHAKER."
+        },
+        {
+          "title": "I SET OUT ALL THE JUICES IN THIS ORDER: LEMON, LIME, ORANGE, GRAPEFRUIT AND PINEAPPLE JUICE."
+        },
+        {
+          "title": "I SET OUT ALL OF THE FOLLOWING SYRUPS:",
+          "detail": [
+            "Honey, guava, cinnamon, vanilla, ginger, coconut, gardenia, mac-nut, MT rich, orgeat, demerara, passionfruit, mango, condensed dem, ting, strawberry, pandan, gren."
+          ]
+        },
+        {
+          "title": "I SET OUT ALL THE FOLLOWING MODS & BATCHES: ALKALA, 70'S SLING, BOMBAY, SAIGON, CRIOLLA, WAYFINDER, MALAMBO/STICKY, CHUNKY, FI MIX.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well fully set: juices, syrups, mods and batches in place."
+            }
+          ]
+        },
+        {
+          "title": "I SET OUT WHITE TOWELS FOR EACH WELL AND SERVER, ONE MICROFIBER TOWEL ON THE DISHWASHER, AND CHECKED BACKUP STOCK OF PENS, MATCHBOOKS, STICKERS, SHARPIES AND STICKY NOTES."
+        },
+        {
+          "title": "I WIPED DOWN THE BAR TOP, BAMBOO RAIL AND WOOD CASE CAPPING INCLUDING UNDERNEATH IT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top, bamboo rail and wood capping wiped clean."
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED EACH CASH DRAWER HAD A TOTAL OF $400."
+        },
+        {
+          "title": "I TURNED ON THE ENTRANCE WAY SKULLS AND FOUNTAIN LIGHTING."
+        },
+        {
+          "title": "I PLUGGED IN THE HAZE MACHINE (FILLED IT WITH FLUID IF NEEDED) AND CONFIRMED BACK BAR LIGHT SETTINGS WERE APPROPRIATE."
+        },
+        {
+          "title": "I LOCKED THE BACK DOOR, TURNED ON JUNGLE SOUNDS IN THE CLOSET AND PICKED A TIKI PLAYLIST SET AT VOLUME 3.5 - 4."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I MARRIED ALL WELL SPIRITS."
+        },
+        {
+          "title": "I FILLED ALL OF THE FOLLOWING BATCHES: ALKALA, 70'S SLING, BOMBAY, SAIGON, CRIOLLA, WAYFINDER, MALAMBO/STICKY, CHUNKY, FI MIX."
+        },
+        {
+          "title": "I REFILLED ALL OF THE FOLLOWING: ANGOSTURA BITTERS, ALMOND EXTRACT, DERBSTURA, UBE EXTRACT, NUTMEG, MATCHA, TARO POWDER."
+        },
+        {
+          "title": "I WASHED ALL OF THE BARTOOLS, DRIP TRAYS, SYRUP CADDIES, BAR MATS, TRAYS, WATER CARAFES AND ICE BUCKET."
+        },
+        {
+          "title": "I RETURNED ALL SYRUP, JUICE AND MOD BOTTLES TO THE LOWBOY."
+        },
+        {
+          "title": "I RETURNED ALL RE-USABLE GARNISH TO THE LOWBOY."
+        },
+        {
+          "title": "I UNPLUGGED THE HAZE MACHINE."
+        },
+        {
+          "title": "I CLEANED ALL STAINLESS STEEL AND METAL SURFACES, DRINK RAILS, FAUCET PEDALS AND DRINK MIXER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The stainless, drink rails and wells cleaned down."
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED THE SIDE OF THE LOWBOY WHERE THE TRASH LIVES."
+        },
+        {
+          "title": "I CLEANED THE DEEP FREEZER INCLUDING THE ICE BUILDUP ON THE LIP OF THE LID.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The deep freezer cleaned, no ice buildup on the lid lip."
+            }
+          ]
+        },
+        {
+          "title": "I PUT DRAIN SOLUTION/CLEANER DOWN ALL DRAINS INCLUDING ICE WELLS, BAR TOP DRIP TRAYS, SINKS AND FLOOR DRAINS."
+        },
+        {
+          "title": "I PLACED NIPPLE COVERS ON ALL SPOUTED BOTTLES."
+        },
+        {
+          "title": "I COVERED MATCHA AND TARO POWDER WITH SARAN WRAP."
+        },
+        {
+          "title": "I PUT BACK BAR TOOLS, DASHERS, STRAWS, SWIZZLE STICKS, SHAKER TINS AND DRINK MIXING CANS IN STATION."
+        },
+        {
+          "title": "I PUT A FAN OUT FOR EACH WELL."
+        },
+        {
+          "title": "I WIPED DOWN THE BAR TOP, BAMBOO RAIL AND WOOD CASE CAPPING INCLUDING UNDERNEATH IT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top, bamboo rail and wood capping wiped down at close."
+            }
+          ]
+        },
+        {
+          "title": "I REFILLED ALL SANITIZER SPRAY BOTTLES."
+        },
+        {
+          "title": "I WROTE THE LIQUOR RESTOCK LIST FOR THE OPENER AND CHECKED THE BACK BAR FOR ANY MISSING BOTTLES.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The liquor restock list left for the opener."
+            }
+          ]
+        },
+        {
+          "title": "I SLACKED ANYTHING WE WERE LOW ON AND/OR OUT OF STOCK ON THE APPROPRIATE CHANNEL."
+        },
+        {
+          "title": "I CLOSED OUT ALL TABS, BALANCED THE BANKS, RECORDED CASH/CREDIT CARD TIPS, AND CHECKED BOTH ROLODEXES FOR LEFT CARDS."
+        },
+        {
+          "title": "I DOUBLE COUNTED THE MONEY BEFORE I DROPPED IT IN THE SAFE."
+        },
+        {
+          "title": "I TURNED OFF THE AC."
+        },
+        {
+          "title": "I LOCKED ALL BACK DOOR ENTRANCES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back door entrances locked."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CONFIRMED EACH CASH DRAWER HAD A TOTAL OF $400."
+        },
+        {
+          "title": "I TOOK INVENTORY OF ALL OF THE FOLLOWING:",
+          "detail": [
+            "Punch bowl straws, torch, pens, 3 drink trays, receipt glass, 3 stacks napkins, 2 receipt rolls, Bravo and Server 2 toast handhelds, matchbooks and stickers."
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE RETAIL CRATE HAD THE FOLLOWING: BUBBLE WRAP, ALL MUGS AND TOTE BAGS."
+        },
+        {
+          "title": "I CONFIRMED THE FOLLOWING GARNISHES: PICKED MINT, LEMON, LIME AND PINEAPPLE WEDGES, ORANGE HALF MOONS, GRAPEFRUIT TRIANGLES, DELI ORCHIDS, DELI FRONDS, FIRESTIX, PICKED CHERRIES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish line confirmed and stocked."
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE REMAINING GARNISHES: MARIGOLDS, CINNAMON STICKS, CINNAMON SHAKER, PARASOLS, DEHYDRATED LEMON & LIME WHEELS, CHOCO MACADAMIA NUTS."
+        },
+        {
+          "title": "I CONFIRMED THE CROUTONS WERE SATURATED WITH LEMON EXTRACT."
+        },
+        {
+          "title": "I PLACED ALL TABLES IN THE RIGHT POSITION AND USED BAR SANITIZER TO WIPE AND CLEAN ALL SURFACES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room set in position with all surfaces wiped."
+            }
+          ]
+        },
+        {
+          "title": "I PUT ALL CANDLES ON TABLES, BARTOP, FOUNTAIN AREA AND BACK BAR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Candles out on tables, bartop, fountain and back bar."
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED ALL MUSIC AND LIGHTS WERE ON THE APPROPRIATE SETTING."
+        },
+        {
+          "title": "I CONFIRMED I HAD A HANDHELD FOR SERVICE."
+        },
+        {
+          "title": "I CONFIRMED OPEN TABLE WAS UP AND RUNNING FOR THE INSIDE IPAD."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I RESTOCKED ALL OF THE FOLLOWING: CROUTONS X2, CINNAMON POWDER X2, 3 FULL NAPKIN PACKS, 4 RECEIPT ROLLS AND CANDLE REFILLS."
+        },
+        {
+          "title": "I RESTOCKED ALL OF THE FOLLOWING: PUNCH BOWL STRAWS, LIGHTER, PENS, 3 DRINK TRAYS, RECEIPT GLASS, 3 STACK NAPKINS, 2 RECEIPT ROLLS, 5+ CHECK PRESENTERS, MATCHBOOKS AND STICKERS."
+        },
+        {
+          "title": "I WIPED DOWN AND/OR WASHED ALL TABLES AND BARTOP, DRINK TRAYS, BAR MATS, WATER CARAFES AND WATER GLASSES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All tables and bartop wiped down, trays and carafes washed."
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE SERVICE PICK UP STATION PASS INCLUDING BAMBOO RAILING & STAINLESS STEEL SURFACES."
+        },
+        {
+          "title": "I WIPED DOWN BOTH IPADS, THE HANDHELD AND POS INCLUDING THE SURROUNDING AREA BY THE PRINTER."
+        },
+        {
+          "title": "I CONFIRMED BOTH IPADS WERE CHARGING AND RETURNED ALL HANDHELDS TO THE CHARGING DOCK IN THE CLOSET.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both iPads on the charger, handhelds in the dock."
+            }
+          ]
+        },
+        {
+          "title": "I PUT ALL TABLES AND CHAIRS UP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All tables and chairs up for the night."
+            }
+          ]
+        },
+        {
+          "title": "I RETRIEVED ALL CANDLES AND SET THEM ON TBL 6."
+        },
+        {
+          "title": "I TOOK INVENTORY OF ALL DRY GOODS AND RECORDED ANYTHING WE ARE LOW ON/OUT OF IN THE BAR NEEDS CHANNEL ON SLACK."
+        },
+        {
+          "title": "I RETURNED ALL MENUS TO THE HOST STAND."
+        },
+        {
+          "title": "I CLOSED OUT ALL TABS, BALANCED THE BANKS, RECORDED CASH/CREDIT CARD TIPS, AND CHECKED BOTH ROLODEXES FOR LEFT CARDS."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I CLOCKED IN AND CONFIRMED BOTH IPADS ARE CHARGED."
+        },
+        {
+          "title": "I MESSAGED ALL LARGE PARTY RESERVATIONS WITH THE PROMPT FROM THE NOTES APP, AND ONCE CONFIRMED I MADE A NOTE IN THEIR RESERVATION GUEST NOTES SECTION."
+        },
+        {
+          "title": "I CHECKED AND RESPONDED TO ANY NEW EMAILS."
+        },
+        {
+          "title": "I WIPED DOWN THE BAR TOP, BAMBOO RAIL AND WOOD CASE CAPPING INCLUDING UNDERNEATH IT."
+        },
+        {
+          "title": "I PLACED RESERVATION SIGNS ON THE BARTOP AND RECORDED THE RESERVATION TIMES ON A STICKY NOTE BEHIND THE BAR."
+        },
+        {
+          "title": "I SET THE HOST STAND AT THE BOTTOM OF THE RAMP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand set at the bottom of the ramp."
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED WE HAD ENOUGH MENUS FOR SERVICE."
+        },
+        {
+          "title": "I PLACED ALL TABLES IN THE RIGHT POSITION AND CORRECTED ANY WOBBLY ONES. I USED BAR SANITIZER TO WIPE AND CLEAN ALL SURFACES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The room set in position, all surfaces wiped."
+            }
+          ]
+        },
+        {
+          "title": "I PUT ALL PLUG IN CANDLES ON TABLES, BARTOP, FOUNTAIN AREA AND BACK BAR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Candles out across tables, bartop and fountain."
+            }
+          ]
+        },
+        {
+          "title": "I LIT INCENSE FOR THE ENTRY WAY AND FOUNTAIN AREA."
+        },
+        {
+          "title": "I CONFIRMED ALL MUSIC AND LIGHTS WERE ON THE APPROPRIATE SETTING."
+        },
+        {
+          "title": "I CONFIRMED THE BACK DOOR IS LOCKED, THE TIKI PLAYLIST IS AT VOLUME 4-5 AND JUNGLE NOISES ARE PLAYING."
+        },
+        {
+          "title": "I DOUBLE CHECKED WITH MY COWORKERS BEFORE LETTING ANY GUESTS INSIDE THE BAR TO ENSURE WE ARE FULLY PREPARED FOR SERVICE."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I RESTOCKED ALL OF THE FOLLOWING: 3X TALL SWIZZLES, 3X SMALL SWIZZLES, PUNCH BOWL STRAWS, 3X SHORT STRAWS, 3X TALL STRAWS, 3X PARASOLS."
+        },
+        {
+          "title": "I CLOSED ALL CHECKS ON THE HANDHELD."
+        },
+        {
+          "title": "I WIPED DOWN ALL MENUS FRONT AND BACK.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All menus wiped front and back, cambros restocked."
+            }
+          ]
+        },
+        {
+          "title": "I RESTOCKED ALL CAMBROS IN THE CLOSET INCLUDING SWIZZLES AND STRAWS."
+        },
+        {
+          "title": "I RECORDED ANYTHING WE WERE LOW/OOS ON IN THE BAR NEEDS SECTION ON SLACK."
+        },
+        {
+          "title": "I PLACED THE HANDHELD ON THE CHARGING DOCK IN THE CLOSET.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The handheld in the dock and the iPad plugged in at the server station."
+            }
+          ]
+        },
+        {
+          "title": "I PLUGGED IN THE IPAD AT THE SERVER STATION."
+        },
+        {
+          "title": "I UNLOCKED THE BACK DOOR AND TOOK OFF THE BLUE TAPE ONCE CRAFT WAS CLOSED FOR THE EVENING."
+        },
+        {
+          "title": "I CLOSED THE FRONT DOOR AT LAST CALL."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Barback",
+      "role_es": "Ayudante de barra",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I CLEANED, POLISHED AND PUT AWAY ALL GLASSWARE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All glassware cleaned, polished and put away."
+            }
+          ]
+        },
+        {
+          "title": "I WASHED ALL BARTOOLS AND CADDIES FOR BOTH WELLS."
+        },
+        {
+          "title": "I SCRUBBED THE BAR MATS AND HUNG BOTH TO DRY OVER THE TRASH CANS."
+        },
+        {
+          "title": "I REFILLED ALL SYRUPS."
+        },
+        {
+          "title": "I CLEANED THE SINK OUTSIDE OF THE WALK-IN AFTER REFILLING SYRUPS."
+        },
+        {
+          "title": "I MARRIED AND REFILLED ALL JUICES."
+        },
+        {
+          "title": "I TASTED ALL JUICES TO ENSURE FRESHNESS."
+        },
+        {
+          "title": "I TOOK ALL ZESTING FRUIT TO THE WALK-IN."
+        },
+        {
+          "title": "I RESTOCKED BEERS."
+        },
+        {
+          "title": "I CLEANED AND DETAILED THE DUMP SINK STATION INCLUDING THE CUBBIES UNDERNEATH.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dump sink station detailed, cubbies underneath clean."
+            }
+          ]
+        },
+        {
+          "title": "I WIPED THE GASKETS OF THE LOWBOY AND WIPED THE OUTSIDE OF THE LOWBOY."
+        },
+        {
+          "title": "I TOOK OUT THE TRASH AND RECYCLING."
+        },
+        {
+          "title": "I TOOK ALL OF THE TOWELS TO THE KITCHEN BIN."
+        },
+        {
+          "title": "I WASHED AND WIPED THE DRYING STATION ATOP THE DISHWASHER."
+        },
+        {
+          "title": "I EMPTIED AND TURNED OFF THE DISHWASHER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher emptied and off."
+            }
+          ]
+        },
+        {
+          "title": "I COMPLETED THE JUICE AND GARNISH PAR LIST.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The juice and garnish par list completed."
+            }
+          ]
+        },
+        {
+          "title": "I COMPLETED THE VESTA ORDER BEFORE 11:00PM."
+        },
+        {
+          "title": "I COMPLETED THE SPECIALTY PRODUCE ORDER."
+        },
+        {
+          "title": "I REMOVED ALL DEBRIS AND CLEANED UNDERNEATH/BEHIND THE DISHWASHER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Underneath and behind the dishwasher clear and clean."
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE BAR TOP, BAMBOO RAIL AND WOOD CASE CAPPING."
+        },
+        {
+          "title": "I CONFIRMED ALL TABLES AND CHAIRS WERE SET UP."
+        },
+        {
+          "title": "I REMOVED AND CLEANED THE LOWBOY FILTER SCREENS."
+        },
+        {
+          "title": "I CLEANED THE FANS ON THE INSIDE OF THE LOWBOY."
+        },
+        {
+          "title": "I CHIPPED OFF ICE FROM THE LIP OF THE DEEP FREEZER AND SET IT TO DEFROST MODE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The deep freezer ice chipped off the lid, set to defrost."
+            }
+          ]
+        },
+        {
+          "title": "I RECORDED ANYTHING WE WERE LOW ON/OOS IN THE PREP CHANNEL ON SLACK."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar prep",
+      "role_es": "Preparación de barra",
+      "phase": "open",
+      "items": [
+        {
+          "title": "8:30AM - CHECK OFF THE DELIVERED ORDER ON THE INVOICE AND LABEL PRODUCE (C&C OR FALSE)."
+        },
+        {
+          "title": "9AM - TALLY THE PARS NEEDED FOR ALL JUICE AND GARNISH.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The juice and garnish pars tallied for the day."
+            }
+          ]
+        },
+        {
+          "title": "9:15AM - RETRIEVE ALL FRUIT AND PREP SUPPLIES FROM THE WALK-IN & BACK HALLWAY."
+        },
+        {
+          "title": "9:15AM - PUT CITRUS IN A WARM WATER BATH BEFORE JUICING."
+        },
+        {
+          "title": "IF NEEDED, PLACE A SAME DAY ORDER THROUGH SPECIALTY BEFORE 12PM."
+        },
+        {
+          "title": "9:30AM-3:30PM - COMPLETE THE PREP LIST."
+        },
+        {
+          "title": "9:30AM-3:30PM - FILL GARNISH TRAYS WITH ORANGES AND LEMONS."
+        },
+        {
+          "title": "3:30-4PM - DATE & STORE ALL JUICES AND GARNISH FOR C&C AND FALSE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Juices and garnish dated and stored for C&C and False."
+            }
+          ]
+        },
+        {
+          "title": "4PM - PUT AWAY ALL LEFTOVER CASES OF FRUIT AND PREP SUPPLIES."
+        },
+        {
+          "title": "4:15PM - SWEEP AND MOP, WIPE THE BARTOP WITH SANITIZER & GLASS CLEANER.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Floors swept and mopped, bartop wiped down."
+            }
+          ]
+        },
+        {
+          "title": "4:30PM - TRASH RUN, RE-LINE THE TRASH BINS."
+        },
+        {
+          "title": "4:30-4:45PM - REMOVE GUM FROM THE BOTTOM OF TABLES."
+        },
+        {
+          "title": "4:30-4:45PM - RESET TABLES, CHAIRS, AND BARSTOOLS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Tables, chairs and barstools reset."
+            }
+          ]
+        },
+        {
+          "title": "4:45-5PM - MOP THE WALK-IN COOLER."
+        },
+        {
+          "title": "SLACK - COMMUNICATE ANY MESSAGES VIA SLACK."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I WROTE THE DAILY SHIFT NOTES WITH ANYTHING THE NEXT SHIFT NEEDS TO KNOW.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The shift notes logged for the day."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1455 @@
+{
+  "venue": "LEIL",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I ENTERED THE PREMISES AND STARTED MY SHIFT.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "IF IT IS MONDAY, I PRINTED NEW CHECKLISTS FOR ALL DEPARTMENTS AND PUT ON THE CORRESPONDING CLIPBOARD",
+          "detail": [
+            "About 5 minutes"
+          ],
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "I RETRIEVED ALL PACKAGES AND BROKE THEM DOWN.",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I SET ALL AC UNITS TO THE APPROPRIATE TEMPERATURE FOR THE WEATHER.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I CHECKED THE ICE MACHINES TO ENSURE THEY WERE FUNCTIONING PROPERLY.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I PERFORMED A REFRIGERATION CHECK TO CONFIRM PROPER TEMPERATURES AND FUNCTIONALITY.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I WALKED THE SPACE TO CHECK THE NIGHTTIME CLEANERS WORK AND CONTACTED THEM IF FOLLOW-UP WAS NEEDED.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I CHECKED AND PRINTED THE ROSTER FOR THE DAY AND MADE THE APPROPRIATE ADJUSTMENTS TO THE SCHEDULE.",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I FOUND SHIFT COVERAGE AS NEEDED FOR ANY GAPS IN THE SCHEDULE.",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I PERFORMED THE DAILY FINANCIAL ADMINISTRATIVE DUTIES, INCLUDING SAFE COUNTS  & TIP SREADSHEET.",
+          "detail": [
+            "About 30 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The safe counts and tip spreadsheet done"
+            }
+          ]
+        },
+        {
+          "title": "I SCANNED ALL INVOICES AND PROCESSED THEM ACCORDINGLY(IF APPLICABLE).",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I EXECUTED THE DCR.",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I RESPONDED TO ALL PENDING EMAILS.",
+          "detail": [
+            "About 30 minutes"
+          ]
+        },
+        {
+          "title": "I POSTED CTUIT BEFORE 4PM.",
+          "detail": [
+            "About 30 minutes"
+          ]
+        },
+        {
+          "title": "I FOLLOWED UP ON REPAIR AND MAINTENANCE NEEDS BY CONTACTING THE APPROPRIATE VENDORS.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I COMMUNICATED WITH THE LEADERSHIP TEAM ABOUT ANY ASSISTANCE NEEDED FOR THE DAY BEFORE STEPPING INTO SERVICE.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I CREATED THE FLOOR PLAN FOR THE CREW AND COMMUNICATED THE GAME PLAN.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I CHECKED WITH THE KITCHEN LEADERSHIP AND UPDATED THE POS WITH COUNTS AND 86'D ITEMS.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I CREATED AND COMMUNICATED THE PRESHIFT BRIEFING (DAILY MEMO) FOR THE CREW AND POSTED ON WHATSAPP.",
+          "detail": [
+            "About 15 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The preshift briefing posted to WhatsApp"
+            }
+          ]
+        },
+        {
+          "title": "I GAVE THE BARTENDERS THE BAR BANKS",
+          "detail": [
+            "About 3 minutes"
+          ]
+        },
+        {
+          "title": "I GAVE THE SUPPORT STAFF 10 WHITE TOWELS AND 5 GREEN TOWELS",
+          "detail": [
+            "About 3 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED ALL STAFF WERE PRESENT AND ON TIME.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I SUPERVISED THE SETUP OF THE DINING AND BAR AREAS.",
+          "detail": [
+            "About 30 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining and bar areas set up"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED THE THE MULTIFOLD TOWELS IN THE RESTROOM WERE EXCHANGED FOR CH LINEN LIKE TOWELS",
+          "detail": [
+            "About 5 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restroom with CH linen-like towels in place"
+            }
+          ]
+        },
+        {
+          "title": "I REFERENCED THE AMBIANCE CHECKLIST TO ENSURE WE WERE SERVICE READY",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I MADE SURE STAFF WAS LINED UP TO START SEATING AND THE RESTAURANT WAS 100% READY BY 4:55PM",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restaurant service-ready with staff lined up"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I ENSURED AT LEAST ONE MOD WAS ON THE FLOOR WITH THE STAFF DIRECTLY ASSIGING AND MANAGING CLOSING TASKS ALONG WITH SETTING A TONE FOR A NON-SOCIAL AND RAPID CLOSE",
+          "detail": [
+            "About 30 minutes"
+          ]
+        },
+        {
+          "title": "I ORDERED RED ROSE PETALS FOR THE NEXT DAY'S ANNIVERSARIES IF NECESSARY"
+        },
+        {
+          "title": "ONCE I WAKLKED THE ENTIRE SPACE TO CONFIRM NO GUESTS WERE PRESENT I PUT ON THE CLEAN LIGHT SETTING ALERTED ALL STAFF TO A CLEAR HOUSE TO ALLOW FOR DEEP CLEANING PROTOCOLS AS WELL AS TURNING OFF THE STAR CEILING",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED ALL STAFF TOOK THEIR BREAKS"
+        },
+        {
+          "title": "I ENSURED THAT ALL STAFF PAID FOR FOOD THEY BOUGHT AND ALL COMPS/VOIDS TICKETS WERE CLOSED IN TOAST",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I WALKED THE LAGOON TO ENSURE NO HEAVY DEBRIS WAS PRESENT OR ITEMS TO BE REMOVED TO NOT GET SUCKED INTO FILTER",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I RECEIVED AND COUNTED ALL CHECKOUTS & ENTERED THEM INTO THE TIP SPREADSHEET AND STORED ALL CASH IN THE SAFE",
+          "detail": [
+            "About 15 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The checkouts entered and cash stored in the safe"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE BAR DRAWERS FOR ACCURACY"
+        },
+        {
+          "title": "I CLOSED OUT THE DAY ON TOAST"
+        },
+        {
+          "title": "I CHECKED THE RESTROOMS FOR A THOROUGH CLEAN AND STOCKING AND ENSURED ALL TRASH WAS EMPTIED THROUGHOUT THE SPACE BEFORE THE CLOSING STAFF CLOCKED OUT",
+          "detail": [
+            "About 5 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restrooms clean and stocked, trash emptied"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED AND SIGNED OFF ON ALL CHECKLISTS IN THE HOUSE",
+          "detail": [
+            "About 20 minutes"
+          ]
+        },
+        {
+          "title": "I CHECKED OUT THE CLEANLINESS AND ORGANIZATION OF THE ENTIRE SPACE MADE SURE THE BACK ALLEY WAS CLEAN AND ALL LEFTOVER DIRTY LINENS WERE IN LINEN BASKET",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The space clean and the back alley clear, dirty linens in the basket"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED OFF THE MUSIC IPAD AND AMPS AND ENSURED THAT THE MUSIC AMPS WERE TURNED OFF AS WELL",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED ALL AC UNITS WERE SET TO OVERNIGHT TEMPS OF 76°",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED THE CH LINEN-LIKES(PAPERTOWELS) WERE EXCHANGED FOR THE BROWN MULTI-FOLD PAPER TOWELS IN THE RESTROOM",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I CONFIRMED ALL HANDHELDS AND IPADS WERE STORED AND CHARGING",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I COMPLETED THE MANAGER LOG NOTES IN CTUIT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The manager log notes completed in Ctuit"
+            }
+          ]
+        },
+        {
+          "title": "I TOOK OUT OFFICE TRASH AND TIDIED THE OFFICE FOR THE NEXT DAY",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I CHECKED FOR ANY MISSED CLOCK OUTS AND ATTEMPTED TO CONFIRM EXIT TIMES AND EDIT TIME ENTRIES IN THE MOMENT",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I ENUSURED THERE WAS NO TRASH OR DEBRIS AROUND THE FACADE OF THE BUILDING AND CLEANED AS NECESSARY",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The building facade clear of trash and debris"
+            }
+          ]
+        },
+        {
+          "title": "I OPENED THE LOCKBOX AND ENSURED ALL KEYS WERE PRESENT",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "BEFORE EXIT I PERFORMED A FINAL WALKTHROUGH OF THE SPACE TO CHECK FOR STOWAWAYS",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED FRONT DOOR, DUMPSTER DOOR, AND EMPLOYEE ENTRY DOOR WERE CLOSED AND LOCKED",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front, dumpster and employee doors closed and locked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "open",
+      "room": "Ambiance",
+      "items": [
+        {
+          "title": "UPON ENTRY FOR THE DAY I BRIEFLY PUT THE LIGHTS TO THE LEILA MAIN SETTING AND WALKED THE SPACE TO ENSURE NO LIGHTBULBS WERE OUT OR FLICKERING AND REPLACED OR ALERTED BEASTMAN AS NEEDED",
+          "detail": [
+            "About 15 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED THAT THE LAGOON WAS FREE OF DEBRIS BY SKIMMING IT ENTIRELY AND ALERTED BEASTMAN AS NEEDED WITH ANY SCENT OR DEEP CLEANLINESS ISSUES",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lagoon skimmed and free of debris"
+            }
+          ]
+        },
+        {
+          "title": "I WALKED THE PERIMETER OF THE BUILDING TO ENSURE PLANTERS WERE CLEAN AND TIDY AND THE FACADE OF THE BUILDING WAS CLEAN AND TIDY AS WELL",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "USING THE OFFICE FLASHLIGHT I COMBED THROUGH ALL PLANTS AND BELOW ALL TABLES AND CHAIRS TO SEEK ANY FOREIGN DEBRIS AND ASSIGNED THE NEEDED TASKS TO THE OPENING CREW",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "BY 4PM I ENSURED THAT THE WATERFALLS + FOUNTAINS IN ZEN DEN + RESTROOMS WERE ON AND PROPERLY FULL OF H20",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I TURNED THE MUSIC DOWN FOR THE REMAINDER OF SETUP AND PRESHIFT AND TURNED IT TO OPENING LEVELS (50 BAR / 60 DINING / 50 UPSTAIRS) BY THE 4:45PM FINAL WALKTHROUGH",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I WALKED THE ENTIRE FLOOR UPSTAIRS AND DOWN APPROACHING THE 4:45PM WALKTHROUGH TO ENSURE STAFF WAS ON TRACK FOR A COMPLETE RESTAURANT BY 4:45PM",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I ENSURED THE CEILING WAS ON NIGHT SKY SETTING AND NO SHOOTING STARS WERE PRESENT",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I CHECKED THAT ALL FLOOR LANTERNS WERE PROPERLY SEATED AND ILLUMNATED AND NO TRASH WAS PRESENT SURROUNDING THEM",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor lanterns seated, illuminated and clear of trash"
+            }
+          ]
+        },
+        {
+          "title": "I RECHECKED PLANTERS AND UNDER ALL TABLES AND CHAIRS TO ENSURE CREW HAD COMPLETED NEEDED CLEANING TASKS",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "AT 4:45PM I PERFORMED A FINAL WALKTHROUGH OF THE SPACE AND SIGNED OFF ON BEING SERVICE READY WITH THE CREW",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The space service-ready at the 4:45pm walkthrough"
+            }
+          ]
+        },
+        {
+          "title": "DURING THE COURSE OF THE EVENING I PERIODICALLY CHECKED ON THE IPAD TO ENSURE VOLUME WAS AT 100% AND PLAYLIST WAS HAPPILY ON THE CORRECT SHUFFLE (NOT SMART SHUFFLE)",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "AS BUSINESS PACE INCREASED I GRADUALLY BROUGHT THE VOLUMES UP TO THE MAX OF A FULL ROOM AT 65 BAR / 75 DINING AND THEN ADJUSTED AS BUSINESS PACE AND ROOM OCCUPANCY EBBED AND FLOWED",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "AT MINIMUM EACH HOUR I PERSONALLY CHECKED RESTROOMS TO ENSURE THAT THEY WERE STOCKED AND CLEANED AND ASSIGNED AND COMPLETED TASKS PERSONALLY AS NEEDED",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restrooms stocked and clean on the hourly check"
+            }
+          ]
+        },
+        {
+          "title": "AT MINIMUM EACH HOUR I PERSONALLY WALKED THE SPACE TO ENSURE THE SERVER STATIONS WERE TIDY AND THE ENTIRE FLOOR WAS FREE OF DEBRIS INCLUDING THE EXTERIOR OF THE BUILDING",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I WALKED THE SPACE WHILE LIGHTS WERE STILL ON EVENING SETTING AND CHECKED FOR ANY BULBS OUT OR FLICKERING AND REPLACED OR ALERTED BEASTMAN AS NEEDED",
+          "detail": [
+            "About 15 minutes"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Encargado",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "BY SUNDAY I CHECKED THE MENU LEVELS AND SENT AN ORDER TO BEASTMAN TO LAST US THE WEEK IF NEEDED",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The menu order sent to Beastman"
+            }
+          ],
+          "section": "WEEKLY"
+        },
+        {
+          "title": "BY SUNDAY I CHECKED ALL UNIFORM NEEDS AND SENT AN ORDER TO BEASTMAN TO COVER US FOR 3 MONTHS IF NEEDED",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "BY SUNDAY I CHECKED ALL COASTER + MATCH NEEDS AND SENT AN ORDER TO BEASTMAN TO COVER US FOR 3 MONTHS IF NEEDED",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "BY SUNDAY I CHECKED ALL BUSINESS CARD NEEDS AND SENT AN ORDER TO BEASTMAN TO COVER US FOR 3 MONTHS IF NEEDED",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I GOOGLED THE LOCATION AND ENSURED ALL HOURS AND INFORMATION WAS UP TO DATE ON OUR GOOGLE LISTING + IF UPDATES WERE NEEDED I EXECUTED THE CHANGES",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I CHECKED OUR YELP PAGE TO INSURE ALL INFORMATION AND HOURS ARE UP TO DATE + IF UPDATES WERE NEEDED I EXECUTED THE CHANGES",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I CALLED IN THE MORNING TO ENSURE PROPER PHONE FUNCTION AS WELL AS ACCURATE MESSAGING AND LEFT A VOICEMAIL TO TEST VOICEMAIL TO EMAIL RECEIPT",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I CHECKED OUR WEBSITES TO ENSURE FUNCTION AND ENSURE ALL LISTED INFORMATION WAS UP TO DATE AND ACCURATE",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I CHECKED OUR SOCIAL MEDIA TO ENSURE ALL LISTED INFORMATION WAS UP TO DATE AND ACCURATE",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I CHECKED OUR OPENTABLE TO ENSURE ALL LISTED INFORMATION WAS UP TO DATE AND ACCURATE + AVAILABILITY SETTINGS WERE CORRECT",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I EXECUTED THE MEGATRACKER IN FULL BEFORE  THE DAY OF THE WEEKLY MEETING",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The megatracker executed in full"
+            }
+          ],
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I ENSURED THE DCR WAS ENTERED AND ACCURATELY BALANCING WITH CTUIT OPS STATEMENT BEFORE THE DAY OF THE MEETING + REACHED TO CHRYSTA FOR ANY CLARITY OR ADJUSTMENTS NEEDED",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The DCR balanced against the Ctuit ops statement"
+            }
+          ],
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I ENSURED I HAD COMMUNICATED ANY UPDATES ON POLICY OR PROCEDURE OR PRODUCT TO ALL STAFF VIA WHATSAPP AND ENSURED THERE WERE NO UNANSWERED QUESTIONS PRESENT",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I ENSURED THAT JON + BRIAN HAD ALL UPDATED COIN NEEDS BEFORE THE DAY OF THE WEEKLY MEETING",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I PICKED UP PAYCHECKS ON THURSDAY NIGHT OR FRIDAY MORNING AND HAD THEM ON LOCATION BEFORE THE FIRST EMPLOYEE CLOCKED OUT FOR THE DAY + IF I COULD NOT I ASKED FOR HELP",
+          "section": "WEEKLY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "MDR",
+      "items": [
+        {
+          "title": "I checked in with active sections and ensured they were set for success."
+        },
+        {
+          "title": "I pivoted into a busser and supported the remaining team flip for the next turn"
+        },
+        {
+          "title": "I restocked all server stationsin the MDR with pens, thermal paper, and togo supplies."
+        },
+        {
+          "title": "I replaced black silverware dividers in the MDR service stations and ran dirty ones through dish."
+        },
+        {
+          "title": "I spot checked under the tables in my section (keeping an eye out for service items on the ground)"
+        },
+        {
+          "title": "I filled the lamp oil in my section"
+        },
+        {
+          "title": "I called for silverware and polished all thst was available  (at least 2 racks)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "At least 2 racks of polished silverware"
+            }
+          ]
+        },
+        {
+          "title": "I completed my check out and presented the finished tasks to mod"
+        },
+        {
+          "title": "Detail 50s Server Station: remove items/trash, wiped shelves/counters, restock plates, linen, & silver. Check around cabinet & clear dropped items.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 50s server station detailed and restocked"
+            }
+          ]
+        },
+        {
+          "title": "Detail Bar Server Station: remove items/trash, wiped shelves/counters, restock plates, linen, & silver. Orginize tea pots + glassware on shelves",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar server station detailed, tea pots and glassware organized"
+            }
+          ]
+        },
+        {
+          "title": "Detail Expo Server Station: remove items/trash, wiped shelves/counters, restock plates, linen, & silver. Check around cabinet & clear dropped items.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The expo server station detailed and restocked"
+            }
+          ]
+        },
+        {
+          "title": "Ran all marking trays through dish and returned them to each server station/bar (2 each)"
+        },
+        {
+          "title": "Ran all check presenters through dish and returned them back to each server station/bar (8 each)"
+        },
+        {
+          "title": "Ran all rubber drink tray inserts through dish, sanitized/poliished the tray part, and returned them back to each bar"
+        },
+        {
+          "title": "Ran all gold crumbing trays through dish and returned them back to each service station"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "Mezzanine",
+      "items": [
+        {
+          "title": "I checked in with active sections and ensured they were set for success."
+        },
+        {
+          "title": "I pivoted into a busser and supported the remaining team flip for the next turn"
+        },
+        {
+          "title": "I restocked all server stations on the MEZZ with pens, thermal paper, and togo supplies."
+        },
+        {
+          "title": "I replaced black silverware dividers in the MEZZ service stations and ran dirty ones through dish."
+        },
+        {
+          "title": "I spot checked under the tables in my section (keeping an eye out for service items on the ground)"
+        },
+        {
+          "title": "I called for silverware and polished all thst was available  (at least 2 racks)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "At least 2 racks of polished silverware"
+            }
+          ]
+        },
+        {
+          "title": "I filled the lamp oil in my section"
+        },
+        {
+          "title": "I completed my check out and presented the finished tasks to mod"
+        },
+        {
+          "title": "I detailed 60s Server Station: remove items/trash, wiped shelves/counters, restock plates, linen, & silver. Check around cabinet & clear dropped items.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 60s server station detailed and restocked"
+            }
+          ]
+        },
+        {
+          "title": "I washed and polished all water pictchers.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The water pitchers washed and polished"
+            }
+          ]
+        },
+        {
+          "title": "I completed the day\"s weekly sidework"
+        },
+        {
+          "title": "I orginized cv and unpacked any open boxes"
+        },
+        {
+          "title": "I spot checked the tables in my section (keeping an eye out for service items on the ground)"
+        },
+        {
+          "title": "I took a final lap thru the restaruant to mis en place"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar prep",
+      "role_es": "Preparación de barra",
+      "phase": "open",
+      "items": [
+        {
+          "title": "DOWNSTAIRS COOLERS: I cleaned shelves, interiors, door tracks, and gaskets; removed spills / mildew, rotated stock, and reported damaged seals.",
+          "days": [
+            "MONDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The downstairs coolers cleaned and restocked"
+            }
+          ]
+        },
+        {
+          "title": "UPSTAIRS COOLERS: I cleaned shelves, interiors, door tracks, and gaskets; removed spills / mildew, rotated stock, and reported damaged seals.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "PATIO FRIDGE: I cleaned shelves, interiors, door tracks, and gaskets; checked dates, rotated stock, and reported seal or temperature issues.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "CV & WINE ROOM (1 OF 2): I shelved loose stock, organized liquor / wine, wiped accessible shelves, cleared floor clutter, and broke down empty boxes.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "DOWNSTAIRS DETAIL: I cleaned beneath the guest-side bar top by ADA seating, all three wells / syrup areas, and barback shelving including under marble.",
+          "days": [
+            "FRIDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The downstairs bar detailed - under the bar top, wells and barback shelving"
+            }
+          ]
+        },
+        {
+          "title": "CV & WINE ROOM (2 OF 2): I reset liquor / wine storage, shelved loose stock, wiped spills, cleared walkways, and removed empty boxes.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "UPSTAIRS DETAIL: I cleaned the freezer interior, under-bar areas by POS / mixer / wine glasses, and back-bar cabinet shelves; reported excess ice buildup.",
+          "days": [
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The upstairs bar detailed - freezer, under-bar and back-bar shelves"
+            }
+          ]
+        },
+        {
+          "title": "I reviewed backup juices, syrups, batches, and the par sheet; identified what must be made today and prioritized longer tasks first."
+        },
+        {
+          "title": "I set out clean prep tools and containers, then made syrups, juices, and batches while the opener set up the bars."
+        },
+        {
+          "title": "I washed produce as needed, inspected precut garnishes, used older usable product first (FIFO), and discarded spoiled product."
+        },
+        {
+          "title": "I prepared fresh garnishes and confirmed service and backup quantities met the day’s pars.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The fresh garnishes prepped to par"
+            }
+          ]
+        },
+        {
+          "title": "I labeled and dated all prep, stored perishables promptly, and rotated backup product in the appropriate storage areas."
+        },
+        {
+          "title": "I checked tomatoes, ice cream, Turkish delights, and other bar service items against pars and replenished as needed."
+        },
+        {
+          "title": "I restocked NA beverage fridges early enough for product to be cold for service."
+        },
+        {
+          "title": "I placed the next-day order through the usual process and notified the bar lead / MOD of urgent shortages or unavailable items.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The next-day order placed and shortages flagged"
+            }
+          ]
+        },
+        {
+          "title": "I washed, rinsed, and sanitized prep tools and food-contact surfaces; cleaned and reset the prep space.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The prep space cleaned and reset"
+            }
+          ]
+        },
+        {
+          "title": "I communicated prep quantities, shortages, and unfinished work to the opener / bar lead before ending my prep shift."
+        },
+        {
+          "title": "BAR LEAD / MOD: I reviewed prep handoff and confirmed today’s weekly assignment was completed or reassigned."
+        },
+        {
+          "title": "ISSUES / LOW STOCK / HANDOFF — Include item, location, action needed, and who was notified.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any issues, low stock or handoff for the next shift"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I reviewed the prep handoff, par sheet, low-stock items, and any equipment or product issues with the bar lead / MOD."
+        },
+        {
+          "title": "I received and confirmed my bar bank with the MOD, if assigned."
+        },
+        {
+          "title": "I checked bar coolers / freezers for proper operation and closed doors; reported temperature issues, damaged gaskets, or ice buildup preventing a seal."
+        },
+        {
+          "title": "I turned on bar dish equipment as applicable, checked chemical levels, and confirmed it was ready before washing service items."
+        },
+        {
+          "title": "I set out clean tools, containers, bar mats, and towels; prepared sanitizer at the approved concentration and checked it with the correct test strips."
+        },
+        {
+          "title": "I confirmed handwashing sinks were clean, unobstructed, and stocked with soap and paper towels."
+        },
+        {
+          "title": "I inspected ice wells and scoops, then filled wells for service and stored scoops hygienically."
+        },
+        {
+          "title": "I stocked liquor, wine, beer, NA beverages, and cocktail batches upstairs and downstairs; filled working bottles and bitters as needed."
+        },
+        {
+          "title": "I stocked clean, polished glassware and other bar service items evenly across the bars.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The polished glassware stocked across both bars"
+            }
+          ]
+        },
+        {
+          "title": "I put out usable precut garnishes first for FIFO, checked backup garnish pars, and stocked syrups, juices, and mixers."
+        },
+        {
+          "title": "I set up tomatoes, ice cream, Turkish delights, and other required bar service items in their designated locations."
+        },
+        {
+          "title": "I confirmed open wines and perishable prep were labeled / dated and stored correctly; discarded unusable product."
+        },
+        {
+          "title": "I removed bottle caps / covers for service as applicable and stored clean covers in their designated place."
+        },
+        {
+          "title": "I wiped bar tops, back bars, POS exteriors, guest-facing surfaces, and bar seats; removed sticky residue and clutter.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar tops and guest-facing surfaces wiped clean"
+            }
+          ]
+        },
+        {
+          "title": "I organized service shelves and cabinets, checked trash liners, and spot-cleaned the bar floor as needed."
+        },
+        {
+          "title": "I checked POS readiness and receipt paper, then communicated 86s, shortages, and urgent orders to the bar lead / MOD.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The 86s, shortages and urgent orders passed to the bar lead / MOD"
+            }
+          ]
+        },
+        {
+          "title": "I took a final lap of both bars to confirm setup, stock, tools, and guest-facing areas were ready for service.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both bars set, stocked and service-ready"
+            }
+          ]
+        },
+        {
+          "title": "BAR LEAD / MOD: I inspected the opening setup and confirmed the bars were service-ready"
+        },
+        {
+          "title": "ISSUES / LOW STOCK / HANDOFF — Include item, location, action needed, and who was notified.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any issues, low stock or handoff for the shift"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Cantinero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I restocked liquor, wine, beer, NA beverages, service cabinets, and to-go items upstairs and downstairs to the established pars."
+        },
+        {
+          "title": "I refilled working batches, cheater bottles, and bitters as needed; recorded next-shift syrup / juice / batch quantities and urgent orders."
+        },
+        {
+          "title": "I returned fruit, ice cubes, ice cream, tomatoes, Turkish delights, and other perishables to their proper storage locations."
+        },
+        {
+          "title": "I inspected and stored garnishes, labeled / dated usable prep, discarded bad product, and rotated stock FIFO."
+        },
+        {
+          "title": "I pumped / preserved open wine as appropriate, dated it, and stored it in the designated location."
+        },
+        {
+          "title": "I washed, polished, and put away glassware, bar tools, and service items; emptied all bus tubs and assisted dish as needed."
+        },
+        {
+          "title": "I fully closed both wells only after all drinks were complete; burned ice and washed, rinsed, sanitized, and air-dried ice wells and scoops.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice wells burned, sanitized and air-drying"
+            }
+          ]
+        },
+        {
+          "title": "I washed removable bar mats and drain trays and left them in the designated place to air-dry."
+        },
+        {
+          "title": "I cleaned bar sinks and accessible strainers, removed food / debris, and left handwashing sinks clean and unobstructed."
+        },
+        {
+          "title": "I cleaned working bottle exteriors and necks, fitted clean caps / covers as applicable, and left wells clean with bottles capped."
+        },
+        {
+          "title": "I wiped bar tops, back bars, POS exteriors, guest-facing surfaces, and bar seats; removed sticky residue and dried surfaces.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar tops and guest-facing surfaces wiped and dried"
+            }
+          ]
+        },
+        {
+          "title": "I wiped beneath bar edges and syrup areas, spot-cleaned shelving, and removed spills from refrigerator interiors, handles, and door seals."
+        },
+        {
+          "title": "I organized upstairs and downstairs service cabinets; removed food debris, loose utensils, dirty linens, and clutter."
+        },
+        {
+          "title": "I emptied trash and broken-glass containers safely, cleaned bins as needed, replaced liners, and removed cardboard / debris."
+        },
+        {
+          "title": "I swept behind both bars and spot-mopped spills; left work areas and walkways clear.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind both bars swept and mopped, walkways clear"
+            }
+          ]
+        },
+        {
+          "title": "I emptied sanitizer containers, sent dirty towels / linens to the designated collection area, and restocked clean towels for the next shift."
+        },
+        {
+          "title": "I cleaned and shut down bar dish equipment, if assigned, following equipment instructions; left refrigeration running."
+        },
+        {
+          "title": "I stored equipment only in its designated place; nothing was left on upholstered seating."
+        },
+        {
+          "title": "I confirmed today’s weekly assignment on BAR PREP & WEEKLY was initialed, or documented the reason and arranged follow-up with the bar lead / MOD."
+        },
+        {
+          "title": "I closed checks and returned my bank / checkout to the MOD; communicated all low stock, 86s, broken items, pest activity, and equipment issues.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Low stock, 86s, broken items and equipment issues reported to the MOD"
+            }
+          ]
+        },
+        {
+          "title": "I took a final lap upstairs and downstairs, confirmed cold-storage doors were shut and stock secure, and obtained bar lead / MOD approval before clocking out.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Both bars closed, cold-storage doors shut and stock secure"
+            }
+          ]
+        },
+        {
+          "title": "BAR LEAD / MOD: I inspected both bars, reviewed issues on all three sections, and approved the close"
+        },
+        {
+          "title": "ISSUES / LOW STOCK / HANDOFF — Include item, location, action needed, and who was notified.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any issues, low stock or handoff for the next shift"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Responded To Reservation Confirmation Messages, Updated Opentable With Celebration Details And Guest Notes, And Adjusted The Timeline To Maximize Opportunities For Walk-Ins."
+        },
+        {
+          "title": "Sent The Mod The Shift Overview From Opentable, Including Reservation Counts, Vips, Large Parties, And Any Potential Problem Reservations.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The shift overview sent to the MOD"
+            }
+          ]
+        },
+        {
+          "title": "Adjusted All Reservations In The Timeline As Needed And Made Sure All Reservations Were Assigned A Table. Alerted Support Of Any Tables That Require More Or Less Settings For 5pm Turn."
+        },
+        {
+          "title": "Assigned Sections On Opentable."
+        },
+        {
+          "title": "Did A Test Print For Chit On Both iPads."
+        },
+        {
+          "title": "Ensured All Host And Restaurant Supplies Were Stocked, Including Wobble Wedges, Business Cards, Gift Cards, Candles, Thermal Paper, And Other Shift Essentials."
+        },
+        {
+          "title": "Ensured The Front Of The Restaurant And Planters Were Clean, Including Sweeping Out Front And Wiping The Black Planter Ledges As Needed.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The front of the restaurant and planters clean"
+            }
+          ]
+        },
+        {
+          "title": "Prepared Roses Before The Shift By Cutting And Placing Them In The Designated Water Bucket."
+        },
+        {
+          "title": "Replace All Wax Candles Around The Restaurant & Replaced Hanging Lanterns With Led Lights"
+        },
+        {
+          "title": "Cleaned And Organized The Host Stand, Including Sorting Menus And Discarding Damaged Or Dirty Menus.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand clean and organized, menus sorted"
+            }
+          ]
+        },
+        {
+          "title": "Prepared The Bathrooms By Replacing The Beeswax Candle, Incense, Stocking Soap And Supplies, And Exchanging Multifold Towels For Ch Linen Towels.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bathrooms prepared - candle, incense, soap and CH linen towels"
+            }
+          ]
+        },
+        {
+          "title": "Ensured Host Stand Lighting Is On And Dimmed"
+        },
+        {
+          "title": "Helped Ensure All Candles In The Space Were Lit Prior To Opening"
+        },
+        {
+          "title": "Pulled 5 Packs Of Linens From The Back & Ensured There Were Enough Folded Linens For The Current Shift. If Not, I Folded More."
+        },
+        {
+          "title": "I Made Sure The Correct Number Of Place Setting Were On Each Table For The First Turn"
+        },
+        {
+          "title": "Runner: I Chose A Figma Task To Be Completed During The Shift (Guest Facing Cleaning/Organizing)"
+        },
+        {
+          "title": "I Alerted A Manager Of Any Low Stock Items While Setting Up For The Shift.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any low-stock items flagged to a manager"
+            }
+          ]
+        },
+        {
+          "title": "I Reviewed Any Weekly Host Updates On The Clipboard And Initialed (As Applicable)"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Sent The Next Day Reservation Confirmation Text Messages Through OpenTable."
+        },
+        {
+          "title": "Cleared All Finished And Bussing-Needed Tables Before Leaving."
+        },
+        {
+          "title": "Collected All Menus From The Server Stations And Discarded Damaged Or Dirty Menus."
+        },
+        {
+          "title": "Wiped Down And Organized The Host Stand, Including Lamps, Printers, Under Matches, Loose Cords, And Loose Items Underneath.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand wiped down and organized"
+            }
+          ]
+        },
+        {
+          "title": "Restocked The Host Stand, Ensured There Were Two Backup Thermal Paper Rolls, And Communicated Any Low Stock To The Mod.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Any low stock communicated to the MOD"
+            }
+          ]
+        },
+        {
+          "title": "Wiped Down All iPads, Phones, And Phone Bases, Ensured They Were Charging, And Emptied The Host Stand Trash."
+        },
+        {
+          "title": "Performed A Final Bathroom Check By Emptying Trash, Tidying The Space, Restocking Toilet Paper, Backup Candles, Paper Rolls, And Removing Dirty Towels.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bathrooms tidy, restocked and trash emptied"
+            }
+          ]
+        },
+        {
+          "title": "Made Sure The Wine Cellar Was Clean, Organized, Ready For Service The Next Day, Returned The Roses To The Wine Cellar, And Removed Any Rubbish.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wine cellar clean and organized for the next day"
+            }
+          ]
+        },
+        {
+          "title": "Bring All Lost And Found Items To The Office And Ensure Any Left Credit Cards Are In The Safe."
+        },
+        {
+          "title": "I Completed 1 Figma Task And Sent Before, After, And Description To The Comms Chat 🚨"
+        },
+        {
+          "title": "I Confirmed 5 Linen Packs Were Folded For The Next Days Service And Stocked All Stations."
+        },
+        {
+          "title": "I Removed Led Candles From The Lanterns And Charged Them At The Host Stand."
+        },
+        {
+          "title": "I Communicated Any Pertinent Information To The Mod."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Tables Set"
+        },
+        {
+          "title": "Stock Server Stations With: Forks • Knives, Folds, Plates, Check Presenters, Marking Trays, Pens, Sanitizers, Towels"
+        },
+        {
+          "title": "Fill Ice Box With Pebble Ice"
+        },
+        {
+          "title": "Fill Water Pitchers (Ice Water) And Disperse"
+        },
+        {
+          "title": "7 Batches Of 28G Of Tea Prepped"
+        },
+        {
+          "title": "I Cleaned And Tidied The Teapot Server Station And Water Glass Shelving"
+        },
+        {
+          "title": "1 Motion Light At Tea Station, 2 At Polishing Station, The Rest Charging"
+        },
+        {
+          "title": "Wiped Down All Pos Screens"
+        },
+        {
+          "title": "Polish Wine Cellar And Mirrors (With Glass Cleaner) And Wipe Down Bathroom Frames",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wine cellar and mirrors polished"
+            }
+          ]
+        },
+        {
+          "title": "I Spot Swept And Spot Mopped The Restaurant, Restrooms, And Stairs As Needed"
+        },
+        {
+          "title": "Set Up Bussing Cart With: Bags, Ramekins, Towels, Boxes, Foil"
+        },
+        {
+          "title": "I Detailed All The Tables In My Section (Including Booths), Ensuring Setups Were Complete, Properly Arranged, And Silverware, Water Glasses And Plates Were Polished.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tables in my section detailed and set, silverware and glassware polished"
+            }
+          ]
+        },
+        {
+          "title": "Wiped Down / Detailed All Ledges And Tailings Throughout The Restaurant As Needed"
+        },
+        {
+          "title": "I Checked Tables For Wobbles And Adjusted If Needed Throughout The Restaurant"
+        },
+        {
+          "title": "I Inspected Each Floor Lantern For Completeness And Alerted Management Of Any Irregularities Or Damages"
+        },
+        {
+          "title": "I Assisted In Lighting All Lanterns Prior To Service",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All floor lanterns lit before service"
+            }
+          ]
+        },
+        {
+          "title": "Brew Tea At 4:45"
+        },
+        {
+          "title": "At 4:45 I Set Up The Incense Burner And Lit Restroom Candles"
+        },
+        {
+          "title": "Complete 1 Figma Task"
+        },
+        {
+          "title": "I Unpacked Any Packages/Deliveries In Backyard, Informed The Mod Of Thier Contents (Amazon Especially), And Stocked Them In Thier Appropriate Locations, And Broke Down The Boxes",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Deliveries unpacked and contents (Amazon especially) reported to the MOD"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I Wiped Down All The Seating In The Restaurant, Ensuring No Crumbs Or Debris Present, Paying Special Attention To Dust Between Tables, Clean In The Nooks, And Underneath Cushions."
+        },
+        {
+          "title": "As The Mezzanine Support, I Took The Bus Bin Downstairs To The Dish Palace And Ensured The Service Cabinet Behind The Bar Was Free Of Any Food Debris, Dirty Linens, Or Utensils."
+        },
+        {
+          "title": "I Removed The Turkish Coffee Machine And Wiped Out All Vessels And The Shelf Where The Coffee Cups Are."
+        },
+        {
+          "title": "I Emptied The Trash In The Server Station On The Mezzanine & Replaced Any Trash Cans That Need Liners"
+        },
+        {
+          "title": "I Emptied The Trash In The Server Stations In The Mdr & Replaced Any Trash Cans That Need Liners"
+        },
+        {
+          "title": "I Collected All Dirty Towels / Linens And Did A Final Linen Run & Replaced The Linen Bag For The Morning Crew"
+        },
+        {
+          "title": "I Cleaned The Trash Area & All Surrounding Areas Out Back Making Sure Things Are Looking Nice And Neat",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back trash area clean and neat"
+            }
+          ]
+        },
+        {
+          "title": "I Wiped Down All Tables And Polished The Table Bases And Chair Bases In The Mdr",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The MDR table and chair bases polished"
+            }
+          ]
+        },
+        {
+          "title": "I Wiped Down All Tables And Polished The Table Bases And Chair Bases In The Mezzanine",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The Mezzanine table and chair bases polished"
+            }
+          ]
+        },
+        {
+          "title": "I Swept The Bar Footsteps On The Mezzanine"
+        },
+        {
+          "title": "I Swept The Bar Footsteps In The Mdr"
+        },
+        {
+          "title": "I Removed Any Remaining Set-Ups From All Tables And Returned Linen, Silverware And Glassware To Storage Spaces."
+        },
+        {
+          "title": "I Spot Swept The Backyard And Alley Of Any Debris And Scrubbed As Needed / Directed By Mod"
+        },
+        {
+          "title": "I Went Through All 4 Restrooms And The Bathroom Area And Did A Quick Tidy.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All 4 restrooms tidied"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Food runner",
+      "role_es": "Corredor",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I Detailed The Expo Station Emptied Bus Tub, Removed All Loose Items, Wiped Down Surfaces/Shelves, Exchanged Marking Trays, Restocked Silverware + Birthday Candles",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The expo station detailed and restocked"
+            }
+          ]
+        },
+        {
+          "title": "I Detailed The To Go Station: Sanitized Surface/Shelves, Restocked To-Go Supplies (Including Brown Boxes For Staff)"
+        },
+        {
+          "title": "I Detailed Polishing Station: Sanitized Surface/Shelves, Ensured Clenliness Of The Surrounding Walls, Ran Black Caddies Through Dish And Replaced With Clean Ones, Hung Up Any Preserveable Microfiber Towels",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The polishing station detailed, walls clean, clean caddies in place"
+            }
+          ]
+        },
+        {
+          "title": "I Detailed The Ice Well Service Station: Burned Ice, Scrubbed Sinks W/ Green Scrubby, Sanatized / Wiped / Dried All Stainless",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice well station burned, scrubbed and the stainless dried"
+            }
+          ]
+        },
+        {
+          "title": "I Exchanged All Motion Lights For Charged Ones And Placed Old Ones On The Charger"
+        },
+        {
+          "title": "I Detailed The Ripple Machine: Ask Matt"
+        },
+        {
+          "title": "I Blew Out All Remaining Candles"
+        },
+        {
+          "title": "I Removed All Personal Items//Food From The Staff Area, And Threw Out Any Lingering Trash."
+        },
+        {
+          "title": "I Sanitized Emoloyee Picnick Table In The Backyard"
+        },
+        {
+          "title": "I Broke Down All Boxes In Backyard And Ensured They Were Placed In The Appropriate Bins"
+        },
+        {
+          "title": "I Exchanged The Linen Likes For Tri Fold Towels In The Bathrooms"
+        },
+        {
+          "title": "I Called For Silverware, Polished All That Was Available And Checked The Kitchen For Any Loose Items To Be Polished"
+        }
+      ]
+    }
+  ]
+}
