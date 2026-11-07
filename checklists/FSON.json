@@ -930,16 +930,18 @@
       ]
     },
     {
-      "house": "FOH",
+      "house": "HOH",
       "role": "Prep/Kitchen",
       "role_es": "Preparación/Cocina",
       "phase": "close",
       "items": [
         {
-          "title": "I ENSURED ENOUGH SILVERWARE WAS POLISHED TO REFILL THE SILVERWARE CADDYS."
+          "title": "I ENSURED ENOUGH SILVERWARE WAS POLISHED TO REFILL THE SILVERWARE CADDYS.",
+          "title_es": "Me aseguré de pulir suficientes cubiertos para rellenar las charolas de cubiertos."
         },
         {
           "title": "I WIPED DOWN ALL WOOD COUNTER AREAS, UNDERNEATH THE RICE MAKER & WONTON SINK.",
+          "title_es": "Limpié todas las mesadas de madera, debajo de la arrocera y el fregadero de wonton.",
           "detail": [
             "About 7 minutes"
           ],
@@ -952,6 +954,7 @@
         },
         {
           "title": "I THOROUGHLY WIPED DOWN AND ORGANIZED EXPO. I ENSURED IT WAS CLEAR OF ALL FOOD DEBRIS UNDERNEATH ITEMS ON COUNTERSPACE. I ALSO ENSURED THE PLASTIC CAMBROS WHICH CONTAIN THE TAKE OUT ITEMS WERE CLEAN OF FOOD DEBRIS.",
+          "title_es": "Limpié y organicé bien el expo. Me aseguré de que no quedara comida debajo de las cosas en la mesada. También revisé que los cambros de plástico de los productos para llevar estuvieran sin residuos de comida.",
           "detail": [
             "About 2 minutes"
           ],
@@ -964,6 +967,7 @@
         },
         {
           "title": "I WIPED DOWN ALL CONDIMENT CADDYS AND REFILLED THEM FOR NEXT DAYS SERVICE WITH A FRESH NAPKIN.",
+          "title_es": "Limpié todas las charolas de condimentos y las rellené para el servicio del día siguiente con una servilleta nueva.",
           "detail": [
             "About 15 minutes"
           ],
@@ -976,12 +980,14 @@
         },
         {
           "title": "I REMOVED ALL DIRTY TOWELS AND DUMPED THE SANITATION BUCKET.",
+          "title_es": "Quité todas las toallas sucias y vacié el balde de desinfectante.",
           "detail": [
             "About 3 minutes"
           ]
         },
         {
           "title": "I DID A FINAL BATHROOM CHECK FOR THE NIGHT TO RESTOCK AND WIPE DOWN.",
+          "title_es": "Hice la última revisión del baño de la noche para surtirlo y limpiarlo.",
           "detail": [
             "About 7 minutes"
           ],
@@ -994,12 +1000,14 @@
         },
         {
           "title": "I CLOSED OUT ALL OF THE TAKE OUT CHECKS FOR THE EVENING.",
+          "title_es": "Cerré todas las cuentas de para llevar de la noche.",
           "detail": [
             "About 10 minutes"
           ]
         },
         {
           "title": "I COUNTED DOWN MY BANK TO $300.00",
+          "title_es": "Conté mi banco hasta dejarlo en $300.00.",
           "detail": [
             "About 5 minutes"
           ],
@@ -1012,12 +1020,14 @@
         },
         {
           "title": "I CHECKED IN WITH MY SHIFT LEAD TO TURN IN THE TAKEOUT DROP & REVIEW ANY TAB DESCREPANCIES FOR THE NIGHT.",
+          "title_es": "Me reporté con mi líder de turno para entregar el drop de para llevar y revisar cualquier diferencia en las cuentas de la noche.",
           "detail": [
             "About 5 minutes"
           ]
         },
         {
           "title": "I LOCKED THE TAKE OUT DOOR PRIOR TO CLOCKING OUT FOR THE NIGHT.",
+          "title_es": "Cerré con llave la puerta de para llevar antes de marcar mi salida.",
           "detail": [
             "About 2 minutes"
           ],
@@ -1032,8 +1042,8 @@
     },
     {
       "house": "HOH",
-      "role": "AM Lead",
-      "role_es": "Líder AM",
+      "role": "Lead",
+      "role_es": "Líder",
       "phase": "open",
       "items": [
         {
@@ -1146,8 +1156,8 @@
     },
     {
       "house": "HOH",
-      "role": "PM Lead",
-      "role_es": "Líder PM",
+      "role": "Lead",
+      "role_es": "Líder",
       "phase": "close",
       "items": [
         {
@@ -1371,16 +1381,6 @@
           "title_es": "Limpiar/desinfectar encimeras, barrer y trapear el piso cada hora, retirar toallas sucias y vaciar los botes de basura cuando estén llenos."
         },
         {
-          "title": "I MAKE SURE TO CLEAN ALL THE RICE MAKER, PUT AWAY THE SOY SAUCE AND ANY CONTAINERS THAT I USE",
-          "title_es": "Me aseguro de limpiar todas las arroceras, guardar la salsa de soya y cualquier contenedor que haya utilizado.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Rice makers cleaned, soy sauce and containers put away"
-            }
-          ]
-        },
-        {
           "title": "I Make sure to clean bins,tables,windows and walls",
           "title_es": "Me aseguro de limpiar contenedores, mesas, ventanas y paredes.",
           "proof": [
@@ -1405,16 +1405,6 @@
         {
           "title": "I make sure to wash the heand sink",
           "title_es": "Me aseguro de lavar el lavabo de manos."
-        },
-        {
-          "title": "Clean and organize walk-in, including sweeping and mopping the floor",
-          "title_es": "Limpiar y organizar el walk-in, incluyendo barrer y trapear el piso.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Walk-in clean and organized, floor swept and mopped"
-            }
-          ]
         }
       ]
     },
@@ -1465,10 +1455,6 @@
           "title_es": "Pregunto a los chefs si hay algún trabajo de preparación necesario."
         },
         {
-          "title": "I sweep and mop the back kitchen once every hour.",
-          "title_es": "Barro el área de la línea una vez por hora"
-        },
-        {
           "title": "I take out the trash as needed throughout the shift.",
           "title_es": "Saco la basura durante el turno tan seguido como sea necesario"
         },
@@ -1495,10 +1481,6 @@
               "prompt": "Handsink to the left of the dish area, detailed"
             }
           ]
-        },
-        {
-          "title": "I swept and mopped the floor using \"wash and walk\" solution.",
-          "title_es": "Barrí el piso de la cocina"
         },
         {
           "title": "I made sure all dishes are clean and put in the proper place.",
@@ -1536,25 +1518,24 @@
     },
     {
       "house": "HOH",
-      "role": "Fry/Saute",
-      "role_es": "Estación de fritura",
+      "role": "Hot line",
+      "role_es": "Línea caliente",
       "phase": "close",
       "items": [
         {
           "title": "I have a hair net",
-          "title_es": "Tengo una redecilla para el cabello"
-        },
-        {
-          "title": "I turned on the fryers to 350 degrees",
-          "title_es": "Prendí las freidoras a 350 grados"
+          "title_es": "Tengo una redecilla para el cabello",
+          "section": "COMMON"
         },
         {
           "title": "I checked all prep and mise en place in my low boy, on the station, and in the walk in.",
-          "title_es": "Revisé todo el prep y la mise en place en mi low boy, en la estación y en el walk-in."
+          "title_es": "Revisé todo el prep y la mise en place en mi low boy, en la estación y en el walk-in.",
+          "section": "COMMON"
         },
         {
           "title": "My pans are completely full and stocked",
           "title_es": "Mis pans están completamente llenos y surtidos",
+          "section": "COMMON",
           "proof": [
             {
               "kind": "photo",
@@ -1563,40 +1544,9 @@
           ]
         },
         {
-          "title": "I heated up 3 3rd pans of Orange Sauce and 3 3rd pans of General Tso's in a stock pot",
-          "title_es": "Calenté 3 terceros de salsa de naranja y 3 terceros de General Tso en una olla"
-        },
-        {
-          "title": "The pasta boiler is filled all the way up and boiling, ready for service.",
-          "title_es": "El hervidor de pasta está lleno hasta arriba y hirviendo, listo para el servicio."
-        },
-        {
-          "title": "I have batter and corn starch bowls",
-          "title_es": "Tengo los tazones de batido y de maicena"
-        },
-        {
-          "title": "I have all my cold dipping sauces",
-          "title_es": "Tengo todas mis salsas frías para remojar"
-        },
-        {
-          "title": "I have a lexan filled with chicken fritters, as well as a back up ready to go in the walk-in",
-          "title_es": "Tengo un lexan lleno de fritters de pollo y uno de repuesto listo en el walk-in"
-        },
-        {
-          "title": "I have all my seasonings available: szechuan hot seasoning, sesame seeds.",
-          "title_es": "Tengo todos mis sazonadores: sazonador picante szechuan y ajonjolí."
-        },
-        {
-          "title": "I have 3 empty medium sized mixing bowls on my station",
-          "title_es": "Tengo 3 tazones medianos vacíos en mi estación"
-        },
-        {
-          "title": "I have rangoons, veg and egg rolls, and dumplings.",
-          "title_es": "Tengo rangoons, rollos de verdura y huevo, y dumplings."
-        },
-        {
           "title": "I changed, refilled, consolidated all pans on station",
           "title_es": "Cambié, rellené y consolidé todos los pans de la estación",
+          "section": "COMMON",
           "proof": [
             {
               "kind": "photo",
@@ -1606,73 +1556,18 @@
         },
         {
           "title": "Wash sauce bottles, including caps and tops.",
-          "title_es": "Lavé las botellas de salsa, incluyendo las tapas."
+          "title_es": "Lavé las botellas de salsa, incluyendo las tapas.",
+          "section": "COMMON"
         },
-        {
-          "title": "I scrubbed and wiped the stock burners, and fryer area.",
-          "title_es": "Tallé y limpié los quemadores y el área de la freidora.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Burners and fryer area scrubbed and wiped"
-            }
-          ]
-        },
-        {
-          "title": "I cleaned all the shelves, low boys, hand sink, map sink and tables. I removed all unnecessary items and put them in their appropriate places.",
-          "title_es": "Limpié todas las repisas, low boys, lavabo, mop sink y mesas. Quité todo lo innecesario y lo puse en su lugar."
-        },
-        {
-          "title": "I restocked my station fully and wrapped well with plastic wrap.",
-          "title_es": "Surtí mi estación por completo y la tapé bien con plástico.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Station fully restocked and wrapped"
-            }
-          ]
-        },
-        {
-          "title": "I cleaned KDS (kitchen display screens)",
-          "title_es": "Limpié las pantallas KDS de la cocina"
-        },
-        {
-          "title": "I took out the trash.",
-          "title_es": "Saqué la basura."
-        },
-        {
-          "title": "I changed out the tray under the stove burners and lined with new foil.",
-          "title_es": "Cambié la charola debajo de los quemadores y la forré con papel aluminio nuevo."
-        },
-        {
-          "title": "I cleaned the fryer area, and use the spider tool to skim out all the debris.",
-          "title_es": "Limpié el área de la freidora y usé la araña para sacar todos los residuos.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Fryer skimmed clean of debris"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "house": "HOH",
-      "role": "Wok",
-      "role_es": "Estación de wok",
-      "phase": "close",
-      "items": [
         {
           "title": "I have rice cooking in the rice cooker. Rice paddles are nearby.",
-          "title_es": "Tengo arroz cocinándose en la arrocera y las paletas de arroz cerca."
-        },
-        {
-          "title": "I have a hair net",
-          "title_es": "Tengo una redecilla para el cabello"
+          "title_es": "Tengo arroz cocinándose en la arrocera y las paletas de arroz cerca.",
+          "section": "WOK"
         },
         {
           "title": "The wok station is set up with two wok ladles, 2 wok spatulas, 2 bain maries with water under the faucets, two woks, two strainers, and two large bains with oil.",
           "title_es": "La estación de wok está lista con dos cucharones, 2 espátulas, 2 bain maries con agua bajo las llaves, dos woks, dos coladores y dos bains grandes con aceite.",
+          "section": "WOK",
           "proof": [
             {
               "kind": "photo",
@@ -1681,50 +1576,34 @@
           ]
         },
         {
-          "title": "I checked all prep and mise en place in my low boy, on the station, and in the walk in.",
-          "title_es": "Revisé todo el prep y la mise en place en mi low boy, en la estación y en el walk-in."
-        },
-        {
-          "title": "My pans of product are completely full and stocked",
-          "title_es": "Mis pans de producto están completamente llenos y surtidos"
-        },
-        {
           "title": "I have a soap/sanitizer container below wok to clean my station during service",
-          "title_es": "Tengo un contenedor de jabón/desinfectante debajo del wok para limpiar mi estación durante el servicio"
+          "title_es": "Tengo un contenedor de jabón/desinfectante debajo del wok para limpiar mi estación durante el servicio",
+          "section": "WOK"
         },
         {
           "title": "I have enough cooked chicken and portioned beef to make it through the service.",
-          "title_es": "Tengo suficiente pollo cocido y res porcionada para todo el servicio."
+          "title_es": "Tengo suficiente pollo cocido y res porcionada para todo el servicio.",
+          "section": "WOK"
         },
         {
           "title": "I have all my seasonings available: salt, salt & pepper, MSG, sesame seeds, dried whole chilis, peanuts, garlic minced, ginger puree, sichuan, alted black beans, and, almond dukkah.",
-          "title_es": "Tengo todos mis sazonadores: sal, sal y pimienta, MSG, ajonjolí, chiles secos enteros, cacahuates, ajo picado, puré de jengibre, sichuan, frijol negro salado y dukkah de almendra."
+          "title_es": "Tengo todos mis sazonadores: sal, sal y pimienta, MSG, ajonjolí, chiles secos enteros, cacahuates, ajo picado, puré de jengibre, sichuan, frijol negro salado y dukkah de almendra.",
+          "section": "WOK"
         },
         {
           "title": "I have cornstarch slurry, stir fry sauce, beef and broccoili , kung pao sauce, and yu xing sauces",
-          "title_es": "Tengo la mezcla de maicena, salsa para saltear, salsa de res y brócoli, salsa kung pao y salsa yu xiang."
-        },
-        {
-          "title": "I changed, refilled, and consolidated all pans on my station",
-          "title_es": "Cambié, rellené y consolidé todos los pans de mi estación",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Station pans changed, refilled and consolidated"
-            }
-          ]
+          "title_es": "Tengo la mezcla de maicena, salsa para saltear, salsa de res y brócoli, salsa kung pao y salsa yu xiang.",
+          "section": "WOK"
         },
         {
           "title": "I emptied the oil catchers in the hood",
-          "title_es": "Vacié los recolectores de aceite de la campana"
-        },
-        {
-          "title": "Wash sauce bottles, including caps and tops.",
-          "title_es": "Lavé las botellas de salsa, incluyendo las tapas."
+          "title_es": "Vacié los recolectores de aceite de la campana",
+          "section": "WOK"
         },
         {
           "title": "I scrubbed and wiped down the wok station, as well as emptied and cleaned the wok filter.",
           "title_es": "Tallé y limpié la estación de wok, y vacié y limpié el filtro del wok.",
+          "section": "WOK",
           "proof": [
             {
               "kind": "photo",
@@ -1734,15 +1613,18 @@
         },
         {
           "title": "I scrubbed and wiped down the tile wall.",
-          "title_es": "Tallé y limpié la pared de azulejo."
+          "title_es": "Tallé y limpié la pared de azulejo.",
+          "section": "WOK"
         },
         {
           "title": "I scrubbed all the shelves, low boys, and tables. I removed all unnecessary items and put them in their appropriate places.",
-          "title_es": "Tallé todas las repisas, low boys y mesas. Quité todo lo innecesario y lo puse en su lugar."
+          "title_es": "Tallé todas las repisas, low boys y mesas. Quité todo lo innecesario y lo puse en su lugar.",
+          "section": "WOK"
         },
         {
           "title": "I restocked my station fully and made sure lids were on everything",
           "title_es": "Surtí mi estación por completo y me aseguré de que todo tuviera tapa.",
+          "section": "WOK",
           "proof": [
             {
               "kind": "photo",
@@ -1752,11 +1634,111 @@
         },
         {
           "title": "I wiped down both screens and behind the screens. I wiped down rice cookers and emptied water tray.",
-          "title_es": "Limpié ambas pantallas y detrás de ellas. Limpié las arroceras y vacié la bandeja de agua."
+          "title_es": "Limpié ambas pantallas y detrás de ellas. Limpié las arroceras y vacié la bandeja de agua.",
+          "section": "WOK"
         },
         {
           "title": "I took out the trash and swept the floor",
-          "title_es": "Saqué la basura y barrí el piso"
+          "title_es": "Saqué la basura y barrí el piso",
+          "section": "WOK"
+        },
+        {
+          "title": "I turned on the fryers to 350 degrees",
+          "title_es": "Prendí las freidoras a 350 grados",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I heated up 3 3rd pans of Orange Sauce and 3 3rd pans of General Tso's in a stock pot",
+          "title_es": "Calenté 3 terceros de salsa de naranja y 3 terceros de General Tso en una olla",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "The pasta boiler is filled all the way up and boiling, ready for service.",
+          "title_es": "El hervidor de pasta está lleno hasta arriba y hirviendo, listo para el servicio.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have batter and corn starch bowls",
+          "title_es": "Tengo los tazones de batido y de maicena",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have all my cold dipping sauces",
+          "title_es": "Tengo todas mis salsas frías para remojar",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have a lexan filled with chicken fritters, as well as a back up ready to go in the walk-in",
+          "title_es": "Tengo un lexan lleno de fritters de pollo y uno de repuesto listo en el walk-in",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have all my seasonings available: szechuan hot seasoning, sesame seeds.",
+          "title_es": "Tengo todos mis sazonadores: sazonador picante szechuan y ajonjolí.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have 3 empty medium sized mixing bowls on my station",
+          "title_es": "Tengo 3 tazones medianos vacíos en mi estación",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have rangoons, veg and egg rolls, and dumplings.",
+          "title_es": "Tengo rangoons, rollos de verdura y huevo, y dumplings.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I scrubbed and wiped the stock burners, and fryer area.",
+          "title_es": "Tallé y limpié los quemadores y el área de la freidora.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Burners and fryer area scrubbed and wiped"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned all the shelves, low boys, hand sink, map sink and tables. I removed all unnecessary items and put them in their appropriate places.",
+          "title_es": "Limpié todas las repisas, low boys, lavabo, mop sink y mesas. Quité todo lo innecesario y lo puse en su lugar.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I restocked my station fully and wrapped well with plastic wrap.",
+          "title_es": "Surtí mi estación por completo y la tapé bien con plástico.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Station fully restocked and wrapped"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned KDS (kitchen display screens)",
+          "title_es": "Limpié las pantallas KDS de la cocina",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I took out the trash.",
+          "title_es": "Saqué la basura.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I changed out the tray under the stove burners and lined with new foil.",
+          "title_es": "Cambié la charola debajo de los quemadores y la forré con papel aluminio nuevo.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I cleaned the fryer area, and use the spider tool to skim out all the debris.",
+          "title_es": "Limpié el área de la freidora y usé la araña para sacar todos los residuos.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Fryer skimmed clean of debris"
+            }
+          ]
         }
       ]
     },
