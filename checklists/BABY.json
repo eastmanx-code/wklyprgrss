@@ -1,0 +1,2274 @@
+{
+  "venue": "BABY",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Cafe bartender",
+      "role_es": "Cantinero de café",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Clock-In & Systems Ready",
+          "detail": [
+            "Clocked in, in uniform",
+            "Logged into Zingle + Stayntouch.",
+            "Signed weekly news sheet."
+          ]
+        },
+        {
+          "title": "Bar Area & Well Ready",
+          "detail": [
+            "1-well bar area verified clean and organized from previous shift.",
+            "Well stocked with ice.",
+            "All syrups and mixers checked, and low or expired replaced."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "1-well bar set to spec"
+            }
+          ]
+        },
+        {
+          "title": "Dish Machine - Enter Chlorine PPM Number:",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Dish Machine - Enter Chlorine PPM Number"
+            }
+          ]
+        },
+        {
+          "title": "Sanitizer Bucket - Enter Multi-Quat PPM Number:",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Sanitizer Bucket - Enter Multi-Quat PPM Number"
+            }
+          ]
+        },
+        {
+          "title": "Cafe Bar Setup",
+          "detail": [
+            "Tap covers removed from spro/cold brew lines, soaked in warm water.",
+            "Bar set up: syrups (vanilla, lavender, honey, brown sugar, pear, peppermint, and orange spice), pitchers (1 large and 1 small), stirring spoons (1 tall and 1 short), and rags (knock box, steam wand, and wiping).",
+            "Cafe countertops and espresso machine sanitized.",
+            "Espresso dialed in: 17g ground produces 30g pull in 24-30 sec."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cafe bar set to spec and espresso dial-in shot"
+            }
+          ]
+        },
+        {
+          "title": "Misc Debris Traps",
+          "detail": [
+            "Lift dry-deck, run through dishwasher, detail under, dry, replace",
+            "Detail feet of mixing equipment / under [Hamilton mixer, Magic Bullet]"
+          ]
+        },
+        {
+          "title": "Tables Set for Service",
+          "detail": [
+            "All tables wiped down.",
+            "Tables in correct position per floor plan.",
+            "Chairs wiped down (seats, backs, legs).",
+            "Table tops wiped.",
+            "Table bases cleaned with microfiber (no footprints, no debris).",
+            "Cafe tables reset.",
+            "Coffee container filled.",
+            "Coffee station tools present (tamp, scales, distributor).",
+            "Place settings complete.",
+            "Cafe lights on, set to daytime.",
+            "Lamps polished, dusted and wiped.",
+            "Music on, volume set per daytime spec."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "wide shot of cafe showing tables set and clean"
+            }
+          ]
+        },
+        {
+          "title": "First thing, walk the bar. Was it closed right?",
+          "detail": [
+            "Floors clean, not sticky",
+            "Bar tops wiped, clean and dry",
+            "Under bar rails clean, no stickiness or buildup",
+            "Under equipment clean, no spills or grime",
+            "Marble wiped, undersides too, no sticky spots",
+            "Sink cleaned and dried",
+            "POS screen wiped clean"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "biggest issue found"
+            }
+          ]
+        },
+        {
+          "title": "Floor, Lines, & Equipment Check",
+          "detail": [
+            "Cafe bar drainage pipe checked for standing water.",
+            "Floor dry at open, no standing water.",
+            "Squeegee at the station.",
+            "Soda lines checked."
+          ]
+        },
+        {
+          "title": "RIPPLE MACHINE",
+          "detail": [
+            "I UNDERSTAND MY DUTY TO PRINT ON ALL LATTES",
+            "TAKE A PIC OF THE RIPPLE MACHINE"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ripple machine"
+            }
+          ]
+        },
+        {
+          "title": "Garnish & Glassware",
+          "detail": [
+            "Garnish tray set up with fresh garnishes, including citrus, olives, etc.",
+            "All glassware polished and staged.",
+            "Pour spouts clean and properly fitted."
+          ]
+        },
+        {
+          "title": "Stock & 86 List",
+          "detail": [
+            "Beer, wine, and spirit stock checked, and 86'd items noted."
+          ]
+        },
+        {
+          "title": "Surfaces, POS & Menu",
+          "detail": [
+            "Bar top and all surfaces wiped down.",
+            "Bar stool and base rail wiped with microfiber.",
+            "Verify cafe bar under-equipment clean from previous close.",
+            "POS logged in and functioning."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Cafe bartender",
+      "role_es": "Cantinero de café",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Storage",
+          "detail": [
+            "All product / boxes off of the ground",
+            "Shelves organized to match shelving labels",
+            "Empty boxes broken down and taken to recycling bin",
+            "Floor swept of any debris"
+          ]
+        },
+        {
+          "title": "External Bar Clean",
+          "detail": [
+            "Tile backsplash, foot rest, and barstools wiped down.",
+            "Dirt and residue collected from lip of the barstools.",
+            "Barstool reeding and joints detailed with stiff bristled brush"
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Cleaned barstools and tile"
+            }
+          ]
+        },
+        {
+          "title": "Splash Zone Set-Up",
+          "detail": [
+            "Stage both brass champagne buckets on the mat in the handicap section of the cafe bar.",
+            "Fill each bucket with fresh ice.",
+            "Nest one bottle of bubbles per bucket, label forward.",
+            "Champagne stopper at the station, every open bottle gets stopped between pours.",
+            "Stage polished coupes in tight rows on the mat. No water spots, no dust, no chips.",
+            "Wipe down the marble and mirror. The station reflects, literally. It has to look right from every angle."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Completed Set-Up"
+            }
+          ]
+        },
+        {
+          "title": "Splash Zone Take-Down",
+          "detail": [
+            "Return the open bottles to proper storage; unopened bottles back to stock.",
+            "Dump the ice. Buckets stay at the station; dry, in place, ready for tomorrow.",
+            "Restock the station with a full set of polished glassware before walking away.",
+            "Wipe down the mat, marble, and mirror. The station closes fully reset, sans bubbles and ice."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Completed Station Break-Down"
+            }
+          ]
+        },
+        {
+          "title": "Tables & Chairs",
+          "detail": [
+            "Scrub and wipe down all tables and chairs in the cafe.",
+            "Ensure all the tables are clean and free from dirt, sap, and any grime."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cleaned tables and chairs"
+            }
+          ]
+        },
+        {
+          "title": "Cafe Restock & Espresso Reset",
+          "detail": [
+            "Cups, lids, straws, sugars, and napkins restocked.",
+            "Mid-day espresso machine water flush and coffee bar reset.",
+            "All surfaces wiped after check-out rush (no stickiness).",
+            "Mid-day trash run and ice well refilled."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "reset cafe bar"
+            }
+          ]
+        },
+        {
+          "title": "Reach-In Fridge to Par",
+          "detail": [
+            "Top row: 2 rows tonic, 1 row half-and-half, 1 deli lemons, 2 boxes chai.",
+            "Bottom row: 1 row whole milk, 2 rows oat milk, 2 rows alm milk."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "stocked reach-in fridge"
+            }
+          ]
+        },
+        {
+          "title": "Enter Product Temperature:",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Enter Product Temperature"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Cafe bartender",
+      "role_es": "Cantinero de café",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Espresso Machine & Equipment",
+          "detail": [
+            "Scale, Toast screen, and iPads plugged in.",
+            "Espresso machine broken down, group heads backflushed, top cleaned, and coffee drain emptied.",
+            "All ceramics/smallware/matcha tools run through sanitizer, dried, and reset.",
+            "Surfaces wiped behind cafe, sink cleaned, and multifold towel dispenser restocked.",
+            "Thorough sweep behind cafe including under equipment.",
+            "Broom and dustpan cleaned."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "closed cafe bar and clean espresso machine"
+            }
+          ]
+        },
+        {
+          "title": "Fridge Restock Complete",
+          "detail": [
+            "Reach-in top row: 2 rows tonic, 1 row half-and-half, 1 lemon deli, and 2 boxes chai.",
+            "Reach-in bottom row: 1 row whole milk, 2 rows oat milk, and 2 rows alm milk.",
+            "Main fridge top: 4 bottles coco whip, 1 deli simple syrup, 1 deli honey, and 1 row brown sugar / lavender / vanilla / peppermint / orange spice / pear / strawberry.",
+            "Main fridge middle: 3 gallons whole milk, 2 rows oat milk, and 2 rows alm milk.",
+            "Main fridge bottom: coupes and delis."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "fully stocked fridges"
+            }
+          ]
+        },
+        {
+          "title": "Garnish & Bottles",
+          "detail": [
+            "All garnishes cleaned, wrapped, and stored properly in fridge.",
+            "All bottles wiped down and returned to positions."
+          ]
+        },
+        {
+          "title": "Security & Handoff",
+          "detail": [
+            "Liquor secured and cabinets locked if applicable.",
+            "Note left for opener on any 86'd items or issues."
+          ]
+        },
+        {
+          "title": "Ice Well & Pour Spouts",
+          "detail": [
+            "Ice well emptied and cleaned.",
+            "All pour spouts removed, soaked, and cleaned."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean ice well and pour spouts"
+            }
+          ]
+        },
+        {
+          "title": "POS, Trash & Floor",
+          "detail": [
+            "POS terminal wiped and logged out.",
+            "Bar trash out and liner replaced.",
+            "Bar floor swept and mopped."
+          ]
+        },
+        {
+          "title": "Surfaces, Glassware & Sink",
+          "detail": [
+            "Bar top, back bar, and all surfaces cleaned with sanitizer.",
+            "All remaining glassware washed and polished.",
+            "Bar sink emptied and cleaned."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean bar surfaces and sink"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Luggage Room & Lobby Tables",
+          "section": "MONTHLY",
+          "detail": [
+            "Luggage room clean, cleared of debris, and organized.",
+            "All lobby tables deep cleaned, checked for wobble, rims scrubbed with green sponge, and bases sanitized."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean luggage room and lobby tables"
+            }
+          ]
+        },
+        {
+          "title": "Cabinets Left & Right of Tap",
+          "section": "MONTHLY",
+          "detail": [
+            "All cabinets left of tap wiped down.",
+            "All cabinets right of tap wiped down."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean cabinets"
+            }
+          ]
+        },
+        {
+          "title": "Shelves Left & Right of Tap",
+          "section": "MONTHLY",
+          "detail": [
+            "All shelves left of tap dusted.",
+            "All shelves right of tap dusted."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean shelves"
+            }
+          ]
+        },
+        {
+          "title": "Lobby Trash & Main Fridge",
+          "section": "MONTHLY",
+          "detail": [
+            "Lobby trashcans deep cleaned, including small countertop trashes.",
+            "Main fridge cleaned and all items checked for expiration."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean lobby trash and main fridge"
+            }
+          ]
+        },
+        {
+          "title": "To-go sleeves and lid tower detailed.",
+          "section": "SATURDAY",
+          "detail": [
+            "Guest-facing cafe items detailed: napkin tray, sugar packet holders, and brown sugar cube containers."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned guest-facing cafe items"
+            }
+          ]
+        },
+        {
+          "title": "All floor drains behind cafe scrubbed with brush and bleach.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned floor drains"
+            }
+          ]
+        },
+        {
+          "title": "All cups and saucers removed from top of espresso machine.",
+          "section": "FRIDAY",
+          "detail": [
+            "Espresso machine deep cleaned."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "deep cleaned espresso machine"
+            }
+          ]
+        },
+        {
+          "title": "Rolling fridge pulled out and space behind cleaned.",
+          "section": "WEDNESDAY",
+          "detail": [
+            "Interior of both fridges deep cleaned."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned fridges"
+            }
+          ]
+        },
+        {
+          "title": "Two back cafe shelves, including tea container shelves, dusted.",
+          "section": "THURSDAY",
+          "detail": [
+            "All upper and lower cabinets deep cleaned, including cabinet knobs."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned shelves and cabinets"
+            }
+          ]
+        },
+        {
+          "title": "Hand washing sink deep cleaned with wire scrubby.",
+          "section": "TUESDAY",
+          "detail": [
+            "Cabinet underneath sink cleaned and replenished: 2 paper towels, 1 bag napkins, 1 case trash can liners, and 2 boxes coasters (no ice buckets)."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned sink and restocked cabinet"
+            }
+          ]
+        },
+        {
+          "title": "All five cafe trash cans detailed, including 3 black and 2 gold.",
+          "section": "SUNDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cleaned trash cans"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Front desk",
+      "role_es": "Recepción",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Lobby Volume & Lighting Set for the Day",
+          "detail": [
+            "Ambiance music on, volume set to 34 (lobby spec).",
+            "All lobby lights on, set to daytime mode.",
+            "All room lights off in unoccupied rooms, front desk verified."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lobby lit and set for the day"
+            }
+          ]
+        },
+        {
+          "title": "Front Desk & Comms",
+          "detail": [
+            "Desk clear of clutter, L&F items and packages to office.",
+            "Touched base with overnight crew for pass-ons and guest issues.",
+            "Checked in with phone operators for special guests and events.",
+            "Reviewed arrivals and BEO folder for the day.",
+            "Touched base with housekeeping for room refreshments and service."
+          ]
+        },
+        {
+          "title": "Lobby Cocktail Table Lamps",
+          "detail": [
+            "Ensure table lamps are wiped with a micro fiber towel",
+            "Should be dirt and smudge free"
+          ]
+        },
+        {
+          "title": "Cigar Box",
+          "detail": [
+            "Ensure Cigar box is stocked with cigars",
+            "Cigar Boxed locked (and at all times)",
+            "Have a cigar cutter",
+            "Have cigar matches for guest to take"
+          ]
+        },
+        {
+          "title": "Supply Cart",
+          "detail": [
+            "Ensure this well organized and clutter free",
+            "Ensure all tech is connected and charging accordingly"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The supply cart organized and clutter-free"
+            }
+          ]
+        },
+        {
+          "title": "Lobby Book Shelves",
+          "detail": [
+            "Dust entire shelves",
+            "Wipe down counters",
+            "Ensure everything is organized"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lobby book shelves dusted and organized"
+            }
+          ]
+        },
+        {
+          "title": "Scent Machine",
+          "detail": [
+            "Check lobby and F.E machines",
+            "Ensure the scent machine has enough scent oil, if not replace with a new cannister",
+            "Ensure machine is working properly"
+          ]
+        },
+        {
+          "title": "Reservation Comms",
+          "detail": [
+            "Late check-out times modified on Stayntouch as needed.",
+            "Room moves and back-to-back reservations communicated to housekeeping."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Front desk",
+      "role_es": "Recepción",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Admin & Reporting",
+          "detail": [
+            "Phone office cleaned, and food and trash taken out.",
+            "Arrivals report run to set up Expedia's room and tax.",
+            "Newsletter completed, glitch report updated, and action items created.",
+            "End-of-shift update created and overnight report sent to mgmt team if needed."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "completed newsletter and glitch report"
+            }
+          ]
+        },
+        {
+          "title": "Barista Tasks",
+          "detail": [
+            "Dish pit checked, and dishes ran at lobby bar.",
+            "Ice bins burned off with hot water and sanitize wiped.",
+            "Used microfibers to dirty hamper, and new microfibers restocked in cabinet.",
+            "Mineragua and tonic water restocked in back up fridge.",
+            "All green cabinet exteriors sprayed and wiped.",
+            "Tea bag quantities checked (5 of each).",
+            "All trash cans cleaned and sanitized.",
+            "Simple syrup checked, and more made as needed.",
+            "Pastries restocked and waste log updated."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cafe bar ready for AM"
+            }
+          ]
+        },
+        {
+          "title": "Floor & Space Walkthroughs",
+          "detail": [
+            "Walked all FOH sections to confirm staffing and relays.",
+            "Checked in with valet and offered assistance if overwhelmed.",
+            "Walked all lobby areas: cleanliness and maintenance standards met, and discrepancies reported.",
+            "Tables cleared of glassware and helped lobby bar return glassware from other locations.",
+            "Lobby table feet checked and adjusted for stability.",
+            "Grounds checked throughout night: pool, hallways, bathrooms, and office."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean lobby and grounds spot check"
+            }
+          ]
+        },
+        {
+          "title": "Comms & Desk Reset",
+          "detail": [
+            "Signed weekly news sheet.",
+            "Desk clear of clutter, L&F and packages to office."
+          ]
+        },
+        {
+          "title": "Guest Comms & Departures",
+          "detail": [
+            "All departures checked out and notes left on 'open balance' reservations.",
+            "Room moves, back-to-backs, early departures and extensions communicated to housekeeping and noted on each reservation.",
+            "Before 4PM: queued guests texted about room ready status."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Front desk",
+      "role_es": "Recepción",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Cash, Admin, & Comms",
+          "detail": [
+            "L&F items and packages to office.",
+            "Checks closed, comps/voids reviewed with MOD, cash tips consolidated.",
+            "Screens wiped using screen cleaner, printer wiped damp, no stickiness.",
+            "Pet fee and laundry forms verified, charged, and initialed; forms older than 1 week discarded.",
+            "Phone ops checked for maintenance, lobby attendant on site, and requests communicated.",
+            "Overnight pass-on notes taken, including maintenance issues, challenging rooms, etc."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "closing report and cash drop"
+            }
+          ]
+        },
+        {
+          "title": "Shift Change Handoff",
+          "detail": [
+            "Coverage arrival confirmed and pertinent info communicated."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lobby lead",
+      "role_es": "Encargado de lobby",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Clock-In & Systems Ready",
+          "detail": [
+            "Clocked in, in uniform",
+            "Logged into Zingle + Stayntouch.",
+            "Signed weekly news sheet."
+          ]
+        },
+        {
+          "title": "Cafe Bar Setup",
+          "detail": [
+            "Tap covers removed from spro/cold brew lines, soaked in warm water.",
+            "Bar set up: syrups (vanilla, lavender, honey, brown sugar, pear, peppermint, and orange spice), pitchers (1 large and 1 small), stirring spoons (1 tall and 1 short), and rags (knock box, steam wand, and wiping).",
+            "Cafe countertops and espresso machine sanitized.",
+            "Espresso dialed in: 17g ground produces 30g pull in 24-30 sec."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cafe bar set to spec and espresso dial-in shot"
+            }
+          ]
+        },
+        {
+          "title": "Tables Set for Service",
+          "detail": [
+            "All tables wiped down.",
+            "Tables in correct position per floor plan.",
+            "Chairs wiped down (seats, backs, and legs).",
+            "Table tops wiped.",
+            "Table bases cleaned with microfiber (no footprints, no debris).",
+            "Cafe tables reset.",
+            "Coffee container filled.",
+            "Coffee station tools present (tamp, scales, and distributor).",
+            "Place settings complete.",
+            "Cafe lights on, set to daytime.",
+            "Music on, volume set per daytime spec."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "wide shot of cafe showing tables set and clean"
+            }
+          ]
+        },
+        {
+          "title": "Front Desk & Comms",
+          "detail": [
+            "Desk clear of clutter, L&F items and packages to office.",
+            "Touched base with overnight crew for pass-ons and guest issues.",
+            "Checked in with phone operators for special guests and events.",
+            "Reviewed arrivals and BEO folder for the day.",
+            "Touched base with housekeeping for room refreshments and service."
+          ]
+        },
+        {
+          "title": "Reservation Comms",
+          "detail": [
+            "Late check-out times modified on Stayntouch as needed.",
+            "Room moves and back-to-back reservations communicated to housekeeping."
+          ]
+        },
+        {
+          "title": "Cafe Space Prep",
+          "detail": [
+            "Lobby tables stable, tops and bases sanitized.",
+            "Floors swept behind the cafe.",
+            "Pastry display cleaned with glass cleaner.",
+            "Sanitizer bucket and spray bottles filled (multi-quat).",
+            "Floor drains under cafe free of debris.",
+            "Luggage room clean, cleared, leftover luggage noted."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cafe space ready for service"
+            }
+          ]
+        },
+        {
+          "title": "Stock Levels & Dry Goods",
+          "detail": [
+            "Bottom row of fridge: 3 rows of coupes.",
+            "Ice well filled (low ice issues noted to mgmt).",
+            "Fridge stocked: milk/alt milks, syrups, teas.",
+            "Dry goods stocked: napkins, to-go supplies, lids, and cups."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "stocked fridge and dry goods"
+            }
+          ]
+        },
+        {
+          "title": "Inventory",
+          "detail": [
+            "Is there enough ice in the machine?"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lobby lead",
+      "role_es": "Encargado de lobby",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Splash Zone Set-Up",
+          "detail": [
+            "I ensured the splash station was properly set-up with glassware and bubbles.",
+            "I alerted the MOD/Cafe Bar if we needed any restocking from storage or the wine room."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Completed Set-Up"
+            }
+          ]
+        },
+        {
+          "title": "Cafe Restock & Espresso Reset",
+          "detail": [
+            "Cups, lids, straws, sugars, and napkins restocked.",
+            "Mid-day espresso machine water flush and coffee bar reset.",
+            "All surfaces wiped after check-out rush (no stickiness).",
+            "Mid-day trash run and ice well refilled."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "reset cafe bar"
+            }
+          ]
+        },
+        {
+          "title": "Comms & Desk Reset",
+          "detail": [
+            "Signed weekly news sheet.",
+            "Desk clear of clutter, L&F and packages to office."
+          ]
+        },
+        {
+          "title": "Guest Comms & Departures",
+          "detail": [
+            "All departures checked out and notes left on 'open balance' reservations.",
+            "Room moves, back-to-backs, early departures and extensions communicated to housekeeping and noted on each reservation.",
+            "Before 4PM: queued guests texted about room ready status."
+          ]
+        },
+        {
+          "title": "Reach-In Fridge to Par",
+          "detail": [
+            "Top row: 2 rows tonic, 1 row half-and-half, 1 deli lemons, 2 boxes chai.",
+            "Bottom row: 1 row whole milk, 2 rows oat milk, 2 rows alm milk."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "stocked reach-in fridge"
+            }
+          ]
+        },
+        {
+          "title": "Ambiance Check 4 PM",
+          "detail": [
+            "Lights dimmed by 4PM.",
+            "Candles lit: above fireplace, lobby tabletops, and front desk.",
+            "Fireplace on (24 hrs)."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "4 PM ambiance set"
+            }
+          ]
+        },
+        {
+          "title": "Prep & Support Tasks",
+          "detail": [
+            "Clean glassware retrieved from other venues and returned to correct location.",
+            "Prep list: syrup levels, syrup/mocha bottles, iced teas, and chai (more retrieved to par).",
+            "Toast printer wiped (no stickiness).",
+            "Luggage tags assembled.",
+            "To-go cups stamped.",
+            "IFS order put away, leader notified of missing items.",
+            "Wet floors checked and dried at the source."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lobby lead",
+      "role_es": "Encargado de lobby",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Cash, Admin, & Comms",
+          "detail": [
+            "L&F items and packages to office.",
+            "Checks closed, comps/voids reviewed with MOD, cash tips consolidated.",
+            "Screens wiped using screen cleaner, printer wiped damp, no stickiness.",
+            "Pet fee and laundry forms verified, charged, and initialed; forms older than 1 week discarded.",
+            "Phone ops checked for maintenance, lobby attendant on site, and requests communicated.",
+            "Overnight pass-on notes taken, including maintenance issues, challenging rooms, etc."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "closing report and cash drop"
+            }
+          ]
+        },
+        {
+          "title": "Fridge Restock Complete",
+          "detail": [
+            "Reach-in top row: 2 rows tonic, 1 row half-and-half, 1 lemon deli, and 2 boxes chai.",
+            "Reach-in bottom row: 1 row whole milk, 2 rows oat milk, and 2 rows alm milk.",
+            "Main fridge top: 4 bottles coco whip, 1 deli simple syrup, 1 deli honey, and 1 row brown sugar / lavender / vanilla / peppermint / orange spice / pear / strawberry.",
+            "Main fridge middle: 3 gallons whole milk, 2 rows oat milk, and 2 rows alm milk.",
+            "Main fridge bottom: coupes and delis."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "fully stocked fridges"
+            }
+          ]
+        },
+        {
+          "title": "Bar Handoff & Smallware",
+          "detail": [
+            "Smallware cleaned, cold brew and pour-over drip trays broken down and cleaned.",
+            "Cups, lids, straws, sugars, and napkins restocked.",
+            "Front and back lobby tables bussed and wiped within 2 min of guest departure.",
+            "Glassware returned to bar on tray, no dirty glassware left more than 5 min."
+          ]
+        },
+        {
+          "title": "Pre-Close Comms & Prep",
+          "detail": [
+            "Signed weekly news sheet.",
+            "10 tea bags of each tea filled and V60 tubes pre-dosed.",
+            "Trash and recycling emptied to appropriate dumpsters, including cafe and bar."
+          ]
+        },
+        {
+          "title": "Last 15 Min Sidework",
+          "detail": [
+            "Ice well refilled.",
+            "All three trash cans checked and emptied.",
+            "Cafe surfaces wiped, no stickiness.",
+            "Reach-in fridge topped up.",
+            "Final bussing run in front and back lobby.",
+            "Main fridge checked for items to pull from downstairs walk-in and restocked.",
+            "Checked in with bar for any final assistance."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "completed sidework"
+            }
+          ]
+        },
+        {
+          "title": "Bar Team Check-In & Recap",
+          "detail": [
+            "Checked in with lobby bar team before clocking out.",
+            "Picture of all day-part checklists sent to lobby/cafe chat.",
+            "Recap of highlights and supplies needed sent to chat."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "completed checklists"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Overnight lobby host",
+      "role_es": "Anfitrión nocturno de lobby",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Clock-In & Comms",
+          "detail": [
+            "Clocked in, in uniform, logged into Zingle and Stayntouch, and earpiece and radio on.",
+            "Pertinent info retrieved from mgmt and PM Host.",
+            "Checked in with PM barista on remaining coffee bar tasks.",
+            "Remaining arrivals for the day reviewed."
+          ]
+        },
+        {
+          "title": "Lobby Volume & Lighting",
+          "detail": [
+            "Ambiance music on, volume set per daytime spec.",
+            "All lobby lights on, set to daytime mode."
+          ]
+        },
+        {
+          "title": "Lobby Volume & Lighting Set for the Day",
+          "detail": [
+            "Ambiance music on, volume set to 34 (lobby spec).",
+            "All lobby lights on, set to daytime mode.",
+            "All room lights off in unoccupied rooms, front desk verified."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The lobby lit and set for the day"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Overnight lobby host",
+      "role_es": "Anfitrión nocturno de lobby",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Admin & Reporting",
+          "detail": [
+            "Phone office cleaned, and food and trash taken out.",
+            "Arrivals report run to set up Expedia's room and tax.",
+            "Newsletter completed, glitch report updated, and action items created.",
+            "End-of-shift update created and overnight report sent to mgmt team if needed."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "completed newsletter and glitch report"
+            }
+          ]
+        },
+        {
+          "title": "Ambience Control",
+          "detail": [
+            "Pool patio lights off and cleared of people no later than 11PM.",
+            "Candles blown out in lobby by 1AM, pool patio by 11PM, and candle fluid refilled when out.",
+            "Music playlist changed by 2AM, lowered at midnight, and restored to 'light' setting at 6AM.",
+            "Break taken before 5HR mark if scheduled 6+ HRs."
+          ]
+        },
+        {
+          "title": "Barista Tasks",
+          "detail": [
+            "Dish pit checked, and dishes ran at lobby bar.",
+            "Ice bins burned off with hot water and sanitize wiped.",
+            "Used microfibers to dirty hamper, and new microfibers restocked in cabinet.",
+            "Mineragua and tonic water restocked in back up fridge.",
+            "All green cabinet exteriors sprayed and wiped.",
+            "Tea bag quantities checked (5 of each).",
+            "All trash cans cleaned and sanitized.",
+            "Simple syrup checked, and more made as needed.",
+            "Pastries restocked and waste log updated."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "cafe bar ready for AM"
+            }
+          ]
+        },
+        {
+          "title": "Reservations & Billing",
+          "detail": [
+            "Stay extensions explained via Lafa website, and upsell opportunities offered.",
+            "Valet charges cross-referenced with parking log before house rolls.",
+            "House rolled at 3:30AM.",
+            "No-shows charged for one night.",
+            "Credit Check Report: CCs authorized $100 over invoice, 'Checked Out With Balance' tab addressed, and remaining balances charged."
+          ]
+        },
+        {
+          "title": "Floor & Space Walkthroughs",
+          "detail": [
+            "Walked all FOH sections to confirm staffing and relays.",
+            "Checked in with valet and offered assistance if overwhelmed.",
+            "Walked all lobby areas: cleanliness and maintenance standards met, and discrepancies reported.",
+            "Tables cleared of glassware and helped lobby bar return glassware from other locations.",
+            "Lobby table feet checked and adjusted for stability.",
+            "Grounds checked throughout night: pool, hallways, bathrooms, and office."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "clean lobby and grounds spot check"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Overnight lobby host",
+      "role_es": "Anfitrión nocturno de lobby",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Shift Change Handoff",
+          "detail": [
+            "Coverage arrival confirmed and pertinent info communicated."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Valet",
+      "role_es": "Valet",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Key cabinet is organized.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The key cabinet organized, keys in order"
+            }
+          ]
+        },
+        {
+          "title": "All keys are accounted for."
+        },
+        {
+          "title": "Valet tickets are stocked (overnight + daily)."
+        },
+        {
+          "title": "Key rings are stocked."
+        },
+        {
+          "title": "Pens and clipboard are ready."
+        },
+        {
+          "title": "Cones & signage are in place.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cones and signage in place"
+            }
+          ]
+        },
+        {
+          "title": "Podium is clean.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The valet podium clean and set"
+            }
+          ]
+        },
+        {
+          "title": "Credit card terminal is working (test transaction if applicable)."
+        },
+        {
+          "title": "Stapler, tape, hole puncher are on hand."
+        },
+        {
+          "title": "Overnight valet tracking paper, for charges, is stocked."
+        },
+        {
+          "title": "Rubber bands are stocked."
+        },
+        {
+          "title": "Record Daily Vehicles in Valet count.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Record Daily Vehicles in Valet count."
+            }
+          ]
+        },
+        {
+          "title": "Record Overnight Vehicles count.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Record Overnight Vehicles count."
+            }
+          ]
+        },
+        {
+          "title": "Opening notes documented."
+        },
+        {
+          "title": "Valet Staff signature on opening log."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Valet",
+      "role_es": "Valet",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Every vehicle logged in with correct ticket number."
+        },
+        {
+          "title": "Guest ticket matched to key tag before releasing any vehicle."
+        },
+        {
+          "title": "All Keys in cabinet are in numerical order"
+        },
+        {
+          "title": "Overnight charges recorded on tracking paper as they occur."
+        },
+        {
+          "title": "Cones and signage remain in place and visible."
+        },
+        {
+          "title": "Podium kept tidy and organized.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The valet podium tidy and organized"
+            }
+          ]
+        },
+        {
+          "title": "Cones & signage are in place."
+        },
+        {
+          "title": "Tickets, pens, and supplies restocked if running low mid-shift."
+        },
+        {
+          "title": "Podium is clean."
+        },
+        {
+          "title": "Any vehicle damage noted and reported immediately at check-in."
+        },
+        {
+          "title": "Credit card charges processed accurately, receipts retained."
+        },
+        {
+          "title": "VIP or notable arrivals flagged to front desk/management."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Valet",
+      "role_es": "Valet",
+      "phase": "close",
+      "items": [
+        {
+          "title": "All active vehicles reconciled against tickets issued."
+        },
+        {
+          "title": "Key cabinet locked and organized for next shift.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The key cabinet locked and organized"
+            }
+          ]
+        },
+        {
+          "title": "Overnight vehicles logged and tagged correctly."
+        },
+        {
+          "title": "Cash/credit charges reconciled and submitted."
+        },
+        {
+          "title": "Podium and valet area cleaned.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The valet podium and area cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Supplies inventoried for next opening (tickets, pens, tape, key rings, etc.)."
+        },
+        {
+          "title": "Cones & signage stored properly (if not left overnight)."
+        },
+        {
+          "title": "Closing notes documented."
+        },
+        {
+          "title": "Valet Staff signature on closing log."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Housekeeper",
+      "role_es": "Camarista",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Mini bar spirits checked and restocked; any missing, opened, or used bottles logged for charges.",
+          "title_es": "Revisé y reabastecí los licores del minibar; registré las botellas faltantes, abiertas o usadas para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar spirits shelf/tray, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Mini bar snacks checked and restocked; any missing, used, or opened items logged for charges.",
+          "title_es": "Revisé y reabastecí los snacks del minibar; registré los faltantes, usados o abiertos para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar snack shelf/basket, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Mini bar beverages checked and restocked; any missing, used, or opened items logged for charges.",
+          "title_es": "Revisé y reabastecí las bebidas del minibar; registré las faltantes, usadas o abiertas para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar beverage shelf/fridge, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Mini bar wellness products checked and restocked; any missing, used, or opened items logged for charges.",
+          "title_es": "Revisé y reabastecí los productos de bienestar del minibar; registré los faltantes, usados o abiertos para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar wellness shelf/basket, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Mini bar wine checked and restocked; any bottles missing, opened, or used below the fill line logged for charges.",
+          "title_es": "Revisé y reabastecí el vino del minibar; registré las botellas faltantes, abiertas o por debajo de la línea de llenado para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar wine rack/storage, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Mini bar beer checked and restocked; any missing, opened, or used bottles logged for charges.",
+          "title_es": "Revisé y reabastecí las cervezas del minibar; registré las faltantes, abiertas o usadas para los cargos.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full mini bar beer shelf/fridge, stocked"
+            }
+          ]
+        },
+        {
+          "title": "All personal care products stocked.",
+          "title_es": "Reabastecí todos los productos de cuidado personal.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The full personal care basket/drawer, stocked"
+            }
+          ]
+        },
+        {
+          "title": "Electronics",
+          "title_es": "Electrónicos",
+          "detail": [
+            "Hair Dryer: present, plugged in, powers on.",
+            "Hair Dryer Bag: present, clean, hair dryer stored inside.",
+            "Steamer: present, powers on.",
+            "Steamer Bag: present, clean, steamer stored inside.",
+            "Tivoli Radio: present, plugged in, powers on.",
+            "Lamps on Tables: present, each bulb works.",
+            "Coffee Machine: present, clean, powers on.",
+            "TV: powers on, displays picture.",
+            "TV Remote: present, controls TV."
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Any electronics missing or not working"
+            }
+          ]
+        },
+        {
+          "title": "Furnishings",
+          "title_es": "Mobiliario",
+          "detail": [
+            "Ear Plugs: present, sealed.",
+            "Instant Coffee Crystal Jars: present, clean, stocked.",
+            "Water Glasses: both present, clean, spot-free.",
+            "Coasters: present under/with water glasses.",
+            "Side Table: clean, undamaged.",
+            "Couch: clean, cushions straightened, stain-free, undamaged.",
+            "Stationery Table: present, clean, neatly arranged.",
+            "Do Not Disturb w/ Blue Tassel: near/on door, blue tassel attached.",
+            "Hangers: standard number present."
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Any furnishings missing or damaged"
+            }
+          ]
+        },
+        {
+          "title": "Room & Furnishings",
+          "title_es": "Habitación y mobiliario",
+          "detail": [
+            "Full room confirmation."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "one photo of full room/electronics area"
+            }
+          ]
+        },
+        {
+          "title": "Table Stationary",
+          "title_es": "Papelería de mesa",
+          "detail": [
+            "Compendium: present, clean, pages intact/undamaged.",
+            "Stationery with Guest Names: present, guest name correct and spelled correctly.",
+            "Envelope: present, unused.",
+            "Pen: present, writes when tested.",
+            "Business Card: present, good condition."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Full Stationary Set"
+            }
+          ]
+        },
+        {
+          "title": "Bathroom",
+          "title_es": "Baño",
+          "detail": [
+            "Hand Soap: present, at least half full.",
+            "Lotion: present, at least half full.",
+            "Shampoo: present, at least half full.",
+            "Conditioner: present, at least half full.",
+            "Body Wash: present, at least half full.",
+            "Hand Towels: present, clean, neatly folded/hung.",
+            "Bathmats: present, clean, laid flat.",
+            "Towels: full set present, clean, neatly folded/hung.",
+            "Pool Towels (rooms w/ bathtub): present, neatly folded.",
+            "Bathrobes x2: both present, clean, hung.",
+            "Laundry Bags: present, unused."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Full Bathroom"
+            }
+          ]
+        },
+        {
+          "title": "Cocktail Fruit",
+          "title_es": "Fruta para cócteles",
+          "detail": [
+            "Lemons x2: both present, fresh, no bruising/mold.",
+            "Orange: present, fresh.",
+            "Limes x2: both present, fresh.",
+            "Grapefruit: present, fresh."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Full fruit bowl/tray"
+            }
+          ]
+        },
+        {
+          "title": "Mini Bar Stationary",
+          "title_es": "Papelería del minibar",
+          "detail": [
+            "Negroni Card: present, good condition, no tears/stains.",
+            "Old Fashion Card: present, good condition.",
+            "Caipirinha Card: present, good condition.",
+            "Cafe Royale Card: present, good condition.",
+            "Mini Bar Menu: present, good condition.",
+            "Giants Art Book: present, displayed.",
+            "Champagne Bucket: present, clean, dry."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "On “Yes”, full display"
+            }
+          ]
+        },
+        {
+          "title": "Mini Bar Tools",
+          "title_es": "Herramientas del minibar",
+          "detail": [
+            "Stir Sticks x2: both present, clean.",
+            "Wine Opener: present, functional.",
+            "Cutting Board: present, clean.",
+            "Cocktail Shaker: present, clean.",
+            "Bottle Opener: present, functional.",
+            "Jigger: present, clean.",
+            "Muddler: present, clean.",
+            "Citrus Juicer: present, clean."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "On “Yes”, full tool set"
+            }
+          ]
+        },
+        {
+          "title": "Bar Glasses",
+          "title_es": "Cristalería del bar",
+          "detail": [
+            "Wine Glasses x2: both present, clean, spot-free, chip-free.",
+            "Rock Glasses x2: both present, clean, spot-free, chip-free.",
+            "Sherry Glasses x2: both present, clean, spot-free, chip-free.",
+            "Collins Glasses x2: both present, clean, spot-free, chip-free.",
+            "BG Glasses x2: both present, clean, spot-free, chip-free."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "On “Yes”, full glassware set"
+            }
+          ]
+        },
+        {
+          "title": "Ambiance",
+          "title_es": "Ambiente",
+          "detail": [
+            "Bathroom Doors: open.",
+            "Curtains: fully open.",
+            "Custom Scent: activated/applied.",
+            "Room Lights: all on.",
+            "Shell Light: on, working.",
+            "Mirrors: streak-free, smudge-free.",
+            "Brass Fixtures: streak-free, fingerprint-free.",
+            "Toilet Paper w/ Ribbon: present, fresh, folded/tied with ribbon."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Full room photo of the overall ambience"
+            }
+          ]
+        },
+        {
+          "title": "Room Number & Wall Hangings",
+          "title_es": "Número de habitación y cuadros",
+          "detail": [
+            "Ensure all are dust free",
+            "All are wiped and polished"
+          ]
+        },
+        {
+          "title": "Monday - Run Shower Drains for 2 minutes",
+          "title_es": "Lunes - Dejar correr los desagües de la regadera 2 minutos",
+          "detail": [
+            "Run shower drain in room 101",
+            "Run shower drain in room 102",
+            "Run shower drain in room 103",
+            "Run shower drain in room 104",
+            "Run shower drain in room 105",
+            "Run shower drain in room 106",
+            "Run shower drain in room 107",
+            "Run shower drain in room 108",
+            "Run shower drain in room 109",
+            "Run shower drain in room 110",
+            "Run shower drain in room 111",
+            "Run shower drain in room 112",
+            "Run shower drain in room 113",
+            "Run shower drain in room 114"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Housekeeping supervisor",
+      "role_es": "Supervisor de limpieza",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Preliminaries",
+          "title_es": "Preliminares",
+          "detail": [
+            "Open the house according to total rooms sold or based on credits.",
+            "Clocked in, in uniform, earpiece and radio on and working properly.",
+            "Read email for updates, passdowns, meetings, or events for the day.",
+            "Conduct daily team meeting, including subject of the day and warm-up exercise."
+          ]
+        },
+        {
+          "title": "Supplies & Linens",
+          "title_es": "Suministros y blancos",
+          "detail": [
+            "Ensure all housekeepers have enough supplies and linens to start the day."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Sufficient amount of supplies and linens"
+            }
+          ]
+        },
+        {
+          "title": "Premises Check",
+          "title_es": "Revisión de instalaciones",
+          "detail": [
+            "Conduct a property walk.",
+            "Confirm all public areas, corridors, and restrooms are clean and fully stocked."
+          ]
+        },
+        {
+          "title": "Departure",
+          "title_es": "Salida",
+          "detail": [
+            "By departure time, ensure all rooms are cleaned, inspected, and updated in the system.",
+            "Run and complete a departure report after corroboration.",
+            "Return an updated copy of the departure report to Front Desk."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Updated departure report"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Housekeeping supervisor",
+      "role_es": "Supervisor de limpieza",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Select the vacant rooms that require stripping and cleaning:",
+          "title_es": "Seleccione las habitaciones vacías que requieren deshacer y limpiar"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Houseperson",
+      "role_es": "Mozo de limpieza",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Open",
+          "title_es": "Apertura",
+          "detail": [
+            "Clocked in, in uniform, radio and earpiece on and working properly.",
+            "Checking in with all Room Attendants and reviewing their boards for the day.",
+            "Continuously checking Room Attendant bags, removing trash, retrieving linen, and stocking commonly-needed amenities.",
+            "Ready to deliver guest requests to their rooms within 15 minutes.",
+            "Assisting with any special projects assigned by supervisor"
+          ]
+        },
+        {
+          "title": "Closet",
+          "title_es": "Clóset",
+          "detail": [
+            "Informing leadership of closet items running low so they can be restocked."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Closet Items"
+            }
+          ]
+        },
+        {
+          "title": "Linen & Laundry",
+          "title_es": "Blancos y lavandería",
+          "detail": [
+            "Restocking linen and laundry whenever levels run low."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Linen & Laundry Stocked"
+            }
+          ]
+        },
+        {
+          "title": "Public Areas",
+          "title_es": "Áreas públicas",
+          "detail": [
+            "Guest corridors, stairs, and stairwells clean and swept"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean and swept spaces"
+            }
+          ]
+        },
+        {
+          "title": "Trash",
+          "title_es": "Basura",
+          "detail": [
+            "All trash disposed of in the designated area by end of shift."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Disposed Trash"
+            }
+          ]
+        },
+        {
+          "title": "Room Attendant Bags",
+          "title_es": "Bolsas de camarista",
+          "detail": [
+            "All Room Attendant bags emptied and restock any cleaning products for the next shift."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bags and cleaning products"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Houseperson",
+      "role_es": "Mozo de limpieza",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "BED",
+          "title_es": "CAMA",
+          "detail": [
+            "No rips or tears in linen, not wrinkled, in clean condition. Baby Grand hotel logo facing the upright direction."
+          ]
+        },
+        {
+          "title": "BATHROOM",
+          "title_es": "BAÑO",
+          "detail": [
+            "Clean, no hair or dust; new, clean, fresh terry; all amenities clean and filled to an appropriate level; everything in working order."
+          ]
+        },
+        {
+          "title": "FLOORS",
+          "title_es": "PISOS",
+          "detail": [
+            "No scuffs or damage, no stains, properly swept/mopped and free of dust."
+          ]
+        },
+        {
+          "title": "WINDOWS",
+          "title_es": "VENTANAS",
+          "detail": [
+            "No visible fingerprints, window clean and clear, opens and closes properly."
+          ]
+        },
+        {
+          "title": "CURTAINS",
+          "title_es": "CORTINAS",
+          "detail": [
+            "No stains or rips visible; check behind and underneath for anything a guest may have left behind."
+          ]
+        },
+        {
+          "title": "TV",
+          "title_es": "TELEVISIÓN",
+          "detail": [
+            "Clear of fingerprints and dust, in working order."
+          ]
+        },
+        {
+          "title": "MIRROR",
+          "title_es": "ESPEJO",
+          "detail": [
+            "Clear of fingerprints and dust."
+          ]
+        },
+        {
+          "title": "MINI BAR",
+          "title_es": "MINIBAR",
+          "detail": [
+            "Clean and stocked; mini-bar attendant notified if not stocked; nothing used or opened in the refrigerator."
+          ]
+        },
+        {
+          "title": "MINI FRIDGE",
+          "title_es": "MINI REFRIGERADOR",
+          "detail": [
+            "Clean and stocked; mini-bar attendant notified if not stocked; nothing used or opened in the refrigerator."
+          ]
+        },
+        {
+          "title": "EVIDENCE OF PREVIOUS HUMANS",
+          "title_es": "RASTROS DE HUÉSPEDES ANTERIORES",
+          "detail": [
+            "Room feels as though no guest has ever resided in it before; check all areas for anything a guest may have left or hidden."
+          ]
+        },
+        {
+          "title": "Room List",
+          "title_es": "Lista de habitaciones",
+          "detail": [
+            "Get the vacant or dirty room list from supervisors.",
+            "Update throughout the day."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Updated list"
+            }
+          ]
+        },
+        {
+          "title": "Closets",
+          "title_es": "Clósets",
+          "detail": [
+            "Ensure all closets are properly restocked and clean.",
+            "Monitor throughout the day."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Restocked and clean closet"
+            }
+          ]
+        },
+        {
+          "title": "Rooms & Linens",
+          "title_es": "Habitaciones y blancos",
+          "detail": [
+            "Strip vacant rooms as directed by Housekeeping.",
+            "Take dirty linen to the laundry room."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Stripped rooms and dirty linens"
+            }
+          ]
+        },
+        {
+          "title": "Hallways & Rooms",
+          "title_es": "Pasillos y habitaciones",
+          "detail": [
+            "Keep all hallways and rooms swept, mopped, and presentable."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Swept and mopped hallways"
+            }
+          ]
+        },
+        {
+          "title": "Stairways",
+          "title_es": "Escaleras",
+          "detail": [
+            "Check stairways to make sure they are clean and free of dust."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean stairways"
+            }
+          ]
+        },
+        {
+          "title": "Trash",
+          "title_es": "Basura",
+          "detail": [
+            "Remove all trash from assigned floors and any storage areas.",
+            "Continuously remove trash from housekeeper carts."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Removed trash from housekeeper carts"
+            }
+          ]
+        },
+        {
+          "title": "Monday - Run Shower Drains for 2 minutes",
+          "title_es": "Lunes - Dejar correr los desagües de la regadera 2 minutos",
+          "detail": [
+            "Run shower drain in room 200",
+            "Run shower drain in room 201",
+            "Run shower drain in room 202",
+            "Run shower drain in room 203",
+            "Run shower drain in room 204",
+            "Run shower drain in room 205",
+            "Run shower drain in room 206",
+            "Run shower drain in room 207",
+            "Run shower drain in room 208",
+            "Run shower drain in room 209",
+            "Run shower drain in room 210",
+            "Run shower drain in room 211",
+            "Run shower drain in room 213",
+            "Run shower drain in room 214"
+          ]
+        },
+        {
+          "title": "Housekeeping Bags",
+          "title_es": "Bolsas de limpieza",
+          "detail": [
+            "Remove all trash, dirty rags, and dirty linen.",
+            "Bring all to the laundry area"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All trash, dirty rags, and dirty linen"
+            }
+          ]
+        },
+        {
+          "title": "Hosekeeping Closets",
+          "title_es": "Clósets de limpieza",
+          "detail": [
+            "Maintain all housekeeping closets clean and organized"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean and organized closets"
+            }
+          ]
+        },
+        {
+          "title": "Restocking",
+          "title_es": "Reabastecimiento",
+          "detail": [
+            "Restock closets, linen, and supplies.",
+            "Sign the inventory sheet."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Restocked supplies"
+            }
+          ]
+        },
+        {
+          "title": "Vacant Rooms",
+          "title_es": "Habitaciones vacías",
+          "detail": [
+            "Strip any vacant rooms."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Stripped room"
+            }
+          ]
+        },
+        {
+          "title": "Vacuums & Bags",
+          "title_es": "Aspiradoras y bolsas",
+          "detail": [
+            "Clean vacuums.",
+            "Change bags as needed."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean vacuums"
+            }
+          ]
+        },
+        {
+          "title": "Stairs",
+          "title_es": "Escaleras",
+          "detail": [
+            "Sweep, mop, and dust the stairs."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cleaned stairs"
+            }
+          ]
+        },
+        {
+          "title": "Premises Check",
+          "title_es": "Revisión de instalaciones",
+          "detail": [
+            "Walk the property.",
+            "Confirm all hallways, landscaping lights, and lamps are clean."
+          ]
+        },
+        {
+          "title": "Requests & Projects",
+          "title_es": "Solicitudes y proyectos",
+          "detail": [
+            "Own and complete guest requests.",
+            "Complete any other project assigned by the supervisor."
+          ]
+        },
+        {
+          "title": "Chandeliers",
+          "title_es": "Candelabros",
+          "detail": [
+            "Be sure they are clean and free of cobwebs",
+            "Lightbulbs all working, if not replace the lightbulb."
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Public areas",
+      "role_es": "Áreas públicas",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Hallways",
+          "title_es": "Pasillos",
+          "detail": [
+            "Sweep hallway floors.",
+            "Ensure marble baseboards through the corridors are clean and polished."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Swept floors"
+            }
+          ]
+        },
+        {
+          "title": "Floors",
+          "title_es": "Pisos",
+          "detail": [
+            "Mop the floors in the public areas."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Mopped floors"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Public areas",
+      "role_es": "Áreas públicas",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Preliminary Checks",
+          "title_es": "Revisiones preliminares",
+          "detail": [
+            "Clocked in, in uniform, earpiece and radio on and working properly.",
+            "Checked in with all outlets, namely Night Hawk, Fallen Empire, and Café Bar, with the person in charge of each."
+          ]
+        },
+        {
+          "title": "Lobby Restrooms",
+          "title_es": "Baños del lobby",
+          "detail": [
+            "Lobby restrooms are clean and in good, presentable condition."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean and organized restrooms"
+            }
+          ]
+        },
+        {
+          "title": "Hallways",
+          "title_es": "Pasillos",
+          "detail": [
+            "Public hallways are clean and free of trash and dust."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean hallways"
+            }
+          ]
+        },
+        {
+          "title": "Trash Bins",
+          "title_es": "Botes de basura",
+          "detail": [
+            "Replace liners when almost full."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Relined bins"
+            }
+          ]
+        },
+        {
+          "title": "Lagoon",
+          "title_es": "Laguna",
+          "detail": [
+            "Lagoon area clean.",
+            "Towels are available at the lagoon upon guest request."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cleaned lagoon area and stocked towels"
+            }
+          ]
+        },
+        {
+          "title": "Front Driveway",
+          "title_es": "Entrada principal",
+          "detail": [
+            "Front drive free of trash.",
+            "Check planters for cleanliness."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cleaned front drive and planters"
+            }
+          ]
+        },
+        {
+          "title": "Wall Decor",
+          "title_es": "Decoración de pared",
+          "detail": [
+            "Pictures and mirrors are free of dust and fingerprints."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cleaned pictures and mirrors"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Public areas",
+      "role_es": "Áreas públicas",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Floors",
+          "title_es": "Pisos",
+          "detail": [
+            "Sweep the floors in the public areas."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Swept floors"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Room attendant",
+      "role_es": "Camarista de habitaciones",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Bathroom",
+          "title_es": "Baño",
+          "detail": [
+            "Toilet bowl, base and seat scrubbed, no residue.",
+            "Sink and counter wiped, no hair/dust.",
+            "Mirror fingerprint-free.",
+            "Shower walls and glass clean, no soap residue.",
+            "Drain hair-free.",
+            "Tub clean and drained, if applicable.",
+            "Floor swept and mopped, no mildew.",
+            "Fresh towels hung.",
+            "All amenities filled, including soap, shampoo, conditioner, body wash."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "wide shot capturing toilet, sink and shower in one frame"
+            }
+          ]
+        },
+        {
+          "title": "Bedroom",
+          "title_es": "Habitación",
+          "detail": [
+            "Bed made, linens no rips, tears, or wrinkles.",
+            "Logo facing upright direction.",
+            "Pillows and bedding restocked to par.",
+            "Carpet vacuumed.",
+            "Window shades left open for view.",
+            "Windows clean, with no fingerprints.",
+            "TV fingerprint and dust-free.",
+            "Mirrors fingerprint and dust-free.",
+            "Minibar and refrigerator clean, and nothing opened.",
+            "Patio and seating area cushions placed, patio swept, furniture wiped, if applicable."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "wide shot from doorway showing bed and room"
+            }
+          ]
+        },
+        {
+          "title": "Mini Bar Pre Check-In",
+          "title_es": "Minibar antes del check-in",
+          "detail": [
+            "Mini bar confirmed: books, steamers, decanters, coffee.",
+            "Missing items logged and reordered, ticket auto-created."
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "on Yes: mini bar setup pre-arrival"
+            }
+          ]
+        },
+        {
+          "title": "Is everything in good condition and functioning properly?",
+          "title_es": "¿Todo está en buen estado y funcionando correctamente?",
+          "detail": [
+            "Bathroom fixtures.",
+            "No tears, rips, stains on curtains or carpets.",
+            "Windows opening and closing.",
+            "TV working."
+          ]
+        },
+        {
+          "title": "Were any lost items found?",
+          "title_es": "¿Se encontraron objetos perdidos?",
+          "detail": [
+            "Check behind curtains."
+          ]
+        },
+        {
+          "title": "Mark the room marked clean in PMS.",
+          "title_es": "Marcar la habitación como limpia en el PMS."
+        }
+      ]
+    }
+  ]
+}
