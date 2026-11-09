@@ -98,7 +98,7 @@ export function PhotoGrid({
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {photos.map((p) => (
           <span key={p.id} className="relative block">
             {p.isDoc ? (
@@ -147,7 +147,7 @@ export function PhotoGrid({
               <button
                 type="button"
                 onClick={() => setOpen(urlOf(p))}
-                className="block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[6px]"
+                className="block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[10px]"
                 aria-label="View photo larger"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
