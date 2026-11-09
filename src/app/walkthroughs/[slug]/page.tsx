@@ -85,7 +85,11 @@ export default async function PropertyPage({
       open: g.items.filter((i) => i.status !== "signed").length,
       overdue: g.items.filter((i) => i.status === "overdue").length,
     }))
-    .filter((c) => c.open > 0);
+    .filter((c) => c.open > 0)
+    // Biggest pile of work first, so the bars read top to bottom.
+    .sort((a, b) => b.open - a.open);
+  // The longest bar sets the scale the rest are drawn against.
+  const maxDue = Math.max(1, ...dueByCategory.map((c) => c.open));
 
   return (
     <main className="close-flow">
@@ -139,25 +143,37 @@ export default async function PropertyPage({
           {/* The same numbers by category, filling the rest of the band on a
               wide screen and dropping under the dial on a phone. */}
           {dueByCategory.length > 0 ? (
-            <div className="border-divider grid flex-1 grid-cols-2 gap-x-6 gap-y-4 border-t pt-5 sm:grid-cols-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+            <div className="border-divider flex-1 space-y-2.5 border-t pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-8">
               {dueByCategory.map((c) => (
-                <div key={c.category}>
-                  <p className="label text-[11px] text-muted">
+                <div key={c.category} className="flex items-center gap-3">
+                  <span className="label w-28 shrink-0 truncate text-[11px] text-muted">
                     {CATEGORY_BADGE[c.category]}
-                  </p>
-                  <p className="mt-1.5 text-[18px] text-ink tabular-nums leading-none">
-                    {c.open}
-                    <span className="label ml-1 text-[11px] text-muted">
-                      due
-                    </span>
-                  </p>
-                  <p
-                    className={`label mt-1 text-[11px] tabular-nums ${
-                      c.overdue > 0 ? "text-warn" : "text-muted"
-                    }`}
-                  >
-                    {c.overdue > 0 ? `${c.overdue} overdue` : "on time"}
-                  </p>
+                  </span>
+                  {/* Bar length is how much is due; the warn part is how much of
+                      that is overdue. */}
+                  <div className="bg-inset h-2 flex-1 overflow-hidden rounded-full">
+                    <div
+                      className="flex h-full"
+                      style={{ width: `${Math.max((c.open / maxDue) * 100, 4)}%` }}
+                    >
+                      <div
+                        className="h-full bg-warn"
+                        style={{ width: `${(c.overdue / c.open) * 100}%` }}
+                      />
+                      <div
+                        className="bg-ink/55 h-full"
+                        style={{ width: `${((c.open - c.overdue) / c.open) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="label w-20 shrink-0 text-right text-[11px] tabular-nums">
+                    <span className="text-ink">{c.open}</span>
+                    {c.overdue > 0 ? (
+                      <span className="text-warn"> · {c.overdue} late</span>
+                    ) : (
+                      <span className="text-muted"> due</span>
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
