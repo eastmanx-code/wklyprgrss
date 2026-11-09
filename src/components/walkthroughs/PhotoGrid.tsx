@@ -30,10 +30,14 @@ export function PhotoGrid({
   photos,
   onRemove,
   busy,
+  cols = 2,
 }: {
   photos: GridPhoto[];
   onRemove?: (id: string) => void;
   busy?: boolean;
+  /** How many photos across. A photo-led gallery tile wants one big hero;
+      the wide upload/open view wants two. */
+  cols?: 1 | 2;
 }) {
   const [open, setOpen] = useState<string | null>(null);
   const [failed, setFailed] = useState<Set<string>>(new Set());
@@ -98,7 +102,7 @@ export function PhotoGrid({
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className={`grid gap-2.5 ${cols === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
         {photos.map((p) => (
           <span key={p.id} className="relative block">
             {p.isDoc ? (
