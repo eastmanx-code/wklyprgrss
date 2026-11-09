@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { refreshWalkPhotoUrl } from "@/app/walkthroughs/actions";
 
@@ -97,9 +98,9 @@ export function PhotoGrid({
 
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {photos.map((p) => (
-          <span key={p.id} className="relative inline-block">
+          <span key={p.id} className="relative block">
             {p.isDoc ? (
               // A document opens in its own viewer, so it is a link, not an
               // <img> in the lightbox. No auto-resign heal: a lapsed link just
@@ -109,11 +110,11 @@ export function PhotoGrid({
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Open document (PDF)"
-                className="bg-inset text-muted ring-card-border hover:text-ink flex h-16 w-16 flex-col items-center justify-center gap-0.5 rounded-[4px] ring-1"
+                className="bg-inset text-muted ring-card-border hover:text-ink flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-[6px] ring-1"
               >
                 <svg
-                  width="22"
-                  height="22"
+                  width="26"
+                  height="26"
                   viewBox="0 0 24 24"
                   fill="none"
                   aria-hidden="true"
@@ -131,14 +132,14 @@ export function PhotoGrid({
                     strokeLinejoin="round"
                   />
                 </svg>
-                <span className="text-[10px] leading-none">PDF</span>
+                <span className="text-[11px] leading-none">PDF</span>
               </a>
             ) : failed.has(p.id) ? (
               <button
                 type="button"
                 onClick={() => retry(p.id)}
                 disabled={retrying.has(p.id)}
-                className="bg-inset text-muted ring-card-border grid h-16 w-16 place-items-center rounded-[4px] px-1 text-center text-[10px] leading-tight ring-1"
+                className="bg-inset text-muted ring-card-border grid aspect-square w-full place-items-center rounded-[6px] px-2 text-center text-[11px] leading-tight ring-1"
               >
                 {retrying.has(p.id) ? "Loading…" : "Didn’t load · tap to retry"}
               </button>
@@ -146,7 +147,7 @@ export function PhotoGrid({
               <button
                 type="button"
                 onClick={() => setOpen(urlOf(p))}
-                className="block cursor-zoom-in"
+                className="block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[6px]"
                 aria-label="View photo larger"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -155,7 +156,7 @@ export function PhotoGrid({
                   src={urlOf(p)}
                   alt=""
                   onError={() => onImgError(p.id)}
-                  className="h-16 w-16 rounded-[4px] object-cover"
+                  className="h-full w-full object-cover"
                 />
               </button>
             )}
@@ -165,7 +166,7 @@ export function PhotoGrid({
                 onClick={() => onRemove(p.id)}
                 disabled={busy}
                 aria-label="Remove this photo"
-                className="bg-surface text-warn ring-card-border absolute -top-2 -right-2 grid size-5 place-items-center rounded-full text-[13px] leading-none ring-1"
+                className="bg-surface text-warn ring-card-border absolute -top-2 -right-2 grid size-6 place-items-center rounded-full text-[14px] leading-none ring-1"
               >
                 ×
               </button>
@@ -174,30 +175,33 @@ export function PhotoGrid({
         ))}
       </div>
 
-      {open ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpen(null)}
-          className="fixed inset-0 z-50 grid place-items-center bg-black/80 p-4"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={open}
-            alt=""
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-full max-w-full rounded-[6px] object-contain"
-          />
-          <button
-            type="button"
-            aria-label="Close"
-            onClick={() => setOpen(null)}
-            className="absolute top-4 right-4 grid size-9 place-items-center rounded-full bg-white/15 text-2xl leading-none text-white"
-          >
-            ×
-          </button>
-        </div>
-      ) : null}
+      {open && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              onClick={() => setOpen(null)}
+              className="fixed inset-0 z-[100] grid place-items-center bg-black/90 p-4"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={open}
+                alt=""
+                onClick={(e) => e.stopPropagation()}
+                className="max-h-[92vh] max-w-full rounded-[6px] object-contain"
+              />
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setOpen(null)}
+                className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-white/15 text-2xl leading-none text-white"
+              >
+                ×
+              </button>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
