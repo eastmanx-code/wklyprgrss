@@ -88,7 +88,7 @@ export default async function PropertyPage({
     .filter((c) => c.open > 0);
 
   return (
-    <main className="close-flow mx-auto max-w-7xl">
+    <main className="close-flow">
       <BackLink href="/walkthroughs">All properties</BackLink>
 
       <header className="mt-4 mb-5">
@@ -107,55 +107,62 @@ export default async function PropertyPage({
           then the same numbers broken out by category underneath, so the whole
           state of the walk reads as one block rather than a ring and a scatter
           of chips. */}
-      <div className="panel mb-6 max-w-3xl p-5 sm:p-6">
-        <div className="flex items-center gap-5">
-          <div className="w-24 shrink-0">
-            <Dial
-              percent={s.percent}
-              tone={behind ? "var(--warn)" : "var(--ink)"}
-              caption=""
-              label={`${s.signed}/${s.actionable}`}
-              size={96}
-            />
+      <div className="panel mb-6 p-5 sm:p-6">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:gap-8">
+          {/* Dial and headline count. */}
+          <div className="flex items-center gap-5 md:shrink-0">
+            <div className="w-24 shrink-0">
+              <Dial
+                percent={s.percent}
+                tone={behind ? "var(--warn)" : "var(--ink)"}
+                caption=""
+                label={`${s.signed}/${s.actionable}`}
+                size={96}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[17px] text-ink font-medium leading-snug">
+                {s.signed} of {s.actionable} signed off
+              </p>
+              <p className="label mt-1.5 text-[12px]">
+                {s.overdue > 0 ? (
+                  <span className="text-warn">{s.overdue} overdue</span>
+                ) : (
+                  "none overdue"
+                )}
+                {" · "}
+                {photoCount} {photoCount === 1 ? "photo" : "photos"}
+              </p>
+            </div>
           </div>
-          <div className="min-w-0">
-            <p className="text-[17px] text-ink font-medium leading-snug">
-              {s.signed} of {s.actionable} signed off
-            </p>
-            <p className="label mt-1.5 text-[12px]">
-              {s.overdue > 0 ? (
-                <span className="text-warn">{s.overdue} overdue</span>
-              ) : (
-                "none overdue"
-              )}
-              {" · "}
-              {photoCount} {photoCount === 1 ? "photo" : "photos"}
-            </p>
-          </div>
-        </div>
 
-        {dueByCategory.length > 0 ? (
-          <div className="border-divider mt-5 grid grid-cols-2 gap-x-6 gap-y-4 border-t pt-5 sm:grid-cols-4">
-            {dueByCategory.map((c) => (
-              <div key={c.category}>
-                <p className="label text-[11px] text-muted">
-                  {CATEGORY_BADGE[c.category]}
-                </p>
-                <p className="mt-1.5 text-[18px] text-ink tabular-nums leading-none">
-                  {c.open}
-                  <span className="label ml-1 text-[11px] text-muted">due</span>
-                </p>
-                <p
-                  className={`label mt-1 text-[11px] tabular-nums ${
-                    c.overdue > 0 ? "text-warn" : "text-muted"
-                  }`}
-                >
-                  {c.overdue > 0 ? `${c.overdue} overdue` : "on time"}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : null}
+          {/* The same numbers by category, filling the rest of the band on a
+              wide screen and dropping under the dial on a phone. */}
+          {dueByCategory.length > 0 ? (
+            <div className="border-divider grid flex-1 grid-cols-2 gap-x-6 gap-y-4 border-t pt-5 sm:grid-cols-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+              {dueByCategory.map((c) => (
+                <div key={c.category}>
+                  <p className="label text-[11px] text-muted">
+                    {CATEGORY_BADGE[c.category]}
+                  </p>
+                  <p className="mt-1.5 text-[18px] text-ink tabular-nums leading-none">
+                    {c.open}
+                    <span className="label ml-1 text-[11px] text-muted">
+                      due
+                    </span>
+                  </p>
+                  <p
+                    className={`label mt-1 text-[11px] tabular-nums ${
+                      c.overdue > 0 ? "text-warn" : "text-muted"
+                    }`}
+                  >
+                    {c.overdue > 0 ? `${c.overdue} overdue` : "on time"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="space-y-8">
@@ -300,7 +307,7 @@ function CommitmentRow({
   if (isRow) {
     return (
       <li
-        className={`col-span-full rounded-[10px] p-5 ${
+        className={`col-span-2 rounded-[10px] p-5 md:col-span-3 xl:col-span-2 ${
           overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
         }`}
       >
