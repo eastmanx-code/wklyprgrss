@@ -165,28 +165,54 @@ export default async function PropertyPage({
         </div>
       </div>
 
-      <div className="space-y-8">
-        {property.groups.map((group) => (
-          <section key={group.category}>
-            <h2 className="card-title mb-4 text-[18px]">
-              {CATEGORY_LABEL[group.category]}
-              <span className="label ml-2 text-[12px] text-muted">
-                {group.items.length}
-              </span>
-            </h2>
-            <ul className="grid grid-cols-2 items-start gap-3 md:grid-cols-3 xl:grid-cols-4">
-              {group.items.map((item) => (
-                <CommitmentRow
-                  key={item.id}
-                  item={item}
-                  urls={urls}
-                  observed={property.lastWalk}
-                  isAdmin={isAdmin}
-                />
-              ))}
-            </ul>
-          </section>
-        ))}
+      <div className="space-y-10">
+        {property.groups.map((group) => {
+          // Two kinds of card, kept apart so neither looks wrong next to the
+          // other: the to-do items are a stacked list of wide cards with room
+          // to sign, the done ones a photo gallery.
+          const todos = group.items.filter(isTodo);
+          const done = group.items.filter((i) => !isTodo(i));
+          return (
+            <section key={group.category}>
+              <h2 className="card-title mb-4 text-[18px]">
+                {CATEGORY_LABEL[group.category]}
+                <span className="label ml-2 text-[12px] text-muted">
+                  {group.items.length}
+                </span>
+              </h2>
+              {todos.length > 0 ? (
+                <ul className="space-y-3">
+                  {todos.map((item) => (
+                    <CommitmentRow
+                      key={item.id}
+                      item={item}
+                      urls={urls}
+                      observed={property.lastWalk}
+                      isAdmin={isAdmin}
+                    />
+                  ))}
+                </ul>
+              ) : null}
+              {done.length > 0 ? (
+                <ul
+                  className={`grid grid-cols-2 items-start gap-3 sm:grid-cols-3 xl:grid-cols-4 ${
+                    todos.length > 0 ? "mt-3" : ""
+                  }`}
+                >
+                  {done.map((item) => (
+                    <CommitmentRow
+                      key={item.id}
+                      item={item}
+                      urls={urls}
+                      observed={property.lastWalk}
+                      isAdmin={isAdmin}
+                    />
+                  ))}
+                </ul>
+              ) : null}
+            </section>
+          );
+        })}
       </div>
 
       {canSeeLog ? <ChangeLog events={events} /> : null}
@@ -253,6 +279,19 @@ function ChangeLog({ events }: { events: WalkEvent[] }) {
 const SPECIAL: WalkCategory[] = ["open_question", "future_goal", "covered"];
 
 /**
+ * A to-do: an open item with a sign-off form, or a question still to answer.
+ * These stack as wide cards; everything else is a done, photo-led tile. Kept
+ * as one rule so the page split and the card agree on which is which.
+ */
+function isTodo(item: Commitment): boolean {
+  const signed = item.status === "signed";
+  const answered = item.status === "answered";
+  const question = item.category === "open_question";
+  const special = SPECIAL.includes(item.category);
+  return (question && !answered) || (!special && !signed);
+}
+
+/**
  * One commitment. The ask in plain words, its badges, the date it was seen and
  * the date it is due, and its state. A repeat is called out hard because an item
  * on its third walk is a different problem from a new one.
@@ -270,7 +309,6 @@ function CommitmentRow({
 }) {
   const overdue = item.status === "overdue";
   const signed = item.status === "signed";
-  const answered = item.status === "answered";
   const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
   const photos = item.photos
@@ -300,42 +338,38 @@ function CommitmentRow({
     </div>
   );
 
-  // A to-do carries a form or an answer box, so it runs full width where there
-  // is room to work. Everything done or display-only becomes a photo-led tile.
-  const isRow = (question && !answered) || (!special && !signed);
-
-  if (isRow) {
+  // A to-do: a wide card with the ask on the left and the sign-off on the
+  // right, so it fills the row instead of boxing a short form in empty space.
+  if (isTodo(item)) {
     return (
       <li
-        className={`col-span-2 rounded-[10px] p-5 md:col-span-3 xl:col-span-2 ${
+        className={`rounded-[10px] p-5 ${
           overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
         }`}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[16px] text-ink leading-relaxed break-words">
-              {item.commitment}
-            </p>
-            <div className="mt-2.5">{metaLine(false)}</div>
-            {item.note ? (
-              <p className="note mt-2 leading-relaxed text-ink/75">
-                {item.note}
+        <div className="flex flex-col gap-5 md:flex-row md:gap-8">
+          <div className="min-w-0 md:flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[16px] text-ink leading-relaxed break-words">
+                {item.commitment}
               </p>
-            ) : null}
+              <StatusPill item={item} />
+            </div>
+            <div className="mt-2.5">{metaLine(false)}</div>
           </div>
-          <StatusPill item={item} />
+          <div className="md:w-[360px] md:shrink-0">
+            {question ? (
+              <QuestionAnswer id={item.id} />
+            ) : (
+              <CommitmentActions
+                id={item.id}
+                signed={signed}
+                canReopen={isAdmin}
+                initialPhotos={photos}
+              />
+            )}
+          </div>
         </div>
-
-        {question ? (
-          <QuestionAnswer id={item.id} />
-        ) : (
-          <CommitmentActions
-            id={item.id}
-            signed={signed}
-            canReopen={isAdmin}
-            initialPhotos={photos}
-          />
-        )}
       </li>
     );
   }
