@@ -1,0 +1,2103 @@
+{
+  "venue": "FSON",
+  "lists": [
+    {
+      "house": "FOH",
+      "role": "Manager",
+      "role_es": "Gerente",
+      "phase": "open",
+      "phase_label": "MOD",
+      "items": [
+        {
+          "title": "GET AND COUNT THE BANK",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Bank counted and starting total"
+            }
+          ]
+        },
+        {
+          "title": "CHECK BATHROOM RESTOCK AND SOAP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bathroom restocked, soap and paper full"
+            }
+          ]
+        },
+        {
+          "title": "NO LIGHTS ARE OFF AND DIMMED"
+        },
+        {
+          "title": "FLOOR CANDLES AND LANTERNS ARE CLEAN AND LIT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Floor candles and lanterns clean and lit"
+            }
+          ]
+        },
+        {
+          "title": "CHECK/ RESPOND TO REVIEWS"
+        },
+        {
+          "title": "CHECK/ RESPOND TO RESERVATION EMAILS"
+        },
+        {
+          "title": "COUNT MONEY FROM PREVIOUS NIGHT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Previous night's cash counted and reconciled"
+            }
+          ]
+        },
+        {
+          "title": "SENT ANY INVOICES TO JOSH/ PLATE IQ"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Manager",
+      "role_es": "Gerente",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I CLOCKED IN AND CHECKED SLACK FOR NOTES RELEVANT TO TODAY'S SERVICE.",
+          "detail": [
+            "About 2 minutes"
+          ]
+        },
+        {
+          "title": "I CONFIRMED TORCHES WERE RESET FOR THE FOLLOWING DAY",
+          "detail": [
+            "About 3 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Torches reset for the next day"
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE PRODUCE ORDER WAS PLACED.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE KOLD-DRAFT AND SCOTSMAN MACHINES ARE WORKING PROPERLY AND ICE IS BEING MADE.",
+          "detail": [
+            "About 2 minutes"
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE HALLWAY IS TIDY",
+          "detail": [
+            "About 3 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The hallway, tidy and clear"
+            }
+          ]
+        },
+        {
+          "title": "I PULLED BOTTLES FORWARD IN UPPER CABINETS SO THEY ARE DISPLAYED PROPERLY",
+          "detail": [
+            "About 5 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Upper cabinet bottles pulled forward and faced"
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED ALL TRASH AND RECYCLING WAS BEEN TAKEN OUT",
+          "detail": [
+            "About 3 minutes"
+          ]
+        },
+        {
+          "title": "I TURNED OFF AC/HEAT BY PUSING THE MODE BUTTON UNTIL IT READS OFF.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I WRAPPED ANY LEFT CC'S IN RECEIPT OR DATED PAPER AND PLACED THEM ALPHABETICALLY IN CC ROLODEX IN OFFICE.",
+          "detail": [
+            "About 3 minutes"
+          ]
+        },
+        {
+          "title": "I PLUGGED IN THE OFFICE IPOD TO CHARGE OVERNIGHT.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I CONFIRMED THE LIQUOR ROOM IS LOCKED.",
+          "detail": [
+            "About 1 minute"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The liquor room door, locked"
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED EVERY USED RAG HAS BEEN PLACED IN DIRTY LINEN BIN.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I CHECKED THE FORTUNATE SON AND POLITE PROVISION CHECKLISTS TO ENSURE THEY WERE COMPLETED THOROUGHLY AS WELL AS ANY WEEKLY SIDEWORK.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I CONFIRMED BATHROOM CANDLES WERE EXTINGUISHED.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I CONFIRMED ALL OUTDOOR TORCHES ARE EXTINGUISHED AND THE GAS IS OFF.",
+          "detail": [
+            "About 2 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Outdoor torches out and the gas valve off"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED OFF ALL LIGHTS (EXCEPT LEDS) AND FANS AND LOCKED ALL WINDOWS AND DOORS.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I DID A THOROOUGH WALKTHROUGH OF POLITE PROVISIONS & FORTUNATE SON TO ENSURE THAT ALL DESIGNATED AREAS WERE PROPERLY CLEANED, RESTOCKED, AND PREPARED FOR NEXT DAY OF SERVICE PER THE DUTIES ON THE CHECKLISTS.",
+          "detail": [
+            "About 10 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "video",
+              "prompt": "Walk both rooms and call out anything left unclean, unstocked, or unready"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL EMPLOYEES ARE CLOCKED OUT INCLUDING MYSELF.",
+          "detail": [
+            "About 1 minute"
+          ]
+        },
+        {
+          "title": "I ENSURED THAT ALL ENTRY WAYS ARE PROPERLY LOCKED AND SECURED.",
+          "detail": [
+            "About 3 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every entryway locked and secured"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Expo",
+      "role_es": "Expo",
+      "phase": "open",
+      "items": [
+        {
+          "title": "I MADE SURE ALL THE LIGHTS ARE ON AND WORKING (MESSAGE MANAGER IF NOT)"
+        },
+        {
+          "title": "USED LEAF BLOWER TO CLEAN SIDEWALK/ PATIO/ DINING ROOM. SWEPT TO COLLECT ANY VISIBLE TRASH IN PATIO/ DINING ROOM. INCLUDING THE ROCKS OUTSIDE BY THE TREE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Sidewalk, patio and dining room clear of trash"
+            }
+          ]
+        },
+        {
+          "title": "CHECK PLANTERS AROUND PATIO PERIMETER, REMOVE ANY TRASH FROM THEM. WIPED WHITE TILE NEXT TO THE PATIO DOOR"
+        },
+        {
+          "title": "WIPE DOWN FRONT WINDOWS AND THE GREEN LEDGES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Front windows and green ledges, clean"
+            }
+          ]
+        },
+        {
+          "title": "SET UP PATIO: UMBRELLAS OPEN, CUSHIONS, CHAIRS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Patio set: umbrellas open, cushions and chairs in place"
+            }
+          ]
+        },
+        {
+          "title": "WIPED DOWN GREEN BOOTHS, TABLE BASES, LEDGES AND IN BETWEEN BOOTH USE A CHOPSTICK TO GET FOOD OUT"
+        },
+        {
+          "title": "BROUGH 2 TRASH CANS"
+        },
+        {
+          "title": "GARAGE RESTOCK: BAGS, CHOPSTICKS, NAPKINS, MATCHES, TO GO SLEEVES, SOY SAUCE, MUSTARD, FORTUNE COOKIES, WINE, BEER, N/A'S, STRAWS, ROUNDS/ LIDS, FLATS, 26'S, 16'S, WHITE/ GREEN RAGS, TP AND BROWN NAPKINS, SOUP CUPS AND WATER CUPS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Which garage restock items were low or out"
+            }
+          ]
+        },
+        {
+          "title": "I ORGANIZED/ STOCKED TAKEOUT."
+        },
+        {
+          "title": "WHIPED DOWN EXPO TOP TO BOTTOM",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Expo wiped top to bottom"
+            }
+          ]
+        },
+        {
+          "title": "SET UP EXPO: RICE SPOON AND RINSE CADDY FOR BOTH RICE STATIONS, GREEN ONION/ CILATRO, SESSAME/ CHILI OIL REFILL. CHECK WHIPPED CREAM/ POWDERED SUGAR",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Expo set up: rice stations, garnishes and oils ready"
+            }
+          ]
+        },
+        {
+          "title": "SET UP BUSSING STATION: 3 BUS TUBS AND 3 UTENSIL SOAKING CONTAINERS,"
+        },
+        {
+          "title": "FILLED UP THE SANITIZERS AND FOLDED GREEN RAGS"
+        },
+        {
+          "title": "ASKED MOD FOR THE BANK"
+        },
+        {
+          "title": "CLOSING: CUT LEMON/ LIMES"
+        },
+        {
+          "title": "CLOSING: I THREW AWAY THE TRASH, RESTOCKED TAKEOUT AND ASKED WINDOW IF THEY NEEDED ANYTHING ELSE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "open",
+      "items": [
+        {
+          "title": "WIPED DOWN ALL TABLES WITH PURPLE SPRAY AND BRASS BASE (DO A WOBBLE CHECK)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Tables wiped and steady after the wobble check"
+            }
+          ]
+        },
+        {
+          "title": "I STOCKED UP THE GREEN TEA / GINGER LEMONADE. CHECKED STRAWS CUT LEMON WHEELS"
+        },
+        {
+          "title": "MADED SURE BEVERAGES WERE RESTOKED AND READY FOR SERVICE"
+        },
+        {
+          "title": "MADE SURE MOCHIS WERE READY FOR SERVICE. MESSAGED THE CHAT IF FLAVORS ARE OUT/ LOW"
+        },
+        {
+          "title": "CHECKED WHIPPED CREAM/ POWDERED SUGAR"
+        },
+        {
+          "title": "LITE ALL LANTERNS. (TABLE AND FLOOR)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All table and floor lanterns lit"
+            }
+          ]
+        },
+        {
+          "title": "WIPE OUTSIDE PATIO RAILING"
+        },
+        {
+          "title": "WIPED DOWN RESTAURANT SIDE OF EXPO",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Restaurant side of expo wiped down"
+            }
+          ]
+        },
+        {
+          "title": "DUSTED ABOVE 61/ 62, ABOVE TAKEOUT WINDOW AND ABOVE MOCHI FREEZER"
+        },
+        {
+          "title": "DOUBLE CHECK: ALL LIGHTS ARE ON AND BATHROOM IS DIMMED, BANK WAS RETRIEVED, SPOT SWEEP DINIG ROOM/ PATIO AND MAKE SURE BATHROOM IS RESTOCKED. CHECK THE HAND SOAP"
+        },
+        {
+          "title": "GET ICE FOR WATER STATION AND FRIDGE"
+        },
+        {
+          "title": "GRAB ANYTHING FROM THE GARAGE THE EXPO MIGHT'VE FORGOTTEN. CHECK EXPO GARAGE RESTOCK ON CHECKLIST"
+        },
+        {
+          "title": "GRAB HANDHELDS AND IPAD"
+        },
+        {
+          "title": "CLOSING: FILL UP CHILI OIL AND SOY SAUCE CONTAIER. WIPE DOWN AFTER. FILL TAKEOUT CHILI OIL. TUESDAY DUMP AND WASH CHILI OIL CONTAINERS"
+        },
+        {
+          "title": "CLOSING: DO A BATHROOM CHECK"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "items": [
+        {
+          "title": "MADE SURE ALL CHECKS ARE PAYED"
+        },
+        {
+          "title": "BUSSED ALL TABLES"
+        },
+        {
+          "title": "TURN OFF HEATERS/ FIREPLACE"
+        },
+        {
+          "title": "WIPE TABLES, TABLE BASES AND INSIDE BENCHES WITH PURPLE SPRAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Tables, bases and inside benches wiped"
+            }
+          ]
+        },
+        {
+          "title": "WIPE BUCHER BLOCK SHELVES YES THE ENTIRE AREA",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Butcher block shelves wiped, whole area"
+            }
+          ]
+        },
+        {
+          "title": "STACK CHAIRS ON TOP OF TABLES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Chairs stacked on the tables"
+            }
+          ]
+        },
+        {
+          "title": "BRING OUTSIDE ITEMS IN: CUSHIONS, UMBRELLAS, CHAIRS AND HOST STAND"
+        },
+        {
+          "title": "TURN OFF FLOOR/ TABLE LANTERS"
+        },
+        {
+          "title": "FILL TABLE LANTERNS AND WIPE AREA WITH PURPLE SPRAY AFTER"
+        },
+        {
+          "title": "TURN OFF LIGHT SWITCHES AT WATERSTATION AND TURN OFF WINDOW LIGHTS"
+        },
+        {
+          "title": "LOCK THE FRONT DOOR AND WINDOW",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Front door and window locked"
+            }
+          ]
+        },
+        {
+          "title": "TOSS REMAINING RAGS"
+        },
+        {
+          "title": "CHAREGE PHONE, IPAD, IPOD AND HANDHELDS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Phone, iPad, iPod and handhelds all on chargers"
+            }
+          ]
+        },
+        {
+          "title": "MUTE MUSIC"
+        },
+        {
+          "title": "RECOUNT THE BANK AND DROP",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Bank recounted and drop amount"
+            }
+          ]
+        },
+        {
+          "title": "POLISH REMAING GLASSWARE AND SILVERWARE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "items": [
+        {
+          "title": "PLOTTED RESOS/ SET THEM UP"
+        },
+        {
+          "title": "WOBBLE CHECK ALL TABLES"
+        },
+        {
+          "title": "BRING GREEN RAG FOR WATER STATION"
+        },
+        {
+          "title": "MADE SURE ICE WAS FULLY STOCKED FOR BOTH STATIONS"
+        },
+        {
+          "title": "TURN ON MUSIC"
+        },
+        {
+          "title": "DOUBLE CHECK: BATHROOM AND LIGHTS ARE ALL ON/ DIMMED AND RESTAURANT SIDE OF EXPO IS WIDED DOWN TOP TO BOTTOM"
+        },
+        {
+          "title": "SPOT SWEEP INSIDE AND OUTSIDE"
+        },
+        {
+          "title": "CLOSING: TOSS ALL RAGS USED TO CLEAN TABLES GET ONE FRESH SET FOR CLOSERS"
+        },
+        {
+          "title": "CLOSING: BRING ALL 3 ICE BUCKETS AND 5 BLACK MATS TO GET WASHED. USE SQUEEGEE BEFORE WIPING DOWN WATER STATION USE BUCKET TO CATCH WATER FROM SQUEEGEE"
+        },
+        {
+          "title": "CLOSING: POLISHED ALL WATER GLASSES THAT WERE AT THE WATER STATION"
+        },
+        {
+          "title": "CLOSING: RESET THE WATER STATION FOR TOMORROWS SERVICE BUCKETS FACING DOWN",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Water station reset for tomorrow, buckets facing down"
+            }
+          ]
+        },
+        {
+          "title": "CLOSING: WIPED DOWN PATIO TABLES/ CUSHIONS, STACK CUSHIONS, CLOSE UBRELLAS, SWEEP AND RESET THE TABLES FOR TOMORROW",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Patio reset: cushions stacked, umbrellas closed, tables set"
+            }
+          ]
+        },
+        {
+          "title": "CLOSING: CHECKED BATHROOM AND REPLACED TRASH",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bathroom checked, trash replaced"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Takeout",
+      "role_es": "Para llevar",
+      "phase": "close",
+      "items": [
+        {
+          "title": "MADE SURE EVERYONES CLOSED OUT"
+        },
+        {
+          "title": "PUT IN TIPS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Tips entered for the shift"
+            }
+          ]
+        },
+        {
+          "title": "WIPE EXPO AREA BOTH SHELVES AND TOP AREA",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Expo area wiped, both shelves and top"
+            }
+          ]
+        },
+        {
+          "title": "WIPE CHILI OIL AND SESAME SEED CANISTERS. REFILL IF LESS THAN HALF"
+        },
+        {
+          "title": "TAKE RICE, CILATRO AND GREEN ONTION CONTAINERS BACK TO DISH PIT"
+        },
+        {
+          "title": "REMOVE ICE BUCKET FROM FRIDGE"
+        },
+        {
+          "title": "TAKE BACK LAST REMAINING DIRTY CUPS, UTENSILS AND DISHES TO THE DISH PIT MAKE SURE WINE CARAFES AND BLACK MATTS ARE WASHED"
+        },
+        {
+          "title": "ALL WINDOW/ BUTCHER BLOCK ITEMS ARE PLACED ON 62 INCLUDING ALL BLACK MATTS"
+        },
+        {
+          "title": "WIPE DOWN BUSSING STARION AND BIN WHERE WE PUT THE BAGS WITH PURPLE SPRAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bussing station and bag bin wiped"
+            }
+          ]
+        },
+        {
+          "title": "WIPE DOWN WINDOW AREA WITH PURPLE SPRAY: TABLE TOPS, FRIDGE WINDOWS AND WHITE BINS (CLEAR PART)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Window area wiped: tabletops, fridge windows, white bins"
+            }
+          ]
+        },
+        {
+          "title": "COUNT THE MONEY FOR THE BANK:$300 (6-$20,10-$10, 12-$5, 20-$1) WRAP IT AROUND RECIPS PAPER AND A STICKER. WRITE BANK WITH SHARPIE",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Bank counted to $300 and wrapped"
+            }
+          ]
+        },
+        {
+          "title": "COUNT THE MONEY DROP: CLOSE OUT DAY, CAPTURE ALL PAYMENTS, PRINT REPORT, FIND TOTAL CASH, WRITE DAY AND TOTAL CASH ON ENVELOPE, COUNT REMAING BILLS AND MAKE SURE WE HAVE ENOUGH FOR TOTAL CASH (IF NOT GO TO POLITE AND ASK FOR THE EXACT AMOUNT YOU NEED), WRITE DOWN HOW MUCH YOU TOOK FROM POLITE IF YOU DID, PUT TAKOUT RECIPTS AND REPORT IN THE ENVELOPE, PUT MONEY IN ORDER FROM 100-1 IN THE ENVELOPE. SEAL IT WITH A STICKER",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Money drop total and whether anything was borrowed from Polite"
+            }
+          ]
+        },
+        {
+          "title": "WHIPE DOWN SINK"
+        },
+        {
+          "title": "SWEEP TAKOUT AND EXPO AREA",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Takeout and expo floor swept"
+            }
+          ]
+        },
+        {
+          "title": "DROP THE BANK AND MONEY DROP IN THE SAFE ON AT A TIME"
+        },
+        {
+          "title": "MAKE SURE: PHONE, IPAD, IPOD, AND HANDHELDS ARE CHARHING, MUSIC IS MUTED AND LIGHTS ARE OFF",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Phone, iPad, iPod and handhelds charging"
+            }
+          ]
+        },
+        {
+          "title": "POLISH ALL REMAING GLASSWARE AND SILVERWARE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bar Manager",
+      "role_es": "Gerente de barra",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "SUBMIT LIQUOR ORDERS WITH SOUTHERN (GERRY), RNDC (DENNIS), WINE WAREHOUSE (CHRISTOPHER) & PAC EDGE (MARIO) FOR TUESDAY - THURSDAY SERVICE.",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT BEER ORDERS TO STONE OR CRAFT BEER GUILD FOR THE WEEKLY ORDER.",
+          "days": [
+            "MONDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE A SPECIALTY PRODUCE ORDER IN ACCORDANCE WITH THE CURRENT COST OF MIXES & GARNISHES.",
+          "days": [
+            "MONDAY",
+            "TUESDAY",
+            "FRIDAY",
+            "SATURDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "RESTOCK COCKTAILS FOR CAN COCKTAIL PROGRAM; 10 OF EACH SELECTION. (SUBMIT CAN LABEL ORDER TO ALICIA VIA EMAIL, IF NECESSARY).",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT PENNY POUND SUPER ROCK ICE ORDER FOR WEDNESDAY DELIVERY.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE SERVICE NOTES FOR POLITE PROVISIONS AND THE END OF THE SHIFT.",
+          "days": [
+            "TUESDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "MANAGER MEETING",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "OFF SITE EMAIL LIQUOR ORDERS WITH SOUTHERN (GERRY) AND RNDC (DENNIS) FOR FRIDAY - MONDAY SERVICE. (ALICIA WILL REVIEW FOR APPROVAL.)",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "RESTOCK COCKTAILS FOR CAN COCKTAIL PROGRAM; 10 OF EACH SELECTION.",
+          "days": [
+            "FRIDAY",
+            "SUNDAY"
+          ]
+        },
+        {
+          "title": "DRAIN OUT THE CONTENTS OF THE SLUSHY MACHINE AND CLEAN IT OUT PER THE WEEKLY CLEANING PROCEDURE. CREATE MORE OF THE \"LAZY RIVER\" BATCH IF NEEDED.",
+          "days": [
+            "SUNDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Slushy machine drained and cleaned out"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Lead",
+      "role_es": "Líder",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "COLLECT ALL INVOICES FROM THE HALLWAY AND SCAN THEM INTO PLATEIQ. COPY ALL INVOICES SCANNED. PUT BOTH STACKS IN ALICIA'S FOLDER IN THE OFFICE FOR REVIEW.",
+          "days": [
+            "TUESDAY",
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE BEER INVENTORY & REQUEST A PRICE BREAKDOWN OF YOUR ORDER PRIOR TO SUBMISSION. PROVIDE ALICIA WITH THE COST OF THE ORDER FOR APPROVAL.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE A WINE INVENTORY & REQUEST A PRICE BREAKDOWN OF YOUR ORDER PRIOR TO SUBMISSION. PROVIDE ALICIA WITH THE COST OF THE ORDER FOR APPROVAL.",
+          "days": [
+            "TUESDAY",
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE TIPS AFTER PICKING UP THE DEPOSIT FOR BOTH POLITE PROVISIONS AND FORTUNATE SON.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT A SYSCO ORDER TO ALICIA VIA EMAIL AT THE END OF SHIFT, FOR THURSDAY DELIVERY.",
+          "days": [
+            "TUESDAY"
+          ]
+        },
+        {
+          "title": "11:15 AM POW-WOW / 12:00 PM MANAGER MEETING WITH CH",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "DO A WALK THROUGH OF THE GARAGE TO COMPLETE INVENTORY OF BACK STOCK, CREATE LIST FOR BAKERY PICK UP. COMPLETE BAKERY RUN IF NEEDED.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT A DBS ORDER NO LATER THAN 2:00PM TO CHEF TONY, FOR THURSDAY DELIVERY.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "CONNECT WITH TONY OR BEASTMAN TO SEE IF ANY TAKE OUT ITEMS NEED TO BE ORDERED FOR THE BAKERY.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "ENSURE ALL ITEMS ON THE WHITE BOARD THAT PERTAIN TO FSON HAVE BEEN EITHER ORDERED, OR DOCUMENTED FOR AN UPCOMING ORDER. COMMUNICATE WITH THE TEAM TO ENSURE THEY HAVE INPUT ALL OF THIER NEEDS.",
+          "days": [
+            "WEDNESDAY"
+          ]
+        },
+        {
+          "title": "DO A MID-WEEK CHECK ON CHECKLISTS. FOLLOW-UP WITH ANY STAFF MEMBER THAT HAS FAILED TO SIGN OFF BASED ON THE SCHEDULE.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "PROVIDE ALICIA WITH ANY MENU UPDATES IF NECESSARY BASED ON PRODUCTS THAT MAY BE OUT OF STOCK.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "EMAIL ALICIA WITH ANY ORDERING NEEDS OF THE RESTAURANT OUTSIDE OF FOOD BASED PRODUCTS, DBS, OR SYSCO.",
+          "days": [
+            "THURSDAY"
+          ]
+        },
+        {
+          "title": "MEET WITH ALICIA TO DISCUSS WEEKLY PERFORMANCE OF STAFF MEMBERS.",
+          "days": [
+            "FRIDAY"
+          ]
+        },
+        {
+          "title": "COMPLETE BAKERY RUN, IF UNABLE TO COMMUNICATE TO ALICIA.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT A MENU COUNT TO ALICIA VIA EMAIL AT THE END OF THE SHIFT.",
+          "days": [
+            "SATURDAY"
+          ]
+        },
+        {
+          "title": "SUBMIT A SYSCO ORDER TO ALICIA VIA EMAIL AT END OF SHIFT, FOR MONDAY DELIVERY.",
+          "days": [
+            "SATURDAY"
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Rinse rain gutters with hot water",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Rain gutters rinsed clean"
+            }
+          ]
+        },
+        {
+          "title": "Clean foliage",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Foliage cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Clean takeout bins",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Takeout bins clean inside and out"
+            }
+          ]
+        },
+        {
+          "title": "Clean Booth edges",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Booth edges clean"
+            }
+          ]
+        },
+        {
+          "title": "clean bucher block under expo",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Butcher block under expo, clean"
+            }
+          ]
+        },
+        {
+          "title": "Clean floor lanterns",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Floor lanterns clean"
+            }
+          ]
+        },
+        {
+          "title": "clean storage are next to takeout window",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Storage area next to the takeout window, clean and organized"
+            }
+          ]
+        },
+        {
+          "title": "wipe down windows",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Windows wiped down"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Prep/Kitchen",
+      "role_es": "Preparación/Cocina",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I ENSURED ENOUGH SILVERWARE WAS POLISHED TO REFILL THE SILVERWARE CADDYS.",
+          "title_es": "Me aseguré de pulir suficientes cubiertos para rellenar las charolas de cubiertos."
+        },
+        {
+          "title": "I WIPED DOWN ALL WOOD COUNTER AREAS, UNDERNEATH THE RICE MAKER & WONTON SINK.",
+          "title_es": "Limpié todas las mesadas de madera, debajo de la arrocera y el fregadero de wonton.",
+          "detail": [
+            "About 7 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Wood counters, under the rice maker and wonton sink wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I THOROUGHLY WIPED DOWN AND ORGANIZED EXPO. I ENSURED IT WAS CLEAR OF ALL FOOD DEBRIS UNDERNEATH ITEMS ON COUNTERSPACE. I ALSO ENSURED THE PLASTIC CAMBROS WHICH CONTAIN THE TAKE OUT ITEMS WERE CLEAN OF FOOD DEBRIS.",
+          "title_es": "Limpié y organicé bien el expo. Me aseguré de que no quedara comida debajo de las cosas en la mesada. También revisé que los cambros de plástico de los productos para llevar estuvieran sin residuos de comida.",
+          "detail": [
+            "About 2 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Expo wiped and organized, cambros clear of debris"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ALL CONDIMENT CADDYS AND REFILLED THEM FOR NEXT DAYS SERVICE WITH A FRESH NAPKIN.",
+          "title_es": "Limpié todas las charolas de condimentos y las rellené para el servicio del día siguiente con una servilleta nueva.",
+          "detail": [
+            "About 15 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Condiment caddies wiped and refilled with fresh napkins"
+            }
+          ]
+        },
+        {
+          "title": "I REMOVED ALL DIRTY TOWELS AND DUMPED THE SANITATION BUCKET.",
+          "title_es": "Quité todas las toallas sucias y vacié el balde de desinfectante.",
+          "detail": [
+            "About 3 minutes"
+          ]
+        },
+        {
+          "title": "I DID A FINAL BATHROOM CHECK FOR THE NIGHT TO RESTOCK AND WIPE DOWN.",
+          "title_es": "Hice la última revisión del baño de la noche para surtirlo y limpiarlo.",
+          "detail": [
+            "About 7 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bathroom restocked and wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I CLOSED OUT ALL OF THE TAKE OUT CHECKS FOR THE EVENING.",
+          "title_es": "Cerré todas las cuentas de para llevar de la noche.",
+          "detail": [
+            "About 10 minutes"
+          ]
+        },
+        {
+          "title": "I COUNTED DOWN MY BANK TO $300.00",
+          "title_es": "Conté mi banco hasta dejarlo en $300.00.",
+          "detail": [
+            "About 5 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Bank counted down to $300.00"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED IN WITH MY SHIFT LEAD TO TURN IN THE TAKEOUT DROP & REVIEW ANY TAB DESCREPANCIES FOR THE NIGHT.",
+          "title_es": "Me reporté con mi líder de turno para entregar el drop de para llevar y revisar cualquier diferencia en las cuentas de la noche.",
+          "detail": [
+            "About 5 minutes"
+          ]
+        },
+        {
+          "title": "I LOCKED THE TAKE OUT DOOR PRIOR TO CLOCKING OUT FOR THE NIGHT.",
+          "title_es": "Cerré con llave la puerta de para llevar antes de marcar mi salida.",
+          "detail": [
+            "About 2 minutes"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The takeout door, locked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Lead",
+      "role_es": "Líder",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Check temperatures of all Low Boys",
+          "title_es": "Verifique las temperaturas de todos los refrigeradores bajos",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Low Boy temperatures logged"
+            }
+          ]
+        },
+        {
+          "title": "Check Walk-In temperature",
+          "title_es": "Verifique la temperatura de la cámara frigorífica",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Walk-In temperature logged"
+            }
+          ]
+        },
+        {
+          "title": "I have a hair net",
+          "title_es": "Tengo una redecilla para el cabello"
+        },
+        {
+          "title": "Turn on all necessary appliances and equipment",
+          "title_es": "Encienda todos los aparatos y equipos necesarios"
+        },
+        {
+          "title": "Check that the dishwasher is running properly",
+          "title_es": "Verifique que el lavavajillas esté funcionando correctamente"
+        },
+        {
+          "title": "Make sure all stations have their sanitizer buckets properly set up",
+          "title_es": "Asegúrese de que todas las estaciones tengan sus cubetas de desinfectante preparadas correctamente",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every station with its sanitizer bucket set up"
+            }
+          ]
+        },
+        {
+          "title": "Open the front door for deliveries",
+          "title_es": "Abra la puerta principal para las entregas"
+        },
+        {
+          "title": "Review the Prep List",
+          "title_es": "Revise la lista de preparación"
+        },
+        {
+          "title": "Identify the most urgent prep items",
+          "title_es": "Identifique los artículos de preparación más urgentes"
+        },
+        {
+          "title": "Create a plan with the team and assign priorities",
+          "title_es": "Cree un plan con el equipo y asigne prioridades"
+        },
+        {
+          "title": "Communicate any concerns or shortages to the Chef",
+          "title_es": "Comunique cualquier inquietud o escasez al Chef"
+        },
+        {
+          "title": "Check all deliveries when they arrive",
+          "title_es": "Revise todas las entregas cuando lleguen"
+        },
+        {
+          "title": "Verify items and quantities against the order/invoice",
+          "title_es": "Verifique los artículos y las cantidades contra el pedido/factura"
+        },
+        {
+          "title": "Notify the Chef immediately if anything is missing, damaged, or incorrect",
+          "title_es": "Notifique al Chef inmediatamente si falta algo, está dañado o es incorrecto"
+        },
+        {
+          "title": "Check that all team members are wearing the proper uniform",
+          "title_es": "Verifique que todos los miembros del equipo lleven el uniforme adecuado"
+        },
+        {
+          "title": "Make sure breaks are being taken on time",
+          "title_es": "Asegúrese de que los descansos se tomen a tiempo"
+        },
+        {
+          "title": "please make sure the team do their checklist",
+          "title_es": "por favor asegúrese de que el equipo haga su lista de verificación"
+        },
+        {
+          "title": "Follow FIFO – older product in front, newer product in back",
+          "title_es": "Siga FIFO: el producto más antiguo al frente, el producto más nuevo atrás"
+        },
+        {
+          "title": "Make sure the team is maintaining cleanliness and organization throughout the shift",
+          "title_es": "Asegúrese de que el equipo mantenga la limpieza y organización durante todo el turno"
+        },
+        {
+          "title": "Review completed Prep List",
+          "title_es": "Revise la lista de preparación completada"
+        },
+        {
+          "title": "Communicate with the PM Lead or Chef about anything that was not completed",
+          "title_es": "Comunique al Líder de la Tarde o al Chef sobre cualquier cosa que no se haya completado"
+        },
+        {
+          "title": "Communicate any issues, shortages, equipment problems, or other incidents before leaving",
+          "title_es": "Comunique cualquier problema, escasez, problema de equipo u otros incidentes antes de salir"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Lead",
+      "role_es": "Líder",
+      "phase": "close",
+      "items": [
+        {
+          "title": "Check temperatures of all Low Boys",
+          "title_es": "Verifique las temperaturas de todos los refrigeradores bajos",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Low Boy temperatures logged"
+            }
+          ]
+        },
+        {
+          "title": "Check Walk-In temperature",
+          "title_es": "Verifique la temperatura de la cámara frigorífica",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Walk-In temperature logged"
+            }
+          ]
+        },
+        {
+          "title": "Review the Prep List",
+          "title_es": "Revise la lista de preparación"
+        },
+        {
+          "title": "I have a hair net",
+          "title_es": "Tengo una redecilla para el cabello"
+        },
+        {
+          "title": "Check that the dishwasher is running properly",
+          "title_es": "Verifique que el lavavajillas esté funcionando correctamente"
+        },
+        {
+          "title": "Confirm that all required prep is available for service",
+          "title_es": "Confirme que toda la preparación requerida esté disponible para el servicio"
+        },
+        {
+          "title": "Identify any urgent prep that needs to be completed first",
+          "title_es": "Identifique cualquier preparación urgente que deba completarse primero"
+        },
+        {
+          "title": "Check that all team members are wearing the proper uniform",
+          "title_es": "Verifique que todos los miembros del equipo lleven el uniforme adecuado"
+        },
+        {
+          "title": "Start with the prep that is most urgent for service",
+          "title_es": "Comience con la preparación que sea más urgente para el servicio"
+        },
+        {
+          "title": "Create a plan with the team and assign priorities",
+          "title_es": "Cree un plan con el equipo y asigne prioridades"
+        },
+        {
+          "title": "Complete the Daily Order List",
+          "title_es": "Complete la lista de pedidos diarios"
+        },
+        {
+          "title": "Keep the sink clean and organized throughout the shift",
+          "title_es": "Mantenga el fregadero limpio y organizado durante todo el turno"
+        },
+        {
+          "title": "Make sure the kitchen remains clean and organized during service",
+          "title_es": "Asegúrese de que la cocina se mantenga limpia y organizada durante el servicio",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Kitchen clean and organized at close"
+            }
+          ]
+        },
+        {
+          "title": "Make sure all team members take their breaks on time",
+          "title_es": "Asegúrese de que todos los miembros del equipo tomen sus descansos a tiempo"
+        },
+        {
+          "title": "Communicate with the Chef regarding shortages, problems, or any issues during service",
+          "title_es": "Comuníquese con el Chef sobre escasez, problemas o cualquier asunto durante el servicio"
+        },
+        {
+          "title": "Make sure all appliances/equipment that should be turned off are properly turned off",
+          "title_es": "Asegúrese de que todos los electrodomésticos/equipos que deben apagarse estén apagados correctamente",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All equipment that should be off is off"
+            }
+          ]
+        },
+        {
+          "title": "Check that equipment is safely shut down",
+          "title_es": "Verifique que el equipo esté apagado de manera segura"
+        },
+        {
+          "title": "Make sure the team is maintaining cleanliness and organization throughout the shift",
+          "title_es": "Asegúrese de que el equipo mantenga la limpieza y organización durante todo el turno"
+        },
+        {
+          "title": "Make sure sanitizer buckets are properly handled at closing",
+          "title_es": "Asegúrese de que las cubetas de desinfectante se manejen adecuadamente al cerrar"
+        },
+        {
+          "title": "Organize the Walk-In",
+          "title_es": "Organice la cámara frigorífica",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-In organized"
+            }
+          ]
+        },
+        {
+          "title": "Follow FIFO – older product in front, newer product in back",
+          "title_es": "Siga FIFO: el producto más antiguo al frente, el producto más nuevo atrás"
+        },
+        {
+          "title": "Make sure the team completes their checklist",
+          "title_es": "Asegúrese de que el equipo complete su lista de verificación"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Prep",
+      "role_es": "Cocinero de prep",
+      "phase": "open",
+      "items": [
+        {
+          "title": "Set up station with sani bucket, service towels, and untensils needed for day",
+          "title_es": "Preparar la estación con balde de desinfección, toallas de servicio y utensilios necesarios para el día"
+        },
+        {
+          "title": "I have a hair net",
+          "title_es": "Tengo una redecilla para el cabello"
+        },
+        {
+          "title": "Check and log cooler temps (alert chef on duty if temps sre off)",
+          "title_es": "Revisar y registrar la temperatura de los refrigeradores (alertar al chef a cargo si las temperaturas no son correctas).",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Cooler temps logged"
+            }
+          ]
+        },
+        {
+          "title": "Check with chef on duty to prioritize prep list",
+          "title_es": "Consultar con el chef a cargo para priorizar la lista de preparaciones."
+        },
+        {
+          "title": "Communicate with other prep cooks and develope a plan to complete the days tasks",
+          "title_es": "Comunicarme con otros cocineros de prep y desarrollar un plan para completar las tareas del día"
+        },
+        {
+          "title": "Take break before 5th hour",
+          "title_es": "Tomar un descanso antes de la quinta hora."
+        },
+        {
+          "title": "I stored all product off of the floor. Boxes of eggs need to be kept on dunnage rack if not enough room on the shelves.",
+          "title_es": "Guardé todos los productos fuera del piso. Las cajas de huevos deben mantenerse en el estante de dunnage si no hay suficiente espacio en las repisas."
+        },
+        {
+          "title": "I wiped tables and counters of my prep area with sanitizer solution.",
+          "title_es": "Limpié mesas y encimeras de mi área de prep con solución desinfectante.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Prep area tables and counters wiped with sanitizer"
+            }
+          ]
+        },
+        {
+          "title": "I took all boxes and trash from the walk in and my prep area and placed directly into the large blue bin in the backyard.",
+          "title_es": "Saqué todas las cajas y basura del refrigerador y de mi área de prep y las coloqué directamente en el contenedor azul grande del patio trasero."
+        },
+        {
+          "title": "I broke down all product in boxes, removed from boxes, placed product on shelves following FIFO",
+          "title_es": "Desempaqué todos los productos de las cajas, los coloqué en las repisas siguiendo FIFO"
+        },
+        {
+          "title": "I consolidated prepped product into smaller sized containers, labeled and dated accordingly",
+          "title_es": "Consolidé productos preparados en contenedores más pequeños, etiquetados y fechados correctamente.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Prepped product consolidated, labeled and dated"
+            }
+          ]
+        },
+        {
+          "title": "I kept BOH items off the floor in the back area, made hallways and walkways clean and clear.",
+          "title_es": "Mantuve los artículos del BOH fuera del piso en el área trasera, manteniendo pasillos y caminos limpios y despejados."
+        },
+        {
+          "title": "Replace sanitation buckets as needed (at least every 4 hours)",
+          "title_es": "Reemplacé los baldes de desinfección según fuera necesario (al menos cada 4 horas)"
+        },
+        {
+          "title": "I remove items in open bags or boxes and replaced into appropriate containers.",
+          "title_es": "Saqué artículos de bolsas o cajas abiertas y los volví a colocar en contenedores apropiados."
+        },
+        {
+          "title": "I took all boxes and trash from garage and placed directly into the trash room.",
+          "title_es": "Saqué todas las cajas y basura del garaje y las llevé directamente al cuarto de basura."
+        },
+        {
+          "title": "I made sure to properly place back the broom in it's designated spot",
+          "title_es": "Me aseguré de colocar correctamente la escoba en su lugar designado."
+        },
+        {
+          "title": "Sanitize countertops and sinks between projects to prevent cross contamination.",
+          "title_es": "Desinfecté encimeras y fregaderos entre tareas para prevenir contaminación cruzada."
+        },
+        {
+          "title": "Small kitchen appliances are properly cleaned and sanitized after use and should be free of debris/ food residues",
+          "title_es": "Los electrodomésticos pequeños de la cocina se limpian y desinfectan correctamente después de usarlos y deben estar libres de residuos de comida."
+        },
+        {
+          "title": "Clean/sanitize counters, sweep and mop floor hourly, remove dirty towels, and empty trash bins when full",
+          "title_es": "Limpiar/desinfectar encimeras, barrer y trapear el piso cada hora, retirar toallas sucias y vaciar los botes de basura cuando estén llenos."
+        },
+        {
+          "title": "I Make sure to clean bins,tables,windows and walls",
+          "title_es": "Me aseguro de limpiar contenedores, mesas, ventanas y paredes.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bins, tables, windows and walls clean"
+            }
+          ]
+        },
+        {
+          "title": "I HAVE FINISHED THE PREP LIST. ANYTHING NOT DONE HAS BEEN COMMUNICATED TO THE CHEF.",
+          "title_es": "He terminado la lista de preparaciones. Todo lo que no se haya completado se ha comunicado al chef."
+        },
+        {
+          "title": "Labeled and stored all prepped product in properly sized containers",
+          "title_es": "Etiqueté y almacené todos los productos preparados en contenedores de tamaño adecuado."
+        },
+        {
+          "title": "Consolidated all product in dry storage and walkin into properly sized containers",
+          "title_es": "Consolidé todos los productos en almacenamiento seco y en el refrigerador en contenedores de tamaño adecuado."
+        },
+        {
+          "title": "I make sure to wash the heand sink",
+          "title_es": "Me aseguro de lavar el lavabo de manos."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I put any dishes away that are clean",
+          "title_es": "Guardo los platos que están limpios"
+        },
+        {
+          "title": "I refilled any chemicals that were low or empty",
+          "title_es": "Reemplacé los químicos necesarios para la máquina"
+        },
+        {
+          "title": "I am keeping all product off of the floor.",
+          "title_es": "Mantengo el piso lo más despejado posible durante el turno"
+        },
+        {
+          "title": "I will and have replaced any linen bags if they are full and as needed.",
+          "title_es": "Reemplazo las bolsas de trapos sucios si es necesario"
+        },
+        {
+          "title": "I filled up one container with pre soak for silverware, and another with pre soak for ramekins",
+          "title_es": "Tengo un contenedor para remojar utensilios y otro para ramekins"
+        },
+        {
+          "title": "I will keep up with cleaning dishes, silverware, and ramekins.",
+          "title_es": "Limpio todos los platos, utensilios y equipo de cocina en el área de lavado."
+        },
+        {
+          "title": "I will bring clean plates back to the hot line and restock.",
+          "title_es": "Llevo todos los platos limpios a la cocina y meseros para iniciar el servicio."
+        },
+        {
+          "title": "Stock dry storage with clean aprons and towels form downstairs",
+          "title_es": "Traer mandiles y toallas del garage y colocarlos en el almacén de guardado"
+        },
+        {
+          "title": "I separate forks, knives and spoons as they get washed into silverware caddy",
+          "title_es": "Lavo y separo los utensilios en una charola para utensilios"
+        },
+        {
+          "title": "I ask the chefs if there is any prep that needs to be done.",
+          "title_es": "Pregunto a los chefs si hay algún trabajo de preparación necesario."
+        },
+        {
+          "title": "I take out the trash as needed throughout the shift.",
+          "title_es": "Saco la basura durante el turno tan seguido como sea necesario"
+        },
+        {
+          "title": "I took out all of the trash before 7pm to the back dumpster.",
+          "title_es": "Saqué toda la basura al contenedor antes de las 7pm."
+        },
+        {
+          "title": "I cleaned the pipe and wall underneath the dishmachine with a metal scrubbie and bleach solution.",
+          "title_es": "Limpié la canasta y el residuo de comida debajo de la máquina lavaplatos",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Pipe and wall under the dish machine, scrubbed clean"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned and detailed the handsink to the left of the dish area with a metal scrubbie and bleach solution.",
+          "title_es": "Limpié a detalle el fregadero usando químicos",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Handsink to the left of the dish area, detailed"
+            }
+          ]
+        },
+        {
+          "title": "I made sure all dishes are clean and put in the proper place.",
+          "title_es": "Me aseguré que todos los platos estén limpios y organizados en el lugar correcto"
+        },
+        {
+          "title": "I refilled any chemicals if they are low or empty. I let a chef know that we are running low on a product.",
+          "title_es": "Rellené los químicos necesarios y me aseguré que tengamos suficientes para reemplazar los que están bajos."
+        },
+        {
+          "title": "I cleaned out all sinks, grates, and drains of food and debris. I washed the individual pieces and sponges in the dishwashing machine.",
+          "title_es": "Limpié todos los sinks y las canastas en el suelo.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Sinks, grates and drains clear of food and debris"
+            }
+          ]
+        },
+        {
+          "title": "I de-limed the machine by adding \"Lime Away\" to the machine and running the cycle.",
+          "title_es": "Usé Lime Away para limpiar la máquina lavaplatos"
+        },
+        {
+          "title": "I drained the machine, turned the machine off, and lifted the door and left it open overnight.",
+          "title_es": "Drené la máquina lavaplatos, la apagué y dejé la puerta abierta para que se ventile",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish machine open and drained, door lifted for the night"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Hot line",
+      "role_es": "Línea caliente",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I have a hair net",
+          "title_es": "Tengo una redecilla para el cabello",
+          "section": "COMMON"
+        },
+        {
+          "title": "I checked all prep and mise en place in my low boy, on the station, and in the walk in.",
+          "title_es": "Revisé todo el prep y la mise en place en mi low boy, en la estación y en el walk-in.",
+          "section": "COMMON"
+        },
+        {
+          "title": "My pans are completely full and stocked",
+          "title_es": "Mis pans están completamente llenos y surtidos",
+          "section": "COMMON",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Station pans full and stocked for service"
+            }
+          ]
+        },
+        {
+          "title": "I changed, refilled, consolidated all pans on station",
+          "title_es": "Cambié, rellené y consolidé todos los pans de la estación",
+          "section": "COMMON",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Station pans changed, refilled and consolidated"
+            }
+          ]
+        },
+        {
+          "title": "Wash sauce bottles, including caps and tops.",
+          "title_es": "Lavé las botellas de salsa, incluyendo las tapas.",
+          "section": "COMMON"
+        },
+        {
+          "title": "I have rice cooking in the rice cooker. Rice paddles are nearby.",
+          "title_es": "Tengo arroz cocinándose en la arrocera y las paletas de arroz cerca.",
+          "section": "WOK"
+        },
+        {
+          "title": "The wok station is set up with two wok ladles, 2 wok spatulas, 2 bain maries with water under the faucets, two woks, two strainers, and two large bains with oil.",
+          "title_es": "La estación de wok está lista con dos cucharones, 2 espátulas, 2 bain maries con agua bajo las llaves, dos woks, dos coladores y dos bains grandes con aceite.",
+          "section": "WOK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Wok station set up with both woks, tools and oil bains"
+            }
+          ]
+        },
+        {
+          "title": "I have a soap/sanitizer container below wok to clean my station during service",
+          "title_es": "Tengo un contenedor de jabón/desinfectante debajo del wok para limpiar mi estación durante el servicio",
+          "section": "WOK"
+        },
+        {
+          "title": "I have enough cooked chicken and portioned beef to make it through the service.",
+          "title_es": "Tengo suficiente pollo cocido y res porcionada para todo el servicio.",
+          "section": "WOK"
+        },
+        {
+          "title": "I have all my seasonings available: salt, salt & pepper, MSG, sesame seeds, dried whole chilis, peanuts, garlic minced, ginger puree, sichuan, alted black beans, and, almond dukkah.",
+          "title_es": "Tengo todos mis sazonadores: sal, sal y pimienta, MSG, ajonjolí, chiles secos enteros, cacahuates, ajo picado, puré de jengibre, sichuan, frijol negro salado y dukkah de almendra.",
+          "section": "WOK"
+        },
+        {
+          "title": "I have cornstarch slurry, stir fry sauce, beef and broccoili , kung pao sauce, and yu xing sauces",
+          "title_es": "Tengo la mezcla de maicena, salsa para saltear, salsa de res y brócoli, salsa kung pao y salsa yu xiang.",
+          "section": "WOK"
+        },
+        {
+          "title": "I emptied the oil catchers in the hood",
+          "title_es": "Vacié los recolectores de aceite de la campana",
+          "section": "WOK"
+        },
+        {
+          "title": "I scrubbed and wiped down the wok station, as well as emptied and cleaned the wok filter.",
+          "title_es": "Tallé y limpié la estación de wok, y vacié y limpié el filtro del wok.",
+          "section": "WOK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Wok station scrubbed down and the wok filter cleaned"
+            }
+          ]
+        },
+        {
+          "title": "I scrubbed and wiped down the tile wall.",
+          "title_es": "Tallé y limpié la pared de azulejo.",
+          "section": "WOK"
+        },
+        {
+          "title": "I scrubbed all the shelves, low boys, and tables. I removed all unnecessary items and put them in their appropriate places.",
+          "title_es": "Tallé todas las repisas, low boys y mesas. Quité todo lo innecesario y lo puse en su lugar.",
+          "section": "WOK"
+        },
+        {
+          "title": "I restocked my station fully and made sure lids were on everything",
+          "title_es": "Surtí mi estación por completo y me aseguré de que todo tuviera tapa.",
+          "section": "WOK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Station fully restocked with lids on everything"
+            }
+          ]
+        },
+        {
+          "title": "I wiped down both screens and behind the screens. I wiped down rice cookers and emptied water tray.",
+          "title_es": "Limpié ambas pantallas y detrás de ellas. Limpié las arroceras y vacié la bandeja de agua.",
+          "section": "WOK"
+        },
+        {
+          "title": "I took out the trash and swept the floor",
+          "title_es": "Saqué la basura y barrí el piso",
+          "section": "WOK"
+        },
+        {
+          "title": "I turned on the fryers to 350 degrees",
+          "title_es": "Prendí las freidoras a 350 grados",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I heated up 3 3rd pans of Orange Sauce and 3 3rd pans of General Tso's in a stock pot",
+          "title_es": "Calenté 3 terceros de salsa de naranja y 3 terceros de General Tso en una olla",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "The pasta boiler is filled all the way up and boiling, ready for service.",
+          "title_es": "El hervidor de pasta está lleno hasta arriba y hirviendo, listo para el servicio.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have batter and corn starch bowls",
+          "title_es": "Tengo los tazones de batido y de maicena",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have all my cold dipping sauces",
+          "title_es": "Tengo todas mis salsas frías para remojar",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have a lexan filled with chicken fritters, as well as a back up ready to go in the walk-in",
+          "title_es": "Tengo un lexan lleno de fritters de pollo y uno de repuesto listo en el walk-in",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have all my seasonings available: szechuan hot seasoning, sesame seeds.",
+          "title_es": "Tengo todos mis sazonadores: sazonador picante szechuan y ajonjolí.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have 3 empty medium sized mixing bowls on my station",
+          "title_es": "Tengo 3 tazones medianos vacíos en mi estación",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I have rangoons, veg and egg rolls, and dumplings.",
+          "title_es": "Tengo rangoons, rollos de verdura y huevo, y dumplings.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I scrubbed and wiped the stock burners, and fryer area.",
+          "title_es": "Tallé y limpié los quemadores y el área de la freidora.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Burners and fryer area scrubbed and wiped"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned all the shelves, low boys, hand sink, map sink and tables. I removed all unnecessary items and put them in their appropriate places.",
+          "title_es": "Limpié todas las repisas, low boys, lavabo, mop sink y mesas. Quité todo lo innecesario y lo puse en su lugar.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I restocked my station fully and wrapped well with plastic wrap.",
+          "title_es": "Surtí mi estación por completo y la tapé bien con plástico.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Station fully restocked and wrapped"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned KDS (kitchen display screens)",
+          "title_es": "Limpié las pantallas KDS de la cocina",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I took out the trash.",
+          "title_es": "Saqué la basura.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I changed out the tray under the stove burners and lined with new foil.",
+          "title_es": "Cambié la charola debajo de los quemadores y la forré con papel aluminio nuevo.",
+          "section": "FRY / SAUTE"
+        },
+        {
+          "title": "I cleaned the fryer area, and use the spider tool to skim out all the debris.",
+          "title_es": "Limpié el área de la freidora y usé la araña para sacar todos los residuos.",
+          "section": "FRY / SAUTE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Fryer skimmed clean of debris"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Deep clean",
+      "role_es": "Limpieza profunda",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "Wok Station — Deep clean and detail Wok Station, wok rings and season woks, Deep clean Burners",
+          "title_es": "Estación de wok — Limpiar a profundidad la estación de wok, los aros y sazonar los woks, limpiar a profundidad los quemadores",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Wok station, rings, woks and burners deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Fry Station — Deep clean underneath and in between fryers. Send burner grates to dish to get scrubbed and ran thru the wash.",
+          "title_es": "Estación de fritura — Limpieza profunda debajo y entre freidoras. Envíe las rejillas de los quemadores al lavado para fregarlas.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under and between the fryers deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "PM Lead — Deep clean and detail mixers, robo coups, and blenders. Detail white bins. Sweep and wipe down walls beind bins.",
+          "title_es": "Líder PM — Limpieza profunda y detalle de batidoras, robo coupes y licuadoras. Detalle de contenedores blancos. Barra y limpie las paredes detrás de los contenedores.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Mixers, robo coupes and blenders detailed; white bins and walls behind them clean"
+            }
+          ]
+        },
+        {
+          "title": "PM Dish — Pressure wash the back patio including the ice room and trash cans, wash bus tubs and lids",
+          "title_es": "Lavaplatos PM — Lavar el patio trasero incluyendo el cuarto de hielo y botes de basura con la manguera de presión, lavar bus tubs y tapaderas",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Back patio, ice room and trash cans pressure washed"
+            }
+          ]
+        },
+        {
+          "title": "Wok Station — Pull out prep tables, service tables, and lowboys scrub and wipe clean.",
+          "title_es": "Estación de wok — Saque las mesas de preparación, las mesas de servicio y los low boys, frote y limpie.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the pulled-out tables and lowboys, scrubbed clean"
+            }
+          ]
+        },
+        {
+          "title": "Fry Station — Deep clean and detail inside fryer and under neath/and the outlets behind the fryer",
+          "title_es": "Estación de fritura — Limpieza profunda y detalle del interior de la freidora y debajo, y revisar los enchufes detrás de la freidora.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Inside and behind the fryer detailed"
+            }
+          ]
+        },
+        {
+          "title": "lead — Clean inside and outside windows of walk-in as well as walls and gold tile.",
+          "title_es": "Líder — Limpie las ventanas interiores y exteriores del walk-in, así como las paredes y el azulejo dorado.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-in windows, walls and gold tile cleaned"
+            }
+          ]
+        },
+        {
+          "title": "PM Dish — Clean Pots and pans with baking soda and vinagar. Scrub cutting boards with degreaser including the line's, clean the patio cabinets.",
+          "title_es": "Lavaplatos PM — Limpiar ollas y sartenes con bicarbonato y vinagre, tallar con desengrasante las tablas de cortar incluyendo las de la línea, limpiar los gabinetes del patio",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Pots, pans and cutting boards cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Wok Station — Detail shelves above loboys",
+          "title_es": "Estación de wok — Detalle de los estantes encima de los low boys.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Shelves above the lowboys detailed"
+            }
+          ]
+        },
+        {
+          "title": "Fry Station — Detail spice shelves and fans and A/C unit",
+          "title_es": "Estación de fritura — Detalle de los estantes de especias, los ventiladores y la unidad de aire acondicionado.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Spice shelves, fans and A/C unit detailed"
+            }
+          ]
+        },
+        {
+          "title": "plateing Station — Organize dry stroage shelf in kitchen, consolidate and bring back any unneseccary items to garage storage.",
+          "title_es": "Estación de emplatado — Organice el estante de almacenamiento seco en la cocina, consolide y lleve lo innecesario al almacenamiento del garaje.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Dry storage shelf organized and consolidated"
+            }
+          ]
+        },
+        {
+          "title": "PM Dish — Scrub and pour bleach solution down drains. Clean above and below the sinks including walls.",
+          "title_es": "Lavaplatos PM — Frote y vierta solución de cloro por los desagües, limpie arriba y debajo de los sinks incluyendo paredes.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Drains scrubbed and bleached, around the sinks clean"
+            }
+          ]
+        },
+        {
+          "title": "Lead — Deep Cleaning Walkin, walls, windows, shelves, floor",
+          "title_es": "Líder — Limpieza profunda del walk-in: paredes, ventanas, estantes y piso.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-in deep cleaned top to bottom"
+            }
+          ]
+        },
+        {
+          "title": "Wok Station — Deep Cleaning underneth woks station including pipes/ emty the oil catch containers from the hood",
+          "title_es": "Estación de wok — Limpieza profunda debajo de la estación de wok incluyendo tuberías, vaciar los recolectores de aceite de la campana.",
+          "section": "THURSDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Under the wok station and pipes cleaned, hood oil catchers emptied"
+            }
+          ]
+        },
+        {
+          "title": "Fry Station — bleach map sink and scrub including walls and hose",
+          "title_es": "Estación de fritura — Limpiar con cloro el mop sink y tallar incluyendo paredes y manguera.",
+          "section": "THURSDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Mop sink bleached and scrubbed, walls and hose"
+            }
+          ]
+        },
+        {
+          "title": "plateing Station — deep cleaning inside of low boys and gas kits",
+          "title_es": "Estación de emplatado — Limpieza profunda del interior de los low boys y las gas kits.",
+          "section": "THURSDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Inside the lowboys deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "PM Dish — Degrease and scub cutting boards/ Bleach cutting boards/ deep cleaning diswasher machine and shelves",
+          "title_es": "Lavaplatos PM — Desengrasar y tallar las tablas de cortar, limpiarlas con cloro, limpieza profunda de la máquina lavaplatos y las repisas.",
+          "section": "THURSDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Cutting boards degreased and bleached, dish machine deep cleaned"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Monthly deep clean",
+      "role_es": "Limpieza profunda mensual",
+      "phase": "mid",
+      "items": [
+        {
+          "title": "First Monday, AM TEAM — Move convection oven out from the wall and deep clean behind the oven",
+          "title_es": "Primer lunes, equipo AM — Mover el horno de convección de la pared y limpiar a profundidad detrás del horno",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the convection oven, deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "First Thursday, PM TEAM — Deep clean and organize outside garage storage unit",
+          "title_es": "Primer jueves, equipo PM — Limpiar a profundidad y organizar la unidad de almacenamiento del garaje exterior",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Outside garage storage unit deep cleaned and organized"
+            }
+          ]
+        },
+        {
+          "title": "Second Tuesday, AM TEAM — Move everything from dry storage shelves, deep clean the shelves and organize dry storage",
+          "title_es": "Segundo martes, equipo AM — Mover todo de los estantes de almacenamiento seco, limpiarlos a profundidad y organizar el almacén seco",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Dry storage shelves deep cleaned and organized"
+            }
+          ]
+        },
+        {
+          "title": "Second Wednesday, PM TEAM — Move everything from the walk in shelves and deep clean the shelves and the walk in",
+          "title_es": "Segundo miércoles, equipo PM — Mover todo de los estantes del walk-in y limpiar a profundidad los estantes y el walk-in",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-in shelves and walk-in deep cleaned"
+            }
+          ]
+        },
+        {
+          "title": "Third Monday, AM TEAM — Remove all gaskets in low boys, run through dishwasher",
+          "title_es": "Tercer lunes, equipo AM — Quitar todos los empaques de los low boys y pasarlos por el lavavajillas",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Lowboy gaskets removed and run through the dishwasher"
+            }
+          ]
+        },
+        {
+          "title": "Third Tuesday, PM TEAM — Completely detail convection ovens, degrease and scrub the inside windows, grates, walls of oven.",
+          "title_es": "Tercer martes, equipo PM — Detallar por completo los hornos de convección, desengrasar y tallar las ventanas interiores, rejillas y paredes del horno.",
+          "section": "MONTHLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Convection ovens fully detailed inside"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "PM Line",
+      "role_es": "Línea PM",
+      "phase": "close",
+      "items": [
+        {
+          "title": "I cleaned all rice makers inside and out. I emptied the water trays.",
+          "title_es": "Limpié todas las arroceras por dentro y por fuera. Vacié las bandejas de agua.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Rice makers clean inside and out, water trays empty"
+            }
+          ]
+        },
+        {
+          "title": "I took out all the trash, and wiped down the trash can and I took out all recycling.",
+          "title_es": "Saqué toda la basura, limpié el bote de basura y saqué todo el reciclaje."
+        },
+        {
+          "title": "I made sure to fill out tempeture logs with accurate date and times.",
+          "title_es": "Me aseguré de completar los registros de temperatura con fechas y horas precisas.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Temperature logs filled out with date and time"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned the walk in, organized, everything is labeled and dated, and product is kept off the floor.",
+          "title_es": "Limpié el walk-in, organicé, todo está etiquetado y fechado, y el producto se mantiene alejado del piso.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-in clean and organized, product labeled, dated and off the floor"
+            }
+          ]
+        },
+        {
+          "title": "I made sure to leave the towel bin full and folded.",
+          "title_es": "Me aseguré de dejar el contenedor de toallas lleno y doblado."
+        },
+        {
+          "title": "I made sure to sweep behide all tables, loboys, fryers, wok station and burners.",
+          "title_es": "Me aseguré de barrer detrás de todas las mesas, low boys, freidoras, wok y quemadores.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Swept behind the tables, lowboys, fryers, wok and burners"
+            }
+          ]
+        },
+        {
+          "title": "I empties all drain trays and scrubbed clean. I poured blach down all drains.",
+          "title_es": "Vacié todas las bandejas de drenaje y las froté. Eché cloro por todos los desagües."
+        },
+        {
+          "title": "I cleaned the mop sink. Brooms, dust pans and squeegies are put back in the correct location.",
+          "title_es": "Limpié el fregadero del trapeador. Las escobas, recogedores y escurridores están en su lugar correcto."
+        },
+        {
+          "title": "I made sure all cooking equipment is cleaned and turned off.",
+          "title_es": "Me aseguré de que todo el equipo de cocina esté limpio y apagado.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All cooking equipment clean and turned off"
+            }
+          ]
+        },
+        {
+          "title": "I cleaned the wok station, ran the grate through the dishwasher.",
+          "title_es": "Limpié la estación de wok y pasé la rejilla por el lavavajillas."
+        },
+        {
+          "title": "I made sure any and all metal containers and boxes are out of the walk-in. Only clear plastic containers with labels and dates are in the walk-in.",
+          "title_es": "Me aseguré de que todos los contenedores y cajas de metal estén fuera del walk-in. Solo hay contenedores de plástico transparente con etiquetas y fechas en el walk-in.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Walk-in holds only labeled clear plastic containers, no metal"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

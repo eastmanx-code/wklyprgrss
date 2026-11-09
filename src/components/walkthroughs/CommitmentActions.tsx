@@ -42,11 +42,15 @@ export function CommitmentActions({
   signed,
   canReopen,
   initialPhotos,
+  hidePhotos,
 }: {
   id: string;
   signed: boolean;
   canReopen: boolean;
   initialPhotos: { id: string; url: string; isDoc?: boolean }[];
+  /** A photo-led tile already shows the photos as its hero, so the signed
+      view here renders only the reopen control, not the photos again. */
+  hidePhotos?: boolean;
 }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -197,8 +201,9 @@ export function CommitmentActions({
     if (initialPhotos.length === 0 && !canReopen) return null;
     return (
       <div className="mt-3 space-y-2">
-        {/* Signed: photos are view-only, tap to enlarge, no remove. */}
-        <PhotoGrid photos={initialPhotos} />
+        {/* Signed: photos are view-only, tap to enlarge, no remove. On a
+            photo-led tile the hero is drawn above, so skip them here. */}
+        {hidePhotos ? null : <PhotoGrid photos={initialPhotos} />}
         {canReopen ? (
           <button
             type="button"

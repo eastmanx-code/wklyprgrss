@@ -88,7 +88,7 @@ export default async function PropertyPage({
     .filter((c) => c.open > 0);
 
   return (
-    <main className="close-flow mx-auto max-w-2xl">
+    <main className="close-flow">
       <BackLink href="/walkthroughs">All properties</BackLink>
 
       <header className="mt-4 mb-5">
@@ -103,61 +103,78 @@ export default async function PropertyPage({
           shown what is still waiting to upload. */}
       <WalkQueue />
 
-      {/* The building's own ring, small, with the counts that make it. */}
-      <div className="panel mb-5 flex items-center gap-5 p-5">
-        <div className="w-24 shrink-0">
-          <Dial
-            percent={s.percent}
-            tone={behind ? "var(--warn)" : "var(--ink)"}
-            caption=""
-            label={`${s.signed}/${s.actionable}`}
-            size={96}
-          />
-        </div>
-        <div className="min-w-0">
-          <p className="text-body text-ink leading-snug">
-            {s.signed} of {s.actionable} signed off
-          </p>
-          <p className="label mt-1">
-            {s.overdue > 0 ? (
-              <span className="text-warn">{s.overdue} overdue</span>
-            ) : (
-              "none overdue"
-            )}
-            {" · "}
-            {photoCount} {photoCount === 1 ? "photo" : "photos"}
-          </p>
+      {/* One metrics panel: the building's ring and headline counts up top,
+          then the same numbers broken out by category underneath, so the whole
+          state of the walk reads as one block rather than a ring and a scatter
+          of chips. */}
+      <div className="panel mb-6 p-5 sm:p-6">
+        <div className="flex flex-col gap-5 md:flex-row md:items-center md:gap-8">
+          {/* Dial and headline count. */}
+          <div className="flex items-center gap-5 md:shrink-0">
+            <div className="w-24 shrink-0">
+              <Dial
+                percent={s.percent}
+                tone={behind ? "var(--warn)" : "var(--ink)"}
+                caption=""
+                label={`${s.signed}/${s.actionable}`}
+                size={96}
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[17px] text-ink font-medium leading-snug">
+                {s.signed} of {s.actionable} signed off
+              </p>
+              <p className="label mt-1.5 text-[12px]">
+                {s.overdue > 0 ? (
+                  <span className="text-warn">{s.overdue} overdue</span>
+                ) : (
+                  "none overdue"
+                )}
+                {" · "}
+                {photoCount} {photoCount === 1 ? "photo" : "photos"}
+              </p>
+            </div>
+          </div>
+
+          {/* The same numbers by category, filling the rest of the band on a
+              wide screen and dropping under the dial on a phone. */}
+          {dueByCategory.length > 0 ? (
+            <div className="border-divider grid flex-1 grid-cols-2 gap-x-6 gap-y-4 border-t pt-5 sm:grid-cols-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+              {dueByCategory.map((c) => (
+                <div key={c.category}>
+                  <p className="label text-[11px] text-muted">
+                    {CATEGORY_BADGE[c.category]}
+                  </p>
+                  <p className="mt-1.5 text-[18px] text-ink tabular-nums leading-none">
+                    {c.open}
+                    <span className="label ml-1 text-[11px] text-muted">
+                      due
+                    </span>
+                  </p>
+                  <p
+                    className={`label mt-1 text-[11px] tabular-nums ${
+                      c.overdue > 0 ? "text-warn" : "text-muted"
+                    }`}
+                  >
+                    {c.overdue > 0 ? `${c.overdue} overdue` : "on time"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
-
-      {/* Tasks due, by category, so you see where the work sits at a glance. */}
-      {dueByCategory.length > 0 ? (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {dueByCategory.map((c) => (
-            <span
-              key={c.category}
-              className="bg-inset text-label inline-flex items-center gap-2 rounded px-3 py-2 tracking-[0.08em]"
-            >
-              <span className="text-ink">{CATEGORY_BADGE[c.category]}</span>
-              <span className="text-muted tabular-nums">{c.open} due</span>
-              {c.overdue > 0 ? (
-                <span className="text-warn tabular-nums">
-                  {c.overdue} overdue
-                </span>
-              ) : null}
-            </span>
-          ))}
-        </div>
-      ) : null}
 
       <div className="space-y-8">
         {property.groups.map((group) => (
           <section key={group.category}>
-            <h2 className="card-title mb-3">
+            <h2 className="card-title mb-4 text-[18px]">
               {CATEGORY_LABEL[group.category]}
-              <span className="label text-muted ml-2">{group.items.length}</span>
+              <span className="label ml-2 text-[12px] text-muted">
+                {group.items.length}
+              </span>
             </h2>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-2 items-start gap-3 md:grid-cols-3 xl:grid-cols-4">
               {group.items.map((item) => (
                 <CommitmentRow
                   key={item.id}
@@ -265,85 +282,100 @@ function CommitmentRow({
     .filter((p): p is { id: string; url: string; isDoc: boolean } =>
       Boolean(p.url),
     );
-  const photoStrip =
-    photos.length > 0 ? (
-      <div className="mt-3">
-        <PhotoGrid photos={photos} />
-      </div>
-    ) : null;
+  const metaLine = (small: boolean) => (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+      <span className={`label ${small ? "text-[11px]" : "text-[12px]"}`}>
+        seen {fmtDate(observed)}
+      </span>
+      {item.category !== "future_goal" ? (
+        <span
+          className={`label ${small ? "text-[11px]" : "text-[12px]"} ${
+            overdue ? "text-warn" : ""
+          }`}
+        >
+          due {fmtDate(item.due)}
+          {overdue ? ` · ${item.daysOverdue}d late` : ""}
+        </span>
+      ) : null}
+    </div>
+  );
 
-  return (
-    <li
-      className={`rounded-[6px] p-4 ${
-        overdue
-          ? "bg-warn/10 ring-warn/40 ring-1"
-          : signed || answered
-            ? "bg-inset opacity-80"
-            : "bg-inset"
-      }`}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-body text-ink leading-snug break-words">
-            {item.commitment}
-          </p>
+  // A to-do carries a form or an answer box, so it runs full width where there
+  // is room to work. Everything done or display-only becomes a photo-led tile.
+  const isRow = (question && !answered) || (!special && !signed);
 
-          {/* Badges: category, and the two dates. */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Badge>{CATEGORY_BADGE[item.category]}</Badge>
-            <span className="label">seen {fmtDate(observed)}</span>
-            {item.category !== "future_goal" ? (
-              <span className={`label ${overdue ? "text-warn" : ""}`}>
-                due {fmtDate(item.due)}
-                {overdue ? ` · ${item.daysOverdue}d late` : ""}
-              </span>
+  if (isRow) {
+    return (
+      <li
+        className={`col-span-2 rounded-[10px] p-5 md:col-span-3 xl:col-span-2 ${
+          overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
+        }`}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[16px] text-ink leading-relaxed break-words">
+              {item.commitment}
+            </p>
+            <div className="mt-2.5">{metaLine(false)}</div>
+            {item.note ? (
+              <p className="note mt-2 leading-relaxed text-ink/75">
+                {item.note}
+              </p>
             ) : null}
           </div>
-
-          {item.signedBy ? (
-            <p className="label mt-2">
-              {question ? "Answered by " : "Signed "}
-              {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
-            </p>
-          ) : null}
-          {item.note ? (
-            <p className="note text-muted mt-1 leading-relaxed">{item.note}</p>
-          ) : null}
+          <StatusPill item={item} />
         </div>
 
+        {question ? (
+          <QuestionAnswer id={item.id} />
+        ) : (
+          <CommitmentActions
+            id={item.id}
+            signed={signed}
+            canReopen={isAdmin}
+            initialPhotos={photos}
+          />
+        )}
+      </li>
+    );
+  }
+
+  // Photo-led tile: the picture is the headline, the words sit under it.
+  return (
+    <li
+      className={`flex flex-col gap-2 rounded-[10px] p-3 ${
+        overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
+      }`}
+    >
+      {photos.length > 0 ? <PhotoGrid photos={photos} cols={1} /> : null}
+      <div className="flex items-start justify-between gap-2">
+        <p className="line-clamp-4 text-[14px] text-ink leading-snug break-words">
+          {item.commitment}
+        </p>
         <StatusPill item={item} />
       </div>
-
-      {/* Actionable rows get the check-off: photograph it, then sign. A
-          question is answered in words instead, so an open one gets the answer
-          box and a closed one shows its answer above. Goals and covered notes
-          are never closed here, so they show their proof if any and nothing
-          else. */}
-      {question ? (
-        answered ? (
-          photoStrip
-        ) : (
-          <QuestionAnswer id={item.id} />
-        )
-      ) : special ? (
-        photoStrip
-      ) : (
+      {metaLine(true)}
+      {item.signedBy ? (
+        <p className="label text-[11px]">
+          {question ? "Answered by " : "Signed "}
+          {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
+        </p>
+      ) : null}
+      {item.note ? (
+        <p className="note text-[12px] leading-relaxed text-ink/75">
+          {item.note}
+        </p>
+      ) : null}
+      {signed && !special ? (
         <CommitmentActions
           id={item.id}
-          signed={signed}
+          signed
           canReopen={isAdmin}
           initialPhotos={photos}
+          hidePhotos
         />
-      )}
+      ) : null}
     </li>
-  );
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-panel text-muted inline-flex items-center rounded px-2 py-0.5 text-label tracking-[0.08em]">
-      {children}
-    </span>
   );
 }
 
