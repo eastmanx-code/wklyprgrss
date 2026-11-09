@@ -85,7 +85,11 @@ export default async function PropertyPage({
       open: g.items.filter((i) => i.status !== "signed").length,
       overdue: g.items.filter((i) => i.status === "overdue").length,
     }))
-    .filter((c) => c.open > 0);
+    .filter((c) => c.open > 0)
+    // Biggest pile of work first, so the bars read top to bottom.
+    .sort((a, b) => b.open - a.open);
+  // The longest bar sets the scale the rest are drawn against.
+  const maxDue = Math.max(1, ...dueByCategory.map((c) => c.open));
 
   return (
     <main className="close-flow">
@@ -139,25 +143,37 @@ export default async function PropertyPage({
           {/* The same numbers by category, filling the rest of the band on a
               wide screen and dropping under the dial on a phone. */}
           {dueByCategory.length > 0 ? (
-            <div className="border-divider grid flex-1 grid-cols-2 gap-x-6 gap-y-4 border-t pt-5 sm:grid-cols-4 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+            <div className="border-divider flex-1 space-y-2.5 border-t pt-5 md:border-t-0 md:border-l md:pt-0 md:pl-8">
               {dueByCategory.map((c) => (
-                <div key={c.category}>
-                  <p className="label text-[11px] text-muted">
+                <div key={c.category} className="flex items-center gap-3">
+                  <span className="label w-28 shrink-0 truncate text-[11px] text-muted">
                     {CATEGORY_BADGE[c.category]}
-                  </p>
-                  <p className="mt-1.5 text-[18px] text-ink tabular-nums leading-none">
-                    {c.open}
-                    <span className="label ml-1 text-[11px] text-muted">
-                      due
-                    </span>
-                  </p>
-                  <p
-                    className={`label mt-1 text-[11px] tabular-nums ${
-                      c.overdue > 0 ? "text-warn" : "text-muted"
-                    }`}
-                  >
-                    {c.overdue > 0 ? `${c.overdue} overdue` : "on time"}
-                  </p>
+                  </span>
+                  {/* Bar length is how much is due; the warn part is how much of
+                      that is overdue. */}
+                  <div className="bg-inset h-2 flex-1 overflow-hidden rounded-full">
+                    <div
+                      className="flex h-full"
+                      style={{ width: `${Math.max((c.open / maxDue) * 100, 4)}%` }}
+                    >
+                      <div
+                        className="h-full bg-warn"
+                        style={{ width: `${(c.overdue / c.open) * 100}%` }}
+                      />
+                      <div
+                        className="bg-ink/55 h-full"
+                        style={{ width: `${((c.open - c.overdue) / c.open) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="label w-20 shrink-0 text-right text-[11px] tabular-nums">
+                    <span className="text-ink">{c.open}</span>
+                    {c.overdue > 0 ? (
+                      <span className="text-warn"> · {c.overdue} late</span>
+                    ) : (
+                      <span className="text-muted"> due</span>
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
@@ -165,7 +181,7 @@ export default async function PropertyPage({
         </div>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-10">
         {property.groups.map((group) => (
           <section key={group.category}>
             <h2 className="card-title mb-4 text-[18px]">
@@ -174,7 +190,9 @@ export default async function PropertyPage({
                 {group.items.length}
               </span>
             </h2>
-            <ul className="grid grid-cols-2 items-start gap-3 md:grid-cols-3 xl:grid-cols-4">
+            {/* One grid, uniform tiles: a square photo or a square add-a-photo
+                well up top, so a done card and a to-do card are the same size. */}
+            <ul className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 xl:grid-cols-4">
               {group.items.map((item) => (
                 <CommitmentRow
                   key={item.id}
@@ -253,6 +271,19 @@ function ChangeLog({ events }: { events: WalkEvent[] }) {
 const SPECIAL: WalkCategory[] = ["open_question", "future_goal", "covered"];
 
 /**
+ * A to-do: an open item with a sign-off form, or a question still to answer.
+ * These stack as wide cards; everything else is a done, photo-led tile. Kept
+ * as one rule so the page split and the card agree on which is which.
+ */
+function isTodo(item: Commitment): boolean {
+  const signed = item.status === "signed";
+  const answered = item.status === "answered";
+  const question = item.category === "open_question";
+  const special = SPECIAL.includes(item.category);
+  return (question && !answered) || (!special && !signed);
+}
+
+/**
  * One commitment. The ask in plain words, its badges, the date it was seen and
  * the date it is due, and its state. A repeat is called out hard because an item
  * on its third walk is a different problem from a new one.
@@ -270,7 +301,6 @@ function CommitmentRow({
 }) {
   const overdue = item.status === "overdue";
   const signed = item.status === "signed";
-  const answered = item.status === "answered";
   const question = item.category === "open_question";
   const special = SPECIAL.includes(item.category);
   const photos = item.photos
@@ -300,61 +330,54 @@ function CommitmentRow({
     </div>
   );
 
-  // A to-do carries a form or an answer box, so it runs full width where there
-  // is room to work. Everything done or display-only becomes a photo-led tile.
-  const isRow = (question && !answered) || (!special && !signed);
+  // The ask, its pill, and the dates. Every card shows this the same way,
+  // under the photo area, so a photo card and an add-a-photo card line up.
+  const head = (
+    <div className="min-w-0 flex-1">
+      <div className="flex items-start justify-between gap-2">
+        <p className="line-clamp-3 text-[13px] text-ink leading-snug break-words">
+          {item.commitment}
+        </p>
+        <StatusPill item={item} />
+      </div>
+      <div className="mt-1.5">{metaLine(true)}</div>
+    </div>
+  );
 
-  if (isRow) {
+  const cardClass = `flex h-full flex-col gap-2 rounded-[10px] p-3 ${
+    overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
+  }`;
+
+  // A to-do is worked in the card: an add-a-photo well, then the sign-off once
+  // a photo is on it. A question is answered in words instead.
+  if (isTodo(item)) {
     return (
-      <li
-        className={`col-span-2 rounded-[10px] p-5 md:col-span-3 xl:col-span-2 ${
-          overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
-        }`}
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-[16px] text-ink leading-relaxed break-words">
-              {item.commitment}
-            </p>
-            <div className="mt-2.5">{metaLine(false)}</div>
-            {item.note ? (
-              <p className="note mt-2 leading-relaxed text-ink/75">
-                {item.note}
-              </p>
-            ) : null}
-          </div>
-          <StatusPill item={item} />
-        </div>
-
+      <li className={cardClass}>
         {question ? (
-          <QuestionAnswer id={item.id} />
+          <>
+            {head}
+            <QuestionAnswer id={item.id} />
+          </>
         ) : (
           <CommitmentActions
             id={item.id}
             signed={signed}
             canReopen={isAdmin}
             initialPhotos={photos}
+            tile
+            caption={head}
           />
         )}
       </li>
     );
   }
 
-  // Photo-led tile: the picture is the headline, the words sit under it.
+  // Done or display-only: the photo leads, the words sit under it. Same square
+  // top as a to-do's well, so the grid stays even.
   return (
-    <li
-      className={`flex flex-col gap-2 rounded-[10px] p-3 ${
-        overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
-      }`}
-    >
+    <li className={cardClass}>
       {photos.length > 0 ? <PhotoGrid photos={photos} cols={1} /> : null}
-      <div className="flex items-start justify-between gap-2">
-        <p className="line-clamp-4 text-[14px] text-ink leading-snug break-words">
-          {item.commitment}
-        </p>
-        <StatusPill item={item} />
-      </div>
-      {metaLine(true)}
+      {head}
       {item.signedBy ? (
         <p className="label text-[11px]">
           {question ? "Answered by " : "Signed "}

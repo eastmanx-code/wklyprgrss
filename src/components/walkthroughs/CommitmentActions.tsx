@@ -43,6 +43,8 @@ export function CommitmentActions({
   canReopen,
   initialPhotos,
   hidePhotos,
+  tile,
+  caption,
 }: {
   id: string;
   signed: boolean;
@@ -51,6 +53,12 @@ export function CommitmentActions({
   /** A photo-led tile already shows the photos as its hero, so the signed
       view here renders only the reopen control, not the photos again. */
   hidePhotos?: boolean;
+  /** Render as a uniform grid tile: an aspect-square photo or add-a-photo
+      well up top, the caption below it, and the sign-off fields only once a
+      photo is on it. Keeps an untouched to-do the same size as a photo card. */
+  tile?: boolean;
+  /** The ask and its dates, shown between the photo area and the controls. */
+  caption?: React.ReactNode;
 }) {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -214,6 +222,94 @@ export function CommitmentActions({
             {busy ? "…" : "Reopen"}
           </button>
         ) : null}
+        {error ? (
+          <p role="alert" className="label text-warn">
+            {error}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  // Uniform grid tile. Every card is the same shape: a square photo or a
+  // square "add a photo" well, the caption, then the controls pinned to the
+  // bottom. The sign-off fields appear only once there is a photo to sign
+  // against, so an untouched to-do stays the size of a photo card.
+  if (tile) {
+    return (
+      <div className="flex h-full flex-col gap-2">
+        {hasPhoto ? (
+          <PhotoGrid photos={initialPhotos} onRemove={remove} busy={busy} cols={1} />
+        ) : (
+          <label className="dotfield flex aspect-square cursor-pointer items-center justify-center rounded-[10px]">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="sr-only"
+              onChange={pick}
+              disabled={busy}
+            />
+            <span className="label text-ink bg-paper rounded-full px-3 py-1.5">
+              {busy ? "Working…" : "Add a photo"}
+            </span>
+          </label>
+        )}
+
+        {caption}
+
+        {hasPhoto ? (
+          <div className="mt-auto space-y-2 pt-1">
+            <label className="btn-ghost btn-sm inline-flex cursor-pointer items-center">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="sr-only"
+                onChange={pick}
+                disabled={busy}
+              />
+              {busy ? "Working…" : "Add another"}
+            </label>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name"
+              className="field w-full"
+              autoComplete="off"
+            />
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Note (optional)"
+              rows={2}
+              className="field w-full"
+            />
+            <button
+              type="button"
+              onClick={sign}
+              disabled={busy || !hasPhoto}
+              className="btn btn-sm w-full"
+            >
+              Sign off
+            </button>
+          </div>
+        ) : (
+          <label className="btn-ghost btn-sm mt-auto inline-flex w-fit cursor-pointer items-center">
+            <input
+              ref={docRef}
+              type="file"
+              accept="application/pdf"
+              className="sr-only"
+              onChange={pickDoc}
+              disabled={busy}
+            />
+            {busy ? "Working…" : "Attach a PDF"}
+          </label>
+        )}
+
         {error ? (
           <p role="alert" className="label text-warn">
             {error}
