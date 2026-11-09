@@ -166,53 +166,29 @@ export default async function PropertyPage({
       </div>
 
       <div className="space-y-10">
-        {property.groups.map((group) => {
-          // Two kinds of card, kept apart so neither looks wrong next to the
-          // other: the to-do items are a stacked list of wide cards with room
-          // to sign, the done ones a photo gallery.
-          const todos = group.items.filter(isTodo);
-          const done = group.items.filter((i) => !isTodo(i));
-          return (
-            <section key={group.category}>
-              <h2 className="card-title mb-4 text-[18px]">
-                {CATEGORY_LABEL[group.category]}
-                <span className="label ml-2 text-[12px] text-muted">
-                  {group.items.length}
-                </span>
-              </h2>
-              {todos.length > 0 ? (
-                <ul className="space-y-3">
-                  {todos.map((item) => (
-                    <CommitmentRow
-                      key={item.id}
-                      item={item}
-                      urls={urls}
-                      observed={property.lastWalk}
-                      isAdmin={isAdmin}
-                    />
-                  ))}
-                </ul>
-              ) : null}
-              {done.length > 0 ? (
-                <ul
-                  className={`grid grid-cols-2 items-start gap-3 sm:grid-cols-3 xl:grid-cols-4 ${
-                    todos.length > 0 ? "mt-3" : ""
-                  }`}
-                >
-                  {done.map((item) => (
-                    <CommitmentRow
-                      key={item.id}
-                      item={item}
-                      urls={urls}
-                      observed={property.lastWalk}
-                      isAdmin={isAdmin}
-                    />
-                  ))}
-                </ul>
-              ) : null}
-            </section>
-          );
-        })}
+        {property.groups.map((group) => (
+          <section key={group.category}>
+            <h2 className="card-title mb-4 text-[18px]">
+              {CATEGORY_LABEL[group.category]}
+              <span className="label ml-2 text-[12px] text-muted">
+                {group.items.length}
+              </span>
+            </h2>
+            {/* One grid, uniform tiles: a square photo or a square add-a-photo
+                well up top, so a done card and a to-do card are the same size. */}
+            <ul className="grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {group.items.map((item) => (
+                <CommitmentRow
+                  key={item.id}
+                  item={item}
+                  urls={urls}
+                  observed={property.lastWalk}
+                  isAdmin={isAdmin}
+                />
+              ))}
+            </ul>
+          </section>
+        ))}
       </div>
 
       {canSeeLog ? <ChangeLog events={events} /> : null}
@@ -338,57 +314,54 @@ function CommitmentRow({
     </div>
   );
 
-  // A to-do: a wide card with the ask on the left and the sign-off on the
-  // right, so it fills the row instead of boxing a short form in empty space.
-  if (isTodo(item)) {
-    return (
-      <li
-        className={`rounded-[10px] p-5 ${
-          overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
-        }`}
-      >
-        <div className="flex flex-col gap-5 md:flex-row md:gap-8">
-          <div className="min-w-0 md:flex-1">
-            <div className="flex items-start justify-between gap-3">
-              <p className="text-[16px] text-ink leading-relaxed break-words">
-                {item.commitment}
-              </p>
-              <StatusPill item={item} />
-            </div>
-            <div className="mt-2.5">{metaLine(false)}</div>
-          </div>
-          <div className="md:w-[360px] md:shrink-0">
-            {question ? (
-              <QuestionAnswer id={item.id} />
-            ) : (
-              <CommitmentActions
-                id={item.id}
-                signed={signed}
-                canReopen={isAdmin}
-                initialPhotos={photos}
-              />
-            )}
-          </div>
-        </div>
-      </li>
-    );
-  }
-
-  // Photo-led tile: the picture is the headline, the words sit under it.
-  return (
-    <li
-      className={`flex flex-col gap-2 rounded-[10px] p-3 ${
-        overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
-      }`}
-    >
-      {photos.length > 0 ? <PhotoGrid photos={photos} cols={1} /> : null}
+  // The ask, its pill, and the dates. Every card shows this the same way,
+  // under the photo area, so a photo card and an add-a-photo card line up.
+  const head = (
+    <div className="min-w-0 flex-1">
       <div className="flex items-start justify-between gap-2">
-        <p className="line-clamp-4 text-[14px] text-ink leading-snug break-words">
+        <p className="line-clamp-3 text-[13px] text-ink leading-snug break-words">
           {item.commitment}
         </p>
         <StatusPill item={item} />
       </div>
-      {metaLine(true)}
+      <div className="mt-1.5">{metaLine(true)}</div>
+    </div>
+  );
+
+  const cardClass = `flex h-full flex-col gap-2 rounded-[10px] p-3 ${
+    overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
+  }`;
+
+  // A to-do is worked in the card: an add-a-photo well, then the sign-off once
+  // a photo is on it. A question is answered in words instead.
+  if (isTodo(item)) {
+    return (
+      <li className={cardClass}>
+        {question ? (
+          <>
+            {head}
+            <QuestionAnswer id={item.id} />
+          </>
+        ) : (
+          <CommitmentActions
+            id={item.id}
+            signed={signed}
+            canReopen={isAdmin}
+            initialPhotos={photos}
+            tile
+            caption={head}
+          />
+        )}
+      </li>
+    );
+  }
+
+  // Done or display-only: the photo leads, the words sit under it. Same square
+  // top as a to-do's well, so the grid stays even.
+  return (
+    <li className={cardClass}>
+      {photos.length > 0 ? <PhotoGrid photos={photos} cols={1} /> : null}
+      {head}
       {item.signedBy ? (
         <p className="label text-[11px]">
           {question ? "Answered by " : "Signed "}
