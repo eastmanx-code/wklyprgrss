@@ -115,10 +115,10 @@ export default async function PropertyPage({
           />
         </div>
         <div className="min-w-0">
-          <p className="text-body text-ink leading-snug">
+          <p className="text-[17px] text-ink font-medium leading-snug">
             {s.signed} of {s.actionable} signed off
           </p>
-          <p className="label mt-1">
+          <p className="label mt-1.5 text-[12px]">
             {s.overdue > 0 ? (
               <span className="text-warn">{s.overdue} overdue</span>
             ) : (
@@ -136,7 +136,7 @@ export default async function PropertyPage({
           {dueByCategory.map((c) => (
             <span
               key={c.category}
-              className="bg-inset text-label inline-flex items-center gap-2 rounded px-3 py-2 tracking-[0.08em]"
+              className="bg-inset inline-flex items-center gap-2 rounded px-3.5 py-2.5 text-[12px] tracking-[0.08em]"
             >
               <span className="text-ink">{CATEGORY_BADGE[c.category]}</span>
               <span className="text-muted tabular-nums">{c.open} due</span>
@@ -153,11 +153,13 @@ export default async function PropertyPage({
       <div className="space-y-8">
         {property.groups.map((group) => (
           <section key={group.category}>
-            <h2 className="card-title mb-3">
+            <h2 className="card-title mb-4 text-[18px]">
               {CATEGORY_LABEL[group.category]}
-              <span className="label text-muted ml-2">{group.items.length}</span>
+              <span className="label ml-2 text-[12px] text-muted">
+                {group.items.length}
+              </span>
             </h2>
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {group.items.map((item) => (
                 <CommitmentRow
                   key={item.id}
@@ -274,7 +276,7 @@ function CommitmentRow({
 
   return (
     <li
-      className={`rounded-[6px] p-4 ${
+      className={`rounded-[8px] p-5 ${
         overdue
           ? "bg-warn/10 ring-warn/40 ring-1"
           : signed || answered
@@ -284,16 +286,16 @@ function CommitmentRow({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-body text-ink leading-snug break-words">
+          <p className="text-[16px] text-ink leading-relaxed break-words">
             {item.commitment}
           </p>
 
-          {/* Badges: category, and the two dates. */}
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-            <Badge>{CATEGORY_BADGE[item.category]}</Badge>
-            <span className="label">seen {fmtDate(observed)}</span>
+          {/* Seen and due. The category is the section heading above, so it is
+              not repeated on every card. */}
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+            <span className="label text-[12px]">seen {fmtDate(observed)}</span>
             {item.category !== "future_goal" ? (
-              <span className={`label ${overdue ? "text-warn" : ""}`}>
+              <span className={`label text-[12px] ${overdue ? "text-warn" : ""}`}>
                 due {fmtDate(item.due)}
                 {overdue ? ` · ${item.daysOverdue}d late` : ""}
               </span>
@@ -301,13 +303,13 @@ function CommitmentRow({
           </div>
 
           {item.signedBy ? (
-            <p className="label mt-2">
+            <p className="label mt-3 text-[12px]">
               {question ? "Answered by " : "Signed "}
               {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
             </p>
           ) : null}
           {item.note ? (
-            <p className="note text-muted mt-1 leading-relaxed">{item.note}</p>
+            <p className="note mt-2 leading-relaxed text-ink/75">{item.note}</p>
           ) : null}
         </div>
 
@@ -336,14 +338,6 @@ function CommitmentRow({
         />
       )}
     </li>
-  );
-}
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="bg-panel text-muted inline-flex items-center rounded px-2 py-0.5 text-label tracking-[0.08em]">
-      {children}
-    </span>
   );
 }
 
