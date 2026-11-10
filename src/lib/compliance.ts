@@ -144,14 +144,22 @@ export function verdictOf(
   const name = `${listName(row.role, row.room)} ${row.phase}`;
 
   if (row.empty) {
+    // Out of tonight's count, and the bar says why. A weekly list that is
+    // finished, or not due yet, is not a list nobody wrote.
+    const why =
+      row.standby === "done"
+        ? "already done this period"
+        : row.standby === "later"
+          ? "weekly or monthly, not due tonight"
+          : "nothing on it tonight";
     return {
       row,
       flag,
       state: "empty",
       group: "empty",
       name,
-      facts: [{ label: "items", value: "nothing written on it yet" }],
-      reason: `${listName(row.role, row.room)} · nothing written on it yet`,
+      facts: [{ label: "items", value: why }],
+      reason: `${listName(row.role, row.room)} · ${why}`,
     };
   }
   const count = `${row.ticked}/${row.items_on_list}`;

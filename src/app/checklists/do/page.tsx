@@ -122,13 +122,20 @@ export default async function DoChecklistsPage() {
       (l) => l.house === house && l.role === role && groupOf(l) === room,
     );
 
-  /** Every list under this position, in this room, is signed. */
-  const positionDone = (house: House, role: string, room: string | null) =>
-    listsFor(house, role, room).every((l) => signed.has(l.id));
-
   const status = new Map(
     (await closeStatus(night)).map((row) => [row.checklist_id, row]),
   );
+
+  /**
+   * Every list under this position, in this room, is signed, or is a weekly
+   * list tonight does not ask for. A manager who has signed the open and the
+   * close is done for the night; the weekly list staying lit all week is what
+   * sent people back in to tick a finished list a second time.
+   */
+  const positionDone = (house: House, role: string, room: string | null) =>
+    listsFor(house, role, room).every(
+      (l) => signed.has(l.id) || Boolean(status.get(l.id)?.standby),
+    );
   const positionNote = (
     house: House,
     role: string,

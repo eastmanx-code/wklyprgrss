@@ -2,7 +2,7 @@ import "server-only";
 
 import { db } from "./supabase";
 import { satisfiedEarlierBatch } from "./close-cadence";
-import { cadenceOwedTonight } from "./due";
+import { cadenceOf, cadenceOwedTonight, isLastNightOfPeriod } from "./due";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 
@@ -40,8 +40,28 @@ export type CloseStatusRow = {
    * is a different problem and belongs in a different column.
    */
   untouched: boolean;
-  /** Created but never filled in. Nobody can do a list with nothing on it. */
+  /**
+   * Nothing is asked of this list tonight, so it is out of the night's count.
+   * True for a list never filled in, for one whose items all sit on other
+   * nights, and for a weekly or monthly list that is standing by (see below).
+   */
   empty: boolean;
+  /**
+   * Set on a list made only of weekly or monthly work, on a night that does
+   * not ask for it. Such a list is owed once in its period, on whatever night
+   * somebody gets to it, so it cannot be late on a Tuesday.
+   *
+   * - "done": every item was already done on an earlier night of the period.
+   *   It is finished until the period turns over, and ticking it again must
+   *   not turn a finished week into an unsigned list.
+   * - "later": not done yet, not signed tonight, and the period still has
+   *   nights left. It comes due on the period's last night.
+   * - null: an ordinary list, or a weekly one that tonight does ask for.
+   *
+   * A standing-by list reads as `empty` so every count already leaves it out;
+   * this says why, so the page does not call finished work unwritten.
+   */
+  standby: "done" | "later" | null;
   certified: boolean;
   certified_by: string | null;
   certified_at: string | null;
@@ -326,8 +346,37 @@ export async function closeStatus(
               proofLen: i.proof?.length ?? 0,
               tickedHere: row ? tickOf.has(`${row.id}:${i.id}`) : false,
             }));
-      const owed = asked.length;
-      const ticked = asked.filter((i) => i.tickedHere).length;
+      // A list of nothing but weekly or monthly work is owed once in its
+      // period, on any night. Scored like a nightly list it read "never
+      // opened" every night until somebody did it, and "not signed" on any
+      // later night somebody ticked it again — a miss for a job that was not
+      // late, and another for one already finished. So it stands by: out of
+      // tonight's count once it is done for the period, and out of it until
+      // the period's last night while it is not. A signature tonight always
+      // counts tonight, whatever night it is.
+      const own = items.filter((i) => i.checklist_id === list.id);
+      const cadenceOnly =
+        own.length > 0 && own.every((i) => cadenceOf(i.section) !== null);
+      const doneEarlier =
+        cadenceOnly && own.every((i) => satisfiedEarlier.has(i.id));
+      const dueTonight =
+        cadenceOnly &&
+        own.some(
+          (i) =>
+            !satisfiedEarlier.has(i.id) &&
+            isLastNightOfPeriod(cadenceOf(i.section)!, night),
+        );
+      const standby: "done" | "later" | null =
+        !cadenceOnly || certified
+          ? null
+          : doneEarlier
+            ? "done"
+            : dueTonight
+              ? null
+              : "later";
+
+      const owed = standby ? 0 : asked.length;
+      const ticked = standby ? 0 : asked.filter((i) => i.tickedHere).length;
       return {
         night,
         checklist_id: list.id,
@@ -342,23 +391,27 @@ export async function closeStatus(
         open: Math.max(0, owed - ticked),
         untouched: owed > 0 && ticked === 0 && !certified,
         empty: owed === 0,
+        standby,
         certified,
         certified_by: row?.certified_by ?? null,
         certified_at: row?.certified_at ?? null,
         checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
         open_reason: row?.open_reason?.trim() || null,
-        proof_missing: row
-          ? asked.filter(
-              (i) =>
-                i.proofLen > 0 &&
-                i.tickedHere &&
-                !proofOf.has(`${row.id}:${i.id}`),
-            ).length
-          : 0,
-        open_titles: row
-          ? asked.filter((i) => !i.tickedHere).map((i) => i.title)
-          : asked.map((i) => i.title),
+        proof_missing:
+          row && !standby
+            ? asked.filter(
+                (i) =>
+                  i.proofLen > 0 &&
+                  i.tickedHere &&
+                  !proofOf.has(`${row.id}:${i.id}`),
+              ).length
+            : 0,
+        open_titles: standby
+          ? []
+          : row
+            ? asked.filter((i) => !i.tickedHere).map((i) => i.title)
+            : asked.map((i) => i.title),
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
         last_activity: row
           ? ([lastTickOn.get(row.id), row.certified_at]

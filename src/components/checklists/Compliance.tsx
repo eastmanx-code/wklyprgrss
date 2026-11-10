@@ -280,7 +280,11 @@ export function ListBar({
             ? "not started"
             : "in progress"
           : list.group === "empty"
-            ? "nothing on it"
+            ? list.row.standby === "done"
+              ? "done this period"
+              : list.row.standby === "later"
+                ? "not due tonight"
+                : "nothing on it"
             : "";
   // What is missing outranks who did the rest: the fail first and in
   // weight, then the record of who checked and who signed, muted.
