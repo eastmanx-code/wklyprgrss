@@ -1,8 +1,8 @@
 import "server-only";
 
-import { db } from "./supabase";
+import { db, selectAll } from "./supabase";
 import { satisfiedEarlierBatch } from "./close-cadence";
-import { cadenceOwedTonight } from "./due";
+import { cadenceOf, cadenceOwedTonight, isLastNightOfPeriod } from "./due";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
 import { paceOf, type Pace } from "./pace";
 
@@ -40,8 +40,28 @@ export type CloseStatusRow = {
    * is a different problem and belongs in a different column.
    */
   untouched: boolean;
-  /** Created but never filled in. Nobody can do a list with nothing on it. */
+  /**
+   * Nothing is asked of this list tonight, so it is out of the night's count.
+   * True for a list never filled in, for one whose items all sit on other
+   * nights, and for a weekly or monthly list that is standing by (see below).
+   */
   empty: boolean;
+  /**
+   * Set on a list made only of weekly or monthly work, on a night that does
+   * not ask for it. Such a list is owed once in its period, on whatever night
+   * somebody gets to it, so it cannot be late on a Tuesday.
+   *
+   * - "done": every item was already done on an earlier night of the period.
+   *   It is finished until the period turns over, and ticking it again must
+   *   not turn a finished week into an unsigned list.
+   * - "later": not done yet, not signed tonight, and the period still has
+   *   nights left. It comes due on the period's last night.
+   * - null: an ordinary list, or a weekly one that tonight does ask for.
+   *
+   * A standing-by list reads as `empty` so every count already leaves it out;
+   * this says why, so the page does not call finished work unwritten.
+   */
+  standby: "done" | "later" | null;
   certified: boolean;
   certified_by: string | null;
   certified_at: string | null;
@@ -144,45 +164,15 @@ export async function closeStatus(
 
   const ids = checklists.map((c) => c.id);
 
-  const [{ data: venueRows }, { data: itemRows }, { data: nightRows }] =
-    await Promise.all([
-      // `close_active`, not `active`. The latter governs membership of the
-      // weekly walkthrough — whether a venue appears in that login picker —
-      // and the close is a different programme with a different roll, which
-      // is why filtering on it once dropped the pilot venue entirely. Now
-      // that the close has a flag of its own, that is the gate: a venue that
-      // has left the programme stops appearing in the feed even if its old
-      // lists are still sitting there.
-      db().from("venues").select("id, code").eq("close_active", true),
-      db()
-        .from("close_items")
-        .select("id, checklist_id, section, days, title, proof")
-        .in("checklist_id", ids)
-        .eq("active", true),
-      db()
-        .from("close_nights")
-        .select(
-          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
-        )
-        .in("checklist_id", ids)
-        .eq("night", night),
-    ]);
-
-  const code = new Map(
-    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [
-      v.id,
-      v.code,
-    ]),
-  );
-  const items = (itemRows ?? []) as {
+  type ItemRow = {
     id: string;
     checklist_id: string;
     section: string | null;
     days: string[] | null;
     title: string;
     proof: { kind: string }[] | null;
-  }[];
-  const nights = (nightRows ?? []) as {
+  };
+  type NightRow = {
     id: string;
     checklist_id: string;
     certified_at: string | null;
@@ -190,7 +180,52 @@ export async function closeStatus(
     open_reason: string | null;
     history: unknown[] | null;
     list_at_signing: unknown;
-  }[];
+  };
+
+  // Paged, every one of them. A single select stops at a thousand rows, and
+  // the items across every venue passed that long ago. Read in one go, the
+  // board got an arbitrary thousand of them: a list whose items fell outside
+  // that slice read as having nothing on it, so a list nobody opened dropped
+  // out of the night's count instead of failing it, and which lists did so
+  // changed from one load to the next. Ordered by id so the pages do not
+  // overlap or skip.
+  const [{ data: venueRows }, items, nights] = await Promise.all([
+    // `close_active`, not `active`. The latter governs membership of the
+    // weekly walkthrough — whether a venue appears in that login picker —
+    // and the close is a different programme with a different roll, which
+    // is why filtering on it once dropped the pilot venue entirely. Now
+    // that the close has a flag of its own, that is the gate: a venue that
+    // has left the programme stops appearing in the feed even if its old
+    // lists are still sitting there.
+    db().from("venues").select("id, code").eq("close_active", true),
+    selectAll<ItemRow>((from, to) =>
+      db()
+        .from("close_items")
+        .select("id, checklist_id, section, days, title, proof")
+        .in("checklist_id", ids)
+        .eq("active", true)
+        .order("id")
+        .range(from, to),
+    ),
+    selectAll<NightRow>((from, to) =>
+      db()
+        .from("close_nights")
+        .select(
+          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
+        )
+        .in("checklist_id", ids)
+        .eq("night", night)
+        .order("id")
+        .range(from, to),
+    ),
+  ]);
+
+  const code = new Map(
+    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [
+      v.id,
+      v.code,
+    ]),
+  );
 
   // Two more columns on a query that was already running. The timestamps are
   // what the pace is read from, and fetching them separately would be a
@@ -202,28 +237,32 @@ export async function closeStatus(
     created_at: string;
     client_at: string | null;
   }[] = [];
+  const nightIds = nights.map((n) => n.id);
   if (nights.length > 0) {
-    const { data: tickRows } = await db()
-      .from("close_ticks")
-      .select("night_id, item_id, initials, created_at, client_at")
-      .order("created_at")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    ticks = (tickRows ?? []) as typeof ticks;
+    // A busy night is several thousand ticks, so this pages too. Oldest
+    // first as before, with the id as a tiebreak so a page boundary that
+    // lands between two ticks of the same instant cannot drop or repeat one.
+    ticks = await selectAll<(typeof ticks)[number]>((from, to) =>
+      db()
+        .from("close_ticks")
+        .select("night_id, item_id, initials, created_at, client_at")
+        .in("night_id", nightIds)
+        .order("created_at")
+        .order("id")
+        .range(from, to),
+    );
   }
   // What arrived against what was asked for, on the same nights.
   let proofRows: { night_id: string; item_id: string }[] = [];
   if (nights.length > 0) {
-    const { data } = await db()
-      .from("close_proof")
-      .select("night_id, item_id")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    proofRows = (data ?? []) as typeof proofRows;
+    proofRows = await selectAll<(typeof proofRows)[number]>((from, to) =>
+      db()
+        .from("close_proof")
+        .select("night_id, item_id")
+        .in("night_id", nightIds)
+        .order("id")
+        .range(from, to),
+    );
   }
   const proofOf = new Set(proofRows.map((p) => `${p.night_id}:${p.item_id}`));
 
@@ -326,8 +365,37 @@ export async function closeStatus(
               proofLen: i.proof?.length ?? 0,
               tickedHere: row ? tickOf.has(`${row.id}:${i.id}`) : false,
             }));
-      const owed = asked.length;
-      const ticked = asked.filter((i) => i.tickedHere).length;
+      // A list of nothing but weekly or monthly work is owed once in its
+      // period, on any night. Scored like a nightly list it read "never
+      // opened" every night until somebody did it, and "not signed" on any
+      // later night somebody ticked it again — a miss for a job that was not
+      // late, and another for one already finished. So it stands by: out of
+      // tonight's count once it is done for the period, and out of it until
+      // the period's last night while it is not. A signature tonight always
+      // counts tonight, whatever night it is.
+      const own = items.filter((i) => i.checklist_id === list.id);
+      const cadenceOnly =
+        own.length > 0 && own.every((i) => cadenceOf(i.section) !== null);
+      const doneEarlier =
+        cadenceOnly && own.every((i) => satisfiedEarlier.has(i.id));
+      const dueTonight =
+        cadenceOnly &&
+        own.some(
+          (i) =>
+            !satisfiedEarlier.has(i.id) &&
+            isLastNightOfPeriod(cadenceOf(i.section)!, night),
+        );
+      const standby: "done" | "later" | null =
+        !cadenceOnly || certified
+          ? null
+          : doneEarlier
+            ? "done"
+            : dueTonight
+              ? null
+              : "later";
+
+      const owed = standby ? 0 : asked.length;
+      const ticked = standby ? 0 : asked.filter((i) => i.tickedHere).length;
       return {
         night,
         checklist_id: list.id,
@@ -342,23 +410,27 @@ export async function closeStatus(
         open: Math.max(0, owed - ticked),
         untouched: owed > 0 && ticked === 0 && !certified,
         empty: owed === 0,
+        standby,
         certified,
         certified_by: row?.certified_by ?? null,
         certified_at: row?.certified_at ?? null,
         checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
         open_reason: row?.open_reason?.trim() || null,
-        proof_missing: row
-          ? asked.filter(
-              (i) =>
-                i.proofLen > 0 &&
-                i.tickedHere &&
-                !proofOf.has(`${row.id}:${i.id}`),
-            ).length
-          : 0,
-        open_titles: row
-          ? asked.filter((i) => !i.tickedHere).map((i) => i.title)
-          : asked.map((i) => i.title),
+        proof_missing:
+          row && !standby
+            ? asked.filter(
+                (i) =>
+                  i.proofLen > 0 &&
+                  i.tickedHere &&
+                  !proofOf.has(`${row.id}:${i.id}`),
+              ).length
+            : 0,
+        open_titles: standby
+          ? []
+          : row
+            ? asked.filter((i) => !i.tickedHere).map((i) => i.title)
+            : asked.map((i) => i.title),
         reopened: Array.isArray(row?.history) ? row.history.length : 0,
         last_activity: row
           ? ([lastTickOn.get(row.id), row.certified_at]

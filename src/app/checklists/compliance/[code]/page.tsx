@@ -255,7 +255,7 @@ export default async function VenueCompliancePage({
         {pile("empty").length > 0 ? (
           <>
             <p className="label mt-5">
-              Nothing written on the list yet · {pile("empty").length}
+              Not owed tonight · {pile("empty").length}
             </p>
             <ul className="mt-2 space-y-3">
               {pile("empty").map((list) => (

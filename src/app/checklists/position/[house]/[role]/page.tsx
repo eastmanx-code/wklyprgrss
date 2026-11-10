@@ -195,7 +195,9 @@ export default async function PositionPage({
             <Link
               href={`/checklists/${slugFor(list.house, list.role, list.phase, list.room)}`}
               className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
-                !built.has(list.id) || signedBy.has(list.id)
+                !built.has(list.id) ||
+                signedBy.has(list.id) ||
+                progress.get(list.id)?.standby
                   ? "bg-inset text-muted ring-divider ring-1 ring-inset"
                   : "bg-warn text-on-warn hover:bg-warn/90"
               }`}
@@ -233,6 +235,18 @@ export default async function PositionPage({
                 <span className="label">
                   <T en="Signed" es="Firmada" />
                   {signedBy.get(list.id) ? ` · ${signedBy.get(list.id)}` : ""}
+                </span>
+              ) : progress.get(list.id)?.standby === "done" ? (
+                // A weekly or monthly list already finished. Unlit, and named,
+                // so nobody opens it to do a finished week over again.
+                <span className="label">
+                  <T en="Done · not due again yet" es="Hecha · aún no toca" />
+                </span>
+              ) : progress.get(list.id)?.standby === "later" ? (
+                // Not done yet, and not late. Still a way in, any night.
+                <span className="label">
+                  <T en="Any night · not due tonight" es="Cualquier noche · hoy no toca" />
+                  <span aria-hidden> →</span>
                 </span>
               ) : listNote(list.id) ? (
                 <span className="label">

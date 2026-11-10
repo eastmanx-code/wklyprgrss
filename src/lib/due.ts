@@ -290,6 +290,15 @@ function periodEndNight(cadence: Cadence, night: string): string | null {
 }
 
 /**
+ * Whether a night is the last one of its period: the Sunday of its week, or the
+ * last day of its month. The night a cadence job nobody has done finally comes
+ * due, and the only night before the period closes that it can be called late.
+ */
+export function isLastNightOfPeriod(cadence: Cadence, night: string): boolean {
+  return periodEndNight(cadence, night) === night;
+}
+
+/**
  * The item shape the cadence resolvers read: an id to look work up by, plus the
  * heading and day list every other due check already takes.
  */
