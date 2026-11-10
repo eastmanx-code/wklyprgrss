@@ -2082,20 +2082,35 @@ export function CloseChecklist({
                       // One-way: a blur may only complete a row, never
                       // undo a done one, and never when the blur is the card's
                       // own tap. The rule is in close-tick.ts, under test.
+                      const hasInitials =
+                        (rowInitials[id] ?? "").trim().length > 0;
+                      const proofIn = shots.every((shot, index) =>
+                        shotFilled(id, index, shot.kind),
+                      );
                       if (
                         shouldCompleteOnBlur({
                           itemId: id,
                           done: Boolean(done[id]),
                           // Typed on this row, by this person. Never a
                           // neighbour's letters carried down.
-                          hasInitials: (rowInitials[id] ?? "").trim().length > 0,
-                          proofIn: shots.every((shot, index) =>
-                            shotFilled(id, index, shot.kind),
-                          ),
+                          hasInitials,
+                          proofIn,
                           togglingId: togglingId.current,
                         })
                       ) {
                         toggle(item);
+                      } else if (
+                        hasInitials &&
+                        !proofIn &&
+                        !done[id] &&
+                        togglingId.current !== id
+                      ) {
+                        // Initialled before the photo or the written answer.
+                        // The box stays empty, and an empty box with letters
+                        // beside it and no reason given reads as broken. Say
+                        // what is still owed, the same words a tap on the box
+                        // would have given.
+                        setNudged(id);
                       }
                     }}
                   />
