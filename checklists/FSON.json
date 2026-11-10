@@ -930,7 +930,7 @@
       ]
     },
     {
-      "house": "HOH",
+      "house": "FOH",
       "role": "Prep/Kitchen",
       "role_es": "Preparación/Cocina",
       "phase": "close",
@@ -1463,6 +1463,10 @@
           "title_es": "Saqué toda la basura al contenedor antes de las 7pm."
         },
         {
+          "title": "I took out all the trash, and wiped down the trash can and I took out all recycling.",
+          "title_es": "Saqué toda la basura, limpié el bote de basura y saqué todo el reciclaje."
+        },
+        {
           "title": "I cleaned the pipe and wall underneath the dishmachine with a metal scrubbie and bleach solution.",
           "title_es": "Limpié la canasta y el residuo de comida debajo de la máquina lavaplatos",
           "proof": [
@@ -1499,6 +1503,10 @@
               "prompt": "Sinks, grates and drains clear of food and debris"
             }
           ]
+        },
+        {
+          "title": "I empties all drain trays and scrubbed clean. I poured blach down all drains.",
+          "title_es": "Vacié todas las bandejas de drenaje y las froté. Eché cloro por todos los desagües."
         },
         {
           "title": "I de-limed the machine by adding \"Lime Away\" to the machine and running the cycle.",
@@ -2028,10 +2036,6 @@
           ]
         },
         {
-          "title": "I took out all the trash, and wiped down the trash can and I took out all recycling.",
-          "title_es": "Saqué toda la basura, limpié el bote de basura y saqué todo el reciclaje."
-        },
-        {
           "title": "I made sure to fill out tempeture logs with accurate date and times.",
           "title_es": "Me aseguré de completar los registros de temperatura con fechas y horas precisas.",
           "proof": [
@@ -2052,8 +2056,8 @@
           ]
         },
         {
-          "title": "I made sure to leave the towel bin full and folded.",
-          "title_es": "Me aseguré de dejar el contenedor de toallas lleno y doblado."
+          "title": "I made sure to leave the towel bin full.",
+          "title_es": "Me aseguré de dejar el contenedor de toallas lleno."
         },
         {
           "title": "I made sure to sweep behide all tables, loboys, fryers, wok station and burners.",
@@ -2064,10 +2068,6 @@
               "prompt": "Swept behind the tables, lowboys, fryers, wok and burners"
             }
           ]
-        },
-        {
-          "title": "I empties all drain trays and scrubbed clean. I poured blach down all drains.",
-          "title_es": "Vacié todas las bandejas de drenaje y las froté. Eché cloro por todos los desagües."
         },
         {
           "title": "I cleaned the mop sink. Brooms, dust pans and squeegies are put back in the correct location.",
