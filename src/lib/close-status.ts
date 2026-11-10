@@ -1,6 +1,6 @@
 import "server-only";
 
-import { db } from "./supabase";
+import { db, selectAll } from "./supabase";
 import { satisfiedEarlierBatch } from "./close-cadence";
 import { cadenceOf, cadenceOwedTonight, isLastNightOfPeriod } from "./due";
 import { currentNight, nightEndsAt, shiftNights } from "./night";
@@ -164,45 +164,15 @@ export async function closeStatus(
 
   const ids = checklists.map((c) => c.id);
 
-  const [{ data: venueRows }, { data: itemRows }, { data: nightRows }] =
-    await Promise.all([
-      // `close_active`, not `active`. The latter governs membership of the
-      // weekly walkthrough — whether a venue appears in that login picker —
-      // and the close is a different programme with a different roll, which
-      // is why filtering on it once dropped the pilot venue entirely. Now
-      // that the close has a flag of its own, that is the gate: a venue that
-      // has left the programme stops appearing in the feed even if its old
-      // lists are still sitting there.
-      db().from("venues").select("id, code").eq("close_active", true),
-      db()
-        .from("close_items")
-        .select("id, checklist_id, section, days, title, proof")
-        .in("checklist_id", ids)
-        .eq("active", true),
-      db()
-        .from("close_nights")
-        .select(
-          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
-        )
-        .in("checklist_id", ids)
-        .eq("night", night),
-    ]);
-
-  const code = new Map(
-    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [
-      v.id,
-      v.code,
-    ]),
-  );
-  const items = (itemRows ?? []) as {
+  type ItemRow = {
     id: string;
     checklist_id: string;
     section: string | null;
     days: string[] | null;
     title: string;
     proof: { kind: string }[] | null;
-  }[];
-  const nights = (nightRows ?? []) as {
+  };
+  type NightRow = {
     id: string;
     checklist_id: string;
     certified_at: string | null;
@@ -210,7 +180,52 @@ export async function closeStatus(
     open_reason: string | null;
     history: unknown[] | null;
     list_at_signing: unknown;
-  }[];
+  };
+
+  // Paged, every one of them. A single select stops at a thousand rows, and
+  // the items across every venue passed that long ago. Read in one go, the
+  // board got an arbitrary thousand of them: a list whose items fell outside
+  // that slice read as having nothing on it, so a list nobody opened dropped
+  // out of the night's count instead of failing it, and which lists did so
+  // changed from one load to the next. Ordered by id so the pages do not
+  // overlap or skip.
+  const [{ data: venueRows }, items, nights] = await Promise.all([
+    // `close_active`, not `active`. The latter governs membership of the
+    // weekly walkthrough — whether a venue appears in that login picker —
+    // and the close is a different programme with a different roll, which
+    // is why filtering on it once dropped the pilot venue entirely. Now
+    // that the close has a flag of its own, that is the gate: a venue that
+    // has left the programme stops appearing in the feed even if its old
+    // lists are still sitting there.
+    db().from("venues").select("id, code").eq("close_active", true),
+    selectAll<ItemRow>((from, to) =>
+      db()
+        .from("close_items")
+        .select("id, checklist_id, section, days, title, proof")
+        .in("checklist_id", ids)
+        .eq("active", true)
+        .order("id")
+        .range(from, to),
+    ),
+    selectAll<NightRow>((from, to) =>
+      db()
+        .from("close_nights")
+        .select(
+          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
+        )
+        .in("checklist_id", ids)
+        .eq("night", night)
+        .order("id")
+        .range(from, to),
+    ),
+  ]);
+
+  const code = new Map(
+    ((venueRows ?? []) as { id: string; code: string }[]).map((v) => [
+      v.id,
+      v.code,
+    ]),
+  );
 
   // Two more columns on a query that was already running. The timestamps are
   // what the pace is read from, and fetching them separately would be a
@@ -222,28 +237,32 @@ export async function closeStatus(
     created_at: string;
     client_at: string | null;
   }[] = [];
+  const nightIds = nights.map((n) => n.id);
   if (nights.length > 0) {
-    const { data: tickRows } = await db()
-      .from("close_ticks")
-      .select("night_id, item_id, initials, created_at, client_at")
-      .order("created_at")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    ticks = (tickRows ?? []) as typeof ticks;
+    // A busy night is several thousand ticks, so this pages too. Oldest
+    // first as before, with the id as a tiebreak so a page boundary that
+    // lands between two ticks of the same instant cannot drop or repeat one.
+    ticks = await selectAll<(typeof ticks)[number]>((from, to) =>
+      db()
+        .from("close_ticks")
+        .select("night_id, item_id, initials, created_at, client_at")
+        .in("night_id", nightIds)
+        .order("created_at")
+        .order("id")
+        .range(from, to),
+    );
   }
   // What arrived against what was asked for, on the same nights.
   let proofRows: { night_id: string; item_id: string }[] = [];
   if (nights.length > 0) {
-    const { data } = await db()
-      .from("close_proof")
-      .select("night_id, item_id")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    proofRows = (data ?? []) as typeof proofRows;
+    proofRows = await selectAll<(typeof proofRows)[number]>((from, to) =>
+      db()
+        .from("close_proof")
+        .select("night_id, item_id")
+        .in("night_id", nightIds)
+        .order("id")
+        .range(from, to),
+    );
   }
   const proofOf = new Set(proofRows.map((p) => `${p.night_id}:${p.item_id}`));
 
