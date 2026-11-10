@@ -25,5 +25,23 @@ may carry it out, posting or sending exactly what was reviewed.
 - If unsure whether approval was explicit and tied to the reviewed item, treat
   it as not given, and ask. The user is the only one who authorizes.
 
+## One deploy a day. Batch the rest.
+Every production deploy reloads every open list once, and a deploy mid-shift
+lands on people who are working. On 2026-11-10 four deploys went out in forty
+minutes. That is the thing this rule stops.
+
+- Approved work collects on one release branch and ships as a single deploy.
+- One deploy a day, in the quiet window: 2 to 4 PM Pacific, after the open
+  lists and before close.
+- The exception is something actively broken: people locked out, work being
+  lost, a list that cannot be signed. That ships right away, on its own.
+- Edits that live in the database (moving items, wording, switching a list on
+  or off) need no deploy and happen right away. The matching
+  `checklists/CODE.json` update rides the next release.
+- Batching changes when a change ships, not who decides. Each change still
+  needs its own explicit approval before it joins the release.
+- When a change is approved, say which release it is waiting in and when that
+  release ships.
+
 ## Style
 - Never use em dashes.
