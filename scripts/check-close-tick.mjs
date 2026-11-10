@@ -6,7 +6,7 @@
  * This is the rule that stopped a tick from flipping the wrong way when the
  * initials field lost focus: opening the signature box unchecked a signed-off
  * box, and a single tap could cancel itself out. The guarantee under test is
- * that a blur is one-way — it only ever completes a pending tick, and never
+ * that a blur is one-way: it only ever completes a row, and never
  * undoes a done one.
  */
 import { shouldCompleteOnBlur } from "../.close-tick-check/close-tick.js";
@@ -23,6 +23,13 @@ const is = (label, got, want) => {
 };
 
 const ITEM = "item-1";
+const base = {
+  itemId: ITEM,
+  done: false,
+  hasInitials: true,
+  proofIn: true,
+  togglingId: null,
+};
 
 // -------------------------------------------- the bug: a blur must not untick
 
@@ -30,24 +37,7 @@ const ITEM = "item-1";
 // This is Drew's exact report. It must not complete (which would toggle it off).
 is(
   "a done box does not complete on blur",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: ITEM,
-    done: true,
-    hasInitials: true,
-    togglingId: null,
-  }),
-  false,
-);
-is(
-  "a done box stays put even with no pending",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: null,
-    done: true,
-    hasInitials: true,
-    togglingId: null,
-  }),
+  shouldCompleteOnBlur({ ...base, done: true }),
   false,
 );
 
@@ -57,74 +47,41 @@ is(
 // blur must stand aside or the two cancel out and the box lands unchecked.
 is(
   "the card's own tap does not also complete on blur",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: ITEM,
-    done: false,
-    hasInitials: true,
-    togglingId: ITEM,
-  }),
+  shouldCompleteOnBlur({ ...base, togglingId: ITEM }),
   false,
 );
 // A tap on a different card must not suppress this row's completion.
 is(
   "a tap on another card does not block this one",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: ITEM,
-    done: false,
-    hasInitials: true,
-    togglingId: "item-2",
-  }),
+  shouldCompleteOnBlur({ ...base, togglingId: "item-2" }),
   true,
 );
 
-// ------------------------------------------------- the intended path still works
+// --------------------------------------------- a row completes on its initials
 
-// Tapped first, initialled second, then focus leaves the field for the sign
-// sheet or anywhere that is not this card: finish what the tap started.
+// Either order: box then initials, or initials and leave the field. Somebody
+// who initialled every line and then went back to check each box was doing
+// the list twice.
 is(
-  "a pending, initialled, not-done row completes on blur",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: ITEM,
-    done: false,
-    hasInitials: true,
-    togglingId: null,
-  }),
+  "initialled, nothing else owed, not done: completes on blur",
+  shouldCompleteOnBlur(base),
   true,
 );
 is(
   "no initials yet, so nothing to complete",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: ITEM,
-    done: false,
-    hasInitials: false,
-    togglingId: null,
-  }),
+  shouldCompleteOnBlur({ ...base, hasInitials: false }),
+  false,
+);
+// Proof comes before the check. Initials alone do not tick a row that still
+// owes a photo, a video or a written note.
+is(
+  "initialled but still owing proof does not complete",
+  shouldCompleteOnBlur({ ...base, proofIn: false }),
   false,
 );
 is(
-  "not pending, so a stray blur does nothing",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: null,
-    done: false,
-    hasInitials: true,
-    togglingId: null,
-  }),
-  false,
-);
-is(
-  "pending points at another row, not this one",
-  shouldCompleteOnBlur({
-    itemId: ITEM,
-    pendingId: "item-2",
-    done: false,
-    hasInitials: true,
-    togglingId: null,
-  }),
+  "owing proof and initials does not complete",
+  shouldCompleteOnBlur({ ...base, proofIn: false, hasInitials: false }),
   false,
 );
 

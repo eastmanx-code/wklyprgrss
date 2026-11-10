@@ -123,6 +123,44 @@ const slotKey = (itemId: string, shot: number) => `${itemId}:${shot}`;
  * legible afterwards — four people work a close, and "who did the restrooms"
  * has to have an answer.
  */
+/**
+ * What a row still owes, as one plain instruction.
+ *
+ * "To check this off: take the photo, then add your initials." Written to be
+ * read once by somebody who has never seen the app, so it names the action and
+ * the order and nothing else.
+ */
+function owedWords(
+  owed: { kind: ProofKind }[],
+  needsInitials: boolean,
+  t: (en: string, es: string) => string,
+): string {
+  const count = (kind: ProofKind) => owed.filter((s) => s.kind === kind).length;
+  const photos = count("photo");
+  const videos = count("video");
+  const written = count("note");
+  const en: string[] = [];
+  const es: string[] = [];
+  if (photos > 0) {
+    en.push(photos === 1 ? "take the photo" : `take the ${photos} photos`);
+    es.push(photos === 1 ? "toma la foto" : `toma las ${photos} fotos`);
+  }
+  if (videos > 0) {
+    en.push(videos === 1 ? "record the video" : `record the ${videos} videos`);
+    es.push(videos === 1 ? "graba el video" : `graba los ${videos} videos`);
+  }
+  if (written > 0) {
+    en.push("write it in the box below");
+    es.push("escríbelo en el cuadro de abajo");
+  }
+  const tailEn = needsInitials ? ", then add your initials" : "";
+  const tailEs = needsInitials ? ", luego pon tus iniciales" : "";
+  return t(
+    `To check this off: ${en.join(", ")}${tailEn}.`,
+    `Para marcarlo: ${es.join(", ")}${tailEs}.`,
+  );
+}
+
 export function CloseChecklist({
   slug,
   phase,
@@ -301,8 +339,16 @@ export function CloseChecklist({
       // Same as above. Nothing to do about it and nothing lost that was saved.
     }
   }, [initialsKey, rowInitials]);
-  /** Tapped, and waiting on its initials before it does anything. */
-  const [pending, setPending] = useState<string | null>(null);
+  /**
+   * The row whose box was tapped before it had what it needs.
+   *
+   * The box only ever checks or unchecks. It used to do three different
+   * things depending on the row: open the keyboard, drop into a text box, or
+   * launch the camera. Nobody could tell which from looking, so a tap that
+   * did not check read as the app misbehaving. Now a tap that cannot check
+   * leaves the box empty and this row says, in words, what is still owed.
+   */
+  const [nudged, setNudged] = useState<string | null>(null);
   const [certifier, setCertifier] = useState(saved.certifiedBy ?? "");
   /**
    * Why the work is not done, in the signer's words.
@@ -658,7 +704,6 @@ export function CloseChecklist({
     const id = item.id ?? "";
     if (initialsFor(item).trim()) return true;
     setInitialsWanted(id);
-    setPending(id);
     initialsRefs.current[id]?.focus();
     return false;
   }
@@ -907,6 +952,16 @@ export function CloseChecklist({
     const id = item.id ?? "";
     if (done[id]) {
       setDone((c) => ({ ...c, [id]: false }));
+      // The initials come off with the check. They are the signature on the
+      // row, and a row that reads as signed but not done would tick itself
+      // again the next time somebody brushed past its field.
+      setRowInitials((c) => {
+        if (!(id in c)) return c;
+        const next = { ...c };
+        delete next[id];
+        return next;
+      });
+      setNudged(null);
       if (item.proof) {
         setCaptures((c) => {
           const next = { ...c };
@@ -927,32 +982,24 @@ export function CloseChecklist({
       return;
     }
 
-    // Evidence is the check. Tapping the card jumps to the first shot still
-    // outstanding rather than ticking anything.
+    // Evidence is the check, and the box does not go and fetch it.
     //
-    // Before the initials gate, deliberately. Asking for a signature before
-    // the camera would open meant the order was sign, then do — backwards, and
-    // the exact habit this is meant to break. Do the job, then put your name
-    // to it. Nothing is marked done unsigned either way: the gate below still
-    // stands between the last shot and the tick.
+    // A tap here used to launch the camera, or drop the cursor into the note,
+    // depending on what the row owed. Three row types, three different things
+    // happening under one box. Now the box stays empty and the row lights up
+    // what is missing, the same way on every row, and the person taps the
+    // control they can already see. Proof still comes before the tick, and
+    // the last thing to land still completes the row on its own.
     //
-    // Length, not truthiness: an empty array is truthy, and this branch then
+    // Length, not truthiness: an empty array is truthy, and this branch once
     // reached for shot zero of a list with no shots and threw inside a click
-    // handler — so the card did nothing, forever, without saying so. Normalised
-    // on the way in and on the way out now, but checked here too, because the
-    // failure was silent and the next one should not be.
+    // handler, so the card did nothing, forever, without saying so.
     if (item.proof && item.proof.length > 0) {
-      const at = item.proof.findIndex(
+      const owed = item.proof.some(
         (shot, index) => !shotFilled(id, index, shot.kind),
       );
-      // Only when something is still outstanding. This used to clamp -1 to 0,
-      // so an item with every shot already in reopened the camera on the first
-      // one instead of letting the tap be the signature — and the clamp is
-      // what turned an empty proof list into a crash.
-      if (at >= 0) {
-        const key = slotKey(id, at);
-        if (item.proof[at].kind === "note") notesRefs.current[key]?.focus();
-        else inputs.current[key]?.click();
+      if (owed) {
+        setNudged(id);
         return;
       }
     }
@@ -960,6 +1007,7 @@ export function CloseChecklist({
     // Nothing left to collect, so this tap is the signature.
     if (!haveInitials(item)) return;
 
+    setNudged(null);
     setDone((c) => ({ ...c, [id]: true }));
     void persistTick(item, true);
   }
@@ -1816,6 +1864,15 @@ export function CloseChecklist({
 
           const mine = initialsFor(item);
           const wanted = initialsWanted === (item.id ?? "") && !mine.trim();
+          // What the row still owes, for the line that answers a tap on a box
+          // that could not check. Only while something is actually missing, so
+          // the line clears itself the moment the last shot lands.
+          const owedShots = shots.filter(
+            (shot, shotIndex) =>
+              !shotFilled(item.id ?? "", shotIndex, shot.kind),
+          );
+          const nudgedHere =
+            nudged === (item.id ?? "") && !isDone && owedShots.length > 0;
 
           /**
            * A heading, when this item starts a new run of one.
@@ -1903,7 +1960,11 @@ export function CloseChecklist({
                   <span
                     aria-hidden
                     className={`mt-px grid size-7 shrink-0 place-items-center rounded border ${
-                      isDone ? "bg-ink border-ink" : "border-muted"
+                      isDone
+                        ? "bg-ink border-ink"
+                        : nudgedHere
+                          ? "border-warn ring-warn/50 ring-2"
+                          : "border-muted"
                     }`}
                   >
                     {isDone ? (
@@ -1963,6 +2024,17 @@ export function CloseChecklist({
                         ))}
                       </span>
                     )}
+                    {/* Said in words, on the row, the moment a tap could not
+                        check it. The box staying empty with nothing said is
+                        what read as the app ignoring the tap. */}
+                    {nudgedHere ? (
+                      <span
+                        role="status"
+                        className="text-warn text-label leading-snug tracking-[0.08em]"
+                      >
+                        {owedWords(owedShots, !mine.trim(), t)}
+                      </span>
+                    ) : null}
                   </span>
                 </button>
 
@@ -2007,19 +2079,22 @@ export function CloseChecklist({
                     }}
                     onBlur={() => {
                       const id = item.id ?? "";
-                      // One-way: a blur may only complete a pending tick, never
+                      // One-way: a blur may only complete a row, never
                       // undo a done one, and never when the blur is the card's
                       // own tap. The rule is in close-tick.ts, under test.
                       if (
                         shouldCompleteOnBlur({
                           itemId: id,
-                          pendingId: pending,
                           done: Boolean(done[id]),
-                          hasInitials: initialsFor(item).trim().length > 0,
+                          // Typed on this row, by this person. Never a
+                          // neighbour's letters carried down.
+                          hasInitials: (rowInitials[id] ?? "").trim().length > 0,
+                          proofIn: shots.every((shot, index) =>
+                            shotFilled(id, index, shot.kind),
+                          ),
                           togglingId: togglingId.current,
                         })
                       ) {
-                        setPending(null);
                         toggle(item);
                       }
                     }}
@@ -2137,7 +2212,11 @@ export function CloseChecklist({
                                 notesRefs.current[key] = node;
                               }}
                               rows={3}
-                              className="field w-full resize-none"
+                              className={`field w-full resize-none ${
+                                nudgedHere && !(notes[key] ?? "").trim()
+                                  ? "ring-warn ring-2"
+                                  : ""
+                              }`}
                               disabled={locked}
                               placeholder={t("What was said", "Qué se dijo")}
                               value={notes[key] ?? ""}
@@ -2223,7 +2302,11 @@ export function CloseChecklist({
                             // No initials gate. Take the photo first; the
                             // signature is asked for once the work is in.
                             onClick={() => inputs.current[key]?.click()}
-                            className="bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em]"
+                            className={`bg-warn text-on-warn inline-flex min-h-11 items-center gap-2.5 rounded px-4 text-body tracking-[0.08em] ${
+                              nudgedHere
+                                ? "ring-ink ring-offset-surface ring-2 ring-offset-2"
+                                : ""
+                            }`}
                           >
                             <CaptureGlyph kind={shot.kind} />
                             {shot.kind === "video"
