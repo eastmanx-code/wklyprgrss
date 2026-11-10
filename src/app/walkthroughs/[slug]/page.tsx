@@ -2,10 +2,8 @@ import { notFound, redirect } from "next/navigation";
 
 import { Dial } from "@/components/Dial";
 import { BackLink } from "@/components/ui";
-import { CommitmentActions } from "@/components/walkthroughs/CommitmentActions";
+import { CommitmentTile } from "@/components/walkthroughs/CommitmentTile";
 import { WalkQueue } from "@/components/walkthroughs/WalkQueue";
-import { PhotoGrid } from "@/components/walkthroughs/PhotoGrid";
-import { QuestionAnswer } from "@/components/walkthroughs/QuestionAnswer";
 import { isDocPath, signedUrls } from "@/lib/photos";
 import { getSession, mayManage, mayReachVenue } from "@/lib/session";
 import {
@@ -271,22 +269,13 @@ function ChangeLog({ events }: { events: WalkEvent[] }) {
 const SPECIAL: WalkCategory[] = ["open_question", "future_goal", "covered"];
 
 /**
- * A to-do: an open item with a sign-off form, or a question still to answer.
- * These stack as wide cards; everything else is a done, photo-led tile. Kept
- * as one rule so the page split and the card agree on which is which.
- */
-function isTodo(item: Commitment): boolean {
-  const signed = item.status === "signed";
-  const answered = item.status === "answered";
-  const question = item.category === "open_question";
-  const special = SPECIAL.includes(item.category);
-  return (question && !answered) || (!special && !signed);
-}
-
-/**
- * One commitment. The ask in plain words, its badges, the date it was seen and
- * the date it is due, and its state. A repeat is called out hard because an item
- * on its third walk is a different problem from a new one.
+ * One commitment, as a uniform tile that opens into a full detail sheet.
+ *
+ * The server side is only the shaping: sign the photo URLs, flatten the item to
+ * the plain fields the tile needs, and hand it off. Everything a manager does
+ * with it, reading the full finding and working it, happens in the client tile
+ * and the sheet it opens, because the finding does not fit a tile and the whole
+ * card has to be one tap target.
  */
 function CommitmentRow({
   item,
@@ -299,10 +288,6 @@ function CommitmentRow({
   observed: string | null;
   isAdmin: boolean;
 }) {
-  const overdue = item.status === "overdue";
-  const signed = item.status === "signed";
-  const question = item.category === "open_question";
-  const special = SPECIAL.includes(item.category);
   const photos = item.photos
     .map((p) => ({
       id: p.id,
@@ -312,114 +297,25 @@ function CommitmentRow({
     .filter((p): p is { id: string; url: string; isDoc: boolean } =>
       Boolean(p.url),
     );
-  const metaLine = (small: boolean) => (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-      <span className={`label ${small ? "text-[11px]" : "text-[12px]"}`}>
-        seen {fmtDate(observed)}
-      </span>
-      {item.category !== "future_goal" ? (
-        <span
-          className={`label ${small ? "text-[11px]" : "text-[12px]"} ${
-            overdue ? "text-warn" : ""
-          }`}
-        >
-          due {fmtDate(item.due)}
-          {overdue ? ` · ${item.daysOverdue}d late` : ""}
-        </span>
-      ) : null}
-    </div>
-  );
 
-  // The ask, its pill, and the dates. Every card shows this the same way,
-  // under the photo area, so a photo card and an add-a-photo card line up.
-  const head = (
-    <div className="min-w-0 flex-1">
-      <div className="flex items-start justify-between gap-2">
-        <p className="line-clamp-3 text-[13px] text-ink leading-snug break-words">
-          {item.commitment}
-        </p>
-        <StatusPill item={item} />
-      </div>
-      <div className="mt-1.5">{metaLine(true)}</div>
-    </div>
-  );
-
-  const cardClass = `flex h-full flex-col gap-2 rounded-[10px] p-3 ${
-    overdue ? "bg-warn/10 ring-warn/40 ring-1" : "bg-inset"
-  }`;
-
-  // A to-do is worked in the card: an add-a-photo well, then the sign-off once
-  // a photo is on it. A question is answered in words instead.
-  if (isTodo(item)) {
-    return (
-      <li className={cardClass}>
-        {question ? (
-          <>
-            {head}
-            <QuestionAnswer id={item.id} />
-          </>
-        ) : (
-          <CommitmentActions
-            id={item.id}
-            signed={signed}
-            canReopen={isAdmin}
-            initialPhotos={photos}
-            tile
-            caption={head}
-          />
-        )}
-      </li>
-    );
-  }
-
-  // Done or display-only: the photo leads, the words sit under it. Same square
-  // top as a to-do's well, so the grid stays even.
   return (
-    <li className={cardClass}>
-      {photos.length > 0 ? <PhotoGrid photos={photos} cols={1} /> : null}
-      {head}
-      {item.signedBy ? (
-        <p className="label text-[11px]">
-          {question ? "Answered by " : "Signed "}
-          {item.signedBy} · {fmtDate(item.signedAt?.slice(0, 10) ?? null)}
-        </p>
-      ) : null}
-      {item.note ? (
-        <p className="note text-[12px] leading-relaxed text-ink/75">
-          {item.note}
-        </p>
-      ) : null}
-      {signed && !special ? (
-        <CommitmentActions
-          id={item.id}
-          signed
-          canReopen={isAdmin}
-          initialPhotos={photos}
-          hidePhotos
-        />
-      ) : null}
-    </li>
-  );
-}
-
-function StatusPill({ item }: { item: Commitment }) {
-  const map: Record<string, { text: string; cls: string }> = {
-    signed: { text: "Signed", cls: "pill-done" },
-    submitted: { text: "Submitted", cls: "bg-panel text-ink" },
-    overdue: { text: "Overdue", cls: "bg-warn text-on-warn" },
-    open: { text: "Open", cls: "bg-panel text-muted" },
-    question: { text: "Question", cls: "bg-panel text-muted" },
-    answered: { text: "Answered", cls: "pill-done" },
-    goal: { text: "Goal", cls: "bg-panel text-muted" },
-    covered: { text: "Covered", cls: "bg-panel text-muted" },
-  };
-  const pill = map[item.status] ?? map.open;
-  return (
-    <span
-      className={`pill shrink-0 ${pill.cls}`}
-      style={{ height: 24 }}
-    >
-      {pill.text}
-    </span>
+    <CommitmentTile
+      id={item.id}
+      badge={CATEGORY_BADGE[item.category]}
+      commitment={item.commitment}
+      due={item.due}
+      status={item.status}
+      daysOverdue={item.daysOverdue}
+      actionable={item.actionable}
+      question={item.category === "open_question"}
+      special={SPECIAL.includes(item.category)}
+      signedBy={item.signedBy}
+      signedAt={item.signedAt}
+      note={item.note}
+      repeatCount={item.repeatCount}
+      photos={photos}
+      observed={observed}
+      isAdmin={isAdmin}
+    />
   );
 }
