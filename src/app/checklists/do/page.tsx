@@ -123,7 +123,10 @@ export default async function DoChecklistsPage() {
     );
 
   const status = new Map(
-    (await closeStatus(night)).map((row) => [row.checklist_id, row]),
+    (venue ? await closeStatus(night, venue) : []).map((row) => [
+      row.checklist_id,
+      row,
+    ]),
   );
 
   /**

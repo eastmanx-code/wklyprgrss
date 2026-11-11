@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { useT } from "@/components/Lang";
+import { serverAnswered, serverDidNotAnswer } from "@/lib/server-pulse";
 
 type State = { locked: boolean; message: string | null; admin: boolean };
 
@@ -13,6 +14,10 @@ const POLL_OPEN_MS = 30_000;
 const POLL_HELD_MS = 5_000;
 /** How long one ask may hang before it is dropped and the next one scheduled. */
 const POLL_TIMEOUT_MS = 8_000;
+/** After a miss, ask again sooner, so the page knows quickly when it is back. */
+const POLL_RETRY_MS = 10_000;
+/** Misses in a row before the page says so. One slow reply is not an outage. */
+const MISSES_BEFORE_SAYING = 2;
 
 /**
  * The site-wide maintenance hold, watched from every open device.
@@ -39,6 +44,9 @@ const POLL_TIMEOUT_MS = 8_000;
 export function MaintenanceGate() {
   const t = useT();
   const [state, setState] = useState<State>(CLEAR);
+  // The server has stopped answering while the phone still has signal. Not a
+  // hold anybody set: the thing a hold exists to explain, happening unplanned.
+  const [silent, setSilent] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   // The poll loop is scheduled once and must see the current lock state without
@@ -55,6 +63,16 @@ export function MaintenanceGate() {
     // Tracked here rather than read back from React, so the very next tick
     // after a reply already knows whether a hold is up.
     let locked = stateRef.current.locked;
+    let misses = 0;
+
+    // A miss with no signal is the phone's, not the server's, and the list
+    // page already says "offline" for that. Only a miss while online counts.
+    function missed() {
+      if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+      serverDidNotAnswer();
+      misses += 1;
+      if (alive && misses >= MISSES_BEFORE_SAYING) setSilent(true);
+    }
 
     function clearTimer() {
       if (timer !== undefined) window.clearTimeout(timer);
@@ -80,7 +98,12 @@ export function MaintenanceGate() {
     function schedule() {
       clearTimer();
       if (!alive || document.hidden) return;
-      timer = window.setTimeout(poll, locked ? POLL_HELD_MS : POLL_OPEN_MS);
+      const wait = locked
+        ? POLL_HELD_MS
+        : misses > 0
+          ? POLL_RETRY_MS
+          : POLL_OPEN_MS;
+      timer = window.setTimeout(poll, wait);
     }
 
     async function poll() {
@@ -99,12 +122,20 @@ export function MaintenanceGate() {
         if (res.ok) {
           const next = (await res.json()) as State;
           locked = next.locked;
-          if (alive) setState(next);
+          misses = 0;
+          serverAnswered();
+          if (alive) {
+            setState(next);
+            setSilent(false);
+          }
+        } else {
+          // Not ok: keep the last known state and try again sooner.
+          missed();
         }
-        // Not ok: keep the last known state and try again next tick.
       } catch {
         // Network down, server mid-restart, or the ask timed out. Hold
         // whatever we last knew.
+        missed();
       } finally {
         window.clearTimeout(hung);
         inFlight = false;
@@ -153,6 +184,22 @@ export function MaintenanceGate() {
           className="bg-warn text-on-warn fixed inset-x-0 top-0 z-50 px-4 py-2 text-center text-label font-medium tracking-[0.08em]"
         >
           Maintenance hold is ON · crews are seeing the wait screen
+        </div>
+      ) : null}
+
+      {/* The server went quiet on its own. Said in one line, at the top, and
+          not as a stop: the list still works, the checks still save on the
+          phone, and the one thing a person needs is to know that so they do
+          not give up and walk away. It clears itself on the first reply. */}
+      {silent && !state.locked ? (
+        <div
+          role="status"
+          className="bg-warn text-on-warn fixed inset-x-0 top-0 z-50 px-4 py-2 text-center text-label font-medium tracking-[0.08em]"
+        >
+          {t(
+            "The server is not answering. Keep going: your checks are saved on this phone and go up on their own.",
+            "El servidor no responde. Sigue: tus marcas se guardan en este teléfono y se envían solas.",
+          )}
         </div>
       ) : null}
 
