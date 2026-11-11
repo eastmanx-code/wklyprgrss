@@ -9,8 +9,10 @@ type State = { locked: boolean; message: string | null; admin: boolean };
 const CLEAR: State = { locked: false, message: null, admin: false };
 
 /** Idle poll cadence, and the quicker one while a hold is up so it lifts fast. */
-const POLL_OPEN_MS = 15_000;
+const POLL_OPEN_MS = 30_000;
 const POLL_HELD_MS = 5_000;
+/** How long one ask may hang before it is dropped and the next one scheduled. */
+const POLL_TIMEOUT_MS = 8_000;
 
 /**
  * The site-wide maintenance hold, watched from every open device.
@@ -49,33 +51,74 @@ export function MaintenanceGate() {
   useEffect(() => {
     let alive = true;
     let timer: number | undefined;
+    let inFlight = false;
+    // Tracked here rather than read back from React, so the very next tick
+    // after a reply already knows whether a hold is up.
+    let locked = stateRef.current.locked;
+
+    function clearTimer() {
+      if (timer !== undefined) window.clearTimeout(timer);
+      timer = undefined;
+    }
+
+    /**
+     * ONE loop per page, ever.
+     *
+     * This used to start a second loop every time the phone woke up, and a
+     * third on the focus event that arrives with it, and none of them was ever
+     * stopped. A phone that had been picked up fifty times in a shift was
+     * running a hundred loops, and when it woke they all fired in the same
+     * instant. By the end of a night that was most of the traffic on the site:
+     * 19,472 of these in the eleven o'clock hour on 2026-11-10, against 346
+     * for the busiest real page, and the server stopped answering anybody for
+     * four minutes in the middle of close.
+     *
+     * So: the pending timer is always cleared before another is set, a second
+     * ask never starts while one is out, and a page nobody is looking at does
+     * not ask at all. It asks once the moment it is looked at again.
+     */
+    function schedule() {
+      clearTimer();
+      if (!alive || document.hidden) return;
+      timer = window.setTimeout(poll, locked ? POLL_HELD_MS : POLL_OPEN_MS);
+    }
 
     async function poll() {
+      if (!alive || inFlight) return;
+      inFlight = true;
+      clearTimer();
+      // A server that has stopped answering must not leave this hanging for
+      // half a minute, holding a connection the crew's own taps need.
+      const giveUp = new AbortController();
+      const hung = window.setTimeout(() => giveUp.abort(), POLL_TIMEOUT_MS);
       try {
-        const res = await fetch("/api/maintenance", { cache: "no-store" });
-        if (!res.ok) return; // Keep the last known state; try again next tick.
-        const next = (await res.json()) as State;
-        if (alive) setState(next);
-      } catch {
-        // Network down or server mid-restart. Hold whatever we last knew.
-      } finally {
-        if (alive) {
-          // A backgrounded tab checks lazily; a foreground one that is holding
-          // a crew rechecks quickly so the hold lifts the moment it can.
-          const delay = document.hidden
-            ? POLL_OPEN_MS
-            : stateRef.current.locked
-              ? POLL_HELD_MS
-              : POLL_OPEN_MS;
-          timer = window.setTimeout(poll, delay);
+        const res = await fetch("/api/maintenance", {
+          cache: "no-store",
+          signal: giveUp.signal,
+        });
+        if (res.ok) {
+          const next = (await res.json()) as State;
+          locked = next.locked;
+          if (alive) setState(next);
         }
+        // Not ok: keep the last known state and try again next tick.
+      } catch {
+        // Network down, server mid-restart, or the ask timed out. Hold
+        // whatever we last knew.
+      } finally {
+        window.clearTimeout(hung);
+        inFlight = false;
+        schedule();
       }
     }
 
     // A phone coming back to the foreground checks at once rather than waiting
-    // out the interval it slept through.
+    // out the interval it slept through. Going to the background stops the
+    // loop. Both events arrive together on a wake; the in-flight guard makes
+    // the second one a no-op.
     function onWake() {
-      if (!document.hidden) void poll();
+      if (document.hidden) clearTimer();
+      else void poll();
     }
 
     void poll();
@@ -83,12 +126,11 @@ export function MaintenanceGate() {
     window.addEventListener("focus", onWake);
     return () => {
       alive = false;
-      if (timer) window.clearTimeout(timer);
+      clearTimer();
       document.removeEventListener("visibilitychange", onWake);
       window.removeEventListener("focus", onWake);
     };
-    // Mount once; the loop reschedules itself and reads live state through the
-    // ref above.
+    // Mount once; the loop reschedules itself and tracks the lock locally.
   }, []);
 
   // Only crews are stopped. showModal/close are idempotent-guarded because
