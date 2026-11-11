@@ -24,6 +24,7 @@ import {
 } from "@/lib/outbox";
 import { noteTrouble, flushTrouble, words, type Trouble } from "@/lib/trouble";
 import { shouldCompleteOnBlur } from "@/lib/close-tick";
+import { serverLooksUp } from "@/lib/server-pulse";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
 import { cadenceOwedTonight, dayOfSection } from "@/lib/due";
@@ -524,11 +525,26 @@ export function CloseChecklist({
    * they were halfway through, within fifteen seconds of walking into the one
    * place this product is for. The queue underneath was working the whole
    * time and never got the chance to prove it.
+   *
+   * And never while the server is not answering, which is the same trap with
+   * signal bars showing. On 2026-11-10 it went quiet for four minutes: every
+   * refresh hung, came back as a timeout, and Next reloaded the page onto the
+   * timeout. The maintenance check keeps a pulse; when the last ask got no
+   * reply this waits, and picks up again on the first one that does.
+   *
+   * A wake fires two events at once, so anything inside four seconds of the
+   * last refresh is the same wake and is dropped.
    */
   useEffect(() => {
+    let last = 0;
     const pull = () => {
       if (typeof navigator !== "undefined" && !navigator.onLine) return;
-      if (document.visibilityState === "visible") router.refresh();
+      if (document.visibilityState !== "visible") return;
+      if (!serverLooksUp()) return;
+      const now = Date.now();
+      if (now - last < 4_000) return;
+      last = now;
+      router.refresh();
     };
     const id = window.setInterval(pull, 15_000);
     document.addEventListener("visibilitychange", pull);
@@ -1396,7 +1412,11 @@ export function CloseChecklist({
     // point. Skipped with no signal for the same reason as the poll: the
     // reopen already succeeded on the server, and a failed refresh would
     // throw the person off the page to show them something they can wait for.
-    if (typeof navigator === "undefined" || navigator.onLine) router.refresh();
+    if (
+      (typeof navigator === "undefined" || navigator.onLine) &&
+      serverLooksUp()
+    )
+      router.refresh();
   }
 
   // Named by phase. This sentence is the record of who stood behind the shift,

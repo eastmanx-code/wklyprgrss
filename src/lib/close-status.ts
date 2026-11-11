@@ -146,11 +146,18 @@ export function signedList(listAtSigning: unknown): SignedItem[] | null {
 
 export async function closeStatus(
   night: string = currentNight(),
+  venueId?: string,
 ): Promise<CloseStatusRow[]> {
-  const { data: checklistRows, error: checklistError } = await db()
+  // One building when one is named. The screens a crew uses only ever show
+  // their own venue, and reading every venue's lists, items, nights and ticks
+  // to draw one venue's chips made the busiest pages the slowest ones, at the
+  // hour every building closes at once.
+  let listQuery = db()
     .from("close_checklists")
     .select("id, venue_id, house, role, phase, room")
     .eq("active", true);
+  if (venueId) listQuery = listQuery.eq("venue_id", venueId);
+  const { data: checklistRows, error: checklistError } = await listQuery;
   if (checklistError) throw new Error(checklistError.message);
   const checklists = (checklistRows ?? []) as {
     id: string;

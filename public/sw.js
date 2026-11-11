@@ -36,6 +36,24 @@ const PAGES = `${VERSION}-pages`;
 const MAX_AGE_MS = 6 * 60 * 60 * 1000;
 const STAMP = "x-ww-cached-at";
 
+/**
+ * How long a page may take before the saved copy is shown instead.
+ *
+ * "No signal" was the only failure this file knew. On 2026-11-10 the server
+ * stopped answering for four minutes with every phone still online: the
+ * request went out, hung for half a minute and came back as a timeout page,
+ * and none of that is a network failure, so the copy sitting right here was
+ * never offered. Somebody trying to open their list at 11:36 at night got a
+ * blank wait and then an error, with the list one cache lookup away.
+ *
+ * Six seconds is past every healthy page in the app and well short of the
+ * point where a person decides it is broken.
+ */
+const NAV_TIMEOUT_MS = 6000;
+
+/** The answers that mean "the server is not there", not "the app said no". */
+const GATEWAY_DOWN = new Set([502, 503, 504]);
+
 self.addEventListener("install", () => {
   // Nothing is pre-cached. There is no shell, and a list of asset URLs written
   // here would be wrong the next time anything is built.
@@ -117,6 +135,30 @@ const offlinePage = () =>
     headers: { "content-type": "text/html; charset=utf-8" },
   });
 
+// The same page with the other cause on it. The phone has signal; the server
+// is the part that is missing, and saying "no signal" to somebody standing
+// next to the router sends them to fix the wrong thing.
+const BUSY = OFFLINE.replace("<title>No signal</title>", "<title>Not answering</title>")
+  .replace(
+    "<p>No signal, and this page was not open.</p>",
+    "<p>The app is not answering right now, and this page was not open.</p>",
+  )
+  .replace(
+    "Sin se&#241;al, y esta p&#225;gina no estaba abierta.",
+    "La app no responde ahora mismo, y esta p&#225;gina no estaba abierta.",
+  )
+  .replace("Find signal and try again.", "Give it a minute and try again.")
+  .replace(
+    "Busca se&#241;al e int&#233;ntalo otra vez.",
+    "Espera un minuto e int&#233;ntalo otra vez.",
+  );
+
+const busyPage = () =>
+  new Response(BUSY, {
+    status: 503,
+    headers: { "content-type": "text/html; charset=utf-8" },
+  });
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
@@ -151,20 +193,59 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     (async () => {
-      try {
-        const response = await fetch(request);
+      // The copy from earlier tonight, or nothing. Never one old enough to be
+      // a different night's work.
+      const saved = async () => {
+        const hit = await caches.match(request, { cacheName: PAGES });
+        return hit && !tooOld(hit) ? hit : null;
+      };
+
+      // The live answer. Left running even after this stops waiting for it,
+      // so a reply that arrives late still replaces the saved copy.
+      const live = fetch(request).then((response) => {
         if (response.ok) {
           const copy = stamped(response.clone());
           void caches.open(PAGES).then((cache) => cache.put(request, copy));
         }
         return response;
+      });
+      event.waitUntil(live.catch(() => undefined));
+
+      let timer;
+      const slow = new Promise((resolve) => {
+        timer = setTimeout(() => resolve("slow"), NAV_TIMEOUT_MS);
+      });
+
+      let first;
+      try {
+        first = await Promise.race([live, slow]);
       } catch {
-        const hit = await caches.match(request, { cacheName: PAGES });
-        // No copy, or one old enough to be a different night's work. Say so
-        // rather than showing a list somebody might sign.
-        if (!hit || tooOld(hit)) return offlinePage();
-        return hit;
+        first = "down";
+      } finally {
+        clearTimeout(timer);
       }
+
+      // No connection at all. What this file was written for.
+      if (first === "down") return (await saved()) ?? offlinePage();
+
+      // Still waiting. Show the copy if there is one; with nothing to show,
+      // keep waiting, because a slow page beats no page.
+      if (first === "slow") {
+        const hit = await saved();
+        if (hit) return hit;
+        try {
+          const late = await live;
+          return GATEWAY_DOWN.has(late.status) ? busyPage() : late;
+        } catch {
+          return offlinePage();
+        }
+      }
+
+      // Answered, but with the hosting saying the server is not there.
+      if (GATEWAY_DOWN.has(first.status)) return (await saved()) ?? busyPage();
+
+      // A real answer, including a real error the app chose to give.
+      return first;
     })(),
   );
 });

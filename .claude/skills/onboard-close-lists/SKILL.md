@@ -24,6 +24,7 @@ signed against it.
 
 Sources are Google Sheets or an xlsx with one tab per list. Read the whole thing before mapping. Then:
 
+- **Hidden tabs are not lists.** Check every tab's visibility before mapping anything (`ws.sheet_state` in openpyxl, loaded without `read_only`; in Google Sheets a hidden tab shows grey in the all-sheets menu). A hidden tab is one the venue retired or keeps out of the crew's sight, and the people running the venue may never have seen it. Do not load one. Name each hidden tab to the user and ask. Fortunate Son and Leila both went live with manager lists built from hidden tabs: nobody signed them, they counted as misses every night, and a GM asked whether AI had made them up.
 - **One list per position and phase.** Tab names say which: "HOST OPENING" is Host / open, "BARBACK CLOSING" is Barback / close. A list that spans a page break ("OPENING THE BAR PAGE 1" and "PAGE 2") is one list.
 - **Phases** are `open`, `mid`, `close`. A full shift list that ends with closing tasks is `close`.
 - **Weekly cleaning tabs** become one `Deep clean` / `mid` list per room, with each item under its weekday as `section` (`MONDAY` … `SUNDAY`). The app only asks for a weekday item on that weekday.

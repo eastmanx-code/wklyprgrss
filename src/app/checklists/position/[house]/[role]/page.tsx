@@ -129,7 +129,7 @@ export default async function PositionPage({
   // same colour for untouched and for every item ticked with no signature,
   // and the second is the one that needs a name on it before 4am.
   const progress = new Map(
-    (await closeStatus(night))
+    (await closeStatus(night, venue))
       .filter((row) => lists.some((l) => l.id === row.checklist_id))
       .map((row) => [row.checklist_id, row]),
   );
