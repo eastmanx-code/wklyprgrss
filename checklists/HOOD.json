@@ -117,10 +117,7 @@
           ]
         },
         {
-          "title": "MAKE SURE ALL ESPRESSO MARTINI EMPTY BOTTLES HAVE BEEN WASHED, REFILLED AND STORED IN FRIDGE.",
-          "detail": [
-            "MAKE SURE ALL YELLOW WATER BOTTLES HAVE BEEN WASHED, REFILLED AND PLACED IN KEG FRIDGE."
-          ]
+          "title": "MAKE SURE ALL ESPRESSO MARTINI, MAI TAI AND MIXED BERRY EMPTY BOTTLES HAVE BEEN WASHED, REFILLED AND STORED IN THE PREP FRIDGE."
         },
         {
           "title": "POUR CITRUS AND SYRUPS BACK IN TO A CLEAN DELI, LABEL/ DATE AND THEN PLACE IN THE FRIDGE. WASH CITRUS & SYRUP POUR BOTTLES / TINS IN DISHWASHER AND TAKE BACK TO NOBLE FOR PREP."
@@ -178,6 +175,9 @@
         },
         {
           "title": "REWIND BOTH REEL-TO-REPLACE AND PUT AWAY IN ITS CORRESPONDING CASE. CLEAN EQUIPMENT WITH RUBBING ALCOHOL AND Q-TIP."
+        },
+        {
+          "title": "TURN A/C OFF."
         },
         {
           "title": "CHECK IN WITH CLOSERS BEFORE LEAVING AND HAVE THEM SIGN OFF ON MY CHECKLISTS."
@@ -664,14 +664,6 @@
           "title": "Move Gelato to Hood Freezer"
         },
         {
-          "title": "AMUSE ORGANIZATION:",
-          "detail": [
-            "Consolidate and organize amuse stations (chip cabinet, jelly molds)",
-            "Discard open chip bags",
-            "Stack bowls neatly on top shelf"
-          ]
-        },
-        {
           "title": "Collect/Dump candles and consolidate at T4"
         },
         {
@@ -827,6 +819,12 @@
         },
         {
           "title": "RESET THE BEADS TO THE INSIDE OF THE FOOTREST ON EACH STOOL"
+        },
+        {
+          "title": "Turn off A/C"
+        },
+        {
+          "title": "Noted all special occasions in general notes."
         },
         {
           "title": "Run checkout aND COMBINE WITH OTHER ROOMS (USE RUBBERBAND). CHECK IN WITH CLOSERS BEFORE LEAVING AND HAVE THEM SIGN OFF ON MY CHECKLIST."
@@ -1215,6 +1213,9 @@
             "Stock with: 5 pens, 10 votive candles, incense, and a lighter",
             "Detail the tiled block and make sure there are no footprints"
           ]
+        },
+        {
+          "title": "Noted all special occasions in general notes."
         },
         {
           "title": "Focus my chi and prepare to enter Thunderdome"
