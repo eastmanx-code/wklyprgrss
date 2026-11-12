@@ -193,7 +193,7 @@
         { "title": "I CONFIRMED THE PATIO HEATERS WERE OFF.", "title_es": "CONFIRMÉ QUE LOS CALENTADORES DEL PATIO ESTUVIERAN APAGADOS." },
         { "title": "I SENT A PHOTO OF ANY BULB THAT WAS OUT OR REPLACED IT.", "title_es": "MANDÉ UNA FOTO DE LOS FOCOS FUNDIDOS, O LOS CAMBIÉ.", "proof": [{ "kind": "photo", "prompt": "Any bulb that is out, or the shot that shows all are working" }] },
         { "title": "I CONFIRMED ALL THE WINDOWS WERE LOCKED AND SECURED.", "title_es": "CONFIRMÉ QUE TODAS LAS VENTANAS ESTUVIERAN CERRADAS CON LLAVE." },
-        { "title": "I CHECKED ALL THE FLOOR LANTERNS WERE FILLED, FILLED ANY THAT WERE MISSED, AND NOTED IT IN THE LEAD THREAD.", "title_es": "REVISÉ QUE LAS LINTERNAS DEL PISO ESTUVIERAN LLENAS, LLENÉ LAS QUE FALTABAN Y LO ANOTÉ EN EL HILO DE LÍDERES.", "proof": [{ "kind": "note", "prompt": "Any lanterns that were missed, or none" }] }
+        { "title": "I CHECKED ALL THE FLOOR LANTERNS WERE FILLED AND FILLED ANY THAT WERE MISSED.", "title_es": "REVISÉ QUE LAS LINTERNAS DEL PISO ESTUVIERAN LLENAS Y LLENÉ LAS QUE FALTABAN.", "proof": [{ "kind": "note", "prompt": "Any lanterns that were missed, or none" }] }
       ]
     },
     {
