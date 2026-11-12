@@ -1,0 +1,49 @@
+# Is the site answering, asked from outside the host.
+#
+# Every five minutes this asks https://wklyprgrss.com/api/health, an address
+# that touches no data and no session. Three tries, twenty seconds apart, so a
+# single dropped request does not send mail. If all three miss, the run fails,
+# and GitHub mails a failed scheduled run to whoever last changed the schedule
+# below. That mail is the alert.
+#
+# GitHub starts scheduled runs when it has room, which can be several minutes
+# late, so this catches an outage that lasts and can miss one that is over in
+# four minutes. The minute-by-minute record is kept by the database, in
+# public.uptime_checks (supabase/043_uptime_checks.sql). That one sees every
+# minute and sends nothing; this one sends mail and sees less. Together they
+# also cover each other: the database cannot report its own outage, and this
+# can.
+name: Uptime
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  # Run by hand to prove the alert arrives: give it an address that does not
+  # answer and the run fails the same way a real outage would.
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Address to ask
+        default: https://wklyprgrss.com/api/health
+
+jobs:
+  ask:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ask three times
+        env:
+          URL: ${{ inputs.url || 'https://wklyprgrss.com/api/health' }}
+        run: |
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o /dev/null -m 10 -w '%{http_code}' "$URL" || true)
+            echo "try $attempt: $code"
+            if [ "$code" = "200" ]; then
+              exit 0
+            fi
+            if [ "$attempt" != "3" ]; then
+              sleep 20
+            fi
+          done
+          echo "::error::$URL did not answer in three tries over a minute. Last answer: $code"
+          exit 1
