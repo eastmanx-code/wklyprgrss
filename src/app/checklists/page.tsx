@@ -132,12 +132,17 @@ export default async function ChecklistsPage() {
     : missed
         .filter((m) => m.of > 0 && m.open >= MIN_MISSES && m.open / m.of >= MIN_RATE)
         .sort((a, b) => b.open / b.of - a.open / a.of || b.open - a.open);
-  // Last night, split by how bad the miss was: never opened, where nobody even
-  // started the list, and signed a box short, where someone worked it and left
-  // a box open. The two are not the same failure and should not read the same.
-  const neverOpened = latest?.notSigned ?? [];
-  const boxShort = latest?.notDone ?? [];
-  const latestShort = neverOpened.length + boxShort.length;
+  // Last night, split by how bad the miss was, in the same three piles and the
+  // same words as the night page and the morning email: never opened, where
+  // nobody ticked a box; never signed, where the list was worked and nobody put
+  // a name to it; and signed with items left. They are not the same failure
+  // and should not read the same. The first two were one pile here, so a hot
+  // line with seventeen of thirty four boxes ticked read "nobody did these".
+  const neverOpened = latest?.neverOpened ?? [];
+  const neverSigned = latest?.neverSigned ?? [];
+  const itemsLeft = latest?.notDone ?? [];
+  const latestShort =
+    neverOpened.length + neverSigned.length + itemsLeft.length;
 
   return (
     <main className="close-flow mx-auto max-w-2xl pb-6">
@@ -190,10 +195,12 @@ export default async function ChecklistsPage() {
         ) : null}
       </section>
 
-      {/* Last night, ranked by how bad the miss was. Never opened — nobody did
-          it — rides the warn accent up top; signed a box short sits under a
-          rule, dimmer and named, because those lists got done. Two counts
-          first, so the shape of the night reads before the detail. */}
+      {/* Last night, ranked by how bad the miss was. Never opened, where
+          nobody did it, rides the warn accent up top. Never signed comes next
+          with how far the list got, because somebody did work it. Signed with
+          items left sits under a rule, dimmer and named, because those lists
+          got a signature. Three counts first, so the shape of the night reads
+          before the detail. */}
       {latest ? (
         <section className="panel mt-4">
           {latestShort === 0 ? (
@@ -212,8 +219,10 @@ export default async function ChecklistsPage() {
                 />
               </p>
 
-              <div className="mt-4 flex gap-2.5">
-                <div className="border-warn/50 bg-warn/5 min-w-0 flex-1 rounded-[6px] border p-4">
+              {/* Two across on a phone with the third underneath: three
+                  across left "pendientes" wider than its tile. */}
+              <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                <div className="border-warn/50 bg-warn/5 min-w-0 rounded-[6px] border p-4">
                   <div className="text-warn text-[44px] font-bold leading-none tabular-nums">
                     {neverOpened.length}
                   </div>
@@ -221,12 +230,20 @@ export default async function ChecklistsPage() {
                     <T en="never opened" es="nunca se abrió" />
                   </p>
                 </div>
-                <div className="border-divider min-w-0 flex-1 rounded-[6px] border p-4">
+                <div className="border-warn/50 min-w-0 rounded-[6px] border p-4">
                   <div className="text-[44px] font-bold leading-none tabular-nums">
-                    {boxShort.length}
+                    {neverSigned.length}
                   </div>
                   <p className="label text-muted mt-2">
-                    <T en="signed a box short" es="firmada incompleta" />
+                    <T en="never signed" es="nunca se firmó" />
+                  </p>
+                </div>
+                <div className="border-divider col-span-2 min-w-0 rounded-[6px] border p-4 sm:col-span-1">
+                  <div className="text-[44px] font-bold leading-none tabular-nums">
+                    {itemsLeft.length}
+                  </div>
+                  <p className="label text-muted mt-2">
+                    <T en="signed with items left" es="firmada con pendientes" />
                   </p>
                 </div>
               </div>
@@ -263,17 +280,60 @@ export default async function ChecklistsPage() {
                 </div>
               ) : null}
 
-              {boxShort.length > 0 ? (
+              {neverSigned.length > 0 ? (
+                <div className="mt-6">
+                  <p className="card-title text-warn">
+                    <T en="never signed" es="nunca se firmó" />
+                    <span className="text-muted">
+                      {" · "}
+                      <T
+                        en="worked, nobody signed"
+                        es="se trabajó, nadie firmó"
+                      />
+                    </span>
+                  </p>
+                  <ul className="mt-3 space-y-2.5">
+                    {neverSigned.map((l, i) => {
+                      const ph = l.phase as "open" | "mid" | "close";
+                      return (
+                        <li
+                          key={`w-${l.role}-${l.room ?? ""}-${l.phase}-${i}`}
+                          className="label border-warn/50 text-ink flex flex-wrap items-baseline gap-x-2 border-l-2 pl-3 leading-relaxed"
+                        >
+                          <span>
+                            <T
+                              en={[l.role, l.room, phaseName(ph)]
+                                .filter(Boolean)
+                                .join(" · ")}
+                              es={[l.role, l.room, PHASE_ES[ph]]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            />
+                          </span>
+                          <span className="text-muted tabular-nums">
+                            <T
+                              en={`${l.ticked ?? 0} of ${l.owed ?? 0} checked off`}
+                              es={`${l.ticked ?? 0} de ${l.owed ?? 0} marcadas`}
+                            />
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+
+              {itemsLeft.length > 0 ? (
                 <div className="border-divider mt-6 border-t pt-5">
                   <p className="text-ink/70 text-body tracking-[0.08em]">
-                    <T en="signed a box short" es="firmada incompleta" />
+                    <T en="signed with items left" es="firmada con pendientes" />
                     <span className="text-muted">
                       {" · "}
                       <T en="done, left a box open" es="hecha, quedó una casilla" />
                     </span>
                   </p>
                   <ul className="mt-3 space-y-2.5">
-                    {boxShort.map((l, i) => {
+                    {itemsLeft.map((l, i) => {
                       const ph = l.phase as "open" | "mid" | "close";
                       return (
                         <li

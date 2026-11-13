@@ -54,7 +54,8 @@ is("lists done and signed over the running nights", [r.done, r.of], [1, 2]);
 // Which one, and which way it fell short: signed, not done.
 is("latest night: not done is named, with who signed it", r.latest, {
   night: W[1],
-  notSigned: [],
+  neverOpened: [],
+  neverSigned: [],
   notDone: [{ role: "MOD", room: null, phase: "close", by: "Ana" }],
 });
 // i1 ticked both nights and so is not on the list at all; i2 open on night 2.
@@ -102,7 +103,8 @@ is("missed carries streak and the recent window",
   // room where there is one, so three deep cleans do not read as one word.
   is("ignored list: the unsigned one is named", ignored.latest, {
     night: W[2],
-    notSigned: [{ role: "MOD", room: null, phase: "close" }],
+    neverOpened: [{ role: "MOD", room: null, phase: "close" }],
+    neverSigned: [],
     notDone: [],
   });
 }
@@ -153,9 +155,96 @@ is("missed carries streak and the recent window",
   is("two of three", [most.done, most.of], [2, 3]);
   is("the deep clean is named with its room", most.latest, {
     night: W[0],
-    notSigned: [{ role: "Deep clean", room: "Noble", phase: "mid" }],
+    neverOpened: [{ role: "Deep clean", room: "Noble", phase: "mid" }],
+    neverSigned: [],
     notDone: [],
   });
+}
+
+// ------------------------------------------- worked is not the same as unopened
+//
+// One night, four lists, one in each pile and one done. The hot line had half
+// its boxes ticked and no signature, and the page listed it under "never
+// opened, nobody did these" beside a list with no ticks at all. A tick on an
+// unsigned list moves it to never signed, with the count that proves it.
+{
+  const one = ["2026-11-12"];
+  const lists = [
+    { id: "HL", venue_id: "V", house: "HOH", role: "Hot line", phase: "close" },
+    { id: "DP", venue_id: "V", house: "HOH", role: "Dish pit", phase: "close" },
+    { id: "PR", venue_id: "V", house: "HOH", role: "Prep", phase: "open" },
+    { id: "MG", venue_id: "V", house: "FOH", role: "Manager", phase: "close" },
+    { id: "BR", venue_id: "V", house: "FOH", role: "Bar", phase: "close" },
+  ];
+  const rows = [
+    ...["a", "b", "c", "d"].map((k) => ({ id: `hl-${k}`, checklist_id: "HL", title: `Hot line ${k}` })),
+    ...["a", "b"].map((k) => ({ id: `dp-${k}`, checklist_id: "DP", title: `Dish pit ${k}` })),
+    ...["a", "b"].map((k) => ({ id: `pr-${k}`, checklist_id: "PR", title: `Prep ${k}` })),
+    ...["a", "b"].map((k) => ({ id: `mg-${k}`, checklist_id: "MG", title: `Manager ${k}` })),
+    { id: "br-a", checklist_id: "BR", title: "Bar a" },
+  ];
+  const opened = [
+    // Worked, two of four, nobody signed.
+    { id: "n-hl", checklist_id: "HL", night: one[0], certified_at: null, certified_by: null },
+    // The screen was opened and nothing ticked: a row, and still never opened.
+    { id: "n-dp", checklist_id: "DP", night: one[0], certified_at: null, certified_by: null },
+    // Prep has no row at all.
+    // Signed with one left.
+    { id: "n-mg", checklist_id: "MG", night: one[0], certified_at: "t", certified_by: "Ana" },
+    // Done and signed.
+    { id: "n-br", checklist_id: "BR", night: one[0], certified_at: "t", certified_by: "Bo" },
+  ];
+  const split = computeRollup({
+    checklists: lists, items: rows, nights: opened,
+    ticks: [
+      { night_id: "n-hl", item_id: "hl-a" },
+      { night_id: "n-hl", item_id: "hl-b" },
+      { night_id: "n-mg", item_id: "mg-a" },
+      { night_id: "n-br", item_id: "br-a" },
+    ],
+  }, one);
+  is("split: three piles, and a worked list is not never opened", split.latest, {
+    night: one[0],
+    neverOpened: [
+      { role: "Dish pit", room: null, phase: "close" },
+      { role: "Prep", room: null, phase: "open" },
+    ],
+    neverSigned: [{ role: "Hot line", room: null, phase: "close", ticked: 2, owed: 4 }],
+    notDone: [{ role: "Manager", room: null, phase: "close", by: "Ana" }],
+  });
+  // The split changes which pile a list is named in and nothing else: it is
+  // still one of five done and signed, and still a short night.
+  is("split: the score does not move", [split.done, split.of, split.strip], [1, 5, "m"]);
+
+  // Every box ticked and no signature is still never signed, not done.
+  const allTicked = computeRollup({
+    checklists: [lists[0]], items: rows, nights: [opened[0]],
+    ticks: ["a", "b", "c", "d"].map((k) => ({ night_id: "n-hl", item_id: `hl-${k}` })),
+  }, one);
+  is("split: all ticked, nobody signed, is never signed", allTicked.latest, {
+    night: one[0],
+    neverOpened: [],
+    neverSigned: [{ role: "Hot line", room: null, phase: "close", ticked: 4, owed: 4 }],
+    notDone: [],
+  });
+
+  // A deep clean rota: Thursday's two boxes are what the night owed. One of
+  // them ticked, plus Monday's done on the wrong day, is two ticked of three,
+  // the same count the night page shows: a tick counts whether or not it was
+  // owed, and the boxes owed on other nights are not on the bill.
+  const rota = [
+    { id: "t1", checklist_id: "HL", title: "Thursday one", section: "THURSDAY" },
+    { id: "t2", checklist_id: "HL", title: "Thursday two", section: "THURSDAY" },
+    { id: "m1", checklist_id: "HL", title: "Monday one", section: "MONDAY" },
+    { id: "f1", checklist_id: "HL", title: "Friday one", section: "FRIDAY" },
+  ];
+  const wrongDay = computeRollup({
+    checklists: [lists[0]], items: rota, nights: [opened[0]],
+    ticks: [{ night_id: "n-hl", item_id: "t1" }, { night_id: "n-hl", item_id: "m1" }],
+  }, one, isDue);
+  is("split: ticks count whether or not owed, owed nights only on the bill",
+    wrongDay.latest.neverSigned,
+    [{ role: "Hot line", room: null, phase: "close", ticked: 2, owed: 3 }]);
 }
 
 // Ranked by how many nights, not by what share. A deep clean job owed one
