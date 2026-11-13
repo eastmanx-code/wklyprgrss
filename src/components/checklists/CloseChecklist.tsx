@@ -1955,7 +1955,7 @@ export function CloseChecklist({
                   <span className="break-words">{heading}</span>
                   <span className="shrink-0 tabular-nums">
                     {optional
-                      ? t("optional", "opcional")
+                      ? null
                       : sectionDay === null
                       ? `${runDone}/${run.length}`
                       : notTonight
