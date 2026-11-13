@@ -1,5 +1,6 @@
 import "server-only";
 
+import { resetGrade, type GradeRow } from "./reset-gate";
 import { db, selectAll } from "./supabase";
 import type {
   House,
@@ -1247,6 +1248,56 @@ export async function gradesFor(
       { gradedAt: row.graded_at, gradedBy: row.graded_by },
     ]),
   );
+}
+
+/**
+ * The grade that lets each house clear its finished work, keyed by house.
+ *
+ * A house missing from the map is still waiting. The rule itself lives in
+ * reset-gate.ts; this only fetches what it needs. The venue screen and the
+ * reset action both come through here, so the button and the rule behind it
+ * cannot disagree about whether a board may be cleared.
+ *
+ * `workWeeks` is, per house, the newest week its finished work was filed in.
+ */
+export async function resetGradesFor(
+  venueId: string,
+  completedWeek: string,
+  workWeeks: Map<House, string | null>,
+): Promise<Map<House, GradeRow>> {
+  // No further back than the oldest finished work: a grade from before it
+  // judged something else.
+  const floors = [...workWeeks.values()].filter(
+    (week): week is string => week !== null,
+  );
+  const earliest = [completedWeek, ...floors].sort()[0];
+
+  const { data } = await db()
+    .from("graded_weeks")
+    .select("house, week_start, graded_at, graded_by")
+    .eq("venue_id", venueId)
+    .gte("week_start", earliest)
+    .lte("week_start", completedWeek);
+  const rows = (data ?? []) as {
+    house: House;
+    week_start: string;
+    graded_at: string;
+    graded_by: string;
+  }[];
+
+  const open = new Map<House, GradeRow>();
+  for (const house of HOUSES) {
+    const mine = rows
+      .filter((row) => row.house === house)
+      .map((row) => ({
+        weekStart: row.week_start,
+        gradedAt: row.graded_at,
+        gradedBy: row.graded_by,
+      }));
+    const grade = resetGrade(mine, workWeeks.get(house) ?? null, completedWeek);
+    if (grade) open.set(house, grade);
+  }
+  return open;
 }
 
 /**

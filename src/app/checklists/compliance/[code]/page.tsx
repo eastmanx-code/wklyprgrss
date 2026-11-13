@@ -3,10 +3,12 @@ import { notFound, redirect } from "next/navigation";
 
 import { ListBar, NightNav } from "@/components/checklists/Compliance";
 import { Card } from "@/components/Card";
+import { ReportCopy } from "@/components/ReportCopy";
 import { BackLink } from "@/components/ui";
 import { nightCompliance, type ListGroup } from "@/lib/compliance";
 import { closeVenueId, venueNameOf } from "@/lib/close-venue";
-import { currentNight, formatNightSpan } from "@/lib/night";
+import { currentNight, formatNightSpan, isNightOver } from "@/lib/night";
+import { nightRecap } from "@/lib/night-recap";
 import { getSession } from "@/lib/session";
 import { db } from "@/lib/supabase";
 
@@ -100,6 +102,27 @@ export default async function VenueCompliancePage({
   // on top.
   const fails = venue.lists.filter((list) => list.state === "fail");
 
+  // The morning email, already written. Admins only, and only once the night
+  // has a verdict: it is the office that sends it, and a recap of a night
+  // still being worked would name items somebody is about to check off.
+  const recap =
+    session.role === "admin" && isNightOver(night)
+      ? nightRecap(
+          night,
+          venue.lists.map((list) => ({
+            name: list.name,
+            group: list.group,
+            untouched: list.row.untouched,
+            ticked: list.row.ticked,
+            owed: list.row.items_on_list,
+            checkedBy: list.row.checked_by,
+            signedBy: list.row.certified_by,
+            openTitles: list.row.open_titles,
+            openReason: list.row.open_reason,
+          })),
+        )
+      : null;
+
   return (
     <main className="close-flow mx-auto max-w-[960px] pb-4">
       <BackLink
@@ -157,6 +180,30 @@ export default async function VenueCompliancePage({
           <span aria-hidden>→</span>
         </Link>
       </p>
+
+      {/* The same night as text, with every missed item named, for the
+          email. Folded away: most visits are to read the page, not send it. */}
+      {recap ? (
+        <details className="group mb-5">
+          <summary className="ring-card-border text-ink inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded px-4 text-label tracking-[0.08em] ring-1">
+            <span>Email recap</span>
+            <span
+              className="text-muted transition-transform group-open:rotate-90"
+              aria-hidden
+            >
+              ▸
+            </span>
+          </summary>
+          <div className="mt-3">
+            <ReportCopy
+              text={recap}
+              button="Copy the recap"
+              hint="Paste into the venue's LAST NIGHTS CHECKLISTS email."
+              tall={false}
+            />
+          </div>
+        </details>
+      ) : null}
 
       {/* One panel, every list a bar, fails first. The same bars the weekly
           board uses: name in the row, the verdict at the right, the facts in

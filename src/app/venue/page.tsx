@@ -18,9 +18,10 @@ import {
   countUnapproved,
   getLeaderBoard,
   getVenue,
-  gradesFor,
   houseStartWeek,
+  resetGradesFor,
 } from "@/lib/status";
+import { newestWeek } from "@/lib/reset-gate";
 import {
   currentWeekStart,
   deadlineFor,
@@ -48,14 +49,26 @@ export default async function VenuePage() {
   // full of empty slots it can never fill.
   const board = await getLeaderBoard(venue.id, venue.houses);
   const unapproved = await countUnapproved(venue.id);
-  // Reset waits on the grade for the week that has actually finished — the one
-  // the signed-off work belongs to, not the one just started.
+  // Reset waits on a grade for the week the signed-off work was filed in, or
+  // any week since. Asking only about the week that most recently finished
+  // locked a kitchen out for three weeks: its work was approved and graded,
+  // nobody reset, and every week after that had nothing new to grade.
   const gradedWeek = mostRecentCompletedWeek();
-  // Every house's grade, and whether the week is closed in all of them. Two
-  // people grade and each signs their own, so one signature is not a closed
-  // week: a venue reset on the strength of the dining room alone would clear a
-  // kitchen nobody had looked at.
-  const grades = await gradesFor(venue.id, gradedWeek);
+  // Per house, because two people grade and each signs their own: a venue
+  // reset on the strength of the dining room alone would clear a kitchen
+  // nobody had looked at.
+  const workWeeks = new Map(
+    board.houses.map((house) => [
+      house.house,
+      newestWeek(
+        [...house.approvedItemIds].flatMap((id) => {
+          const latest = board.latest.get(id);
+          return latest ? [latest.week_start] : [];
+        }),
+      ),
+    ]),
+  );
+  const grades = await resetGradesFor(venue.id, gradedWeek, workWeeks);
   // Both shots, not just the headline one. A tile that showed only the after
   // made a before uploaded the same week invisible, which a leader read as the
   // second photo overriding the first.
@@ -283,7 +296,9 @@ export default async function VenuePage() {
           finished={house.approvedItemIds.size}
           graded={grades.has(house.house)}
           gradedBy={grades.get(house.house)?.gradedBy ?? null}
-          weekLabel={formatWeekStart(gradedWeek)}
+          weekLabel={formatWeekStart(
+            grades.get(house.house)?.weekStart ?? gradedWeek,
+          )}
         />
       ))}
 

@@ -303,7 +303,23 @@ export function ListBar({
         {fact.label} {fact.value}
       </span>
     ));
-  const items = full && list.group === "gaps" ? list.row.open_titles : null;
+  // Named on a list signed with things left, and on one that was worked and
+  // never signed. That second kind used to say "17/19 checked off" and stop,
+  // and the two it was short were a tap away on another page. A list nobody
+  // opened is not itemised: every line on it was missed, and it says so.
+  // Past a dozen it is a count again, because thirty lines of "missed" on a
+  // list somebody barely started is the list, not a report on it.
+  const NAMED_AT_MOST = 12;
+  const itemised =
+    list.group === "gaps" ||
+    (list.group === "unsigned" && !list.row.untouched);
+  const items =
+    full &&
+    itemised &&
+    list.row.open_titles.length > 0 &&
+    (list.group === "gaps" || list.row.open_titles.length <= NAMED_AT_MOST)
+      ? list.row.open_titles
+      : null;
   // A fail leads with the person. A list signed off with items unchecked
   // is headed by whoever signed it, because that is the documented action;
   // a list nobody signed is headed "nobody signed off", because the people
