@@ -68,25 +68,13 @@
           "title": "I MADE SURE ALL THE LIGHTS ARE ON AND WORKING (MESSAGE MANAGER IF NOT)"
         },
         {
-          "title": "USED LEAF BLOWER TO CLEAN SIDEWALK/ PATIO/ DINING ROOM. SWEPT TO COLLECT ANY VISIBLE TRASH IN PATIO/ DINING ROOM. INCLUDING THE ROCKS OUTSIDE BY THE TREE",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Sidewalk, patio and dining room clear of trash"
-            }
-          ]
+          "title": "USED LEAF BLOWER TO CLEAN SIDEWALK/ PATIO/ DINING ROOM. SWEPT TO COLLECT ANY VISIBLE TRASH IN PATIO/ DINING ROOM. INCLUDING THE ROCKS OUTSIDE BY THE TREE"
         },
         {
           "title": "CHECK PLANTERS AROUND PATIO PERIMETER, REMOVE ANY TRASH FROM THEM. WIPED WHITE TILE NEXT TO THE PATIO DOOR"
         },
         {
-          "title": "WIPE DOWN FRONT WINDOWS AND THE GREEN LEDGES",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Front windows and green ledges, clean"
-            }
-          ]
+          "title": "WIPE DOWN FRONT WINDOWS AND THE GREEN LEDGES"
         },
         {
           "title": "SET UP PATIO: UMBRELLAS OPEN, CUSHIONS, CHAIRS",
@@ -98,7 +86,13 @@
           ]
         },
         {
-          "title": "WIPED DOWN GREEN BOOTHS, TABLE BASES, LEDGES AND IN BETWEEN BOOTH USE A CHOPSTICK TO GET FOOD OUT"
+          "title": "WIPED DOWN GREEN BOOTHS, TABLE BASES, LEDGES AND IN BETWEEN BOOTH USE A CHOPSTICK TO GET FOOD OUT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Green booths, table bases and ledges wiped, nothing left between the booths"
+            }
+          ]
         },
         {
           "title": "BROUGH 2 TRASH CANS"
@@ -116,13 +110,7 @@
           "title": "I ORGANIZED/ STOCKED TAKEOUT."
         },
         {
-          "title": "WHIPED DOWN EXPO TOP TO BOTTOM",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Expo wiped top to bottom"
-            }
-          ]
+          "title": "WHIPED DOWN EXPO TOP TO BOTTOM"
         },
         {
           "title": "SET UP EXPO: RICE SPOON AND RINSE CADDY FOR BOTH RICE STATIONS, GREEN ONION/ CILATRO, SESSAME/ CHILI OIL REFILL. CHECK WHIPPED CREAM/ POWDERED SUGAR",
@@ -134,7 +122,13 @@
           ]
         },
         {
-          "title": "SET UP BUSSING STATION: 3 BUS TUBS AND 3 UTENSIL SOAKING CONTAINERS,"
+          "title": "SET UP BUSSING STATION: 3 BUS TUBS AND 3 UTENSIL SOAKING CONTAINERS,",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Bussing station set: 3 bus tubs and 3 utensil soaking containers"
+            }
+          ]
         },
         {
           "title": "FILLED UP THE SANITIZERS AND FOLDED GREEN RAGS"
@@ -143,7 +137,13 @@
           "title": "ASKED MOD FOR THE BANK"
         },
         {
-          "title": "CLOSING: CUT LEMON/ LIMES"
+          "title": "CLOSING: CUT LEMON/ LIMES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Lemons and limes cut for the close"
+            }
+          ]
         },
         {
           "title": "CLOSING: I THREW AWAY THE TRASH, RESTOCKED TAKEOUT AND ASKED WINDOW IF THEY NEEDED ANYTHING ELSE"
@@ -155,6 +155,7 @@
       "role": "Server",
       "role_es": "Mesero",
       "phase": "open",
+      "phase_label": "OPENER",
       "items": [
         {
           "title": "WIPED DOWN ALL TABLES WITH PURPLE SPRAY AND BRASS BASE (DO A WOBBLE CHECK)",
@@ -166,7 +167,13 @@
           ]
         },
         {
-          "title": "I STOCKED UP THE GREEN TEA / GINGER LEMONADE. CHECKED STRAWS CUT LEMON WHEELS"
+          "title": "I STOCKED UP THE GREEN TEA / GINGER LEMONADE. CHECKED STRAWS CUT LEMON WHEELS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Green tea and ginger lemonade stocked, lemon wheels cut"
+            }
+          ]
         },
         {
           "title": "MADED SURE BEVERAGES WERE RESTOKED AND READY FOR SERVICE"
@@ -214,7 +221,13 @@
           "title": "GRAB HANDHELDS AND IPAD"
         },
         {
-          "title": "CLOSING: FILL UP CHILI OIL AND SOY SAUCE CONTAIER. WIPE DOWN AFTER. FILL TAKEOUT CHILI OIL. TUESDAY DUMP AND WASH CHILI OIL CONTAINERS"
+          "title": "CLOSING: FILL UP CHILI OIL AND SOY SAUCE CONTAIER. WIPE DOWN AFTER. FILL TAKEOUT CHILI OIL. TUESDAY DUMP AND WASH CHILI OIL CONTAINERS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Chili oil and soy sauce containers filled and wiped down"
+            }
+          ]
         },
         {
           "title": "CLOSING: DO A BATHROOM CHECK"
@@ -226,6 +239,7 @@
       "role": "Server",
       "role_es": "Mesero",
       "phase": "close",
+      "phase_label": "CLOSER",
       "items": [
         {
           "title": "MADE SURE ALL CHECKS ARE PAYED"
@@ -412,7 +426,13 @@
           "title": "TAKE RICE, CILATRO AND GREEN ONTION CONTAINERS BACK TO DISH PIT"
         },
         {
-          "title": "REMOVE ICE BUCKET FROM FRIDGE"
+          "title": "REMOVE ICE BUCKET FROM FRIDGE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Ice bucket out of the fridge"
+            }
+          ]
         },
         {
           "title": "TAKE BACK LAST REMAINING DIRTY CUPS, UTENSILS AND DISHES TO THE DISH PIT MAKE SURE WINE CARAFES AND BLACK MATTS ARE WASHED"
@@ -472,13 +492,7 @@
           "title": "DROP THE BANK AND MONEY DROP IN THE SAFE ON AT A TIME"
         },
         {
-          "title": "MAKE SURE: PHONE, IPAD, IPOD, AND HANDHELDS ARE CHARHING, MUSIC IS MUTED AND LIGHTS ARE OFF",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Phone, iPad, iPod and handhelds charging"
-            }
-          ]
+          "title": "MAKE SURE: PHONE, IPAD, IPOD, AND HANDHELDS ARE CHARHING, MUSIC IS MUTED AND LIGHTS ARE OFF"
         },
         {
           "title": "POLISH ALL REMAING GLASSWARE AND SILVERWARE"
