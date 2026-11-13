@@ -11,7 +11,20 @@ import { useState } from "react";
  * thing on the clipboard. Selecting by hand in a tall box is exactly where a
  * partial copy comes from, which is the one thing this is here to stop.
  */
-export function ReportCopy({ text }: { text: string }) {
+export function ReportCopy({
+  text,
+  button = "Copy the whole report",
+  hint = "Paste into the ClickUp card, then sharpen the voice sections before it goes up.",
+  tall = true,
+}: {
+  text: string;
+  /** What the button says. The weekly report's words unless told otherwise. */
+  button?: string;
+  /** The line beside the button: where this text is going. */
+  hint?: string;
+  /** The weekly report fills the screen. A short text gets a short box. */
+  tall?: boolean;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -30,19 +43,18 @@ export function ReportCopy({ text }: { text: string }) {
     <div>
       <div className="mb-3 flex flex-wrap items-center gap-3">
         <button type="button" onClick={copy} className="btn">
-          {copied ? "Copied" : "Copy the whole report"}
+          {copied ? "Copied" : button}
         </button>
-        <span className="label">
-          Paste into the ClickUp card, then sharpen the voice sections before it
-          goes up.
-        </span>
+        <span className="label">{hint}</span>
       </div>
       <textarea
         readOnly
         value={text}
         spellCheck={false}
         onFocus={(e) => e.currentTarget.select()}
-        className="bg-inset text-ink h-[70vh] w-full resize-y rounded-[6px] p-4 font-mono text-sm leading-relaxed"
+        className={`bg-inset text-ink w-full resize-y rounded-[6px] p-4 font-mono text-sm leading-relaxed ${
+          tall ? "h-[70vh]" : "h-64"
+        }`}
       />
     </div>
   );
