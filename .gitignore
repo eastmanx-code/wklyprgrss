@@ -55,6 +55,7 @@ next-env.d.ts
 .name-check
 .slug-check
 .trouble-check
+.reset-check
 .role-check
 .outbox-check
 .close-tick-check

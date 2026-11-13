@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 
 import { docPath, photoPath } from "@/lib/photos";
 import { getSession, mayReachVenue } from "@/lib/session";
-import { ITEM_COLUMNS, gradesFor, housesFor } from "@/lib/status";
+import { newestWeek } from "@/lib/reset-gate";
+import { ITEM_COLUMNS, housesFor, resetGradesFor } from "@/lib/status";
 import { PHOTO_BUCKET, db } from "@/lib/supabase";
 import { HOUSES, type House, type Item } from "@/lib/types";
 import {
@@ -563,13 +564,17 @@ export async function clearApproved(
       ? requestedHouse
       : null;
 
+  // The grade has to cover the week the work was filed in, or any week since,
+  // not only the week that most recently finished. A kitchen whose ten were
+  // approved and graded, and that never reset, was asked every week after for
+  // a grade on a week it had filed nothing in. The rule is in reset-gate.ts
+  // and is read through the same function the screen uses.
   const gradedWeek = mostRecentCompletedWeek();
   const { data: venueRow } = await db()
     .from("venues")
     .select("houses")
     .eq("id", venueId)
     .maybeSingle();
-  const grades = await gradesFor(venueId, gradedWeek);
   const owed = housesFor(
     { houses: (venueRow as { houses: House[] } | null)?.houses ?? HOUSES },
     gradedWeek,
@@ -579,42 +584,70 @@ export async function clearApproved(
     // A house the venue does not run, or one that does not count this week.
     return { error: "Nothing to reset there." };
   }
-  if (!target.every((h) => grades.has(h))) {
-    return { error: "That week has not been graded yet." };
-  }
 
   const { data: items } = await db()
     .from("items")
     .select("id, house")
     .eq("venue_id", venueId)
     .eq("active", true);
-  const itemIds = ((items ?? []) as { id: string; house: House }[])
-    .filter((row) => (house ? row.house === house : true))
-    .map((row) => row.id);
-  if (itemIds.length === 0) return { error: null, ok: true };
+  const mine = ((items ?? []) as { id: string; house: House }[]).filter(
+    (row) => (house ? row.house === house : true),
+  );
+  const itemIds = mine.map((row) => row.id);
 
-  const { data: subs } = await db()
-    .from("submissions")
-    .select("item_id, review, created_at")
-    .in("item_id", itemIds)
-    .is("cleared_at", null)
-    .order("created_at", { ascending: false });
+  const { data: subs } =
+    itemIds.length === 0
+      ? { data: [] }
+      : await db()
+          .from("submissions")
+          .select("item_id, review, week_start, created_at")
+          .in("item_id", itemIds)
+          .is("cleared_at", null)
+          .order("created_at", { ascending: false });
 
   // Newest per task decides it. An older approval that a later photograph has
   // already replaced is not the state of the task.
-  const newest = new Map<string, string>();
-  for (const row of (subs ?? []) as { item_id: string; review: string }[]) {
-    if (!newest.has(row.item_id)) newest.set(row.item_id, row.review);
+  const newest = new Map<string, { review: string; week_start: string }>();
+  for (const row of (subs ?? []) as {
+    item_id: string;
+    review: string;
+    week_start: string;
+  }[]) {
+    if (!newest.has(row.item_id)) newest.set(row.item_id, row);
   }
 
   // Approved only. Anything sent back stays put and stays locked — a task the
   // admin rejected is the one thing a reset must not be able to make disappear.
-  const finished = [...newest.entries()]
-    .filter(([, review]) => review === "approved")
-    .map(([itemId]) => itemId);
+  const finished = mine.filter(
+    (row) => newest.get(row.id)?.review === "approved",
+  );
+
+  // The newest week each house's finished work was filed in, which is the
+  // week its grade has to cover.
+  const workWeeks = new Map<House, string | null>(
+    HOUSES.map((h) => [
+      h,
+      newestWeek(
+        finished
+          .filter((row) => row.house === h)
+          .map((row) => newest.get(row.id)!.week_start),
+      ),
+    ]),
+  );
+  const grades = await resetGradesFor(venueId, gradedWeek, workWeeks);
+  if (!target.every((h) => grades.has(h))) {
+    return { error: "That week has not been graded yet." };
+  }
+
   if (finished.length === 0) return { error: null, ok: true };
 
-  await db().from("items").update({ active: false }).in("id", finished);
+  await db()
+    .from("items")
+    .update({ active: false })
+    .in(
+      "id",
+      finished.map((row) => row.id),
+    );
 
   revalidatePath("/venue");
   revalidatePath("/board");
