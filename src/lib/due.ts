@@ -156,6 +156,32 @@ function occurrenceInMonth(night: string): { nth: number; isLast: boolean } | nu
 }
 
 /**
+ * Is this heading the one that marks work as optional?
+ *
+ * Born & Raised closes some nights with a salaried manager and some nights
+ * with an hourly MOD. Four lines on the manager's close (the bar lead check-in
+ * and the three Ctuit entries) only happen when the salaried manager is the
+ * one closing. As ordinary items they made every MOD night read "signed with
+ * boxes open", a miss for not doing a job that was never theirs.
+ *
+ * An item under a heading whose first word is OPTIONAL (OPCIONAL reads the
+ * same) stays on the page and can be ticked, and a tick is credited everywhere
+ * a tick is. It is never owed: it does not count toward the total, it is not
+ * an open box at signing, and no report calls it missed.
+ *
+ * First word only, so the heading can say who it is for: "OPTIONAL" and
+ * "OPTIONAL: SALARIED MANAGER" both land. A heading that merely contains the
+ * word, "BAR OPTIONAL GARNISH", stays an ordinary grouping.
+ */
+export function isOptionalSection(
+  section: string | null | undefined,
+): boolean {
+  if (!section) return false;
+  const first = wordsOf(section)[0];
+  return first === "OPTIONAL" || first === "OPCIONAL";
+}
+
+/**
  * Is an item due on this night?
  *
  * Two ways an item can be tied to particular nights, checked in order:
@@ -169,6 +195,9 @@ function occurrenceInMonth(night: string): { nth: number; isLast: boolean } | nu
  * 2. The item's heading. A weekday, several weekdays, or weekdays pinned to
  *    weeks of the month, parsed above.
  *
+ * Before either, an OPTIONAL heading answers false on every night: see
+ * isOptionalSection.
+ *
  * True for everything with neither, which is almost everything. An unreadable
  * night is treated as "due", because a list that shows too much is recoverable
  * and a list that quietly hides tonight's job is not.
@@ -178,6 +207,9 @@ export function dueOnNight(
   night: string,
   days?: readonly (string | null | undefined)[] | null,
 ): boolean {
+  // Optional work is never owed, whatever the night and whatever day list the
+  // item carries. Checked first so nothing below can turn it back into a miss.
+  if (isOptionalSection(section)) return false;
   const tonight = weekdayOfNight(night);
   if (days && days.length > 0) {
     if (tonight === null) return true;
