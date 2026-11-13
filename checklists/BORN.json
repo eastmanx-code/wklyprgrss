@@ -178,6 +178,7 @@
           "title_es": "CAMINÉ LA LISTA DE BARRA CON LOS BARTENDERS Y VERIFIQUÉ QUE LOS WELLS ESTUVIERAN LIMPIOS DE ARRIBA A ABAJO, INCLUSO DEBAJO DE LOS JARABES Y HASTA EL FONDO."
         },
         {
+          "section": "OPTIONAL",
           "title": "I CHECKED IN WITH THE BAR LEADS: DID ANYTHING BREAK, DO YOU NEED ANYTHING?",
           "title_es": "ME REPORTÉ CON LOS LÍDERES DE BARRA: ¿SE ROMPIÓ ALGO, NECESITAS ALGO?"
         },
@@ -208,14 +209,17 @@
           "title_es": "DEJÉ LAS BOLSAS DE DINERO EN LA CAJA FUERTE."
         },
         {
+          "section": "OPTIONAL",
           "title": "I ENTERED NOTES IN THE MOD CHAT AND THE CTUIT MANAGER LOG.",
           "title_es": "METÍ NOTAS EN EL CHAT DE MOD Y EN EL CTUIT MANAGER LOG."
         },
         {
+          "section": "OPTIONAL",
           "title": "I ENTERED A GREAT GUEST STORY IN CTUIT.",
           "title_es": "METÍ UNA GREAT GUEST STORY EN CTUIT."
         },
         {
+          "section": "OPTIONAL",
           "title": "I ENTERED NOTES FOR THE CREW EVAL IN CTUIT.",
           "title_es": "METÍ NOTAS PARA EL CREW EVAL EN CTUIT."
         },

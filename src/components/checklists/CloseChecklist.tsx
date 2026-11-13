@@ -27,7 +27,11 @@ import { shouldCompleteOnBlur } from "@/lib/close-tick";
 import { serverLooksUp } from "@/lib/server-pulse";
 import { useSpanish, useT } from "@/components/Lang";
 import { SHIFT_WORDS, type Phase } from "@/lib/checklists";
-import { cadenceOwedTonight, dayOfSection } from "@/lib/due";
+import {
+  cadenceOwedTonight,
+  dayOfSection,
+  isOptionalSection,
+} from "@/lib/due";
 import type { CloseItem, ProofKind } from "@/lib/close-checklist";
 import {
   captureTarget,
@@ -1930,6 +1934,12 @@ export function CloseChecklist({
           const dayScoped =
             sectionDay !== null || Boolean(item.days && item.days.length > 0);
           const notTonight = dayScoped && !isDue(item);
+          // Optional work is never owed, so it is out of the count above. It is
+          // not greyed like another night's job: it can be done tonight, by the
+          // person holding the phone, and should look like it can. It carries
+          // its own tag instead, on every row, because only the first row of a
+          // run shows the heading.
+          const optional = isOptionalSection(item.section);
 
           return (
             <li
@@ -1939,12 +1949,14 @@ export function CloseChecklist({
               {heading ? (
                 <p
                   className={`label border-divider flex items-baseline justify-between gap-3 border-b px-4 py-2.5 ${
-                    notTonight ? "text-muted" : "text-warn"
+                    notTonight || optional ? "text-muted" : "text-warn"
                   }`}
                 >
                   <span className="break-words">{heading}</span>
                   <span className="shrink-0 tabular-nums">
-                    {sectionDay === null
+                    {optional
+                      ? t("optional", "opcional")
+                      : sectionDay === null
                       ? `${runDone}/${run.length}`
                       : notTonight
                         ? t("another night", "otra noche")
@@ -2002,6 +2014,11 @@ export function CloseChecklist({
                       <span className="text-title leading-tight tracking-[0.08em] break-words">
                         {titleOf(item)}
                       </span>
+                      {optional ? (
+                        <span className="text-muted ring-muted/60 inline-flex h-[22px] shrink-0 items-center rounded px-2 text-label tracking-[0.08em] ring-1 ring-inset">
+                          {t("Optional", "Opcional")}
+                        </span>
+                      ) : null}
                       {/* Says how many, because three separate photographs is a
                         different job from one and a MOD scanning the list
                         should see that before opening the card. */}

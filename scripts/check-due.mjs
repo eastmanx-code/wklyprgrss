@@ -16,6 +16,7 @@ import {
   dayOfSection,
   dueOnNight,
   hasDayScheduling,
+  isOptionalSection,
   makeCadenceDue,
   periodStartOf,
   weekdayOfNight,
@@ -283,6 +284,46 @@ is("a plain item is owed whatever the flag", cadenceOwedTonight(null, "2026-09-0
   is("a non-cadence item delegates to its day", done({ id: "x", section: "MONDAY" }, "2026-09-07"), true);
   is("a non-cadence Tuesday is not due Monday", done({ id: "x", section: "TUESDAY" }, "2026-09-07"), false);
 }
+
+// ------------------------------------------------------------ optional work
+
+// Born & Raised, manager close. Four lines only happen when the salaried
+// manager closes. Under OPTIONAL they stay on the page and are never owed.
+is("OPTIONAL is optional", isOptionalSection("OPTIONAL"), true);
+is("case does not matter for optional", isOptionalSection("optional"), true);
+is("a colon does not matter for optional", isOptionalSection("OPTIONAL:"), true);
+is("the heading can say who it is for", isOptionalSection("OPTIONAL: SALARIED MANAGER"), true);
+is("Spanish reads the same", isOptionalSection("OPCIONAL"), true);
+is("no heading is not optional", isOptionalSection(null), false);
+is("an empty heading is not optional", isOptionalSection(""), false);
+is("a grouping is not optional", isOptionalSection("CLOSING SQUAD"), false);
+is("a weekday is not optional", isOptionalSection("MONDAY"), false);
+is("WEEKLY is not optional", isOptionalSection("WEEKLY"), false);
+is("the word later in a heading does not count", isOptionalSection("BAR OPTIONAL GARNISH"), false);
+is("a longer word is not the word", isOptionalSection("OPTIONALLY"), false);
+
+is("optional is not due Monday", dueOnNight("OPTIONAL", "2026-11-09"), false);
+is("optional is not due Friday", dueOnNight("OPTIONAL", "2026-11-13"), false);
+is("optional is not due Sunday", dueOnNight("OPTIONAL: SALARIED MANAGER", "2026-11-15"), false);
+is("optional beats a day list", dueOnNight("OPTIONAL", "2026-11-13", ["FRIDAY"]), false);
+is("optional stays out on an unreadable night", dueOnNight("OPTIONAL", "garbage"), false);
+is("optional is not owed at signing", cadenceOwedTonight("OPTIONAL", "2026-11-13", null, false), false);
+is("optional is no cadence", cadenceOf("OPTIONAL"), null);
+is("optional is no day", dayOfSection("OPTIONAL"), null);
+is("an optional run does not make a list a rota", hasDayScheduling([null, "OPTIONAL", null]), false);
+{
+  // A report scoring the list never counts it, ticked or not.
+  const due = makeCadenceDue({
+    cadenceByItem: new Map(),
+    tickNightsByItem: new Map([["o", ["2026-11-13"]]]),
+    runningNightsByItem: new Map([["o", ["2026-11-12", "2026-11-13"]]]),
+    today: "2026-11-14",
+  });
+  is("a report does not owe it on a night it was skipped", due({ id: "o", section: "OPTIONAL" }, "2026-11-12"), false);
+  is("nor on a night it was done", due({ id: "o", section: "OPTIONAL" }, "2026-11-13"), false);
+}
+// And the lines around it are untouched.
+is("the line before an optional run is still due", dueOnNight(null, "2026-11-13"), true);
 
 console.log(`\n  ${pass} passed, ${fail} failed`);
 process.exit(fail === 0 ? 0 : 1);
