@@ -36,9 +36,19 @@ export default async function ChecklistsPage() {
     redirect("/");
   }
 
-  const [name, report, chOpen] = await Promise.all([
+  // The report can fail and the page still has a job. This is the screen the
+  // crew reach their lists from, and a query that timed out on thirty nights
+  // of history is no reason to keep them from tonight's. So a failure is
+  // logged and said out loud below, with the way in left standing.
+  const [name, { report, failed: reportFailed }, chOpen] = await Promise.all([
     closeVenueName(venue),
-    venueRollup(venue),
+    venueRollup(venue).then(
+      (report) => ({ report, failed: false }),
+      (cause: unknown) => {
+        console.error("checklists: the report did not load", cause);
+        return { report: null, failed: true };
+      },
+    ),
     // CH Tasks are the MOD's, so this is for managers only. It rides at the very
     // top of the screen because an owner's walk-around flag has to be the first
     // thing seen, not a tap down inside the checklists.
@@ -87,8 +97,11 @@ export default async function ChecklistsPage() {
     </Link>
   ) : null;
 
-  // Nothing signed off yet. One honest line and the way in, not a page of
-  // confident zeroes.
+  // Nothing signed off yet, or the report did not load. One honest line and
+  // the way in, not a page of confident zeroes. The two are not the same
+  // thing and do not get the same line: "nothing recorded" over a venue with
+  // a month of signed lists is exactly the wrong answer a dropped error used
+  // to give.
   if (!report) {
     return (
       <main className="close-flow mx-auto max-w-2xl pb-6">
@@ -98,13 +111,24 @@ export default async function ChecklistsPage() {
         <section className="panel mt-4">
           <p className="label">{name}</p>
           <h1 className="text-metric mt-2 font-medium">
-            <T en="Nothing recorded yet" es="Todavía nada registrado" />
+            {reportFailed ? (
+              <T en="The report did not load" es="El informe no cargó" />
+            ) : (
+              <T en="Nothing recorded yet" es="Todavía nada registrado" />
+            )}
           </h1>
           <p className="note text-muted mt-3 leading-relaxed">
-            <T
-              en="The report starts the night somebody signs a list."
-              es="El informe empieza la noche que alguien firma una lista."
-            />
+            {reportFailed ? (
+              <T
+                en="Tonight's checklists still work. Reload the page to try the report again."
+                es="Las listas de esta noche siguen funcionando. Recarga la página para intentar el informe otra vez."
+              />
+            ) : (
+              <T
+                en="The report starts the night somebody signs a list."
+                es="El informe empieza la noche que alguien firma una lista."
+              />
+            )}
           </p>
         </section>
       </main>
