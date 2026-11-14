@@ -3,8 +3,11 @@ import "server-only";
 
 import { currentNight, isNightOver, shiftNights } from "./night";
 import {
+  chunksOf,
   computeGroup,
   computeRollup,
+  nightsNeedingTicks,
+  tickNightsOf,
   type ChecklistRow,
   type GroupRow,
   type IsDue,
@@ -15,7 +18,7 @@ import {
   type TickRow,
   WINDOW_NIGHTS,
 } from "./rollup-math";
-import { db } from "./supabase";
+import { db, selectAll } from "./supabase";
 
 /**
  * The report, fetched. The arithmetic lives in rollup-math.ts, which has no
@@ -51,47 +54,88 @@ export function nightWindow(
   );
 }
 
-/** Everything the window needs, in four queries rather than one per night. */
+/** How many list ids, and how many night ids, go over in one request. */
+const LISTS_PER_READ = 40;
+const NIGHTS_PER_READ = 100;
+
+type StoredNight = Omit<NightRow, "signed"> & { list_at_signing: unknown };
+
+/**
+ * Everything the window needs.
+ *
+ * Paged, every read. A single select stops at a thousand rows and says nothing
+ * when it does. This loader used to make four of them, and by November 2026
+ * three were being cut short: Stock's items (1,127), every venue's nights taken
+ * together (3,277), and the ticks almost everywhere (Born & Raised alone had
+ * 13,693 in the window). A venue's page was scored on whichever thousand ticks
+ * came back, and the all-locations page on whichever thousand nights.
+ *
+ * Three things keep it correct and no slower:
+ * - Lists and nights are asked for in runs of ids, side by side, so no request
+ *   carries hundreds of ids in its address and the big ones overlap in time.
+ * - Each run is paged in id order, so pages cannot overlap or skip.
+ * - Ticks are read only for nights with no frozen list. A signed night is
+ *   scored from its own snapshot, so its ticks were being fetched and thrown
+ *   away. See nightsNeedingTicks.
+ *
+ * A failed read throws. It used to come back as no rows, and no rows reads as
+ * a venue that did nothing.
+ */
 async function load(
   venueIds: string[] | null,
   window: string[],
 ): Promise<Loaded | null> {
-  let checklistQuery = db()
-    .from("close_checklists")
-    .select("id, venue_id, house, role, phase, room")
-    .eq("active", true);
-  if (venueIds) checklistQuery = checklistQuery.in("venue_id", venueIds);
-
-  const { data: checklistRows } = await checklistQuery;
-  const checklists = (checklistRows ?? []) as ChecklistRow[];
+  const checklists = await selectAll<ChecklistRow>((from, to) => {
+    let query = db()
+      .from("close_checklists")
+      .select("id, venue_id, house, role, phase, room")
+      .eq("active", true);
+    if (venueIds) query = query.in("venue_id", venueIds);
+    return query.order("id").range(from, to);
+  });
   if (checklists.length === 0) return null;
 
-  const checklistIds = checklists.map((c) => c.id);
+  const listRuns = chunksOf(
+    checklists.map((c) => c.id),
+    LISTS_PER_READ,
+  );
 
-  const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
-    db()
-      .from("close_items")
-      .select("id, checklist_id, title, title_es, section, days")
-      .in("checklist_id", checklistIds)
-      .eq("active", true),
-    db()
-      .from("close_nights")
-      .select(
-        "id, checklist_id, night, certified_at, certified_by, list_at_signing",
-      )
-      .in("checklist_id", checklistIds)
-      .gte("night", window[0])
-      .lte("night", window[window.length - 1]),
+  const [itemRuns, nightRuns] = await Promise.all([
+    Promise.all(
+      listRuns.map((ids) =>
+        selectAll<ItemRow>((from, to) =>
+          db()
+            .from("close_items")
+            .select("id, checklist_id, title, title_es, section, days")
+            .in("checklist_id", ids)
+            .eq("active", true)
+            .order("id")
+            .range(from, to),
+        ),
+      ),
+    ),
+    Promise.all(
+      listRuns.map((ids) =>
+        selectAll<StoredNight>((from, to) =>
+          db()
+            .from("close_nights")
+            .select(
+              "id, checklist_id, night, certified_at, certified_by, list_at_signing",
+            )
+            .in("checklist_id", ids)
+            .gte("night", window[0])
+            .lte("night", window[window.length - 1])
+            .order("id")
+            .range(from, to),
+        ),
+      ),
+    ),
   ]);
 
-  const items = (itemRows ?? []) as ItemRow[];
+  const items = itemRuns.flat();
   // The frozen list rides along on each certified night, so the report scores
   // an old night against the list it was signed against rather than today's.
-  const nights: NightRow[] = (
-    (nightRows ?? []) as (Omit<NightRow, "signed"> & {
-      list_at_signing: unknown;
-    })[]
-  ).map((n) => ({
+  const nights: NightRow[] = nightRuns.flat().map((n) => ({
     id: n.id,
     checklist_id: n.checklist_id,
     night: n.night,
@@ -116,19 +160,20 @@ async function load(
       : null,
   }));
 
-  let ticks: TickRow[] = [];
-  if (nights.length > 0) {
-    const { data: tickRows } = await db()
-      .from("close_ticks")
-      .select("night_id, item_id")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    ticks = (tickRows ?? []) as TickRow[];
-  }
+  const tickRuns = await Promise.all(
+    chunksOf(nightsNeedingTicks(nights), NIGHTS_PER_READ).map((ids) =>
+      selectAll<TickRow>((from, to) =>
+        db()
+          .from("close_ticks")
+          .select("night_id, item_id")
+          .in("night_id", ids)
+          .order("id")
+          .range(from, to),
+      ),
+    ),
+  );
 
-  return { checklists, items, nights, ticks };
+  return { checklists, items, nights, ticks: tickRuns.flat() };
 }
 
 /**
@@ -151,7 +196,6 @@ function cadenceDueFor(data: Loaded): IsDue {
   if (cadenceByItem.size === 0)
     return (item, night) => dueOnNight(item.section, night, item.days);
 
-  const nightDateOf = new Map(data.nights.map((n) => [n.id, n.night]));
   const venueOfList = new Map(data.checklists.map((c) => [c.id, c.venue_id]));
   const runningByVenue = new Map<string, Set<string>>();
   for (const n of data.nights) {
@@ -161,17 +205,9 @@ function cadenceDueFor(data: Loaded): IsDue {
     held.add(n.night);
     runningByVenue.set(venue, held);
   }
-  const tickNightsByItem = new Map<string, string[]>();
-  for (const t of data.ticks) {
-    if (!cadenceByItem.has(t.item_id)) continue;
-    const date = nightDateOf.get(t.night_id);
-    if (!date) continue;
-    const held = tickNightsByItem.get(t.item_id) ?? [];
-    held.push(date);
-    tickNightsByItem.set(t.item_id, held);
-  }
-  for (const [id, dates] of tickNightsByItem)
-    tickNightsByItem.set(id, [...new Set(dates)].sort());
+  // Frozen lists for signed nights, live ticks for the rest: the same two
+  // sources the score itself reads.
+  const tickNightsByItem = tickNightsOf(data, (id) => cadenceByItem.has(id));
   const runningNightsByItem = new Map<string, string[]>();
   const listOfItem = new Map(data.items.map((it) => [it.id, it.checklist_id]));
   for (const id of cadenceByItem.keys()) {

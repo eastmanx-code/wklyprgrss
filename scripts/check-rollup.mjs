@@ -9,7 +9,13 @@
  * being a certified night. Cases worked out by hand, so that changing a
  * definition has to be deliberate.
  */
-import { computeRollup, computeGroup } from "../.rollup-check/rollup-math.js";
+import {
+  chunksOf,
+  computeGroup,
+  computeRollup,
+  nightsNeedingTicks,
+  tickNightsOf,
+} from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
 // rather than a copy of it.
 import { dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
@@ -496,6 +502,71 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   );
   is("a weekly done once leaves nothing open", done.missed, []);
   is("and every night reads clean", done.strip, "ccccccc");
+}
+
+// ------------------------------------------------ what the loader has to read
+//
+// A single read stops at a thousand rows. Born & Raised had 13,693 ticks in
+// the window and the report scored it on whichever thousand came back. These
+// are the three small rules the loader now leans on to read everything it
+// needs and nothing it does not.
+{
+  is("runs: cut in order", chunksOf([1, 2, 3, 4, 5], 2), [[1, 2], [3, 4], [5]]);
+  is("runs: an exact fit has no empty tail", chunksOf([1, 2, 3, 4], 2), [[1, 2], [3, 4]]);
+  is("runs: nothing in, nothing out", chunksOf([], 100), []);
+  is("runs: a short list is one run", chunksOf(["a"], 100), [["a"]]);
+  is("runs: a silly size still moves forward", chunksOf([1, 2], 0), [[1], [2]]);
+  // Nothing lost and nothing repeated, at the sizes the loader uses.
+  const ids = Array.from({ length: 690 }, (_, i) => `n${i}`);
+  const runs = chunksOf(ids, 100);
+  is("runs: 690 nights is seven requests", runs.length, 7);
+  is("runs: every id once", runs.flat().join(), ids.join());
+
+  const frozen = (ticked) => [
+    { item_id: "w", title: "Weekly bar clean", section: "WEEKLY", ticked },
+    { item_id: "d", title: "Doors", section: null, ticked: true },
+  ];
+  const nights = [
+    // Signed, weekly job done: read from the frozen list.
+    { id: "n1", checklist_id: "L", night: "2026-11-09", certified_at: "t", certified_by: "Ana", signed: frozen(true) },
+    // Signed, weekly job skipped.
+    { id: "n2", checklist_id: "L", night: "2026-11-10", certified_at: "t", certified_by: "Ana", signed: frozen(false) },
+    // Still open: no frozen list, so its ticks come from the tick table.
+    { id: "n3", checklist_id: "L", night: "2026-11-11", certified_at: null, certified_by: null, signed: null },
+    // A row with nothing on it yet.
+    { id: "n4", checklist_id: "L", night: "2026-11-12", certified_at: null, certified_by: null },
+  ];
+  is("ticks are read only for nights with no frozen list", nightsNeedingTicks(nights), ["n3", "n4"]);
+  is("no nights, no ticks to read", nightsNeedingTicks([]), []);
+
+  const ticks = [
+    { night_id: "n3", item_id: "w" },
+    { night_id: "n3", item_id: "w" }, // the same box twice is one night
+    { night_id: "n3", item_id: "d" },
+    // A stray live tick on a signed night: the frozen list is the record.
+    { night_id: "n2", item_id: "w" },
+    // A tick for a night that is not in the load at all.
+    { night_id: "gone", item_id: "w" },
+  ];
+  const weekly = tickNightsOf({ nights, ticks }, (id) => id === "w");
+  is("tick nights: frozen list and live ticks together, oldest first",
+    weekly.get("w"), ["2026-11-09", "2026-11-11"]);
+  is("tick nights: only the items asked for", [...weekly.keys()], ["w"]);
+  is("tick nights: an item never ticked is not in the map",
+    tickNightsOf({ nights, ticks: [] }, (id) => id === "x").has("x"), false);
+
+  // The point of it: the weekly rule gets the same answer whether the signed
+  // night's ticks were loaded or not, because it no longer needs them.
+  const cadence = (tickNightsByItem) => makeCadenceDue({
+    cadenceByItem: new Map([["w", "weekly"]]),
+    tickNightsByItem,
+    runningNightsByItem: new Map([["w", ["2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12"]]]),
+    today: "2026-11-17",
+  });
+  const due = cadence(tickNightsOf({ nights, ticks: [] }, (id) => id === "w"));
+  is("weekly done on a signed night is scored there, with no live ticks loaded",
+    ["2026-11-09", "2026-11-10", "2026-11-15"].map((n) => due({ id: "w", section: "WEEKLY" }, n)),
+    [true, false, false]);
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
