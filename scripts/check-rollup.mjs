@@ -18,7 +18,9 @@ import {
 } from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
 // rather than a copy of it.
-import { dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
+import { cadenceOf, dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
+
+const isCadence = (item) => cadenceOf(item.section) !== null;
 
 const isDue = (item, night) => dueOnNight(item.section, night);
 
@@ -565,7 +567,7 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
     runningNightsByItem: new Map([["mm", week]]),
     today,
   });
-  const bill = computeRollup(data, week, cadenceDue("2026-11-16"));
+  const bill = computeRollup(data, week, cadenceDue("2026-11-16"), isCadence);
 
   // Server 7. Attendant 4 (Thu to Sun). Manager mid 1 (the night it was done).
   // The unwritten list never.
@@ -584,7 +586,7 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
     { role: "Manager", done: 1, of: 1 },
     { role: "Bathroom attendant", done: 2, of: 4 },
   ]);
-  is("bill: the group score agrees", computeGroup(data, week, new Map([["V", "VEN"]]), cadenceDue("2026-11-16")),
+  is("bill: the group score agrees", computeGroup(data, week, new Map([["V", "VEN"]]), cadenceDue("2026-11-16"), isCadence),
     [{ code: "VEN", done: 10, of: 12 }]);
 
   // The same week with the weekly list never done. While the week is still
@@ -597,10 +599,10 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
     runningNightsByItem: new Map([["mm", week]]),
     today,
   });
-  const midWeek = computeRollup(undone, week, due("2026-11-13"));
+  const midWeek = computeRollup(undone, week, due("2026-11-13"), isCadence);
   is("bill: a weekly list not yet done is not a miss while the week is open",
     midWeek.series.map((n) => n.of), [1, 1, 1, 2, 2, 2, 2]);
-  const closed = computeRollup(undone, week, due("2026-11-16"));
+  const closed = computeRollup(undone, week, due("2026-11-16"), isCadence);
   is("bill: undone when the week closes, it is owed once, on the last night",
     closed.series.map((n) => n.of), [1, 1, 1, 2, 2, 2, 3]);
   is("bill: and named there", closed.latest.neverOpened.map((l) => l.role),
@@ -612,8 +614,40 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
     ...data,
     nights: [...held, { id: "baTue", checklist_id: "BA", night: week[1], certified_at: null, certified_by: null }],
     ticks: [{ night_id: "baTue", item_id: "ba" }],
-  }, week, cadenceDue("2026-11-16"));
+  }, week, cadenceDue("2026-11-16"), isCadence);
   is("bill: worked on an off night, it is on that night's bill", early.series[1].of, 2);
+
+  // Jaynes, Thursday 11/12: a deep clean of six weekly jobs, one of them ticked
+  // and nobody signed. The night page said "weekly, not due tonight" and this
+  // report said "never signed, 1 of 1". The week was not over, so the night
+  // page was right: a weekly list in progress is on nobody's bill.
+  const deep = [{ id: "DC", venue_id: "V", house: "FOH", role: "Deep clean", phase: "mid", room: "Cafe" }];
+  const jobs = ["a", "b", "c", "d", "e", "f"].map((k) => ({ id: `dc-${k}`, checklist_id: "DC", title: `Job ${k}`, section: "WEEKLY" }));
+  const worked = {
+    checklists: [lists[0], ...deep], items: [rows[0], ...jobs],
+    nights: [
+      ...week.map((n, i) => signedNight(`sv${i}`, "SV", n, true)),
+      { id: "dcThu", checklist_id: "DC", night: week[3], certified_at: null, certified_by: null },
+    ],
+    ticks: [{ night_id: "dcThu", item_id: "dc-a" }],
+  };
+  const weeklyDue = (today) => makeCadenceDue({
+    cadenceByItem: new Map(jobs.map((j) => [j.id, "weekly"])),
+    tickNightsByItem: tickNightsOf(worked, (id) => id.startsWith("dc-")),
+    runningNightsByItem: new Map(jobs.map((j) => [j.id, week])),
+    today,
+  });
+  const thursday = computeRollup(worked, week.slice(0, 4), weeklyDue("2026-11-13"), isCadence);
+  is("bill: a weekly list in progress is not on Thursday's bill", thursday.series[3], { night: week[3], done: 1, of: 1 });
+  is("bill: and is in none of the piles", thursday.latest, { night: week[3], neverOpened: [], neverSigned: [], notDone: [] });
+  // The week closes with five of the six never done: owed once, on Sunday.
+  const sunday = computeRollup(worked, week, weeklyDue("2026-11-16"), isCadence);
+  is("bill: the jobs nobody did come due when the week closes", sunday.series.map((n) => n.of), [1, 1, 1, 1, 1, 1, 2]);
+  is("bill: named as never opened that night", sunday.latest.neverOpened, [{ role: "Deep clean", room: "Cafe", phase: "mid" }]);
+  // Without the cadence rule handed in, the old reading comes back: this is
+  // what the parameter is for.
+  is("bill: unaware of cadence, Thursday reads never signed",
+    computeRollup(worked, week.slice(0, 4), weeklyDue("2026-11-13")).latest.neverSigned.length, 1);
 }
 
 // ------------------------------------------------ what the loader has to read
