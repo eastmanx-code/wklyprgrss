@@ -252,6 +252,18 @@ export type Loaded = {
   ticks: TickRow[];
 };
 
+/**
+ * The nights that are scored from their ticks: the ones with no frozen list.
+ *
+ * A night signed against a snapshot is read from the snapshot, and its ticks
+ * are never looked at. The loader asks this which nights to fetch ticks for,
+ * so it does not read tens of thousands of rows nothing uses, and the fixtures
+ * ask it the same thing to prove the report does not change for the asking.
+ */
+export function nightsReadLive(nights: NightRow[]): NightRow[] {
+  return nights.filter((night) => !night.signed);
+}
+
 /** One item as it stood on one night: owed then, and ticked then. */
 type Present = {
   id: string;

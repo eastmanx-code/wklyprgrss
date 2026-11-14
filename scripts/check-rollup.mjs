@@ -9,7 +9,7 @@
  * being a certified night. Cases worked out by hand, so that changing a
  * definition has to be deliberate.
  */
-import { computeRollup, computeGroup } from "../.rollup-check/rollup-math.js";
+import { computeRollup, computeGroup, nightsReadLive } from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
 // rather than a copy of it.
 import { dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
@@ -496,6 +496,103 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   );
   is("a weekly done once leaves nothing open", done.missed, []);
   is("and every night reads clean", done.strip, "ccccccc");
+}
+
+// ------------------------------------------- the ticks the loader leaves behind
+//
+// The loader does not fetch every tick. A night with a frozen list is scored
+// from that list, so it reads only the ticks on nights without one, and the
+// ticks on weekly and monthly items, which decide the night such an item is
+// scored on. This holds it to that: a week with frozen nights, live nights and
+// a weekly item, scored from every tick and from only the ones the loader
+// reads, has to come out the same report. If the arithmetic ever starts
+// reading a tick the loader does not fetch, this is where it shows.
+{
+  const WK = [
+    "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10",
+    "2026-09-11", "2026-09-12", "2026-09-13",
+  ];
+  const lists = [
+    { id: "A", venue_id: "V", house: "FOH", role: "Bar", phase: "close" },
+    { id: "B", venue_id: "V", house: "HOH", role: "Line", phase: "close" },
+  ];
+  const rows = [
+    { id: "a1", checklist_id: "A", title: "Wipe the rail" },
+    { id: "a2", checklist_id: "A", title: "Lock the well" },
+    { id: "aw", checklist_id: "A", title: "Deep clean the well", section: "WEEKLY" },
+    { id: "b1", checklist_id: "B", title: "Hood filters" },
+    { id: "b2", checklist_id: "B", title: "Walk in temps" },
+  ];
+  const nightRows = [];
+  const allTicks = [];
+  WK.forEach((night, i) => {
+    // Bar: signed against a frozen list the first five nights, a2 left open on
+    // the second. The tick rows are still in the table, as they are for real.
+    // The last two nights are live: worked and never signed, then untouched.
+    const barTicked = i < 5 ? (i === 1 ? ["a1"] : ["a1", "a2"]) : i === 5 ? ["a1"] : [];
+    // The weekly job was done on Wednesday, a frozen night.
+    if (i === 2) barTicked.push("aw");
+    nightRows.push({
+      id: `a${i}`, checklist_id: "A", night,
+      certified_at: i < 5 ? "t" : null, certified_by: i < 5 ? "Ana" : null,
+      signed: i < 5
+        ? rows.filter((r) => r.checklist_id === "A").map((r) => ({
+            item_id: r.id, title: r.title, section: r.section ?? null,
+            ticked: barTicked.includes(r.id),
+          }))
+        : null,
+    });
+    for (const id of barTicked) allTicks.push({ night_id: `a${i}`, item_id: id });
+    // Line: no frozen list on any night. Signed and done, except Friday, when
+    // it was signed with one left, and Sunday, when nobody opened it.
+    if (i < 6) {
+      nightRows.push({ id: `b${i}`, checklist_id: "B", night, certified_at: "t", certified_by: "Bo" });
+      allTicks.push({ night_id: `b${i}`, item_id: "b1" });
+      if (i !== 4) allTicks.push({ night_id: `b${i}`, item_id: "b2" });
+    }
+  });
+
+  // What the loader reads, by the rule it uses.
+  const live = new Set(nightsReadLive(nightRows).map((n) => n.id));
+  const cadence = new Set(["aw"]);
+  const readTicks = allTicks.filter((t) => live.has(t.night_id) || cadence.has(t.item_id));
+  is("reduced ticks: the frozen nights' ordinary ticks are left behind",
+    [allTicks.length, readTicks.length], [22, 13]);
+
+  // The due rule built from the ticks in hand, the way the app builds it.
+  const dateOf = new Map(nightRows.map((n) => [n.id, n.night]));
+  const dueFrom = (ticks) => makeCadenceDue({
+    cadenceByItem: new Map([["aw", "weekly"]]),
+    runningNightsByItem: new Map([["aw", WK]]),
+    tickNightsByItem: new Map([[
+      "aw", ticks.filter((t) => t.item_id === "aw").map((t) => dateOf.get(t.night_id)).sort(),
+    ]]),
+    today: "2026-09-20",
+  });
+  const from = (ticks) => ({ checklists: lists, items: rows, nights: nightRows, ticks });
+  const full = computeRollup(from(allTicks), WK, dueFrom(allTicks));
+  const reduced = computeRollup(from(readTicks), WK, dueFrom(readTicks));
+  is("reduced ticks: the same report as from every tick", reduced, full);
+  is("reduced ticks: the same group row",
+    computeGroup(from(readTicks), WK, new Map([["V", "HOOD"]]), dueFrom(readTicks)),
+    computeGroup(from(allTicks), WK, new Map([["V", "HOOD"]]), dueFrom(allTicks)));
+  // And the report is not trivially empty: the case exercises all of it.
+  is("reduced ticks: the week it scores", [full.strip, full.done, full.of], ["cmccmmm", 9, 14]);
+  is("reduced ticks: the last night, from live ticks alone", full.latest, {
+    night: WK[6],
+    neverOpened: [
+      { role: "Bar", room: null, phase: "close" },
+      { role: "Line", room: null, phase: "close" },
+    ],
+    neverSigned: [],
+    notDone: [],
+  });
+  // Without the weekly item's tick from the frozen Wednesday, the job reads as
+  // never done and fails the week's last night: that tick has to be fetched.
+  const noCadence = allTicks.filter((t) => live.has(t.night_id));
+  is("reduced ticks: the weekly tick on a frozen night is one that matters",
+    computeRollup(from(noCadence), WK, dueFrom(noCadence)).missed.some((m) => m.item === "Deep clean the well"),
+    true);
 }
 
 console.log(`\n  ${pass} passed, ${fail} failed\n`);
