@@ -423,6 +423,24 @@ export function computeRollup(
   const at = (listId: string, night: string) =>
     presentAt.get(`${listId}:${night}`) ?? [];
 
+  /**
+   * Whether a list was on the night's bill at all.
+   *
+   * It is when something on it was owed that night, or somebody did something
+   * on it. It is not on a night it asks for nothing: a bathroom attendant list
+   * that runs Thursday to Sunday, on a Tuesday; a weekly list already done, or
+   * not yet due; a list nobody has written items for.
+   *
+   * The night page and the morning email have always left those out of the
+   * count. This report counted every list every night, so Born & Raised read
+   * 622 of 817 here on the same nights the email said 38 of 42, and a weekly
+   * manager list was named under "never opened, nobody did these" six nights
+   * out of seven for being weekly. One ruler now: a list that owed nothing is
+   * in neither half of the ratio and in none of the piles.
+   */
+  const owedOn = (list: ChecklistRow, night: string) =>
+    at(list.id, night).some((i) => i.due || i.ticked);
+
   // Done and signed: a signature, and every item owed that night ticked.
   const complete = (list: ChecklistRow, night: string, row?: NightRow) =>
     Boolean(row?.certified_at) &&
@@ -439,6 +457,7 @@ export function computeRollup(
   // signed, and which were not, sorted into the three ways of not being.
   let certified = 0;
   let done = 0;
+  let owed = 0;
   let latest: Rollup["latest"] = null;
   const series: Rollup["series"] = [];
   const strip = live
@@ -447,7 +466,10 @@ export function computeRollup(
       const neverSigned: NamedList[] = [];
       const notDone: NamedList[] = [];
       let doneThisNight = 0;
+      let owedThisNight = 0;
       for (const list of checklists) {
+        if (!owedOn(list, night)) continue;
+        owedThisNight += 1;
         const row = nightAt.get(`${list.id}:${night}`);
         if (complete(list, night, row)) {
           done += 1;
@@ -476,7 +498,8 @@ export function computeRollup(
         }
       }
       // The night's own share, so the group screen can draw a line per venue.
-      series.push({ night, done: doneThisNight, of: checklists.length });
+      series.push({ night, done: doneThisNight, of: owedThisNight });
+      owed += owedThisNight;
       const short = neverOpened.length + neverSigned.length + notDone.length;
       if (short === 0) certified += 1;
       // The window is oldest first, so the last one through here is the most
@@ -486,7 +509,9 @@ export function computeRollup(
       return state;
     })
     .join("");
-  const of = checklists.length * live.length;
+  // Lists on the bill, summed over the running nights. Not lists times nights:
+  // see owedOn.
+  const of = owed;
 
   // What keeps getting left open. Every night the venue was running is a
   // chance to have done it, whether or not anyone opened this list.
@@ -609,6 +634,7 @@ export function computeRollup(
       let of = 0;
       for (const list of lists) {
         for (const night of live) {
+          if (!owedOn(list, night)) continue;
           of += 1;
           if (complete(list, night, nightAt.get(`${list.id}:${night}`)))
             done += 1;
@@ -691,13 +717,15 @@ export function computeGroup(
       // Lists, the same ruler as everywhere else: done and signed means a
       // signature and every item owed that night signed off — read from the
       // night's own frozen list where it has one, the current items otherwise.
-      running.of += 1;
       const row = nightAt.get(`${list.id}:${night}`);
+      const present = presentOn(list, night, row, itemsOf, ticked, isDue);
+      // Only a list that was on the night's bill, the same test computeRollup
+      // applies: something owed, or something done.
+      if (!present.some((i) => i.due || i.ticked)) continue;
+      running.of += 1;
       if (
         row?.certified_at &&
-        presentOn(list, night, row, itemsOf, ticked, isDue)
-          .filter((i) => i.due)
-          .every((i) => i.ticked)
+        present.filter((i) => i.due).every((i) => i.ticked)
       )
         running.done += 1;
     }

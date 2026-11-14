@@ -10,7 +10,8 @@ import {
   formatNightEs,
   isNightOver,
 } from "@/lib/night";
-import { previousNight } from "@/lib/close-status";
+import { boardNight } from "@/lib/active-night";
+import { closeStatus, previousNight } from "@/lib/close-status";
 import { getSession, mayReachVenue } from "@/lib/session";
 import { WEEKLY_ITEM_TARGET, getLeaderBoard, getVenue } from "@/lib/status";
 import { db } from "@/lib/supabase";
@@ -67,23 +68,29 @@ export default async function Home() {
     : { data: [] };
   const lists = (listRows ?? []) as { id: string }[];
 
+  // Counted on the same ruler as the board, the night page and the morning
+  // email: only the lists tonight actually asks for. This used to count every
+  // list the venue has, so at Born & Raised the card read "of 43" on a Tuesday
+  // that owed 40, with the bathroom attendant off until Thursday and the
+  // weekly manager list already done, and "all signed" could not be reached.
   let signed = 0;
-  if (lists.length > 0) {
-    const { data: nightRows } = await db()
-      .from("close_nights")
-      .select("checklist_id, certified_at")
-      .eq("night", currentNight())
-      .in(
-        "checklist_id",
-        lists.map((l) => l.id),
+  let owedTonight = lists.length;
+  if (lists.length > 0 && closeVenue) {
+    try {
+      const night = await boardNight(lists.map((l) => l.id));
+      const onBill = (await closeStatus(night, closeVenue)).filter(
+        (row) => !row.empty,
       );
-    signed = ((nightRows ?? []) as { certified_at: string | null }[]).filter(
-      (r) => r.certified_at,
-    ).length;
+      owedTonight = onBill.length;
+      signed = onBill.filter((row) => row.certified).length;
+    } catch {
+      // The door still opens if the count cannot be read. An unknown count
+      // shows as nothing signed yet, which is the safe way to be wrong.
+    }
   }
 
   const weekOpen = filed < owed || sentBack > 0;
-  const nightOpen = lists.length > 0 && signed < lists.length;
+  const nightOpen = lists.length > 0 && signed < owedTonight;
 
   // The whole point of the walkthroughs is the crew seeing their building's
   // follow-ups and signing progress off, so the door shows for anyone on the
@@ -128,17 +135,19 @@ export default async function Home() {
                 en="Nothing set up yet · start your first list"
                 es="Todavía no hay nada · empieza tu primera lista"
               />
-            ) : signed === lists.length ? (
+            ) : owedTonight === 0 ? (
+              <T en="Nothing due tonight" es="Nada para hoy" />
+            ) : signed === owedTonight ? (
               <T
-                en={`All ${lists.length} signed for tonight`}
-                es={`Las ${lists.length} firmadas para hoy`}
+                en={`All ${owedTonight} signed for tonight`}
+                es={`Las ${owedTonight} firmadas para hoy`}
               />
             ) : (
               /* Signed so far, not "not done": at five in the afternoon
                  nothing is done yet and that is not a failing. */
               <T
-                en={`${signed} of ${lists.length} signed tonight`}
-                es={`${signed} de ${lists.length} firmadas hoy`}
+                en={`${signed} of ${owedTonight} signed tonight`}
+                es={`${signed} de ${owedTonight} firmadas hoy`}
               />
             )
           }
