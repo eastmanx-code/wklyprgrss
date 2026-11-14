@@ -252,6 +252,73 @@ export type Loaded = {
   ticks: TickRow[];
 };
 
+/**
+ * A list cut into runs of at most `size`, in order.
+ *
+ * The loader asks for rows by id, and an id list rides in the address of the
+ * request. Six hundred night ids in one address is a request the database
+ * front door can refuse outright, so the ids go over in runs.
+ */
+export function chunksOf<T>(rows: readonly T[], size: number): T[][] {
+  const step = Math.max(1, Math.floor(size));
+  const out: T[][] = [];
+  for (let i = 0; i < rows.length; i += step) out.push(rows.slice(i, i + step));
+  return out;
+}
+
+/**
+ * The nights whose ticks the report has to read from the tick table.
+ *
+ * A signed night carries its frozen list, ticks and all, and presentOn scores
+ * it from that. Only a night with no frozen list, one still open or never
+ * signed, is scored from live ticks. That is about one night in twenty, which
+ * is the difference between reading two thousand ticks and sixty thousand.
+ *
+ * It matters because a single read stops at a thousand rows. The loader used to
+ * ask for every tick in the window in one go, so Born & Raised, with thirteen
+ * thousand, was scored on an arbitrary thousand of them and a list somebody had
+ * half worked read as never opened.
+ */
+export function nightsNeedingTicks(nights: readonly NightRow[]): string[] {
+  return nights.filter((n) => !n.signed).map((n) => n.id);
+}
+
+/**
+ * Every night each wanted item was ticked, oldest first, no repeats.
+ *
+ * Read the same way presentOn reads a night: from the frozen list where the
+ * night has one, from live ticks where it does not. The weekly and monthly
+ * rule needs this for every night of the window, signed or not, and now that
+ * live ticks are only loaded for unsigned nights the frozen lists are where
+ * the rest of the answer is.
+ */
+export function tickNightsOf(
+  data: Pick<Loaded, "nights" | "ticks">,
+  wanted: (itemId: string) => boolean,
+): Map<string, string[]> {
+  const held = new Map<string, Set<string>>();
+  const add = (itemId: string, night: string) => {
+    const set = held.get(itemId) ?? new Set<string>();
+    set.add(night);
+    held.set(itemId, set);
+  };
+  const liveNight = new Map<string, string>();
+  for (const n of data.nights) {
+    if (n.signed) {
+      for (const s of n.signed)
+        if (s.ticked && wanted(s.item_id)) add(s.item_id, n.night);
+    } else liveNight.set(n.id, n.night);
+  }
+  for (const t of data.ticks) {
+    if (!wanted(t.item_id)) continue;
+    const night = liveNight.get(t.night_id);
+    if (night) add(t.item_id, night);
+  }
+  const out = new Map<string, string[]>();
+  for (const [id, nights] of held) out.set(id, [...nights].sort());
+  return out;
+}
+
 /** One item as it stood on one night: owed then, and ticked then. */
 type Present = {
   id: string;

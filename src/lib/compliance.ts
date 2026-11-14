@@ -2,7 +2,7 @@ import "server-only";
 
 import { satisfiedEarlierThisPeriod } from "./close-cadence";
 import { closeStatus, signedList, type CloseStatusRow } from "./close-status";
-import { db } from "./supabase";
+import { db, selectAll } from "./supabase";
 import { cadenceOwedTonight, dueOnNight } from "./due";
 import { listName } from "./slug";
 import {
@@ -14,6 +14,7 @@ import {
   shiftNights,
 } from "./night";
 import { paceOf, type Pace } from "./pace";
+import { chunksOf } from "./rollup-math";
 import { tierOf } from "./status";
 
 /**
@@ -690,59 +691,103 @@ export function failuresByRole(
  * is scored on, and the gap between the two lines is the lists somebody
  * signed with things still left on them.
  *
- * Four queries for the whole window rather than one per night. Thirty nights
- * at four queries each is a hundred and twenty round trips for a sparkline.
+ * Read for the whole window at once rather than one night at a time. Thirty
+ * nights at four queries each is a hundred and twenty round trips for a
+ * sparkline.
  */
 export async function nightTrend(
   window: string[],
 ): Promise<{ night: string; done: number; signed: number; ran: boolean }[]> {
   if (window.length === 0) return [];
 
-  const { data: checklistRows } = await db()
-    .from("close_checklists")
-    .select("id")
-    .eq("active", true);
-  const ids = ((checklistRows ?? []) as { id: string }[]).map((c) => c.id);
+  // Paged, and asked for in runs of list ids. This reads every venue at once,
+  // and a single select stops at a thousand rows without saying so: by
+  // November 2026 there were 3,277 nights in the window, so the line was drawn
+  // from whichever thousand came back and every night read lower than it was.
+  const ids = (
+    await selectAll<{ id: string }>((from, to) =>
+      db()
+        .from("close_checklists")
+        .select("id")
+        .eq("active", true)
+        .order("id")
+        .range(from, to),
+    )
+  ).map((c) => c.id);
   if (ids.length === 0) return [];
 
-  const [{ data: itemRows }, { data: nightRows }] = await Promise.all([
-    db()
-      .from("close_items")
-      .select("id, checklist_id, section, days")
-      .in("checklist_id", ids)
-      .eq("active", true),
-    db()
-      .from("close_nights")
-      .select("id, checklist_id, night, certified_at, open_at_signing")
-      .in("checklist_id", ids)
-      .gte("night", window[0])
-      .lte("night", window[window.length - 1]),
-  ]);
-
-  const items = (itemRows ?? []) as {
-    id: string;
-    checklist_id: string;
-    section: string | null;
-    days: string[] | null;
-  }[];
-  const nights = (nightRows ?? []) as {
+  type TrendNight = {
     id: string;
     checklist_id: string;
     night: string;
     certified_at: string | null;
     open_at_signing: unknown;
-  }[];
+  };
+  type TrendItem = {
+    id: string;
+    checklist_id: string;
+    section: string | null;
+    days: string[] | null;
+  };
 
+  const nights = (
+    await Promise.all(
+      chunksOf(ids, 40).map((run) =>
+        selectAll<TrendNight>((from, to) =>
+          db()
+            .from("close_nights")
+            .select("id, checklist_id, night, certified_at, open_at_signing")
+            .in("checklist_id", run)
+            .gte("night", window[0])
+            .lte("night", window[window.length - 1])
+            .order("id")
+            .range(from, to),
+        ),
+      ),
+    )
+  ).flat();
+
+  // Items and ticks are only replayed for a signed night with no frozen record
+  // of what was open, and none has been written since the freeze began. So
+  // they are read for those nights alone, which today is no read at all, and
+  // not for every tick in the window.
+  const replay = nights.filter(
+    (n) => n.certified_at && !Array.isArray(n.open_at_signing),
+  );
+  let items: TrendItem[] = [];
   let ticks: { night_id: string; item_id: string }[] = [];
-  if (nights.length > 0) {
-    const { data } = await db()
-      .from("close_ticks")
-      .select("night_id, item_id")
-      .in(
-        "night_id",
-        nights.map((n) => n.id),
-      );
-    ticks = (data ?? []) as { night_id: string; item_id: string }[];
+  if (replay.length > 0) {
+    const replayLists = [...new Set(replay.map((n) => n.checklist_id))];
+    [items, ticks] = await Promise.all([
+      Promise.all(
+        chunksOf(replayLists, 40).map((run) =>
+          selectAll<TrendItem>((from, to) =>
+            db()
+              .from("close_items")
+              .select("id, checklist_id, section, days")
+              .in("checklist_id", run)
+              .eq("active", true)
+              .order("id")
+              .range(from, to),
+          ),
+        ),
+      ).then((runs) => runs.flat()),
+      Promise.all(
+        chunksOf(
+          replay.map((n) => n.id),
+          100,
+        ).map((run) =>
+          selectAll<{ night_id: string; item_id: string }>((from, to) =>
+            db()
+              .from("close_ticks")
+              .select("night_id, item_id")
+              .in("night_id", run)
+              .order("id")
+              .range(from, to),
+          ),
+        ),
+      ).then((runs) => runs.flat()),
+    ]);
   }
 
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
