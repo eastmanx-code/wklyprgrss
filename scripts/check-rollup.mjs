@@ -18,7 +18,9 @@ import {
 } from "../.rollup-check/rollup-math.js";
 // The same rule the app passes in, so these cases prove what actually runs
 // rather than a copy of it.
-import { dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
+import { cadenceOf, dueOnNight, makeCadenceDue } from "../.rollup-check/due.js";
+
+const isCadence = (item) => cadenceOf(item.section) !== null;
 
 const isDue = (item, night) => dueOnNight(item.section, night);
 
@@ -94,7 +96,13 @@ is("missed carries streak and the recent window",
 {
   const line = { id: "L2", venue_id: "V", house: "HOH", role: "Line", phase: "close" };
   const ranAll = W.map((n, i) => ({ id: `o${i}`, checklist_id: "L2", night: n, certified_at: "t", certified_by: "Bo" }));
-  const ignored = computeRollup({ checklists: [...checklists, line], items, nights: ranAll, ticks: [] }, W);
+  // The line has one item and did it every night. A list with nothing written
+  // on it would be on no night's bill at all: see "on the bill" below.
+  const lineItem = { id: "l1", checklist_id: "L2", title: "Line wiped" };
+  const ignored = computeRollup({
+    checklists: [...checklists, line], items: [...items, lineItem], nights: ranAll,
+    ticks: ranAll.map((n) => ({ night_id: n.id, item_id: "l1" })),
+  }, W);
   is("ignored list: the venue ran three nights", ignored.nights, 3);
   is("ignored list: every item fully open", ignored.missed.map((m) => m.open), [3, 3]);
   // Ranked worst first: the list nobody opened is nought of three, the one
@@ -148,14 +156,22 @@ is("missed carries streak and the recent window",
     { id: "L3", venue_id: "V", house: "FOH", role: "Deep clean", phase: "mid", room: "Noble" },
   ];
   const most = computeRollup({
-    checklists: three, items,
+    checklists: three,
+    items: [
+      ...items,
+      { id: "l1", checklist_id: "L2", title: "Line wiped" },
+      { id: "d1", checklist_id: "L3", title: "Noble back bar" },
+    ],
     nights: [
       { id: "n1", checklist_id: "L", night: W[0], certified_at: "t", certified_by: "Ana" },
       { id: "n2", checklist_id: "L2", night: W[0], certified_at: "t", certified_by: "Bo" },
       { id: "n3", checklist_id: "L3", night: W[0], certified_at: null, certified_by: null },
     ],
-    // MOD's two items both ticked; the other two lists have no items.
-    ticks: [{ night_id: "n1", item_id: "i1" }, { night_id: "n1", item_id: "i2" }],
+    // MOD's two items and the line's one all ticked; the deep clean untouched.
+    ticks: [
+      { night_id: "n1", item_id: "i1" }, { night_id: "n1", item_id: "i2" },
+      { night_id: "n2", item_id: "l1" },
+    ],
   }, W);
   is("most done and signed is still short", most.strip, "m");
   is("two of three", [most.done, most.of], [2, 3]);
@@ -502,6 +518,136 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   );
   is("a weekly done once leaves nothing open", done.missed, []);
   is("and every night reads clean", done.strip, "ccccccc");
+}
+
+// ----------------------------------------------------------- on the bill
+//
+// A list counts on a night only when something on it was owed that night, or
+// somebody did something on it. The night page and the morning email have
+// always worked that way. This report counted every list every night, so Born
+// & Raised read 622 of 817 here on the nights the email said 38 of 42, and a
+// weekly manager list sat under "never opened" for being weekly.
+{
+  // Mon 11/9 to Sun 11/15, then Mon 11/16.
+  const week = ["2026-11-09", "2026-11-10", "2026-11-11", "2026-11-12", "2026-11-13", "2026-11-14", "2026-11-15"];
+  const lists = [
+    { id: "SV", venue_id: "V", house: "FOH", role: "Server", phase: "close" },
+    // Runs Thursday to Sunday only.
+    { id: "BA", venue_id: "V", house: "FOH", role: "Bathroom attendant", phase: "close" },
+    // Nothing but weekly work.
+    { id: "MM", venue_id: "V", house: "FOH", role: "Manager", phase: "mid" },
+    // Switched on, nothing written on it yet.
+    { id: "NW", venue_id: "V", house: "FOH", role: "New list", phase: "open" },
+  ];
+  const THU_SUN = ["THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+  const rows = [
+    { id: "sv", checklist_id: "SV", title: "Section clean" },
+    { id: "ba", checklist_id: "BA", title: "Restock", days: THU_SUN },
+    { id: "mm", checklist_id: "MM", title: "Clear the voicemail", section: "WEEKLY" },
+  ];
+  // The server list is done and signed all seven nights. The attendant signs
+  // Thursday and Friday and skips the weekend. The manager does the weekly
+  // list on Wednesday.
+  const signedNight = (id, list, night, ticked) => ({
+    id, checklist_id: list, night, certified_at: "t", certified_by: "Ana",
+    signed: rows.filter((r) => r.checklist_id === list).map((r) => ({
+      item_id: r.id, title: r.title, section: r.section ?? null, days: r.days ?? null, ticked,
+    })),
+  });
+  const held = [
+    ...week.map((n, i) => signedNight(`sv${i}`, "SV", n, true)),
+    signedNight("ba3", "BA", week[3], true),
+    signedNight("ba4", "BA", week[4], true),
+    signedNight("mm2", "MM", week[2], true),
+  ];
+  const data = { checklists: lists, items: rows, nights: held, ticks: [] };
+  const cadenceDue = (today) => makeCadenceDue({
+    cadenceByItem: new Map([["mm", "weekly"]]),
+    tickNightsByItem: tickNightsOf(data, (id) => id === "mm"),
+    runningNightsByItem: new Map([["mm", week]]),
+    today,
+  });
+  const bill = computeRollup(data, week, cadenceDue("2026-11-16"), isCadence);
+
+  // Server 7. Attendant 4 (Thu to Sun). Manager mid 1 (the night it was done).
+  // The unwritten list never.
+  is("bill: lists owed, night by night", bill.series.map((n) => n.of), [1, 1, 2, 2, 2, 2, 2]);
+  is("bill: done and signed, night by night", bill.series.map((n) => n.done), [1, 1, 2, 2, 2, 1, 1]);
+  is("bill: ten of twelve, not ten of twenty eight", [bill.done, bill.of], [10, 12]);
+  is("bill: a clean night is clean with the weekly list standing by", bill.strip, "cccccmm");
+  is("bill: Sunday names the attendant and nothing else", bill.latest, {
+    night: week[6],
+    neverOpened: [{ role: "Bathroom attendant", room: null, phase: "close" }],
+    neverSigned: [],
+    notDone: [],
+  });
+  is("bill: per position, the same ruler", bill.byRole, [
+    { role: "Server", done: 7, of: 7 },
+    { role: "Manager", done: 1, of: 1 },
+    { role: "Bathroom attendant", done: 2, of: 4 },
+  ]);
+  is("bill: the group score agrees", computeGroup(data, week, new Map([["V", "VEN"]]), cadenceDue("2026-11-16"), isCadence),
+    [{ code: "VEN", done: 10, of: 12 }]);
+
+  // The same week with the weekly list never done. While the week is still
+  // open it is on no night's bill. Once the week has closed it lands on the
+  // last night the venue was open, as one miss, not seven.
+  const undone = { ...data, nights: held.filter((n) => n.checklist_id !== "MM") };
+  const due = (today) => makeCadenceDue({
+    cadenceByItem: new Map([["mm", "weekly"]]),
+    tickNightsByItem: new Map(),
+    runningNightsByItem: new Map([["mm", week]]),
+    today,
+  });
+  const midWeek = computeRollup(undone, week, due("2026-11-13"), isCadence);
+  is("bill: a weekly list not yet done is not a miss while the week is open",
+    midWeek.series.map((n) => n.of), [1, 1, 1, 2, 2, 2, 2]);
+  const closed = computeRollup(undone, week, due("2026-11-16"), isCadence);
+  is("bill: undone when the week closes, it is owed once, on the last night",
+    closed.series.map((n) => n.of), [1, 1, 1, 2, 2, 2, 3]);
+  is("bill: and named there", closed.latest.neverOpened.map((l) => l.role),
+    ["Bathroom attendant", "Manager"]);
+
+  // A tick on a night a list owed nothing puts it on that night's bill: work
+  // done on the wrong day is seen, not dropped.
+  const early = computeRollup({
+    ...data,
+    nights: [...held, { id: "baTue", checklist_id: "BA", night: week[1], certified_at: null, certified_by: null }],
+    ticks: [{ night_id: "baTue", item_id: "ba" }],
+  }, week, cadenceDue("2026-11-16"), isCadence);
+  is("bill: worked on an off night, it is on that night's bill", early.series[1].of, 2);
+
+  // Jaynes, Thursday 11/12: a deep clean of six weekly jobs, one of them ticked
+  // and nobody signed. The night page said "weekly, not due tonight" and this
+  // report said "never signed, 1 of 1". The week was not over, so the night
+  // page was right: a weekly list in progress is on nobody's bill.
+  const deep = [{ id: "DC", venue_id: "V", house: "FOH", role: "Deep clean", phase: "mid", room: "Cafe" }];
+  const jobs = ["a", "b", "c", "d", "e", "f"].map((k) => ({ id: `dc-${k}`, checklist_id: "DC", title: `Job ${k}`, section: "WEEKLY" }));
+  const worked = {
+    checklists: [lists[0], ...deep], items: [rows[0], ...jobs],
+    nights: [
+      ...week.map((n, i) => signedNight(`sv${i}`, "SV", n, true)),
+      { id: "dcThu", checklist_id: "DC", night: week[3], certified_at: null, certified_by: null },
+    ],
+    ticks: [{ night_id: "dcThu", item_id: "dc-a" }],
+  };
+  const weeklyDue = (today) => makeCadenceDue({
+    cadenceByItem: new Map(jobs.map((j) => [j.id, "weekly"])),
+    tickNightsByItem: tickNightsOf(worked, (id) => id.startsWith("dc-")),
+    runningNightsByItem: new Map(jobs.map((j) => [j.id, week])),
+    today,
+  });
+  const thursday = computeRollup(worked, week.slice(0, 4), weeklyDue("2026-11-13"), isCadence);
+  is("bill: a weekly list in progress is not on Thursday's bill", thursday.series[3], { night: week[3], done: 1, of: 1 });
+  is("bill: and is in none of the piles", thursday.latest, { night: week[3], neverOpened: [], neverSigned: [], notDone: [] });
+  // The week closes with five of the six never done: owed once, on Sunday.
+  const sunday = computeRollup(worked, week, weeklyDue("2026-11-16"), isCadence);
+  is("bill: the jobs nobody did come due when the week closes", sunday.series.map((n) => n.of), [1, 1, 1, 1, 1, 1, 2]);
+  is("bill: named as never opened that night", sunday.latest.neverOpened, [{ role: "Deep clean", room: "Cafe", phase: "mid" }]);
+  // Without the cadence rule handed in, the old reading comes back: this is
+  // what the parameter is for.
+  is("bill: unaware of cadence, Thursday reads never signed",
+    computeRollup(worked, week.slice(0, 4), weeklyDue("2026-11-13")).latest.neverSigned.length, 1);
 }
 
 // ------------------------------------------------ what the loader has to read

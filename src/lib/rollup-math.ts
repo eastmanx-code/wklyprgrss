@@ -373,6 +373,48 @@ function presentOn(
 }
 
 /**
+ * Whether an item is weekly or monthly work, owed once in its period.
+ *
+ * Passed in for the same reason IsDue is: the rule lives in due.ts and this
+ * module stays a leaf. Defaults to "nothing is", which is every fixture and
+ * every list written before cadence headings existed.
+ */
+export type IsCadence = (item: { section?: string | null }) => boolean;
+
+const NEVER_CADENCE: IsCadence = () => false;
+
+/**
+ * Whether a list was on a night's bill at all.
+ *
+ * It is when something on it was owed that night, or somebody did something
+ * on it. It is not on a night it asks for nothing: a bathroom attendant list
+ * that runs Thursday to Sunday, on a Tuesday; a list nobody has written items
+ * for.
+ *
+ * A list of nothing but weekly or monthly work stands by for most of its
+ * period. It is on the bill the night it is signed, and on the last night of a
+ * period that closed with work on it never done. A night somebody ticked one
+ * of its six jobs and did not sign is a list in progress, not a list nobody
+ * signed: the week is not over. That is the night page's rule, word for word.
+ *
+ * The night page and the morning email have always left those lists out of the
+ * count. This report counted every list every night, so Born & Raised read 622
+ * of 817 here on the same nights the email said 38 of 42, and a weekly manager
+ * list was named under "never opened, nobody did these" six nights out of
+ * seven for being weekly. One ruler now: a list that owed nothing is in
+ * neither half of the ratio and in none of the piles.
+ */
+function onTheBill(
+  present: Present[],
+  certified: boolean,
+  cadenceOnly: boolean,
+): boolean {
+  if (!present.some((i) => i.due || i.ticked)) return false;
+  if (cadenceOnly && !certified) return present.some((i) => i.due && !i.ticked);
+  return true;
+}
+
+/**
  * The arithmetic, separated from the fetching so it can be tested against
  * fixtures. Every number on the report comes out of here, and a report that
  * has never been checked against a case somebody worked out by hand is a
@@ -382,6 +424,7 @@ export function computeRollup(
   data: Loaded,
   window: string[],
   isDue: IsDue = ALWAYS,
+  isCadence: IsCadence = NEVER_CADENCE,
 ): Rollup {
   const { checklists, items, nights, ticks } = data;
 
@@ -423,6 +466,23 @@ export function computeRollup(
   const at = (listId: string, night: string) =>
     presentAt.get(`${listId}:${night}`) ?? [];
 
+  // Lists that are nothing but weekly or monthly work, judged on the items
+  // they carry now, the same way the night page judges them.
+  const cadenceOnly = new Set(
+    checklists
+      .filter((list) => {
+        const own = itemsOf.get(list.id) ?? [];
+        return own.length > 0 && own.every(isCadence);
+      })
+      .map((list) => list.id),
+  );
+  const owedOn = (list: ChecklistRow, night: string) =>
+    onTheBill(
+      at(list.id, night),
+      Boolean(nightAt.get(`${list.id}:${night}`)?.certified_at),
+      cadenceOnly.has(list.id),
+    );
+
   // Done and signed: a signature, and every item owed that night ticked.
   const complete = (list: ChecklistRow, night: string, row?: NightRow) =>
     Boolean(row?.certified_at) &&
@@ -439,6 +499,7 @@ export function computeRollup(
   // signed, and which were not, sorted into the three ways of not being.
   let certified = 0;
   let done = 0;
+  let owed = 0;
   let latest: Rollup["latest"] = null;
   const series: Rollup["series"] = [];
   const strip = live
@@ -447,7 +508,10 @@ export function computeRollup(
       const neverSigned: NamedList[] = [];
       const notDone: NamedList[] = [];
       let doneThisNight = 0;
+      let owedThisNight = 0;
       for (const list of checklists) {
+        if (!owedOn(list, night)) continue;
+        owedThisNight += 1;
         const row = nightAt.get(`${list.id}:${night}`);
         if (complete(list, night, row)) {
           done += 1;
@@ -476,7 +540,8 @@ export function computeRollup(
         }
       }
       // The night's own share, so the group screen can draw a line per venue.
-      series.push({ night, done: doneThisNight, of: checklists.length });
+      series.push({ night, done: doneThisNight, of: owedThisNight });
+      owed += owedThisNight;
       const short = neverOpened.length + neverSigned.length + notDone.length;
       if (short === 0) certified += 1;
       // The window is oldest first, so the last one through here is the most
@@ -486,7 +551,9 @@ export function computeRollup(
       return state;
     })
     .join("");
-  const of = checklists.length * live.length;
+  // Lists on the bill, summed over the running nights. Not lists times nights:
+  // see owedOn.
+  const of = owed;
 
   // What keeps getting left open. Every night the venue was running is a
   // chance to have done it, whether or not anyone opened this list.
@@ -609,6 +676,7 @@ export function computeRollup(
       let of = 0;
       for (const list of lists) {
         for (const night of live) {
+          if (!owedOn(list, night)) continue;
           of += 1;
           if (complete(list, night, nightAt.get(`${list.id}:${night}`)))
             done += 1;
@@ -655,6 +723,7 @@ export function computeGroup(
   window: string[],
   codeOf: Map<string, string>,
   isDue: IsDue = ALWAYS,
+  isCadence: IsCadence = NEVER_CADENCE,
 ): GroupRow[] {
   const { checklists, items, nights, ticks } = data;
   const ticked = new Set(ticks.map((t) => `${t.night_id}:${t.item_id}`));
@@ -691,13 +760,23 @@ export function computeGroup(
       // Lists, the same ruler as everywhere else: done and signed means a
       // signature and every item owed that night signed off — read from the
       // night's own frozen list where it has one, the current items otherwise.
-      running.of += 1;
       const row = nightAt.get(`${list.id}:${night}`);
+      const present = presentOn(list, night, row, itemsOf, ticked, isDue);
+      // Only a list that was on the night's bill, the same test computeRollup
+      // applies.
+      const own = itemsOf.get(list.id) ?? [];
+      if (
+        !onTheBill(
+          present,
+          Boolean(row?.certified_at),
+          own.length > 0 && own.every(isCadence),
+        )
+      )
+        continue;
+      running.of += 1;
       if (
         row?.certified_at &&
-        presentOn(list, night, row, itemsOf, ticked, isDue)
-          .filter((i) => i.due)
-          .every((i) => i.ticked)
+        present.filter((i) => i.due).every((i) => i.ticked)
       )
         running.done += 1;
     }

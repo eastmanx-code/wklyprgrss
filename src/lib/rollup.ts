@@ -176,6 +176,10 @@ async function load(
   return { checklists, items, nights, ticks: tickRuns.flat() };
 }
 
+/** Weekly or monthly work, by its heading. Handed to the leaf arithmetic. */
+const isCadence = (item: { section?: string | null }) =>
+  cadenceOf(item.section) !== null;
+
 /**
  * The due rule a report scores with, cadence-aware, built from the rows a load
  * already holds.
@@ -232,7 +236,7 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
   const data = await load([venueId], window);
   if (!data || data.nights.length === 0) return null;
   // The rota rule, handed to a module that keeps itself import free.
-  return computeRollup(data, window, cadenceDueFor(data));
+  return computeRollup(data, window, cadenceDueFor(data), isCadence);
 }
 
 /**
@@ -283,6 +287,7 @@ export async function groupRollupDetailed(): Promise<
       { checklists, items, nights, ticks },
       window,
       isDue,
+      isCadence,
     );
     if (rollup.nights === 0) continue;
     out.push({ code: venue.code, name: venue.name, rollup });
@@ -314,5 +319,5 @@ export async function groupRollup(): Promise<GroupRow[] | null> {
     ]),
   );
 
-  return computeGroup(data, window, codeOf, cadenceDueFor(data));
+  return computeGroup(data, window, codeOf, cadenceDueFor(data), isCadence);
 }
