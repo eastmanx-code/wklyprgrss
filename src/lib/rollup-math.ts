@@ -90,12 +90,18 @@ export type NightState = "c" | "m";
  * A list, by name, for the lines that say which ones. `by` is the signer, set
  * only on a list that was signed with something still open: the person who put
  * their name to it as done. A never-signed list has no one to name.
+ *
+ * `ticked` and `owed` are set only on a list that was worked and never signed:
+ * how many boxes were checked off, over how many were on it that night. They
+ * are what tells it apart from a list nobody opened.
  */
 export type NamedList = {
   role: string;
   room: string | null;
   phase: string;
   by?: string | null;
+  ticked?: number;
+  owed?: number;
 };
 
 export type Rollup = {
@@ -120,9 +126,18 @@ export type Rollup = {
    * actually asks of "12 of 15" is "which three", and a report that makes
    * him ask is a report he stops reading.
    */
+  /**
+   * Three piles, worst first, the same three the night page and the morning
+   * email use. Never opened: not signed and not one box ticked. Never signed:
+   * boxes ticked and nobody put a name to it. Not done: signed with something
+   * still open. The first two used to be one pile called "not signed", and the
+   * page read it out as "never opened, nobody did these" over a list with
+   * seventeen of thirty four boxes ticked.
+   */
   latest: {
     night: string;
-    notSigned: NamedList[];
+    neverOpened: NamedList[];
+    neverSigned: NamedList[];
     notDone: NamedList[];
   } | null;
   missed: MissedRow[];
@@ -354,14 +369,15 @@ export function computeRollup(
   });
 
   // Per night, across every checklist the venue runs: how many were done and
-  // signed, and which were not, sorted into the two ways of not being.
+  // signed, and which were not, sorted into the three ways of not being.
   let certified = 0;
   let done = 0;
   let latest: Rollup["latest"] = null;
   const series: Rollup["series"] = [];
   const strip = live
     .map((night) => {
-      const notSigned: NamedList[] = [];
+      const neverOpened: NamedList[] = [];
+      const neverSigned: NamedList[] = [];
       const notDone: NamedList[] = [];
       let doneThisNight = 0;
       for (const list of checklists) {
@@ -376,15 +392,29 @@ export function computeRollup(
             ...named(list),
             by: by && by.toLowerCase() !== "null" ? by : null,
           });
-        } else notSigned.push(named(list));
+        } else {
+          // Not signed. Whether anything on it was ticked is the difference
+          // between a list nobody did and one somebody worked and never put a
+          // name to. Any tick counts, owed that night or not, the same rule
+          // the night page uses to call a list untouched.
+          const present = at(list.id, night);
+          const tickedCount = present.filter((i) => i.ticked).length;
+          if (tickedCount === 0) neverOpened.push(named(list));
+          else
+            neverSigned.push({
+              ...named(list),
+              ticked: tickedCount,
+              owed: present.filter((i) => i.due || i.ticked).length,
+            });
+        }
       }
       // The night's own share, so the group screen can draw a line per venue.
       series.push({ night, done: doneThisNight, of: checklists.length });
-      const short = notSigned.length + notDone.length;
+      const short = neverOpened.length + neverSigned.length + notDone.length;
       if (short === 0) certified += 1;
       // The window is oldest first, so the last one through here is the most
       // recent night, which is the one somebody reads in the morning.
-      latest = { night, notSigned, notDone };
+      latest = { night, neverOpened, neverSigned, notDone };
       const state: NightState = short === 0 ? "c" : "m";
       return state;
     })
