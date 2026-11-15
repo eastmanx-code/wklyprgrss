@@ -53,6 +53,17 @@ import {
  */
 const note = (trouble: Trouble) => noteTrouble(trouble, reportTrouble);
 
+/** Weekday names for the "this list runs" line, English then Spanish. */
+const DAY_SHORT: Record<string, [string, string]> = {
+  SUNDAY: ["Sun", "Dom"],
+  MONDAY: ["Mon", "Lun"],
+  TUESDAY: ["Tue", "Mar"],
+  WEDNESDAY: ["Wed", "Mié"],
+  THURSDAY: ["Thu", "Jue"],
+  FRIDAY: ["Fri", "Vie"],
+  SATURDAY: ["Sat", "Sáb"],
+};
+
 export type SavedNight = {
   /** item id -> initials */
   ticks: Record<string, string>;
@@ -251,6 +262,31 @@ export function CloseChecklist({
   // "complete" over an untouched fridge was exactly this, a blank render
   // offered a clean bill. Nothing here can be signed; it can only be reloaded.
   const blankLoad = items.length === 0;
+  /**
+   * The list loaded, and nothing on it is owed tonight.
+   *
+   * Seneca's weekday server close on a Friday: fifty seven rows, every one of
+   * them Sunday to Thursday, because Friday and Saturday have their own list.
+   * The count read "0/0 done" and the line under it said "All done. Sign to
+   * finish." over a page of unticked boxes, and the signature it offered was
+   * one the server refuses. Nothing was wrong with the list. The screen just
+   * had no words for a night off, so it borrowed the words for a finished one.
+   */
+  const nothingTonight = !blankLoad && CLOSE_TOTAL === 0;
+  // The nights this list does run, read off its own rows, so the screen can
+  // say when to come back. Only when every row names its days; a list that
+  // mixes scheduled rows with headings is left to say nothing.
+  const runsOn = (() => {
+    if (!nothingTonight) return null;
+    const order = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+    const seen = new Set<string>();
+    for (const item of items) {
+      if (!item.days || item.days.length === 0) return null;
+      for (const day of item.days) seen.add(day.trim().toUpperCase());
+    }
+    const days = order.filter((day) => seen.has(day));
+    return days.length > 0 ? days : null;
+  })();
   const shotsOfKind = (kind: ProofKind) =>
     dueItems.flatMap((item) => item.proof ?? []).filter((s) => s.kind === kind)
       .length;
@@ -1838,7 +1874,9 @@ export function CloseChecklist({
               className={`label ${openItems.length === 0 ? "text-warn" : ""}`}
               role="status"
             >
-              {openItems.length === 0
+              {nothingTonight
+                ? t("Nothing on this list tonight.", "Nada en esta lista hoy.")
+                : openItems.length === 0
                 ? t("All done. Sign to finish.", "Todo hecho. Firma para terminar.")
                 : `${t("Next", "Sigue")} · ${openItems[0].number}${
                     openItems.length > 1
@@ -1846,23 +1884,25 @@ export function CloseChecklist({
                       : ""
                   }`}
             </p>
-            <button
-              type="button"
-              className={
-                openItems.length === 0
-                  ? "btn min-h-9 px-3 py-1"
-                  : "btn-ghost min-h-9 px-3 py-1"
-              }
-              onClick={() =>
-                document
-                  .getElementById("sign-off")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
-            >
-              {openItems.length === 0
-                ? t("Sign", "Firmar")
-                : t("Sign off", "Firma")}
-            </button>
+            {nothingTonight ? null : (
+              <button
+                type="button"
+                className={
+                  openItems.length === 0
+                    ? "btn min-h-9 px-3 py-1"
+                    : "btn-ghost min-h-9 px-3 py-1"
+                }
+                onClick={() =>
+                  document
+                    .getElementById("sign-off")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+              >
+                {openItems.length === 0
+                  ? t("Sign", "Firmar")
+                  : t("Sign off", "Firma")}
+              </button>
+            )}
           </div>
         ) : null}
 
@@ -2412,6 +2452,8 @@ export function CloseChecklist({
         >
           {blankLoad
             ? t("This list did not load", "Esta lista no cargó")
+            : nothingTonight
+              ? t("Nothing due tonight", "Nada para hoy")
             : openItems.length > 0
               ? `${t("Not done", "Sin hacer")} · ${openItems.length}`
               : `${t("All", "Las")} ${CLOSE_TOTAL} ${t("complete", "completas")}`}
@@ -2470,6 +2512,23 @@ export function CloseChecklist({
               {t("Reload the list", "Recargar la lista")}
             </button>
           </div>
+        ) : nothingTonight && !locked ? (
+          <p className="note mt-3 leading-relaxed">
+            {t(
+              "Nothing on this list is owed tonight, so there is nothing to sign. The rows above belong to other nights.",
+              "Nada de esta lista toca hoy, así que no hay nada que firmar. Los puntos de arriba son de otras noches.",
+            )}
+            {runsOn ? (
+              <>
+                {" "}
+                {t("This list runs", "Esta lista toca")}:{" "}
+                {runsOn
+                  .map((day) => t(DAY_SHORT[day][0], DAY_SHORT[day][1]))
+                  .join(" · ")}
+                .
+              </>
+            ) : null}
+          </p>
         ) : openItems.length === 0 || locked ? (
           signBlock
         ) : (

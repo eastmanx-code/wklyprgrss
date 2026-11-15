@@ -446,9 +446,6 @@
           "title": "I RETRIEVED ALL PACKAGES FROM THE SECURITY DESK AND RETRIEVED NEWSPAPERS IF AVAILABLE."
         },
         {
-          "title": "I AUDITED TIME CLOCKS AND MADE SURE THERE WERE NO BREAK ADHERENCE ISSUES (TIME THEFT)."
-        },
-        {
           "title": "I CHECKED OUR MAILBOX (FRONT OF LOADING DOCK, #11 BOX) FOR MAIL AND MAGAZINES. KEYS ARE ON THE WALL IN THE OFFICE AND SHOULD BE RETURNED THERE. I PUT MAIL ON THE DESK IN THE OFFICE AND DISTRIBUTED MAGAZINES TO THE TRC PERIODICALS TABLE."
         },
         {
@@ -456,6 +453,16 @@
         },
         {
           "title": "I WALKED THE SPACE TO ENSURE DUE DILIGENCE BY THE NIGHT CLEANERS AND SENT APPROPRIATE PHOTOS AND FOLLOW-UP IF NEEDED."
+        },
+        {
+          "section": "OPTIONAL",
+          "title": "IF THE NIGHT CLEANING WAS SUB-PAR, I PHOTOGRAPHED WHAT WAS MISSED.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "What the night cleaners missed"
+            }
+          ]
         },
         {
           "title": "I ENSURED ALL AIR CONDITIONING WAS ON AND PROPERLY SET: OFFICE CONTROLLERS ON 76 AND THE TRC THERMOSTATS ALL SET TO 74°, EXCEPT THE HOST STAND AT 72°."
@@ -468,27 +475,36 @@
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Both downstairs Seneca signs wiped down and the roof clean and free of debris."
+              "prompt": "The first downstairs Seneca sign, wiped down"
+            },
+            {
+              "kind": "photo",
+              "prompt": "The second downstairs Seneca sign, wiped down"
             }
           ]
         },
         {
-          "title": "I PERFORMED THE DAILY FINANCIAL ADMINISTRATIVE DUTIES BY 11:30 (CASH COUNT, TIP HOURS/ADJUSTMENTS IF NEEDED, DCR UPLOADS)."
+          "title": "I PERFORMED THE DAILY FINANCIAL ADMINISTRATIVE DUTIES BY 11:30.",
+          "detail": [
+            "TIME CLOCK EDITS AND AUDIT",
+            "CASH COUNT",
+            "DCR ENTRIES"
+          ]
         },
         {
           "title": "I CHECKED WITH THE KITCHEN LEADERSHIP TO BE AWARE OF ANY MENU EDITS NEEDED FOR THE DAY IN BOTH LOCATIONS, AND UPDATED THE POS WITH COUNTS AND 86'D ITEMS."
         },
         {
-          "title": "I COUNTED AND MADE SURE WE HAD ENOUGH MENUS FOR 3 DAYS, AND THAT NONE WERE TOO DARK, MISPRINTED OR DIRTY. IF WE WERE LOW, I SUBMITTED A PRINT REQUEST VIA THE TYPEFORM AND CLOSED THE LOOP BY EMAILING MANAGERS@ SO WE DON'T DUPLICATE ORDERS."
+          "title": "I CONFIRMED THE NEXT MENU PICKUP WITH THE OTHER MANAGERS."
         },
         {
-          "title": "I PRINTED AN APPROPRIATE AMOUNT OF ALL SENECA MENUS (INCLUDING SPECIAL OCCASION MENUS) FOR THE DAY. IF UNSURE OF THE AMOUNT, I REACHED OUT TO OTHER LEADERSHIP FOR CLARITY."
+          "title": "IF MENUS WERE PICKED UP FROM HQ, I PLACED A NEW ORDER."
         },
         {
           "title": "USING ITUNES REMOTE, I SET THE VOLUMES AND WALKED THE SPACE TO CONFIRM THEY WERE AT AN APPROPRIATE LEVEL."
         },
         {
-          "title": "USING ITUNES REMOTE, I TURNED ON THE \"TRC 2025\" PLAYLIST IN TRC, SET THE VOLUMES, AND WALKED THE SPACE TO CONFIRM THEY WERE AT AN APPROPRIATE LEVEL."
+          "title": "USING ITUNES REMOTE, I TURNED ON THE \"2026 PLAYLIST\" IN TRC, SET THE VOLUMES, AND WALKED THE SPACE TO CONFIRM THEY WERE AT AN APPROPRIATE LEVEL."
         },
         {
           "title": "I ENSURED ALL LIGHTS IN BOTH SPACES WERE SET TO THE APPROPRIATE DAYTIME SETTINGS FOR THE AMBIENT LIGHT THAT DAY."
@@ -513,9 +529,6 @@
         },
         {
           "title": "I CHECKED THE CRACK IN THE MAIN DINING ROOM TO ENSURE IT WAS CLEAN AND CLEAR, ALONG WITH THE PDR DOOR, AND ENSURED THERE WERE NO MENUS STUCK UNDER THE BOOTHS. I RESOLVED AS NEEDED."
-        },
-        {
-          "title": "I CHECKED FOR ANY CH-BRANDED ITEMS WE ARE LOW ON AND DISCUSSED \"STUDIO\" PICKUPS WITH LEADERSHIP: TAKE-OUT BOTTOMS, TOPS, BAGS AND DELIS."
         },
         {
           "title": "I ENSURED THE PDR DOOR SMUDGES AND RESIDUE WERE WIPED OFF AND CLEAN."
@@ -583,9 +596,6 @@
           "title": "I CHECKED WITH THE KITCHEN LEADERSHIP TO BE AWARE OF ANY MENU EDITS NEEDED FOR THE NIGHT IN BOTH LOCATIONS."
         },
         {
-          "title": "I PRINTED AN APPROPRIATE AMOUNT OF ALL SENECA MENUS FOR THE NIGHT. IF UNSURE OF THE AMOUNT, I REACHED OUT TO OTHER LEADERSHIP FOR CLARITY."
-        },
-        {
           "title": "I CHECKED THE POS AND, WITH THE UPDATED INFORMATION FROM THE KITCHEN LEADERSHIP, UPDATED COUNTS AND 86'D ITEMS."
         },
         {
@@ -616,15 +626,6 @@
           "title": "I ENSURED THE TRC FIREPLACE WAS ON, THE RC BOOK DOOR WAS SET TO THE APPROPRIATE SETTING, MR2'S DOOR WAS SHUT PROPERLY, AND RC'S MAIN DOOR WAS LATCHED. I TESTED EACH OF THE DOORS."
         },
         {
-          "title": "I ENSURED WE WERE FULLY STOCKED WITH SODAS AND BOTTLED WATER.",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "The fridges fully stocked with sodas and bottled water."
-            }
-          ]
-        },
-        {
           "title": "I CHECKED THE CRACK IN THE MAIN DINING ROOM TO ENSURE IT WAS CLEAN AND CLEAR, ALONG WITH THE PDR DOOR, AND ENSURED THERE WERE NO MENUS STUCK UNDER THE BOOTHS. I RESOLVED AS NEEDED."
         },
         {
@@ -644,6 +645,9 @@
         },
         {
           "title": "I ENSURED ALL STAFF UNIFORMS WERE CLEAN AND PRESENTABLE."
+        },
+        {
+          "title": "I CONFIRMED ALL PRIVATE DINING PAYMENTS WERE PROPERLY PROCESSED IN BOTH TOAST AND OPENTABLE, PROVIDING APPROPRIATE REFUNDS IF NEEDED, AND ENTERED DATA INTO THE PDR TRACKING EXCEL SHEET."
         }
       ]
     },
@@ -699,7 +703,13 @@
           "title": "I CONFIRMED HOST IPADS AND KEY WERE STORED AND CHARGING IN THE OFFICE."
         },
         {
-          "title": "I CHECKED THE RESTROOMS FOR A THOROUGH CLEAN AND STOCKING (TOILETS CLEAN, FANS AND CEILING FREE OF LINT, SOAP AND PAPER TOWELS STOCKED) AND ENSURED ALL TRASH WAS EMPTIED THROUGHOUT THE SPACE, INCLUDING ANY EMPLOYEE TRASH."
+          "title": "I CHECKED THE RESTROOMS FOR A THOROUGH CLEAN AND STOCKING (TOILETS CLEAN, FANS AND CEILING FREE OF LINT, SOAP AND PAPER TOWELS STOCKED) AND ENSURED ALL TRASH WAS EMPTIED THROUGHOUT THE SPACE, INCLUDING ANY EMPLOYEE TRASH.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The restrooms clean and stocked: toilets clean, soap and paper towels stocked"
+            }
+          ]
         },
         {
           "title": "I CHECKED THE CLOSETS FOR TIDINESS AND TO ENSURE THERE WERE ENOUGH LINENS AND THAT LAMPS WERE PLUGGED IN AND CHARGING FOR THE NIGHT, WITH NONE LEFT SWITCHED ON. UNUSED LAMPS ARE STORED PROPERLY (NOT STACKED AT THE TOP) AND THE FLOOR OF THE LAMP CLOSET IS CLEAR AND ORGANIZED."
@@ -729,16 +739,13 @@
           ]
         },
         {
-          "title": "I LOCKED THE BAR FRIDGE IN THE BOARDWALK AND RETURNED THE KEYS TO THE OFFICE."
-        },
-        {
           "title": "I CHECKED IN WITH AT LEAST TWO CREW MEMBERS ABOUT A POSITIVE MOMENT DURING THEIR SHIFT."
         },
         {
-          "title": "I WROTE A REPORT ON THE CLOSE FOR THE EVENING, RECORDING ANY VALUABLE INFORMATION THE OPENERS WILL NEED."
+          "title": "THURSDAY ONLY: I REVIEWED THE EMPLOYEE DEEP CLEAN (BBY STATION) AND APPROVED CLOCKING OUT."
         },
         {
-          "title": "THURSDAY ONLY: I REVIEWED THE EMPLOYEE DEEP CLEAN (BBY STATION) AND APPROVED CLOCKING OUT."
+          "title": "I VERIFIED THAT SUPPORT BACK POURED DRAIN CLEANER DOWN EVERY DRAIN."
         },
         {
           "title": "I ENSURED THE BACK DOOR INTO THE KITCHEN WAS CLOSED."
@@ -753,30 +760,39 @@
       "phase_label": "WEEKLY",
       "items": [
         {
+          "section": "WEEKLY",
           "title": "BY SUNDAY, I CHECKED THE LIMONCELLO ALMOND LEVELS AND SENT AN ORDER TO BEASTMAN TO LAST A WEEK IF NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "BY SUNDAY, I CHECKED THE CUSTOM SENECA ALMOND BAG LEVELS AND SENT BEASTMAN AN ORDER TO LAST 2 MONTHS IF NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "BY SUNDAY, I CHECKED THE MENU PAPER LEVELS AND SENT AN ORDER TO BEASTMAN TO LAST THE WEEK IF NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "BY SUNDAY, I CHECKED THE FIREPLACE FUEL LEVELS AND SENT AN ORDER TO JON TO LAST THE MONTH IF NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "I EXECUTED THE MEGATRACKER IN FULL BEFORE THE DAY OF THE WEEKLY MEETING."
         },
         {
+          "section": "WEEKLY",
           "title": "I ENSURED THE DCR WAS ENTERED AND ACCURATELY BALANCING WITH THE CTUIT OPS STATEMENT BEFORE THE DAY OF THE MEETING, AND REACHED OUT TO CHRYSTA FOR ANY CLARITY OR ADJUSTMENTS NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "I COMMUNICATED ANY UPDATES ON POLICY, PROCEDURE OR PRODUCT TO ALL STAFF AND ENSURED THERE WERE NO UNANSWERED QUESTIONS."
         },
         {
+          "section": "WEEKLY",
           "title": "I PICKED UP PAYCHECKS ON THURSDAY NIGHT OR FRIDAY MORNING AND HAD THEM ON LOCATION BEFORE THE FIRST EMPLOYEE CLOCKED OUT FOR THE DAY. IF I COULD NOT, I ASKED FOR HELP."
         },
         {
+          "section": "WEEKLY",
           "title": "I HAD / HELPED SUPPORT AND THE SERVICE TEAM CONDITION ALL LEATHER BOOTHS WITH LEATHER CLEANER.",
           "proof": [
             {
@@ -786,25 +802,40 @@
           ]
         },
         {
+          "section": "WEEKLY",
           "title": "I CONTACTED BEAST TO SCHEDULE A TOUCH-UP PAINTING IN BOTH HALLWAYS, IF NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "I AUDITED THE \"ALL EYES\" / BROKEN FURNITURE LIST AND ADDED / RESOLVED ISSUES AS NEEDED."
         },
         {
+          "section": "WEEKLY",
           "title": "I REVIEWED LAST WEEK'S FOH CHECKLISTS (MOD, SUPPORT, SERVER, HOST) FOR BLANK LINES AND FOLLOWED UP WITH WHOEVER WAS RESPONSIBLE."
         },
         {
+          "section": "WEEKLY",
           "title": "I CONFIRMED EVERY ITEM ON THE FOH WEEKLY DEEP CLEAN SHEET WAS DONE THIS WEEK, AND THAT THE BACKUP COVERED ANYTHING THE OWNER MISSED (FOR EXAMPLE, IF THE OWNER WAS OFF)."
         },
         {
+          "section": "WEEKLY",
           "title": "I AUDITED CLEANING SUPPLIES AND DUST PANS, AND REPLACED ANY THAT ARE WORN OR INADEQUATE."
         },
         {
+          "section": "WEEKLY",
           "title": "I CHECKED THE PLANTS (ELEVATOR LANDING, PERIODICALS, HALLWAYS) AND STOOD UP, REPLACED OR REVIVED ANY THAT ARE FALLING OVER OR DYING."
         },
         {
+          "section": "WEEKLY",
           "title": "I REVIEWED THE FIX LIST, UPDATED STATUSES, AND SENT CORPORATE PHOTOS OR COSTS FOR ANYTHING NEEDING APPROVAL."
+        },
+        {
+          "section": "WEEKLY",
+          "title": "I REVIEWED ALL SENTIMENT AND RESPONDED TO ALL RELEVANT REVIEWS."
+        },
+        {
+          "section": "WEEKLY",
+          "title": "WE PLACED THE IFS ORDER, AND USE BEAST CHAT FOR ANYTHING OUTSIDE NORMAL BUSINESS."
         }
       ]
     },
@@ -1371,6 +1402,24 @@
           "title": "I WIPED DOWN THE CHAIRS IN THE HALLWAYS AND USED A MAGIC ERASER ON THE WALL BEHIND THEM."
         },
         {
+          "title": "I RESTOCKED THE CHILI OIL AND PLATE WIPES TO ENSURE THE AM CREW WAS SET UP FOR SUCCESS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The chili oil and plate wipes restocked for the AM crew."
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE PDR TABLE, WIPED DOWN BOTH COUNTERTOPS, AND HORSEBRUSHED THE SEATS TO CLEAR THEM OF ANY DEBRIS (IF THERE WAS A PDR SAT, I ALERTED THE SUPPORT TEAM)"
+        },
+        {
+          "title": "I WIPED DOWN AND POLISHED THE HEAT LAMPS, CEILING ABOVE THE EXPO PASS (INCLUDING WIFI ROUTER), AND WALL ADJACENT TO THE EXPO PASS AFTER SERVICE"
+        },
+        {
+          "title": "I WIPED DOWN THE CEILING [USING A STEP STOOL], WALLS, FRONT AND SIDES OF THE KITCHEN PASS; I PAID SPECIAL ATTENTION TO THE METAL TRIM AROUND THE GRILL AND THE FLOORBOARDS UNDERNEATH THE ISLAND"
+        },
+        {
           "title": "I CHECKED IN WITH THE BACK CLOSER TO SEE WHAT WAS LEFT ON THEIR SIDE."
         }
       ]
@@ -1456,6 +1505,15 @@
         },
         {
           "title": "I ENSURED THE BOARDWALK AND BACK LANDINGS WERE CLEAN, WITH A CLEAR PATHWAY AND NOTHING STACKED OR LEFT ON THE LANDINGS (INCLUDING PALLETS), AND COVERED THE SILVER POLISHER."
+        },
+        {
+          "title": "I MADE SURE TO POUR 1X CUP OF BUG KILLING DRAIN CLEANER DOWN EACH INDIVIDUAL DRAIN. INCLUDING PDR, SERVER STATIONS, DISHPIT SINK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The drain cleaner going down the drains: PDR, server stations and dish pit sink"
+            }
+          ]
         }
       ]
     },
@@ -1467,61 +1525,10 @@
       "room": "Seneca",
       "items": [
         {
-          "title": "I RESTOCKED THE CHILI OIL AND PLATE WIPES TO ENSURE THE AM CREW WAS SET UP FOR SUCCESS",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "The chili oil and plate wipes restocked for the AM crew."
-            }
-          ]
-        },
-        {
-          "title": "I REFILLED ALL CHILI FLAKES, SALT, AND PEPPER SHAKERS"
-        },
-        {
-          "title": "I RESTOCKED ALL 3 OF THE SERVER STATIONS WITH UTENSILS, GLASSWARE, AND PLATES",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "All three server stations restocked with utensils, glassware and plates."
-            }
-          ]
-        },
-        {
-          "title": "I REFILLD THE BIRTHDAY CANDLES, WIPED DOWN THE BIRTHDAY DOMES, AND REPLACED THE PINK LINEN UNDERNEATH THE DOMES (I ALERTED THE MOD IF CANDLES WERE NEEDED**)",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "The birthday candles refilled and the domes wiped with fresh pink linen."
-            }
-          ]
-        },
-        {
           "title": "I HELPED SUPPORT RESTOCK THE FRIDGES, THE TO-GO ITEMS (BOTTOMS, LIDS, RAMIKANS, BAGS), AND ASSISTED IN FOLDING ANY ADDITIONAL PIZZA BOXES"
         },
         {
-          "title": "I WIPED DOWN THE COUNTER SPACE AROUND THE SINK AND ON THE MINI FRIDGE"
-        },
-        {
-          "title": "I WIPED DOWN THE GREEN PANELS THAT FRAME EXPO AND GRILL"
-        },
-        {
           "title": "I CHECKED IN WITH THE FRONT CLOSERS TO SEE WHAT WAS LEFT ON THEIR SIDE"
-        },
-        {
-          "title": "I FOLEDED 20 PIZZA BOXES AND RESTOCKED THE TO GO CART WITH TWO SLEEVED OF BOTTOM LIDS, AS WELL AS AMPLE TO GO BAGS"
-        },
-        {
-          "title": "I WIPED DOWN THE PDR TABLE, WIPED DOWN BOTH COUNTERTOPS, AND HORSEBRUSHED THE SEATS TO CLEAR THEM OF ANY DEBRIS (IF THERE WAS A PDR SAT, I ALERTED THE SUPPORT TEAM)"
-        },
-        {
-          "title": "I WIPED DOWN AND POLISHED THE HEAT LAMPS, CEILING ABOVE THE EXPO PASS (INCLUDING WIFI ROUTER), AND WALL ADJACENT TO THE EXPO PASS AFTER SERVICE"
-        },
-        {
-          "title": "I WIPED DOWN THE CEILING [USING A STEP STOOL], WALLS, FRONT AND SIDES OF THE KITCHEN PASS; I PAID SPECIAL ATTENTION TO THE METAL TRIM AROUND THE GRILL AND THE FLOORBOARDS UNDERNEATH THE ISLAND"
-        },
-        {
-          "title": "I MADE SURE TO POUR 1X CUP OF BUG KILLING DRAIN CLEANER DOWN EACH INDIVIDUAL DRAIN. INCLUDING PDR, SERVER STATIONS, DISHPIT SINK"
         }
       ]
     },
@@ -2231,6 +2238,12 @@
             "TUESDAY",
             "WEDNESDAY",
             "THURSDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glass candle domes wiped, fresh linen underneath"
+            }
           ]
         },
         {
@@ -7408,6 +7421,12 @@
           "days": [
             "FRIDAY",
             "SATURDAY"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glass candle domes wiped, fresh linen underneath"
+            }
           ]
         },
         {
