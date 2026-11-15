@@ -252,7 +252,7 @@ export default async function PositionPage({
                 // Its rows all belong to other nights. Still a way in, to see
                 // what is on it, and unlit because tonight owes it nothing.
                 <span className="label">
-                  <T en="Not tonight" es="Hoy no toca" />
+                  <T en="Not due tonight" es="Hoy no toca" />
                 </span>
               ) : listNote(list.id) ? (
                 <span className="label">

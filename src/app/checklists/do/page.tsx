@@ -288,7 +288,7 @@ export default async function DoChecklistsPage() {
                               {done ? (
                                 <span className="label">
                                   {positionOff(house, role, group.room) ? (
-                                    <T en="Not tonight" es="Hoy no toca" />
+                                    <T en="Not due tonight" es="Hoy no toca" />
                                   ) : (
                                     <T en="Signed" es="Firmada" />
                                   )}
