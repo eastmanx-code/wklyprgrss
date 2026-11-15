@@ -135,16 +135,29 @@ export default async function DoChecklistsPage() {
    * close is done for the night; the weekly list staying lit all week is what
    * sent people back in to tick a finished list a second time.
    */
+  // Or one tonight asks nothing of at all: Seneca's weekday server closes on
+  // a Friday, when the weekend list is the one that runs. Those stayed lit all
+  // weekend with nothing on them anyone could sign, so the position could not
+  // go out however much of the night was closed.
+  const offTonight = (id: string) => Boolean(status.get(id)?.empty);
   const positionDone = (house: House, role: string, room: string | null) =>
     listsFor(house, role, room).every(
-      (l) => signed.has(l.id) || Boolean(status.get(l.id)?.standby),
+      (l) => signed.has(l.id) || offTonight(l.id),
+    );
+  // Every list under the position is off tonight and none is signed: the chip
+  // is unlit because there is nothing to do, and should not read "Signed".
+  const positionOff = (house: House, role: string, room: string | null) =>
+    listsFor(house, role, room).every(
+      (l) => !signed.has(l.id) && offTonight(l.id),
     );
   const positionNote = (
     house: House,
     role: string,
     room: string | null,
   ): { en: string; es: string; urgent: boolean } | null => {
-    const open = listsFor(house, role, room).filter((l) => !signed.has(l.id));
+    const open = listsFor(house, role, room).filter(
+      (l) => !signed.has(l.id) && !offTonight(l.id),
+    );
     const rows = open.map((l) => status.get(l.id)).filter(Boolean);
     const ticked = rows.reduce((n, r) => n + (r?.ticked ?? 0), 0);
     const total = rows.reduce((n, r) => n + (r?.items_on_list ?? 0), 0);
@@ -274,7 +287,11 @@ export default async function DoChecklistsPage() {
                               </span>
                               {done ? (
                                 <span className="label">
-                                  <T en="Signed" es="Firmada" />
+                                  {positionOff(house, role, group.room) ? (
+                                    <T en="Not tonight" es="Hoy no toca" />
+                                  ) : (
+                                    <T en="Signed" es="Firmada" />
+                                  )}
                                 </span>
                               ) : note ? (
                                 <span

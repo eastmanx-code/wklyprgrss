@@ -76,6 +76,13 @@ export type CloseStatusRow = {
   /** What the signer said about leaving them. On the bar, not behind a tap. */
   open_reason: string | null;
   /**
+   * The signer said nobody else was in the building, so there is no second
+   * signature and there was never going to be one. True only on a signed
+   * night. Not a fail and not in the score: it is a fact about the night that
+   * a GM should be able to see, which is why it rides on the row.
+   */
+  closed_alone: boolean;
+  /**
    * Items ticked that asked for a photo, video or note and got none. Not a
    * fail, and not folded into the score: a tick with nothing behind it is
    * a different problem from a tick that never happened, and the report
@@ -187,6 +194,7 @@ export async function closeStatus(
     open_reason: string | null;
     history: unknown[] | null;
     list_at_signing: unknown;
+    closed_alone_at: string | null;
   };
 
   // Paged, every one of them. A single select stops at a thousand rows, and
@@ -218,7 +226,7 @@ export async function closeStatus(
       db()
         .from("close_nights")
         .select(
-          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing",
+          "id, checklist_id, certified_at, certified_by, open_reason, history, list_at_signing, closed_alone_at",
         )
         .in("checklist_id", ids)
         .eq("night", night)
@@ -424,6 +432,7 @@ export async function closeStatus(
         checked_by: row ? (whoOn.get(row.id) ?? []) : [],
         signed_with_gaps: certified && ticked < owed,
         open_reason: row?.open_reason?.trim() || null,
+        closed_alone: certified && Boolean(row?.closed_alone_at),
         proof_missing:
           row && !standby
             ? asked.filter(

@@ -119,6 +119,7 @@ export default async function VenueCompliancePage({
             signedBy: list.row.certified_by,
             openTitles: list.row.open_titles,
             openReason: list.row.open_reason,
+            closedAlone: list.row.closed_alone,
           })),
         )
       : null;

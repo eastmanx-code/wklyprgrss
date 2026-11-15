@@ -656,6 +656,7 @@
       "role": "MOD",
       "role_es": "Gerente",
       "phase": "close",
+      "solo_signoff": true,
       "items": [
         {
           "title": "I ENSURED ALL STAFF PAID FOR FOOD THEY BOUGHT AND ALL COMPS/VOIDS TICKETS WERE CLOSED IN TOAST."
@@ -1672,11 +1673,11 @@
       "role": "Server",
       "role_es": "Mesero",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Section 1",
+      "menu_group": "Seneca",
       "items": [
         {
           "title": "I BROUGHT THE COCKTAIL, DINNER, AND DESSERT MENUS BACK TO THE HOST STAND AND ARRANGED THEM NICLEY",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1687,7 +1688,6 @@
         },
         {
           "title": "I RESTOCKED THE UTENSILS, GLASSWARE, AND LINENS",
-          "section": "CLOSING PREP",
           "proof": [
             {
               "kind": "photo",
@@ -1704,7 +1704,6 @@
         },
         {
           "title": "I BROUGHT IN THE CHILI FLAKES, PEPPER, AND SALT TO BE FILLED",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1715,7 +1714,6 @@
         },
         {
           "title": "I FILLED THE SENECA HEAD FULL OF ALMONDS AND PLACED IT IN THE FRIDGE TO STORE OVERNIGHT",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1726,7 +1724,6 @@
         },
         {
           "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED UNDERNEATH THE SERVER STATION (2 ROLLS.)",
-          "section": "CLOSING PREP",
           "proof": [
             {
               "kind": "photo",
@@ -1743,7 +1740,6 @@
         },
         {
           "title": "I DID MY CHECK OUT",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1754,7 +1750,6 @@
         },
         {
           "title": "I EMPITIED THE TRASH FROM MY STATION AND PLACED THE TRASH CAN UPSIDE DOWN",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1765,7 +1760,6 @@
         },
         {
           "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND MADE SURE TO SWEEP UNDERNEATH THE SERVER STATION",
-          "section": "CLOSING TASKS",
           "proof": [
             {
               "kind": "photo",
@@ -1782,7 +1776,6 @@
         },
         {
           "title": "I CHECKED THE SPACE BETWEEN THE TERRACE BOOTHS, GLASS, AND TRC CURTAIN, AND REMOVED ANY TRASH / DEBRIS",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1793,7 +1786,6 @@
         },
         {
           "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1804,7 +1796,6 @@
         },
         {
           "title": "I COVERED MY POS AND I COVERED THE SERVER STATION",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1815,7 +1806,6 @@
         },
         {
           "title": "I CHECKED MY STAND FOR ANY LINGERING ITEMS THAT NEED TO BE PUT AWAY",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1826,7 +1816,6 @@
         },
         {
           "title": "I TOOK ALL THE WATER PITCHERS INSIDE AND EMPTIED THEM",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1837,7 +1826,6 @@
         },
         {
           "title": "I REPLACED THE LINENS UNDERNEATH THE PARM AND SILVERWARE",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1848,7 +1836,6 @@
         },
         {
           "title": "I ASKED MY MOD WHAT TO FOCUS (FOLDS, POLISHING, ETC.)",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1859,7 +1846,6 @@
         },
         {
           "title": "I CHECKED THE CRACK IN BETWEEN THE MAIN DINING ROOM, AND THE PATIO TO ENSURE IT WAS SPOTLESS",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1870,7 +1856,6 @@
         },
         {
           "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 1; I RESOLVED AS NEEDED",
-          "section": "CLOSING TASKS",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1878,10 +1863,19 @@
             "WEDNESDAY",
             "THURSDAY"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "Section 2",
+      "menu_group": "Seneca",
+      "items": [
         {
           "title": "I HELPED SECTION ONE RESTOCK OUR OUTSIDE SERVER STATION",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1892,7 +1886,6 @@
         },
         {
           "title": "I STARTED TO UNSET OUR TABLES AFTER OUR LAST SETTING",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1903,7 +1896,6 @@
         },
         {
           "title": "I HELPED OUR SUPPORT TEAM BUS THE OUTSIDE TABLES AND WIPE THEM DOWN",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1914,7 +1906,6 @@
         },
         {
           "title": "I HELPED BRING DISHES BACK TO THE DISHWASHERS",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1925,7 +1916,6 @@
         },
         {
           "title": "I BROUGHT ANY PLATES OR SILVERWARE THAT NEED TO BE POLISHED FROM THE KITCHEN TO THE POLISHING STATION",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1936,7 +1926,6 @@
         },
         {
           "title": "I COMPLETED MY CHECK OUT",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1947,7 +1936,6 @@
         },
         {
           "title": "I SWEPT UP THE LOOSE GARBAGE FROM MY SECTION (UNDERNEATH TABLES AND SERVER STATION)",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1958,7 +1946,6 @@
         },
         {
           "title": "I MADE SURE TO TREAT ESPRESSO MACHINE LINE WITH DRAIN CLEANER",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1969,7 +1956,6 @@
         },
         {
           "title": "I MADE SURE TO CLEAN ALL DEBRIS FROM UNDERNEATH ESPRESSO MASHINE",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -1997,10 +1983,19 @@
             "WEDNESDAY",
             "THURSDAY"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "Section 3",
+      "menu_group": "Seneca",
+      "items": [
         {
           "title": "I RESTOCKED THE UTENSILS, GLASSWARE, PLATES, AND LINENS IN MY STATION",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2011,7 +2006,6 @@
         },
         {
           "title": "I RESTOCKED THE STRAWS AND COASTERS AND PUT THEM UNDERNEATH MY POS COVER",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2022,7 +2016,6 @@
         },
         {
           "title": "I MADE SURE THE PRINTER PAPER IS RESTOCKED FOR THE MORNING SHIFT (2 ROLLS.)",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2033,7 +2026,6 @@
         },
         {
           "title": "I CLEARED THE LOUNGE AND SANITIZED THE GLASS TABLE",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2044,7 +2036,6 @@
         },
         {
           "title": "I EMPITIED THE TRASH FROM MY STATION",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2055,7 +2046,6 @@
         },
         {
           "title": "I SWEPT UP ANY LINGERING TRASH FROM MY STATION AND I SWEPT UNDERNEATH MY STATION",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2066,7 +2056,6 @@
         },
         {
           "title": "I SPOT CLEANED ALL GLASS PANELS ALONG THE 40s AND 60s",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2077,7 +2066,6 @@
         },
         {
           "title": "I COVERED MY POS AND SERVER STATION - ENSURING STRAWS, COASTERS AND SWIZZLE STICKS ARE STOCKED",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2088,7 +2076,6 @@
         },
         {
           "title": "I BROUGHT IN PIZZA STANDS AND TRAYS",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2099,7 +2086,6 @@
         },
         {
           "title": "I HELPED SUPPORT BRING IN THE CUSIONS FROM THE LOUNGE AND ARRANGED THEM NICELY AT 21",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2110,7 +2096,6 @@
         },
         {
           "title": "I CLEANED ANY LEFTOVER PARM BEHIND THE POS AND I REPLACED ALL THE LINENS ON MY SERVER STATION",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2121,7 +2106,6 @@
         },
         {
           "title": "I CHECKED THE CRACK IN BETWEEN THE MAIN DINING ROOM, AND THE PATIO TO ENSURE IT WAS SPOTLESS.",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2132,7 +2116,6 @@
         },
         {
           "title": "I ENSURED THAT THERE WAS NO MENUS STUCK UNDER THE BOOTHS IN SECTION 3; I RESOLVED AS NEEDED.",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2140,10 +2123,19 @@
             "WEDNESDAY",
             "THURSDAY"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "Inside",
+      "menu_group": "Seneca",
+      "items": [
         {
           "title": "I RESTOCKED THE UTENSILS, PLATES, AND LINENS ON THE INSIDE STATION",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2154,7 +2146,6 @@
         },
         {
           "title": "I CHECKED THE ESPRESSO BEANS (BOTH REGULAR AND DECAF), SUGAR CUBES, STRAWS, COASTERS, AND ALMONDS AND RESTOCKED THEM ACCORDINGLY",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2165,7 +2156,6 @@
         },
         {
           "title": "I BROUGHT IN ALL OF THE TEA CUPS, POLISHED THEM, AND ARRANGED THEM ON THEIR SHELF",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2176,7 +2166,6 @@
         },
         {
           "title": "I STARTED BREAKING DOWN THE COFFEE STATION AND SENDING IT TO THE DISH PIT TO BE WASHED",
-          "section": "CLOSING PREP",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2187,7 +2176,6 @@
         },
         {
           "title": "I CLEANED THE WINE AND WATER SHELVES WITH GLASS CLEANER",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2198,7 +2186,6 @@
         },
         {
           "title": "I FINISHED BREAKING DOWN AND DETAILING THE COFFEE MACHINE",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2209,7 +2196,6 @@
         },
         {
           "title": "WHEN RUNNING LOW OR EMPTY- I EMPTIED THE ICED TEA AND LEMONADE AND CLEANED BOTH MACHINES",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2220,7 +2206,6 @@
         },
         {
           "title": "WHEN DOING THE TASK ABOVE- I PULLED UP THE MATS NEXT THE THE ICED TEA AND LEMONADE MACHINES, I WIPED UNDERNEATH THEM, AND SENT THE MATS TO THE DISH PIT TO BE RAN THROUGH",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2231,7 +2216,6 @@
         },
         {
           "title": "I WIPED DOWN THE GLASS CANDLE COVERING DOMES AND REPLACED THE LINEN UNDERNEATH THEM",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2248,7 +2232,6 @@
         },
         {
           "title": "I WIPED DOWN ALL OF THE PIZZA STANDS",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2259,7 +2242,6 @@
         },
         {
           "title": "I WIPED DOWN THE ENTIRE POS STATION INCLUDING AROUND THE TWO SINKS; I CLEANED ANY DEBRIS IN THE SINK",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2270,7 +2252,6 @@
         },
         {
           "title": "I POURED SANITIZING SOLUTION DOWN BOTH SINKS AND THE DRAIN UNDERNEATH THE FRIDGE",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2281,7 +2262,6 @@
         },
         {
           "title": "I CARRIED THE MATS OUTSIDE AND HUNG THEM OVER THE FENCE",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2292,7 +2272,6 @@
         },
         {
           "title": "I PUT BACK TOGETHER MY STATION AND GAVE IT ONE LAST WIPE DOWN",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2303,7 +2282,6 @@
         },
         {
           "title": "I WIPED DOWN THE ALL OF THE FRIDGES AND UNDERNEATH THE MATS WHERE WE STORE COFFEE CUPS AND BISCOTTI",
-          "section": "CLOSING TASK",
           "days": [
             "SUNDAY",
             "MONDAY",
@@ -2887,6 +2865,7 @@
       "role_es": "Preparación de guarnición",
       "phase": "open",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "I PREPPED 4 DELIS OF ORANGE SLICES (2 FOR WELLS & 2 BACK UP)",
@@ -3051,6 +3030,7 @@
       "role_es": "Limpieza profunda (barra)",
       "phase": "mid",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "I SCRUBBED DOWN THE SINK",
@@ -6423,6 +6403,7 @@
       "role_es": "Barra (pozo)",
       "phase": "open",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "CLOCK IN, RECIEVE PRODUCE ORDER"
@@ -6547,6 +6528,7 @@
       "role_es": "Barra (pozo)",
       "phase": "close",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "RESTOCK SERVICE STATION (PLATES, SILVERWARE, LINEN)",
@@ -6712,6 +6694,7 @@
       "role_es": "Servicio (pozo)",
       "phase": "close",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
@@ -6799,6 +6782,7 @@
       "role_es": "Invitados (pozo)",
       "phase": "close",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
@@ -6890,6 +6874,7 @@
       "role_es": "Apoyo (pozo)",
       "phase": "close",
       "room": "Seneca",
+      "menu_group": "Seneca Bar",
       "items": [
         {
           "title": "Clean, polish, and restock glassware",

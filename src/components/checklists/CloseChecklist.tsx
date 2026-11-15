@@ -40,6 +40,7 @@ import {
   reopenNight,
   reportTrouble,
   saveNote,
+  markClosedAlone,
   verifyNight,
   tickItem,
 } from "@/app/checklists/actions";
@@ -85,6 +86,13 @@ export type SavedNight = {
    */
   verifiedBy: string | null;
   verifiedAt: string | null;
+  /**
+   * When the signer said nobody else was in the building, or null.
+   *
+   * Not a second signature. It is what stands where one would be on a night
+   * there was nobody to give it.
+   */
+  closedAloneAt: string | null;
   /** Certifications this night has already had, oldest first. */
   history: {
     certifiedBy: string | null;
@@ -460,6 +468,8 @@ export function CloseChecklist({
   const [verified, setVerified] = useState<{ by: string | null } | null>(
     saved.verifiedAt ? { by: saved.verifiedBy } : null,
   );
+  const [closedAlone, setClosedAlone] = useState(Boolean(saved.closedAloneAt));
+  const [markingAlone, setMarkingAlone] = useState(false);
   const [verifier, setVerifier] = useState("");
   const [verifierSigned, setVerifierSigned] = useState(false);
   const [checking, setChecking] = useState(false);
@@ -1413,6 +1423,39 @@ export function CloseChecklist({
   }
 
   /**
+   * "Nobody else is here." The signer says they closed alone, and that is
+   * what the record shows in place of a second signature. Asked for on
+   * purpose, behind a disclosure, so it is a thing somebody says and not a
+   * thing somebody taps past.
+   */
+  async function closeAlone() {
+    const data = new FormData();
+    data.set("slug", slug);
+    data.set("device", deviceId());
+    setMarkingAlone(true);
+    let result: { error: string | null };
+    try {
+      result = await markClosedAlone({ error: null }, data);
+    } catch {
+      setMarkingAlone(false);
+      setCheckError(
+        t(
+          "Could not save that. Check your signal and try again.",
+          "No se pudo guardar. Revisa tu señal e inténtalo otra vez.",
+        ),
+      );
+      return;
+    }
+    setMarkingAlone(false);
+    if (result.error) {
+      setCheckError(result.error);
+      return;
+    }
+    setCheckError(null);
+    setClosedAlone(true);
+  }
+
+  /**
    * Back to a working night. The ticks and the proof stay — reopening exists
    * because one thing was wrong, and making everyone redo the other nine is
    * how you teach a crew to sign first and check later.
@@ -1440,6 +1483,8 @@ export function CloseChecklist({
     setSigned(false);
     setCertifier("");
     signatureRef.current = null;
+    // "Closed alone" was said about the signature just undone.
+    setClosedAlone(false);
     // The check went with the signature it was checking.
     setVerified(null);
     setVerifier("");
@@ -1646,6 +1691,19 @@ export function CloseChecklist({
               <p className="label">
                 {t("Checked by", "Revisada por")} · {verified.by ?? "—"}
               </p>
+            ) : closedAlone ? (
+              <div>
+                <p className="label">
+                  {t("Closed alone", "Cerró sin nadie más")}
+                  {certified?.by ? ` · ${certified.by}` : ""}
+                </p>
+                <p className="note text-muted mt-1.5 leading-relaxed">
+                  {t(
+                    "No second signature. The report shows this list as closed alone.",
+                    "Sin segunda firma. El reporte muestra esta lista como cerrada sin nadie más.",
+                  )}
+                </p>
+              </div>
             ) : (
               <div className="space-y-4">
                 <div>
@@ -1707,6 +1765,33 @@ export function CloseChecklist({
                     ? t("Saving…", "Guardando…")
                     : t("I checked this work", "Yo revisé este trabajo")}
                 </button>
+
+                {/* The other true answer. On a night the last manager left
+                    before the close was finished there is nobody to sign
+                    second, and the only way past this prompt was to sign it
+                    yourself under a shorter name. Behind a disclosure so it
+                    is said on purpose. */}
+                <details className="border-divider border-t pt-3">
+                  <summary className="label inline-flex min-h-11 cursor-pointer items-center underline underline-offset-4">
+                    {t("Nobody else is here?", "¿No hay nadie más?")}
+                  </summary>
+                  <p className="note text-muted mt-2 leading-relaxed">
+                    {t(
+                      "If you are the last person in the building, say so. No second signature is asked for, and the report shows this list as closed alone under your name.",
+                      "Si eres la última persona en el edificio, dilo. No se pide segunda firma, y el reporte muestra esta lista como cerrada sin nadie más, con tu nombre.",
+                    )}
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-ghost mt-3 w-full"
+                    onClick={() => void closeAlone()}
+                    disabled={markingAlone}
+                  >
+                    {markingAlone
+                      ? t("Saving…", "Guardando…")
+                      : t("I closed alone", "Cerré sin nadie más")}
+                  </button>
+                </details>
               </div>
             )}
           </div>
