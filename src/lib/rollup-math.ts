@@ -267,6 +267,38 @@ export function chunksOf<T>(rows: readonly T[], size: number): T[][] {
 }
 
 /**
+ * A job per entry, a few at a time, answers in the order asked.
+ *
+ * The loader used to start every read at once: four side by side for one
+ * venue, eighteen for the all-locations page. On 2026-11-16 at 12:30 at night
+ * one phone asked for the store page fourteen times in ten seconds, and
+ * between them those reports wanted more database connections than exist.
+ * Every other request in the company queued behind them for six minutes, and
+ * a bartender two venues away could not finish her close. A report is never
+ * worth more than a small share of the database.
+ */
+export async function atMost<T, R>(
+  limit: number,
+  jobs: readonly T[],
+  run: (job: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const width = Math.max(1, Math.floor(limit));
+  const out = new Array<R>(jobs.length);
+  let next = 0;
+  const worker = async () => {
+    for (;;) {
+      const i = next++;
+      if (i >= jobs.length) return;
+      out[i] = await run(jobs[i], i);
+    }
+  };
+  await Promise.all(
+    Array.from({ length: Math.min(width, jobs.length) }, worker),
+  );
+  return out;
+}
+
+/**
  * The nights whose ticks the report has to read from the tick table.
  *
  * A signed night carries its frozen list, ticks and all, and presentOn scores

@@ -1,8 +1,11 @@
 import { type Cadence, cadenceOf, dueOnNight, makeCadenceDue } from "./due";
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import { currentNight, isNightOver, shiftNights } from "./night";
 import {
+  atMost,
   chunksOf,
   computeGroup,
   computeRollup,
@@ -58,6 +61,22 @@ export function nightWindow(
 const LISTS_PER_READ = 40;
 const NIGHTS_PER_READ = 100;
 
+/**
+ * How many reads one report may have in flight. See atMost: a report that
+ * takes every connection is how one page stopped every list in the company.
+ */
+const READS_AT_ONCE = 3;
+
+/**
+ * How long a finished report is kept and handed to the next person who asks.
+ *
+ * The window ends at the last closed night, so the answer only moves when
+ * somebody goes back and signs or ticks a night that is already over. Five
+ * minutes behind on that is nothing. Rebuilding thirty nights for every tap
+ * on the page is what was not affordable.
+ */
+const REPORT_SECONDS = 300;
+
 type StoredNight = Omit<NightRow, "signed"> & { list_at_signing: unknown };
 
 /**
@@ -100,42 +119,45 @@ async function load(
     LISTS_PER_READ,
   );
 
-  const [itemRuns, nightRuns] = await Promise.all([
-    Promise.all(
-      listRuns.map((ids) =>
-        selectAll<ItemRow>((from, to) =>
-          db()
-            .from("close_items")
-            .select("id, checklist_id, title, title_es, section, days")
-            .in("checklist_id", ids)
-            .eq("active", true)
-            .order("id")
-            .range(from, to),
-        ),
+  // Items and nights for each run of lists, a few reads at a time.
+  const itemReads = listRuns.map(
+    (ids) => (): Promise<unknown[]> =>
+      selectAll<ItemRow>((from, to) =>
+        db()
+          .from("close_items")
+          .select("id, checklist_id, title, title_es, section, days")
+          .in("checklist_id", ids)
+          .eq("active", true)
+          .order("id")
+          .range(from, to),
       ),
-    ),
-    Promise.all(
-      listRuns.map((ids) =>
-        selectAll<StoredNight>((from, to) =>
-          db()
-            .from("close_nights")
-            .select(
-              "id, checklist_id, night, certified_at, certified_by, list_at_signing",
-            )
-            .in("checklist_id", ids)
-            .gte("night", window[0])
-            .lte("night", window[window.length - 1])
-            .order("id")
-            .range(from, to),
-        ),
+  );
+  const nightReads = listRuns.map(
+    (ids) => (): Promise<unknown[]> =>
+      selectAll<StoredNight>((from, to) =>
+        db()
+          .from("close_nights")
+          .select(
+            "id, checklist_id, night, certified_at, certified_by, list_at_signing",
+          )
+          .in("checklist_id", ids)
+          .gte("night", window[0])
+          .lte("night", window[window.length - 1])
+          .order("id")
+          .range(from, to),
       ),
-    ),
-  ]);
+  );
+  const read = await atMost(
+    READS_AT_ONCE,
+    [...itemReads, ...nightReads],
+    (job) => job(),
+  );
+  const items = read.slice(0, listRuns.length).flat() as ItemRow[];
+  const stored = read.slice(listRuns.length).flat() as StoredNight[];
 
-  const items = itemRuns.flat();
   // The frozen list rides along on each certified night, so the report scores
   // an old night against the list it was signed against rather than today's.
-  const nights: NightRow[] = nightRuns.flat().map((n) => ({
+  const nights: NightRow[] = stored.map((n) => ({
     id: n.id,
     checklist_id: n.checklist_id,
     night: n.night,
@@ -160,8 +182,10 @@ async function load(
       : null,
   }));
 
-  const tickRuns = await Promise.all(
-    chunksOf(nightsNeedingTicks(nights), NIGHTS_PER_READ).map((ids) =>
+  const tickRuns = await atMost(
+    READS_AT_ONCE,
+    chunksOf(nightsNeedingTicks(nights), NIGHTS_PER_READ),
+    (ids) =>
       selectAll<TickRow>((from, to) =>
         db()
           .from("close_ticks")
@@ -170,7 +194,6 @@ async function load(
           .order("id")
           .range(from, to),
       ),
-    ),
   );
 
   return { checklists, items, nights, ticks: tickRuns.flat() };
@@ -231,12 +254,26 @@ function cadenceDueFor(data: Loaded): IsDue {
  * One venue's report, or null when nothing has been recorded yet — the caller
  * shows the sample in that case rather than a page of confident zeroes.
  */
-export async function venueRollup(venueId: string): Promise<Rollup | null> {
+async function buildVenueRollup(venueId: string): Promise<Rollup | null> {
   const window = nightWindow();
   const data = await load([venueId], window);
   if (!data || data.nights.length === 0) return null;
   // The rota rule, handed to a module that keeps itself import free.
   return computeRollup(data, window, cadenceDueFor(data), isCadence);
+}
+
+/**
+ * One venue's report, at most REPORT_SECONDS old.
+ *
+ * Kept under the venue and the two nights the arithmetic reads the clock for,
+ * so the 4am roll starts a fresh report rather than serving yesterday's.
+ */
+export function venueRollup(venueId: string): Promise<Rollup | null> {
+  return unstable_cache(
+    () => buildVenueRollup(venueId),
+    ["venue-rollup", venueId, currentNight(), lastClosedNight()],
+    { revalidate: REPORT_SECONDS },
+  )();
 }
 
 /**
@@ -253,7 +290,7 @@ export async function venueRollup(venueId: string): Promise<Rollup | null> {
  * out, the same as everywhere else: a venue not using the app yet is not a
  * venue missing everything.
  */
-export async function groupRollupDetailed(): Promise<
+async function buildGroupRollupDetailed(): Promise<
   { code: string; name: string | null; rollup: Rollup }[] | null
 > {
   const window = nightWindow();
@@ -300,6 +337,17 @@ export async function groupRollupDetailed(): Promise<
       a.rollup.done / Math.max(1, a.rollup.of) -
       b.rollup.done / Math.max(1, b.rollup.of),
   );
+}
+
+/** Every venue's report, at most REPORT_SECONDS old. */
+export function groupRollupDetailed(): Promise<
+  { code: string; name: string | null; rollup: Rollup }[] | null
+> {
+  return unstable_cache(
+    () => buildGroupRollupDetailed(),
+    ["group-rollup-detailed", currentNight(), lastClosedNight()],
+    { revalidate: REPORT_SECONDS },
+  )();
 }
 
 /**
