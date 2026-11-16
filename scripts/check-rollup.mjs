@@ -10,6 +10,7 @@
  * definition has to be deliberate.
  */
 import {
+  atMost,
   chunksOf,
   computeGroup,
   computeRollup,
@@ -662,6 +663,30 @@ is("group", group, [{ code: "HAWK", done: 1, of: 1 }, { code: "ISFO", done: 0, o
   is("runs: nothing in, nothing out", chunksOf([], 100), []);
   is("runs: a short list is one run", chunksOf(["a"], 100), [["a"]]);
   is("runs: a silly size still moves forward", chunksOf([1, 2], 0), [[1], [2]]);
+
+  // A report may only hold a few reads at once. Fourteen reports at full
+  // width is what took every connection on 2026-11-16.
+  {
+    let open = 0, widest = 0;
+    const slow = async (n) => {
+      open++; widest = Math.max(widest, open);
+      await new Promise((r) => setTimeout(r, 5 - (n % 3)));
+      open--;
+      return n * 10;
+    };
+    const got = await atMost(3, [1, 2, 3, 4, 5, 6, 7, 8], slow);
+    is("at most: answers come back in the order asked", got, [10, 20, 30, 40, 50, 60, 70, 80]);
+    is("at most: never more than the limit in flight", widest, 3);
+    is("at most: nothing in, nothing out", await atMost(3, [], slow), []);
+    open = 0; widest = 0;
+    await atMost(0, [1, 2, 3], slow);
+    is("at most: a silly limit is one at a time", widest, 1);
+    let threw = "";
+    try {
+      await atMost(2, [1, 2, 3], async (n) => { if (n === 2) throw new Error("read failed"); return n; });
+    } catch (e) { threw = e.message; }
+    is("at most: a failed read fails the report, it is not an empty answer", threw, "read failed");
+  }
   // Nothing lost and nothing repeated, at the sizes the loader uses.
   const ids = Array.from({ length: 690 }, (_, i) => `n${i}`);
   const runs = chunksOf(ids, 100);
