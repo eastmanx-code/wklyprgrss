@@ -1309,6 +1309,7 @@
       "role": "Housekeeper",
       "role_es": "Camarista",
       "phase": "mid",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Mini bar spirits checked and restocked; any missing, opened, or used bottles logged for charges.",
@@ -1602,6 +1603,7 @@
       "role": "Housekeeping supervisor",
       "role_es": "Supervisor de limpieza",
       "phase": "open",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Preliminaries",
@@ -1656,6 +1658,7 @@
       "role": "Housekeeping supervisor",
       "role_es": "Supervisor de limpieza",
       "phase": "mid",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Select the vacant rooms that require stripping and cleaning:",
@@ -1668,6 +1671,7 @@
       "role": "Houseperson",
       "role_es": "Mozo de limpieza",
       "phase": "open",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Open",
@@ -1752,6 +1756,7 @@
       "role": "Houseperson",
       "role_es": "Mozo de limpieza",
       "phase": "mid",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "BED",
@@ -2037,6 +2042,7 @@
       "role": "Public areas",
       "role_es": "Áreas públicas",
       "phase": "open",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Hallways",
@@ -2072,6 +2078,7 @@
       "role": "Public areas",
       "role_es": "Áreas públicas",
       "phase": "mid",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Preliminary Checks",
@@ -2168,6 +2175,7 @@
       "role": "Public areas",
       "role_es": "Áreas públicas",
       "phase": "close",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Floors",
@@ -2189,6 +2197,7 @@
       "role": "Room attendant",
       "role_es": "Camarista de habitaciones",
       "phase": "mid",
+      "menu_group": "Housekeeping",
       "items": [
         {
           "title": "Bathroom",
@@ -2267,6 +2276,2846 @@
         {
           "title": "Mark the room marked clean in PMS.",
           "title_es": "Marcar la habitación como limpia en el PMS."
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MOD",
+      "role_es": "Gerente en turno",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I AUDITED TIME CLOCKS AND CONFIRMED ALL SCHEDULED STAFF WERE PRESENT - NO BREAK ADHERENCE ISSUES",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I REVIEWED THE ROSTER FOR THE DAY AND MADE APPROPRIATE STAFFING ADJUSTMENTS",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I CHECKED OPENTABLE / RESY FOR RESERVATIONS, VIPs, AND SPECIAL OCCASIONS - COMMUNICATED TO TEAM",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I CHECKED WITH KITCHEN LEADERSHIP FOR ANY MENU EDITS, 86'D ITEMS, OR SPECIALS FOR THE DAY",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I PRINTED AN APPROPRIATE AMOUNT OF MENUS FOR THE DAY (INCLUDING ANY SPECIAL OCCASION MENUS)",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I UPDATED THE POS WITH ANY 86'D ITEMS OR MENU CHANGES",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I PERFORMED DAILY FINANCIAL ADMIN: CASH COUNT, TIP ADJUSTMENTS, DCR UPLOAD",
+          "section": "PRE-OPEN ADMIN"
+        },
+        {
+          "title": "I WALKED THE ENTIRE SPACE TO ENSURE CLEANLINESS FROM THE PREVIOUS NIGHT'S CLOSE",
+          "section": "SPACE WALKTHROUGH",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room as you found it, clean from last night's close"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL A/C AND CLIMATE CONTROLS WERE SET TO APPROPRIATE DAYTIME SETTINGS",
+          "section": "SPACE WALKTHROUGH"
+        },
+        {
+          "title": "I SET MUSIC TO APPROPRIATE DAYTIME PLAYLIST AND WALKED THE SPACE TO CONFIRM VOLUME",
+          "section": "SPACE WALKTHROUGH"
+        },
+        {
+          "title": "I ENSURED ALL LIGHTING WAS SET TO APPROPRIATE DAYTIME LEVELS",
+          "section": "SPACE WALKTHROUGH"
+        },
+        {
+          "title": "I CHECKED ALL RESTROOMS FOR CLEANLINESS AND STOCKING",
+          "section": "SPACE WALKTHROUGH",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom clean and stocked: towels, soap, paper"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED FOR ANY REPAIR OR MAINTENANCE NEEDS AND COMMUNICATED IN WHATS APP BG > MAINTENANCE",
+          "section": "SPACE WALKTHROUGH",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The repair or maintenance needs you found, or none"
+            }
+          ]
+        },
+        {
+          "title": "I CREATED THE FLOOR PLAN AND ASSIGNED SECTIONS IN RESERVATION SYSTEM",
+          "section": "PRE-SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor plan with sections assigned"
+            }
+          ]
+        },
+        {
+          "title": "I EXECUTED PRE-SHIFT WITH THE TEAM - COVERED SPECIALS, VIPs, AND GAME PLAN",
+          "section": "PRE-SERVICE"
+        },
+        {
+          "title": "15 MINUTES BEFORE OPEN I WALKED THE FULL SPACE AND ASSIGNED ANY REMAINING TASKS",
+          "section": "PRE-SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room set and ready, 15 minutes before open"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL SIGNAGE WAS CLEAN, STRAIGHT, AND PROPERLY POSITIONED",
+          "section": "PRE-SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The signage clean, straight and in position"
+            }
+          ]
+        },
+        {
+          "title": "I COMMUNICATED WITH LEADERSHIP TEAM ON ANYTHING I NEED ASSISTANCE WITH TODAY",
+          "section": "PRE-SERVICE"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MOD",
+      "role_es": "Gerente en turno",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "phase_label": "TRANSITION",
+      "items": [
+        {
+          "title": "I RE-CONFIRMED ALL CLIMATE CONTROLS WERE SET FOR EVENING SERVICE",
+          "section": "TRANSITION WALKTHROUGH"
+        },
+        {
+          "title": "I CHECKED WITH KITCHEN FOR ANY EVENING MENU EDITS OR 86'D ITEMS",
+          "section": "TRANSITION WALKTHROUGH"
+        },
+        {
+          "title": "I PRINTED AN APPROPRIATE AMOUNT OF DINNER MENUS",
+          "section": "TRANSITION WALKTHROUGH"
+        },
+        {
+          "title": "I UPDATED POS WITH ANY CHANGES FROM THE DAY",
+          "section": "TRANSITION WALKTHROUGH"
+        },
+        {
+          "title": "I ENSURED ALL VIPs AND SPECIAL OCCASIONS WERE MARKED AND COMMUNICATED TO PM CREW",
+          "section": "TRANSITION WALKTHROUGH"
+        },
+        {
+          "title": "I TRANSITIONED MUSIC TO EVENING PLAYLIST AND ADJUSTED VOLUME",
+          "section": "PM SETUP"
+        },
+        {
+          "title": "I ADJUSTED ALL LIGHTING TO APPROPRIATE EVENING SETTINGS",
+          "section": "PM SETUP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room at evening lighting levels"
+            }
+          ]
+        },
+        {
+          "title": "I EXECUTED PRE-SHIFT WITH THE PM CREW - COMMUNICATED KEY DETAILS FROM THE DAY",
+          "section": "PM SETUP"
+        },
+        {
+          "title": "I REVIEWED ROSTER FOR THE EVENING AND MADE APPROPRIATE STAFFING ADJUSTMENTS",
+          "section": "PM SETUP"
+        },
+        {
+          "title": "I DID A FULL WALKTHROUGH FOR CLEANLINESS AND ORGANIZATION - ASSIGNED TASKS AS NEEDED",
+          "section": "PM SETUP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room clean and organized for the evening"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL RESTROOMS WERE CHECKED AND RESTOCKED FOR EVENING SERVICE",
+          "section": "PM SETUP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom restocked for evening service: towels, soap, paper"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ADEQUATE SUPPLY OF MENUS, THERMAL PAPER, AND TO-GO SUPPLIES FOR THE NIGHT",
+          "section": "PM SETUP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Dinner menus, thermal paper and to-go supplies stocked for the night"
+            }
+          ]
+        },
+        {
+          "title": "THROUGHOUT THE NIGHT I CHECKED AND ADJUSTED VOLUME AND LIGHTING LEVELS",
+          "section": "PM SETUP"
+        },
+        {
+          "title": "I ENSURED ALL STAFF UNIFORMS WERE CLEAN AND PRESENTABLE",
+          "section": "PM SETUP"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MOD",
+      "role_es": "Gerente en turno",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I ENSURED ALL COMPS AND VOIDS WERE CLOSED IN POS",
+          "section": "END OF NIGHT"
+        },
+        {
+          "title": "I RECEIVED AND COUNTED ALL SERVER CASH",
+          "section": "END OF NIGHT"
+        },
+        {
+          "title": "I COUNTED ALL MONEY AND PLACED IN SAFE - VERIFIED BAR CASH DRAWER",
+          "section": "END OF NIGHT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The safe closed and locked"
+            }
+          ]
+        },
+        {
+          "title": "I CONFIRMED ALL IPADS AND EQUIPMENT WERE STORED AND CHARGING",
+          "section": "END OF NIGHT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every iPad stored and on its charger"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED ALL SERVER, SUPPORT, AND HOST CHECKLISTS FOR COMPLETION",
+          "section": "END OF NIGHT"
+        },
+        {
+          "title": "I CHECKED THE RESTROOMS FOR A THOROUGH CLEAN AND STOCKING - ALL TRASH EMPTIED",
+          "section": "END OF NIGHT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom cleaned and stocked, trash emptied"
+            }
+          ]
+        },
+        {
+          "title": "I DID A FULL WALKTHROUGH OF THE ENTIRE SPACE FOR PROPER CLOSE",
+          "section": "SPACE CLOSEOUT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room closed down: tables wiped, chairs squared"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL MUSIC WAS TURNED OFF",
+          "section": "SPACE CLOSEOUT"
+        },
+        {
+          "title": "I ENSURED ALL CLIMATE CONTROLS WERE SET TO OVERNIGHT SETTINGS",
+          "section": "SPACE CLOSEOUT"
+        },
+        {
+          "title": "I ENSURED ALL ORNAMENTAL LIGHTING AND FIXTURES WERE TURNED OFF",
+          "section": "SPACE CLOSEOUT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The room with the ornamental lighting and fixtures off"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED IN WITH AT LEAST TWO CREW MEMBERS ABOUT A POSITIVE MOMENT DURING THEIR SHIFT",
+          "section": "SPACE CLOSEOUT"
+        },
+        {
+          "title": "I WROTE A CLOSING REPORT - RECORDED ANYTHING VALUABLE FOR THE OPENERS",
+          "section": "SPACE CLOSEOUT"
+        },
+        {
+          "title": "I ENSURED THE BACK DOOR / KITCHEN ENTRANCE WAS SECURED",
+          "section": "SPACE CLOSEOUT",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back door and kitchen entrance closed and locked"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "MOD weekly",
+      "role_es": "Gerente en turno (semanal)",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I CHECKED MENU PAPER LEVELS AND ORDERED IF NEEDED | PAR:",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Menu paper on hand, and the par"
+            }
+          ]
+        },
+        {
+          "title": "I EXECUTED THE WEEKLY MEGATRACKER / INVENTORY IN FULL BEFORE MEETING DAY",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I ENSURED THE DCR WAS ENTERED AND BALANCING WITH OPS STATEMENT",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I COMMUNICATED ANY POLICY, PROCEDURE, OR PRODUCT UPDATES TO ALL STAFF VIA WHATSAPP",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I PICKED UP PAYCHECKS AND HAD THEM ON LOCATION BEFORE FIRST EMPLOYEE SHIFT",
+          "section": "WEEKLY"
+        },
+        {
+          "title": "I AUDITED THE FURNITURE/REPAIR LIST AND ADDED OR RESOLVED ISSUES AS NEEDED",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What you added to or resolved on the furniture and repair list, or no change"
+            }
+          ]
+        },
+        {
+          "title": "I REVIEWED AND UPDATED THE CH BRANDED ITEMS STOCK (TO-GO CONTAINERS, BAGS, ETC.)",
+          "section": "WEEKLY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The CH branded stock on the shelf: to-go containers and bags"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I SET UP ALL TABLES IN MY SECTION WITH: PLATES, NAPKINS, GLASSES, FORKS, KNIVES",
+          "section": "TABLE SETUP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A table in your section fully set: plates, napkins, glasses, forks, knives"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED TABLES AND CHAIRS FOR WOBBLES AND ADJUSTED IF NEEDED",
+          "section": "TABLE SETUP"
+        },
+        {
+          "title": "I WIPED DOWN ALL TABLE TOPS, TABLE SUPPORTS, AND TABLE BASES",
+          "section": "TABLE SETUP"
+        },
+        {
+          "title": "I ENSURED ALL SEATING WAS FREE OF CRUMBS AND DEBRIS (USED HORSEHAIR BRUSH)",
+          "section": "TABLE SETUP"
+        },
+        {
+          "title": "I POLISHED ALL TABLE AND CHAIR BASES",
+          "section": "TABLE SETUP"
+        },
+        {
+          "title": "I STOCKED MY STATION WITH: FORKS, KNIVES, DESSERT SPOONS, STEAK KNIVES, SHARING FLATWARE",
+          "section": "SERVICE STATION",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Your station stocked with forks, knives, dessert spoons, steak knives and sharing flatware"
+            }
+          ]
+        },
+        {
+          "title": "I STOCKED MY STATION WITH: PENS, CHECK PRESENTERS, NAPKINS, SERVING TRAYS",
+          "section": "SERVICE STATION"
+        },
+        {
+          "title": "I STOCKED MY STATION WITH: CRUMB PLATES, CRUMBERS, SANITIZER SPRAY, MICROFIBER CLOTHS",
+          "section": "SERVICE STATION"
+        },
+        {
+          "title": "I ENSURED POS SCREENS WERE WIPED DOWN AND FUNCTIONING",
+          "section": "SERVICE STATION"
+        },
+        {
+          "title": "I CHECKED BIRTHDAY CANDLES/SPARKLERS STOCK",
+          "section": "SERVICE STATION"
+        },
+        {
+          "title": "I STOCKED SERVER FRIDGE WITH: MILK, OAT MILK, ALMOND MILK (BACKUPS IF HALF EMPTY)",
+          "section": "BEVERAGE PREP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The server fridge stocked: milk, oat milk, almond milk"
+            }
+          ]
+        },
+        {
+          "title": "I FILLED WATER PITCHERS AND PLACED ON GLASS SHELVES",
+          "section": "BEVERAGE PREP"
+        },
+        {
+          "title": "I SET UP N/A BEVERAGE STATION WITH: LEMONS, LIMES, COASTERS, STRAWS",
+          "section": "BEVERAGE PREP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The N/A beverage station set: lemons, limes, coasters, straws"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED THE ENTIRE SPACE IS READY FOR GUESTS",
+          "section": "FINAL CHECK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Your section set and ready for guests"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Server",
+      "role_es": "Mesero",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I BROUGHT ALL MENUS BACK TO THE HOST STAND AND ARRANGED THEM NEATLY",
+          "section": "CLOSING PREP"
+        },
+        {
+          "title": "I RESTOCKED UTENSILS, GLASSWARE, AND LINENS IN MY STATION",
+          "section": "CLOSING PREP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Your station restocked: utensils, glassware, linens"
+            }
+          ]
+        },
+        {
+          "title": "I FILLED CONDIMENT CONTAINERS (CHILI FLAKES, SALT, PEPPER) FOR MORNING",
+          "section": "CLOSING PREP"
+        },
+        {
+          "title": "I MADE SURE PRINTER PAPER IS RESTOCKED AT MY STATION",
+          "section": "CLOSING PREP"
+        },
+        {
+          "title": "I COMPLETED MY CHECKOUT",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "I EMPTIED THE TRASH FROM MY STATION AND PLACED CAN UPSIDE DOWN",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The station trash can emptied and upside down"
+            }
+          ]
+        },
+        {
+          "title": "I SWEPT UNDERNEATH ALL TABLES AND THE SERVER STATION IN MY SECTION",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor under your tables and the server station, swept"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ALL TABLES AND POLISHED TABLE AND CHAIR BASES",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Your tables wiped, table and chair bases polished"
+            }
+          ]
+        },
+        {
+          "title": "I SPOT CLEANED ALL GLASS PANELS AND WINDOWS IN MY SECTION",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "I COVERED MY POS AND SERVER STATION",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The POS and server station covered"
+            }
+          ]
+        },
+        {
+          "title": "I TOOK ALL WATER PITCHERS INSIDE AND EMPTIED THEM",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "I REPLACED LINENS UNDERNEATH PARM AND SILVERWARE",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "I CHECKED UNDERNEATH BOOTHS FOR STUCK MENUS OR DEBRIS - RESOLVED AS NEEDED",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "I ASKED MY MOD WHAT TO FOCUS ON (FOLDS, POLISHING, ETC.)",
+          "section": "CLOSING TASKS"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I SWEPT THE ENTIRE DINING FLOOR - UNDERNEATH ALL TABLES, HALLWAYS, AND ENTRANCE",
+          "section": "DINING ROOM",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining floor swept: under the tables, hallways and entrance"
+            }
+          ]
+        },
+        {
+          "title": "I BRUSHED ALL BOOTHS AND SEATS TO CLEAR DEBRIS",
+          "section": "DINING ROOM"
+        },
+        {
+          "title": "I WIPED DOWN ALL GLASS WINDOWS AND FRAMES - USED GLASS CLEANER",
+          "section": "DINING ROOM",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glass windows and frames, clean with no streaks"
+            }
+          ]
+        },
+        {
+          "title": "I DUSTED ALL LIGHT FIXTURES WITH HORSEHAIR BRUSH",
+          "section": "DINING ROOM"
+        },
+        {
+          "title": "I STOCKED ALL SERVICE STATIONS WITH: CRUMB PLATES, CRUMBERS, SANITIZER, MICROFIBER CLOTHS",
+          "section": "SERVICE STATIONS"
+        },
+        {
+          "title": "I SET UP SILVERWARE POLISHING AREA WITH CLEAN DRY MICROFIBRES",
+          "section": "SERVICE STATIONS"
+        },
+        {
+          "title": "I SET UP TO-GO CONTAINER AREA WITH: CONTAINERS, LIDS, BAGS, SPOONS, CH NAPS",
+          "section": "SERVICE STATIONS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The to-go area set: containers, lids, bags, spoons, CH naps"
+            }
+          ]
+        },
+        {
+          "title": "I SET UP DIRTY DISH PIT STATION WITH CAMBRO AND SORTING BINS",
+          "section": "SERVICE STATIONS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dirty dish pit station set with the cambro and sorting bins"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED THE ENTIRE SPACE IS READY FOR GUESTS",
+          "section": "FINAL CHECK",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room ready for guests"
+            }
+          ]
+        },
+        {
+          "title": "IF MUSIC WAS NOT ON, I IMMEDIATELY ALERTED A MOD",
+          "section": "FINAL CHECK"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I CHECKED IN WITH SERVERS AND MOD TO UNDERSTAND WHAT NEEDED TO BE TACKLED",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE"
+        },
+        {
+          "title": "I HORSEBRUSHED ALL OPEN SEATING - CLEARED ALL CRUMBS AND DEBRIS",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE"
+        },
+        {
+          "title": "I SWEPT THE ENTIRE SPACE - UNDERNEATH ALL TABLES, HALLWAYS, PATIOS",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor swept: under the tables, hallways and patios"
+            }
+          ]
+        },
+        {
+          "title": "I RESTOCKED ALL SERVER STATIONS WITH GLASSWARE, SILVERWARE, AND LINENS",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A server station restocked: glassware, silverware, linens"
+            }
+          ]
+        },
+        {
+          "title": "I PLACED ALL TABLE LAMPS AND CHECKED TABLE SETTINGS WERE CENTERED",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Table lamps placed and table settings centered"
+            }
+          ]
+        },
+        {
+          "title": "I RESTOCKED FRIDGES WITH ALL N/A BEVERAGES - ALERTED MOD ON ANY ORDERS NEEDED",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The fridges restocked with N/A beverages"
+            }
+          ]
+        },
+        {
+          "title": "I POLISHED ALL TABLE AND CHAIR BASES",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE"
+        },
+        {
+          "title": "I WIPED DOWN WOOD BACKBOARDS AND SURFACES IN THE DINING ROOM",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE"
+        },
+        {
+          "title": "I CHECKED THE TO-GO AREA AND RESTOCKED FROM STORAGE IF NEEDED",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE"
+        },
+        {
+          "title": "I DID A FINAL WALKTHROUGH - SPACE IS FULLY READY FOR DINNER SERVICE",
+          "section": "RESETTING THE SPACE FOR DINNER SERVICE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dining room reset and ready for dinner service"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Support",
+      "role_es": "Apoyo",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I WIPED DOWN ALL TABLES AND POLISHED TABLE AND CHAIR BASES",
+          "section": "FRONT CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The tables wiped, table and chair bases polished"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ALL SEATING - NO CRUMBS OR DEBRIS PRESENT",
+          "section": "FRONT CLOSE"
+        },
+        {
+          "title": "I CLEARED AND RESET ALL SERVICE STATIONS",
+          "section": "FRONT CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A service station cleared and reset"
+            }
+          ]
+        },
+        {
+          "title": "I TOOK ALL CRUMBERS TO DISH PIT AND FILLED ALL SANITIZER BOTTLES",
+          "section": "FRONT CLOSE"
+        },
+        {
+          "title": "I CHECKED ALL GLASS RAILING / WINDOWS AND SPOT CLEANED AS NEEDED",
+          "section": "FRONT CLOSE"
+        },
+        {
+          "title": "I WENT THROUGH ALL RESTROOMS - COLLECTED TRASH AND SOILED TOWELS",
+          "section": "FRONT CLOSE"
+        },
+        {
+          "title": "I RINSED AND CLEANED ALL RUBBER MATS",
+          "section": "BACK CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The rubber mats rinsed clean"
+            }
+          ]
+        },
+        {
+          "title": "I EMPTIED LIQUID TRASH AND RINSED WITH HOT WATER",
+          "section": "BACK CLOSE"
+        },
+        {
+          "title": "I REMOVED ALL PLATES FROM DISH PIT AND WIPED CLEAN WITH SANITIZER",
+          "section": "BACK CLOSE"
+        },
+        {
+          "title": "I SWEPT AND MOPPED THE BACK AREA",
+          "section": "BACK CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back area floor swept and mopped"
+            }
+          ]
+        },
+        {
+          "title": "I EMPTIED ALL TRASH AND RECYCLING - WASHED OUT CANS",
+          "section": "BACK CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The trash and recycling cans emptied and washed out"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ALL COUNTER SPACE AND SURFACES",
+          "section": "BACK CLOSE"
+        },
+        {
+          "title": "I SENT LAST OF PLATES AND SILVER TO DISH PIT - CLEANED AND DRIED SERVICE CARTS",
+          "section": "BACK CLOSE"
+        },
+        {
+          "title": "I COLLECTED ALL LINEN BAGS AND BROUGHT DOWNSTAIRS",
+          "section": "BACK CLOSE"
+        },
+        {
+          "title": "I ENSURED BACK AREA WAS CLEAN WITH A CLEAR PATHWAY",
+          "section": "BACK CLOSE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The back area clean with a clear pathway"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Food runner",
+      "role_es": "Corredor de comida",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I RESTOCKED CHILI OIL AND PLATE WIPES FOR AM CREW",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Chili oil and plate wipes restocked for the AM crew"
+            }
+          ]
+        },
+        {
+          "title": "I REFILLED ALL CHILI FLAKES, SALT, AND PEPPER SHAKERS"
+        },
+        {
+          "title": "I RESTOCKED ALL SERVER STATIONS WITH UTENSILS, GLASSWARE, AND PLATES"
+        },
+        {
+          "title": "I RESTOCKED BIRTHDAY CANDLES AND WIPED DOWN DOMES - REPLACED LINEN UNDERNEATH"
+        },
+        {
+          "title": "I HELPED SUPPORT RESTOCK FRIDGES AND TO-GO ITEMS (CONTAINERS, LIDS, RAMEKINS, BAGS)"
+        },
+        {
+          "title": "I WIPED DOWN COUNTER SPACE AND MINI FRIDGE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The counter space and mini fridge wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN AND POLISHED HEAT LAMPS AND CEILING ABOVE EXPO PASS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The heat lamps and the ceiling above the expo pass, wiped and polished"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN THE WALLS AND FRONT/SIDES OF THE KITCHEN PASS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walls, front and sides of the kitchen pass, wiped down"
+            }
+          ]
+        },
+        {
+          "title": "I POURED DRAIN CLEANER DOWN EACH INDIVIDUAL DRAIN"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I REVIEWED OPENTABLE / RESY MESSAGES AND RESPONDED TO GUESTS"
+        },
+        {
+          "title": "I SENT RESERVATION TEXTS TO RETRIEVE BIRTHDAY/CELEBRATION DETAILS"
+        },
+        {
+          "title": "I SET UP ALL RESTROOMS: TOWELS, TRASH BAGS, SOAP, DIFFUSER IF NEEDED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom set up: towels, trash bags, soap"
+            }
+          ]
+        },
+        {
+          "title": "I ORGANIZED AND PLACED DIRTY LINEN BAGS AND GARBAGE BAG IN SUPPLY CLOSET"
+        },
+        {
+          "title": "I DUSTED ALL LIGHT FIXTURES, LAMPS, AND LEDGES IN LOBBY/HOST AREA"
+        },
+        {
+          "title": "I CLEANED ALL GLASS WINDOWS AND DOORS AT THE ENTRANCE (INSIDE AND OUTSIDE)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The entrance glass and doors, clean inside and outside"
+            }
+          ]
+        },
+        {
+          "title": "I ASSIGNED SECTIONS IN RESERVATION SYSTEM"
+        },
+        {
+          "title": "I POLISHED ANY METAL/BRASS SURFACES IN THE ENTRY - NO SMUDGES OR FINGERPRINTS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The metal and brass in the entry polished, no smudges or fingerprints"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED THE HOST STAND - ALL BEVERAGE BOOKS WIPED CLEAN",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand clean and organized, beverage books wiped"
+            }
+          ]
+        },
+        {
+          "title": "I SORTED THROUGH ALL MENUS - THREW OUT DIRTY ONES AND PRINTED MORE IF NEEDED"
+        },
+        {
+          "title": "I CONFIRMED CORRECT PLACE SETTINGS ON EACH TABLE FOR FIRST TURN"
+        },
+        {
+          "title": "I CHECKED STOCK OF WOBBLE WEDGES, MATCHES, BUSINESS CARDS, GIFT CARDS"
+        },
+        {
+          "title": "I ENSURED ENOUGH BOXES OF RESTROOM TOWELS FOR THE DAY"
+        },
+        {
+          "title": "I WIPED DOWN ALL MIRRORS IN RESTROOMS AND REMOVED SCUFFS FROM HALLWAYS"
+        },
+        {
+          "title": "I ENSURED ALL HANDHELDS WERE CHARGED AND WIPED DOWN"
+        },
+        {
+          "title": "JUST BEFORE OPENING, I ENSURED ALL RESTROOMS WERE SET TO SPEC",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom set to spec just before opening"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Host",
+      "role_es": "Anfitrión",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I GAVE THE HOST STAND A FULL WIPEDOWN - LAMPS, PRINTERS, UNDER MENUS"
+        },
+        {
+          "title": "I RESTOCKED MATCHES AND BUSINESS CARDS - COMMUNICATED LOW STOCK TO MOD"
+        },
+        {
+          "title": "I ORGANIZED THE HOST STAND - LOOSE CORDS TIDIED, ALL ITEMS IN THEIR HOMES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The host stand wiped and organized: cords tidied, everything in its home"
+            }
+          ]
+        },
+        {
+          "title": "I COLLECTED ALL MENUS AND BEVERAGE BOOKS FROM SERVER STATIONS"
+        },
+        {
+          "title": "I DISPOSED OF IMPERFECT MENUS AND ORGANIZED ALL CLEAN ONES BY CATEGORY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The clean menus organized by category"
+            }
+          ]
+        },
+        {
+          "title": "I EMPTIED ALL TRASH BINS IN HOST AREA"
+        },
+        {
+          "title": "I ENSURED ALL PHONES AND HANDHELDS WERE WIPED DOWN AND CHARGING",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Every phone and handheld on its charger"
+            }
+          ]
+        },
+        {
+          "title": "I COMMUNICATED TO MOD WHAT THE NEXT RESERVATION NEEDS ARE SO TABLE CAN BE SET"
+        },
+        {
+          "title": "I FILLED IN AN ACCURATE COVER COUNT IN THE FORECAST SHEET",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Tonight's cover count"
+            }
+          ]
+        },
+        {
+          "title": "I GAVE ALL IPADS AND REGISTER KEY TO MOD TO LOCK IN OFFICE"
+        },
+        {
+          "title": "I DATED ALL ITEMS LEFT IN LOST & FOUND AND LOGGED THEM",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What went into lost and found tonight, or nothing"
+            }
+          ]
+        },
+        {
+          "title": "I PERFORMED A FINAL RESTROOM CHECK: EMPTY TRASH, TIDY UP, RESTOCK ROLLS AND TOWELS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom after the final check: trash empty, tidy, rolls and towels restocked"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ENOUGH THERMAL PAPER ROLLS FOR THE MORNING"
+        },
+        {
+          "title": "I CHECKED VOICEMAIL AND COMMUNICATED ANY CALLBACKS NEEDED IN THE AM"
+        },
+        {
+          "title": "I WROTE OR ADDED TO THE DAILY CLOSING NOTES ON WHATSAPP"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Bartender",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I CLOCKED IN AND SAID GOOD MORNING TO EVERYONE WORKING"
+        },
+        {
+          "title": "I READ ALL WHATSAPP MESSAGES SENT SINCE MY LAST SHIFT FOR UPDATES"
+        },
+        {
+          "title": "I RETRIEVED CASH BANK FROM OFFICE AND COUNTED THE BANK, ENSURED IT WAS AT $300, REPORTED ANY DISCREPANCY TO THE MOD",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The bank count, and any discrepancy from $300 reported to the MOD"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE DISHWASHER FOR CHEMICALS & THEN TURNED ON THE DISHWASHER."
+        },
+        {
+          "title": "I SET UP THE DISH STATION WITH TWO MICROFIBER TOWELS FOR POLISHING, PLACED A TOWEL AT EACH WELL, AND GRABBED BACKUP MICROFIBERS I FILLED UP ALL MY SPRAYERS WITH FOOD SAFE SANITIZER."
+        },
+        {
+          "title": "I SET UP WELLS 💯 %! I FOLLOWED THE WELL SCHEMATIC PICTURE FOR REFRENCE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "One well set up, matching the well schematic"
+            }
+          ]
+        },
+        {
+          "title": "I RESTOCKED ALL WINE | BEERS | TONIC | COKE | DIET COKE |GINGER ALE | SPRITE, ACCORDING TO OUR PAR SHEET. ALL WHITES, SPARKLING, AND ROSE TO BE CHILLED PROPERLY. I ENSURED TWO BOTTLES OF OUR CHAMPAGNE IN FRIDGE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The fridge restocked to par, two bottles of champagne in it"
+            }
+          ]
+        },
+        {
+          "title": "I BROUGHT OUT ZESTING FRUIT, REMOVED STICKERS 50% LEMONS, 50% ORANGE, 2 LIMES PER WELL, AND 1 GRAPEFRUIT PER WELL . SPENT FRUIT BUCKET AT EACH OPEN WELL."
+        },
+        {
+          "title": "I MADE SURE WE ARE STOCKED WITH STRAWS, COASTERS + CH NAPS"
+        },
+        {
+          "title": "I REFILLED ALL CHEATER BOTTLES OF SYRUPS, BATCHES, JUICES"
+        },
+        {
+          "title": "I SET UP GARNISH STATION ACCORDING TO GARNISH SCHEMATIC PICTURE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnish station set, matching the garnish schematic"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED DOWN ENTIRE BAR TOP AND ALL SURFACES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top wiped down and clear"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL GLASSWARE IS POLISHED AND STAGED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glassware polished and staged"
+            }
+          ]
+        },
+        {
+          "title": "I REVIEWED ANY COCKTAIL SPECIALS, MENU CHANGES, OR 86'D ITEMS"
+        },
+        {
+          "title": "I TAKE A DEEP BREATHE AND PREPARE TO TAKE OUR GUESTS TO HOSPITALITY ISLAND"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Opening bartender",
+      "role_es": "Bartender de apertura",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "phase_label": "END OF SHIFT",
+      "items": [
+        {
+          "title": "I ADDED ANY AND ALL COMP ITEMS TO TAB PRIOR TO LEAVING."
+        },
+        {
+          "title": "I ENSURED THERE IS NO OPEN TABS WITHOUT A CARD ATTACHED. NO TABS UNDER SEAT NUMBERS AND OR ROOM NUMBERS."
+        },
+        {
+          "title": "I TOOK OUT TRASH | NO CARDBOARD OR MESS LEFT BEHIND",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind the bar with the trash out, no cardboard or mess left"
+            }
+          ]
+        },
+        {
+          "title": "I FILLED BITTERS IF NEEDED."
+        },
+        {
+          "title": "CLEAN DELIS WERE TAKEN BACK TO PREP"
+        },
+        {
+          "title": "REFILLED BEER, NA'S, 1ST PULL LIQUOR AND WINE SHELFS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Beer, NA's, 1st pull liquor and wine shelves refilled"
+            }
+          ]
+        },
+        {
+          "title": "I TOPPED OFF ICE FOR DINNER SERVICE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice wells topped off for dinner service"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED OUT WITH ALL MY TEAM, ALONG WITH ANY GUESTS THAT WERE VIBING"
+        },
+        {
+          "title": "I SENT A PICTURE OF OPENING CHECKLISTS ALONG WITH ANY SHIFT NOTES TO THE NIGHTHAWK BAR CHAT",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Shift notes for the bar team, or none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Bartender",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I ENSURED ZESTING FRUIT IS OF QUALITY AND RESTOCKED.REMOVED ANY SPENT FRUIT COLLECTED."
+        },
+        {
+          "title": "I REFILLED STRAWS AND MADE SURE WE HAVE ENOUGH COASTERS FOR THE EVENING."
+        },
+        {
+          "title": "I REPLENISHED CLEAN AND POLISHED GLASSWARE AND ENSURED TO RETURN ANY GLASSWARE BACK TO ITS HOME.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glassware replenished, clean and polished, in its home"
+            }
+          ]
+        },
+        {
+          "title": "I REPLENISH BAR WITH GARNISHES AS NEEDED (WELLS & FRIDGE). REFER TO GARNISH PAR SHEET TO STOCK TO PAR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The garnishes stocked to par at the wells and in the fridge"
+            }
+          ]
+        },
+        {
+          "title": "I FILLED UP ALL DASHER BOTTLES ON THE WELLS."
+        },
+        {
+          "title": "I TOPPED OFF BOTH SCOTSMAN AND HOSHIZAKI DRAFT ICE IF NEEDED PRIOR TO LEAVING.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The Scotsman and Hoshizaki ice topped off"
+            }
+          ]
+        },
+        {
+          "title": "I COMPLETED AN INVENTORY OF ALL WINES, BEER, TONIC, COKE AND ENSURED WE ARE PROPERLY STOCKED AND SET UP FOR WINE SERVICE. WINE SHELF PAR: .",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The wine shelf and fridge stocked and set for wine service"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED IN WITH MY BARTENDERS AND BARBACK TEAM TO SEE IF THERES ANY WAY I CAN ASSIST PRIOR TO MY DEPARTURE. ALWAYS CHECKING WITH A LEAD BEFORE CLOCKING OFF."
+        },
+        {
+          "title": "I REFILLED ANY AND ALL EMPTY BATCH BOTTLES IN CRATE."
+        },
+        {
+          "title": "BEFORE I LEFT I ENSURED POLISHING RAGS (WINE & GREEN) ARE CLEAN AND OF QUALITY TO POLISH CLEAN GLASSES."
+        },
+        {
+          "title": "I CONSOLIDATED TRASH, GATHERED ANY EMPTY CASES/TRASH AND TOOK IT OUT"
+        },
+        {
+          "title": "BEFORE LEAVING I ENSURED I ADDED ANY COMP DRINKS TO THE COMP TAB, I ALSO MADE SURE THERE IS NO OPEN TABS WITHOUT A CARD ATTACHED. I SENT A PICTURE OF MID DAY-PART CHECKLIST IN THE NIGHTHAWK BAR CHAT."
+        },
+        {
+          "title": "I SAID GOODBYE TO THE TEAM AND WENT TO ENJOY THE REST OF MY DAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Bartender",
+      "role_es": "Bartender",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "15 MINUTES PRIOR TO CLOSE, I DID LAST CALL AND INFORMED ALL OF OUR GUESTS WE WILL BE CLOSING FOR THE EVENING."
+        },
+        {
+          "title": "I CONSOLIDATED ALL OF MY BAR TOOLS AND SENT THEM TO THE DISHWASHER."
+        },
+        {
+          "title": "I ENSURED ALL OF THE BATCH BOTTLES ARE MARRIED DOWN | MARRIED SPEED RACK SPIRITS |"
+        },
+        {
+          "title": "I ENSURED ALL EMPTY SYRUP AND CITRUS BOTTLES HAVE BEEN CLEANED PROPERLY FOR THE NEXT DAY. ANY EXPIRED SYRUPS/JUICES I DISPOSED OF"
+        },
+        {
+          "title": "I WAS EXTREMELEY DISCERNING ON WHICH GARNISHES SHOULD BE SAVED FOR TOMORROW'S SERVICE. I STORED THOSE IN A DELI AND PLACED THEM BACK IN THE GARNISH SECTION OF THE FRIDGE ENSURING TO FIFO FOR THE OPENER TOMORROW."
+        },
+        {
+          "title": "I WIPED DOWN ALL | BOTTLES | DASHERS | USING WASH N WALK. NOTHING LEFT STICKY."
+        },
+        {
+          "title": "SCRUBBED DOWN ALL SURFACES INCLUDING THE BAR TOP - MARBLE CLEANER , BACK BAR - MARBLE CLEANER , NOTHING LEFT STICKY. I UTILIZED THE SMALL DRAIN BRUSH TO CLEAN THE WELL DRAINS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top and back bar scrubbed, nothing sticky"
+            }
+          ]
+        },
+        {
+          "title": "ALL CREAM CANISTERS USED DURING SERVICE WERE DUMPED, RINSED AND WASHED AT THE END OF NIGHT"
+        },
+        {
+          "title": "I DEVELOPED A LIST OF ANY 86 ITEMS OR BOTTLES THAT ARE IN NEED OF REPLENISHMENT FOR BACK BAR OR WELL. I WILL INCLUDE THAT IN MY NIGHTLY RECAP WHATSAPP.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The 86 items and bottles to replenish"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED THE BARSTOOLS ARE STORED NEATLY PLACED BACK INTO THE ICE WELLS"
+        },
+        {
+          "title": "I TOOK ALL OF THE ZESTED FRUIT TO THE BACK AND ORGANIZED THEM, ENSURING TO SEPARATE THE FRUIT BY TYPE."
+        },
+        {
+          "title": "I RETURNED ALL UNUSED CITRUS IN THE FRUIT BOWLS BACK TO THE CASES IN THE PREP ROOM. I MADE SURE TO DOUBLE CHECK BEHIND THE CURTAIN FOR BACKUP FRUIT."
+        },
+        {
+          "title": "I WIPED DOWN THE FRUIT BOWLS AT THE END OF THE NIGHT."
+        },
+        {
+          "title": "I CLOSED ALL CHECKS. REVIEWED COMPS & VOIDS WITH MOD. COLLECTED ALL CASH AND COMPLETED A SHIFT REVIEW. DEVELOPED A TIDY BUNDLE TO HAND OFF AS YOUR DROP FOR THE SHIFT."
+        },
+        {
+          "title": "I CHECKED IN ALL STAMPS AND MY 6 TOAST HANDHELDS AND ENSURED THEY WERE CHARGED AND READY FOR THE NEXT DAY.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "All 6 Toast handhelds on their chargers"
+            }
+          ]
+        },
+        {
+          "title": "I DATED ALL WINE BOTTLES. I PLACED RUBBER CORKS ON RED AND WHITE WINE AND USED THE WINE PUMP TO REMOVE THE AIR. I PLACED BOTTLE STOPPERS ON ALL SPARKLING WINE. IF A NEW BOTTLE OF SHERRY (OTHER THAN FINO) WAS OPENED, I DATED IT AND TOPPED IT WITH A RUBBER CORK AS WELL.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The open wine bottles dated, with corks or stoppers on"
+            }
+          ]
+        },
+        {
+          "title": "ALL TRASH WAS TAKEN OUT AND ALL TRASH BINS RINSED AS NEEDED.😷 I REPLACED TRASH BAGS IN BINS."
+        },
+        {
+          "title": "EMPTY BATCH/ SYRUP AND SYRUP BOTTLES THAT HAVE BEEN THOROUGHLY CLEANED WERE NEATLY PLACED IN CRATE AND LEFT UNDER WELL 1 FOR OPENER TO FILL."
+        },
+        {
+          "title": "I ENSURED ALL GLASSWARE IS WASHED AND REPLENISHED FOR NEXT DAYS SERVICE. I RETURNED FOREIGN GLASSWARE TO RESPECTIVE VENUES."
+        },
+        {
+          "title": "I REMOVED THE FLOOR DRAINS COVERS BEHIND THE BAR AND RAN THEM THROUGH DISH. I WIPED THE DRAINS WITH A RAG. I REPLACED THE COVERS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor drains behind the bar wiped clean, covers back on"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED OFF THE DISHWASHER, CLEANED AND DRAINED THE INSIDE FILTER TRAP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher off and drained, inside filter trap clean"
+            }
+          ]
+        },
+        {
+          "title": "AFTER WE MARRIED ALL OF THE BOTTLES, I MADE SURE EVERY WELL WAS SET UP WITH ALL SPIRITS NEEDED INCLUDING BATCH BOTTLES. I PLACED RUBBER COVERS ON ALL POUR SPOUTS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Each well set with spirits and batch bottles, rubber covers on the pour spouts"
+            }
+          ]
+        },
+        {
+          "title": "I STOCKED UP ALL BEER/ NA SODAS IN THE REACH-IN FRIDGE"
+        },
+        {
+          "title": "I SWEPT IN AND AROUND THE BAR AND CLEANED THE DUSTPAN WHEN I WAS DONE. I MOPPED THE FLOOR PRIOR TO LEAVING. I ALSO DETAILED THE UNDERSIDE OF ALL MARBLE SURFACES, BOTH INSIDE AND OUTSIDE THE BAR, USING A SCRUBBY TO REMOVE ANY BUILT UP RESIDUE IF NECESSARY."
+        },
+        {
+          "title": "I SWEPT ALL OF THE DEBRIS BEHIND AND AROUND THE BAR. WE MOPPED THE FLOOR BEHIND THE BAR USING WASH N WALK."
+        },
+        {
+          "title": "15 MINUTES PRIOR TO CLOCKING OUT I COMPLETED A SPOT CHECK OF OUR SPACE ENTIRELY WHICH MEANS A FINAL TOUCH FEEL AROUND OUR BAR WAS DONE BY ONE OF OUR BARTENDERS. ENSURING THE FOLLOWING SPACES ARE NOT LEFT STICKY AND THOURGHLY CLEANED ENTIRETY OF ALL WELLS, WALLS, BAR GRATES, UNDERNEATH BAR GRATES ARE NOT STICKY HANDWASHING SINK IS CLEANED AND FREE OF LEFTOVER DEBRIS. FRONT AND ABYSS SIDE OF DISHWASHER, POS AND BEER FRIDGE DOORS. BACK BAR, HAMILTON MIXERS, ALL WELL SINKS, DIP SINKS, GLASS RINSER. I ENSURED WE HIT THE BRASS LAMPS AS WELL, AS THEY COLLECT DUST, AND THOROUGHLY WIPED UNDERNEATH ALL MARBLE SURFACES, BOTH INSIDE AND AROUND THE EXTERIOR OF THE BAR."
+        },
+        {
+          "title": "WHATS APP/UPDATE AS NEEDED! COMMUNICATION IS NECESSARY FOR A SUCCESSFUL SHIFT. NOTE ANY NECESSARY INFORMATION FOR THE TEAM TO ENSURE FOR A SUCCESSFUL OPEN SUCH AS BATCHES THAT ARE 911 AND NEED TO BE COMPLETED ASAP + 86'D ITEMS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What the opener needs to know: batches that are 911, 86'd items, or nothing"
+            }
+          ]
+        },
+        {
+          "title": "I CLOCKED OUT AND THANKED MY TEAM FOR ANOTHER GREAT DAY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Barback",
+      "role_es": "Barback",
+      "phase": "open",
+      "room": "Night Hawk",
+      "phase_label": "CLOCKING IN",
+      "items": [
+        {
+          "title": "I CLOCKED IN AN SAID GOOD MORNING TO THE TEAM WORKING"
+        },
+        {
+          "title": "I DID A SWEEP OF THE ENTIRE BARTOP AND REMOVED ANY DIRTY GLASSWARE AND DISHES WHICH NEED CLEARED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The bar top clear of dirty glassware and dishes"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED EACH WELL AND REPLENISHED ALL | GARNISHES | BATCHES | SPENT FRUIT | JUICES | SYRUPS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "One well replenished: garnishes, batches, juices, syrups"
+            }
+          ]
+        },
+        {
+          "title": "I REPLENISHED ICE FOR ALL OPEN WELLS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The open wells filled with ice"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED THE REACH IN COOlER AND RESTOCKED ANY ITEMS WHICH ARE LOW",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The reach-in cooler restocked"
+            }
+          ]
+        },
+        {
+          "title": "I DOUBLE CHECKED GLASSWARE FRIDGES FOR ANY ITEMS THAT NEED RESTOCKED 911"
+        },
+        {
+          "title": "REMOVED ANY TRASH WHICH NEEDED ATTENTION"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Barback",
+      "role_es": "Barback",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I ENSURED ALL GLASSWARE IS WASHED AND REPLENISHED FOR NEXT DAYS SERVICE. I RETURNED FOREIGN GLASSWARE TO RESPECTIVE VENUES."
+        },
+        {
+          "title": "I ENSURED THAT ALL GLASS CHILLERS ARE STOCKED AND ORGANISED AS PER THE SCHEMATIC",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The glass chillers stocked and organised to the schematic"
+            }
+          ]
+        },
+        {
+          "title": "I REMOVED THE FLOOR DRAINS COVERS BEHIND THE BAR AND RAN THEM THROUGH DISH. I WIPED THE DRAINS WITH A RAG. I REPLACED THE COVERS. ALL DIRTY TOWELS HAVE BEEN PLACED IN LINEN BAGS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor drains behind the bar wiped clean, covers back on"
+            }
+          ]
+        },
+        {
+          "title": "I TURNED OFF THE DISHWASHER, CLEANED AND DRAINED THE TRAP.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dishwasher off, trap cleaned and drained"
+            }
+          ]
+        },
+        {
+          "title": "EMPTY BATCH/ SYRUP AND SYRUP BOTTLES THAT HAVE BEEN THOROUGHLY CLEANED WERE NEATLY PLACED IN CRATES UNDER WELL 1, WITH NO BOTTLES UPSIDE DOWN",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The clean empty bottles in crates under well 1, none upside down"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED NO EMPTY BOXES OR CLUTTER WAS LEFT IN FOH OR BOH"
+        },
+        {
+          "title": "I TOOK DOWN ALL CLEAN DELIS + LIDS INTO THE PREP AREA AND MADE SURE THERE WAS NO LABELS STILL ATTACHED"
+        },
+        {
+          "title": "I HELPED FINISH ANY TASK WHICH NEEDED TO BE COMPLETED FROM THE BARTENDER CHECKLIST"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Weekly cleaning",
+      "role_es": "Limpieza semanal",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "section": "MONDAY",
+          "title": "I CLEANED ALL FLOOR DRAINS - POURED BLEACH AND SCRUBBED",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor drains scrubbed and bleached"
+            }
+          ]
+        },
+        {
+          "section": "MONDAY",
+          "title": "I DEEP CLEANED UNDERNEATH ALL BAR EQUIPMENT AND FURNITURE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Underneath the bar equipment and furniture, deep cleaned"
+            }
+          ]
+        },
+        {
+          "section": "TUESDAY",
+          "title": "I PULLED OUT ALL REACH-IN FRIDGES AND CLEANED BEHIND AND UNDERNEATH",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Behind and underneath the pulled-out reach-in fridges, clean"
+            }
+          ]
+        },
+        {
+          "section": "TUESDAY",
+          "title": "I HIGH DUSTED ALL LIGHT FIXTURES, SHELVES, AND HARD-TO-REACH SURFACES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The light fixtures and high shelves, dusted"
+            }
+          ]
+        },
+        {
+          "section": "WEDNESDAY",
+          "title": "I POLISHED ALL BRASS EFFECTS AND ORNAMENTAL FIXTURES",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The brass and ornamental fixtures polished, no smudges"
+            }
+          ]
+        },
+        {
+          "section": "WEDNESDAY",
+          "title": "I CLEANED UNDERSIDES OF ALL TABLES, CHAIRS, AND BAR TOP",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The underside of a table and of the bar top, clean"
+            }
+          ]
+        },
+        {
+          "section": "THURSDAY",
+          "title": "I DEEP CLEANED ALL SERVICE STATIONS AND STORAGE AREAS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The service stations and storage areas, deep cleaned"
+            }
+          ]
+        },
+        {
+          "section": "THURSDAY",
+          "title": "I DETAILED ALL SINKS WITH WIRE SCRUBBY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The sinks detailed, no stains"
+            }
+          ]
+        },
+        {
+          "section": "FRIDAY",
+          "title": "I CLEANED AND ORGANIZED ALL DRY GOODS STORAGE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dry goods storage clean and organized"
+            }
+          ]
+        },
+        {
+          "section": "FRIDAY",
+          "title": "I ORGANIZED AND CLEANED THE WALK-IN REFRIGERATOR (SHARED)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in refrigerator shelves clean and organized"
+            }
+          ]
+        },
+        {
+          "section": "SATURDAY",
+          "title": "I ORGANIZED AND CLEANED ALL LIQUOR/WINE STORAGE (SHARED)",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The liquor and wine storage clean and organized"
+            }
+          ]
+        },
+        {
+          "section": "SUNDAY",
+          "title": "I DID A FULL INVENTORY CHECK ON ALL CLEANING SUPPLIES AND ORDERED IF NEEDED",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The cleaning supplies you ordered, or none needed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Monthly deep clean",
+      "role_es": "Limpieza profunda mensual",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I DEEP CLEANED ALL FLOOR DRAINS WITH BLEACH AND WIRE BRUSH",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 1"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The floor drains deep cleaned with bleach and wire brush"
+            }
+          ]
+        },
+        {
+          "title": "I SCRUBBED ALL STAINLESS STEEL SURFACES UNDERNEATH BAR TOPS",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 1"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The stainless steel underneath the bar tops, scrubbed"
+            }
+          ]
+        },
+        {
+          "title": "I USED DETAILING BRUSH TO CLEAN ALL CORNERS AND HARD-TO-REACH PLACES",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 1"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A corner or hard-to-reach spot after the detailing brush, clean"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED UNDERNEATH ALL EQUIPMENT AND FURNITURE THROUGHOUT THE SPACE",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 2"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Underneath the equipment and furniture, clean"
+            }
+          ]
+        },
+        {
+          "title": "I HIGH DUSTED ALL CEILINGS, VENTS, AND UPPER WALL SURFACES",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 2"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ceiling vents and upper walls, dusted"
+            }
+          ]
+        },
+        {
+          "title": "I POLISHED ALL BRASS EFFECTS, FIXTURES, AND ORNAMENTAL ELEMENTS",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 2"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The brass, fixtures and ornamental elements polished"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED UNDERSIDES OF ALL TABLES, CHAIRS, AND BAR STOOLS",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 3"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The underside of a table, a chair and a bar stool, clean"
+            }
+          ]
+        },
+        {
+          "title": "I DEEP CLEANED ALL RESTROOMS - GROUT, FIXTURES, AND HARDWARE",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 3"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A restroom deep cleaned: grout, fixtures and hardware"
+            }
+          ]
+        },
+        {
+          "title": "I DETAILED ALL WINDOWS, GLASS PANELS, AND MIRRORS THROUGHOUT",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 3"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The windows, glass panels and mirrors detailed, no streaks"
+            }
+          ]
+        },
+        {
+          "title": "I CONDITIONED ALL LEATHER SEATING",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 4"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The leather seating conditioned"
+            }
+          ]
+        },
+        {
+          "title": "I CLEANED AND ORGANIZED ALL STORAGE AREAS (DRY GOODS, LIQUOR, WINE)",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 4"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dry goods, liquor and wine storage clean and organized"
+            }
+          ]
+        },
+        {
+          "title": "I AUDITED ALL FURNITURE FOR DAMAGE AND SUBMITTED REPAIR REQUESTS",
+          "section": "MONTHLY",
+          "detail": [
+            "WEEK 4"
+          ],
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The furniture damage you found and the repair requests submitted, or none"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Shared storage",
+      "role_es": "Almacén compartido",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "I CHECKED DRY GOODS STORAGE IS ORGANIZED AND PROPERLY LABELED",
+          "section": "DRY GOODS STORAGE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dry goods storage organized and labeled"
+            }
+          ]
+        },
+        {
+          "title": "I ROTATED STOCK (FIFO) AND REMOVED ANY EXPIRED ITEMS",
+          "section": "DRY GOODS STORAGE"
+        },
+        {
+          "title": "I COMMUNICATED ANY LOW-STOCK ITEMS TO MOD",
+          "section": "DRY GOODS STORAGE",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The low-stock items you passed to the MOD, or none"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED LIQUOR STORAGE IS ORGANIZED AND BOTTLES ARE IN CORRECT POSITIONS",
+          "section": "LIQUOR / WINE STORAGE",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The liquor storage organized, bottles in their positions"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED WINE STORAGE TEMPERATURE AND ORGANIZATION",
+          "section": "LIQUOR / WINE STORAGE",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The wine storage temperature reading"
+            }
+          ]
+        },
+        {
+          "title": "I CHECKED WALK-IN TEMPERATURE IS WITHIN RANGE",
+          "section": "WALK-IN REFRIGERATOR",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The walk-in temperature reading"
+            }
+          ]
+        },
+        {
+          "title": "I ENSURED ALL ITEMS ARE LABELED, DATED, AND WITHIN EXPIRATION",
+          "section": "WALK-IN REFRIGERATOR",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in items labeled and dated"
+            }
+          ]
+        },
+        {
+          "title": "I ORGANIZED AND CLEANED SHELVES",
+          "section": "WALK-IN REFRIGERATOR",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in shelves organized and clean"
+            }
+          ]
+        },
+        {
+          "title": "I COMMUNICATED ANY ISSUES TO MOD",
+          "section": "WALK-IN REFRIGERATOR"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Pantry",
+      "role_es": "Pantry",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "ALL FOOD HAS BEEN FLIPPED INTO CLEAN CONTAINERS WITH LIDS AND LABELED PROPERLY.",
+          "title_es": "TODA LA COMIDA SE CAMBIÓ A CONTENEDORES LIMPIOS CON TAPA Y BIEN ETIQUETADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The pantry cooler open: every container clean, lidded and labeled"
+            }
+          ]
+        },
+        {
+          "title": "REFRIGERATION - WELL HAS BEEN SCRUBBED CLEAN AND WIPED DRY.",
+          "title_es": "REFRIGERACIÓN - EL WELL SE TALLÓ Y QUEDÓ SECO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The refrigeration well empty, scrubbed clean and dry"
+            }
+          ]
+        },
+        {
+          "title": "REFRIGERATION - ALL DRAWER GASKETS AND INTERIOR FLOORS HAVE BEEN CLEAN AND WIPED.",
+          "title_es": "REFRIGERACIÓN - SE LIMPIARON LOS EMPAQUES DE TODOS LOS CAJONES Y EL PISO DE ADENTRO."
+        },
+        {
+          "title": "REFRIGERATION - ALL EXTERIOR SURFACES HAVE BEEN SCRUBBED HAVE BEEN CLEANED AND WIPED DRY.",
+          "title_es": "REFRIGERACIÓN - TODO EL EXTERIOR SE TALLÓ, SE LIMPIÓ Y QUEDÓ SECO."
+        },
+        {
+          "title": "REFRIGERATION - LONG CUTTING BOARD HAS BEEN TAKEN TO DISH, SCRUBBED CLEAN, RINSED, DRIED, AND PLACED BACK WHERE IT GOES.",
+          "title_es": "REFRIGERACIÓN - LA TABLA LARGA DE CORTAR SE LLEVÓ A DISH, SE TALLÓ, SE ENJUAGÓ, SE SECÓ Y SE REGRESÓ A SU LUGAR."
+        },
+        {
+          "title": "FREEZER - HAS BEEN SCRUBBED CLEAN AND WIPED DRY.",
+          "title_es": "CONGELADOR - SE TALLÓ Y QUEDÓ SECO."
+        },
+        {
+          "title": "PREP TABLES - SURFACE, LEGS, AND SHELVES HAVE BEEN SCRUBBED CLEAN AND WIPED DRY.",
+          "title_es": "MESAS DE PREP - SE TALLARON Y SE SECARON LA SUPERFICIE, LAS PATAS Y LAS REPISAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The prep tables scrubbed and dry: tops, legs and shelves"
+            }
+          ]
+        },
+        {
+          "title": "PIPES - ALL DRAIN AND GAS PIPES HAVE BEEN WIPED CLEAN.",
+          "title_es": "TUBOS - SE LIMPIARON TODOS LOS TUBOS DE DRENAJE Y DE GAS."
+        },
+        {
+          "title": "SHELVES - REMOVE ALL ITEMS FROM ALL SHELVES AND WIPE CLEAN.",
+          "title_es": "REPISAS - QUITAR TODO DE TODAS LAS REPISAS Y LIMPIARLAS."
+        },
+        {
+          "title": "WALLS - ALL WALLS HAVE BEEN SCRUBBED AND WIPED CLEAN. KDS WALL, BEHIND COOLER, BEHIND PREP TABLES, UNDERNEATH PREP TABLES, AROUND HAND SINK.",
+          "title_es": "PAREDES - SE TALLARON Y SE LIMPIARON TODAS LAS PAREDES. LA PARED DEL KDS, ATRÁS DEL COOLER, ATRÁS DE LAS MESAS DE PREP, DEBAJO DE LAS MESAS DE PREP, ALREDEDOR DEL LAVAMANOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The pantry walls scrubbed clean: the KDS wall and behind the cooler and prep tables"
+            }
+          ]
+        },
+        {
+          "title": "FLOOR DRAINS - DRAINS HAVE BEEN CLEANED AND RINSED.",
+          "title_es": "COLADERAS - SE LIMPIARON Y SE ENJUAGARON.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The pantry floor drains cleaned and rinsed, nothing left in them"
+            }
+          ]
+        },
+        {
+          "title": "FLOORS - HAVE BEEN SWEPT",
+          "title_es": "PISOS - YA SE BARRIERON"
+        },
+        {
+          "title": "ALL TRASH HAS BEEN TAKEN OUT USING THE TRASH DOLLYS AND THE BINS HAVE BEEN TAKEN TO THE DISH PIT.",
+          "title_es": "SE SACÓ TODA LA BASURA CON LOS DOLLYS Y LOS BOTES SE LLEVARON AL ÁREA DE DISH."
+        },
+        {
+          "title": "STATION PREP LIST HAS BEEN FILLED OUT BY CHECKING ALL INVENTORY IN HOUSE.",
+          "title_es": "LA LISTA DE PREP DE LA ESTACIÓN SE LLENÓ REVISANDO TODO EL INVENTARIO QUE HAY."
+        },
+        {
+          "title": "RECORD TEMP OF SALAD COOLER, FREEZER, WALK-IN.",
+          "title_es": "ANOTAR LA TEMPERATURA DEL COOLER DE ENSALADAS, EL CONGELADOR Y EL WALK-IN.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Temperatures of the salad cooler, the freezer and the walk-in"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Hot line",
+      "role_es": "Línea caliente",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "ALL FOOD HAS BEEN FLIPPED INTO CLEAN CONTAINERS WITH LIDS OR WRAPPED PROPERLY AND LABELED.",
+          "title_es": "TODA LA COMIDA SE CAMBIÓ A CONTENEDORES LIMPIOS CON TAPA O BIEN ENVUELTA, Y ETIQUETADA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The hot line refrigeration open: food in clean containers, lidded or wrapped, and labeled"
+            }
+          ]
+        },
+        {
+          "title": "FRYER - IS SHUT OFF.",
+          "title_es": "FREIDORA - ESTÁ APAGADA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The fryer shut off"
+            }
+          ]
+        },
+        {
+          "title": "FRYER - SPLASH GUARDS HAVE BEEN REMOVED, WASHED, AND REPLACED",
+          "title_es": "FREIDORA - LOS SPLASH GUARDS SE QUITARON, SE LAVARON Y SE VOLVIERON A PONER"
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - EVERYTHING IS OFF",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - TODO ESTÁ APAGADO",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The range, grill and flat top with every knob in the off position"
+            }
+          ]
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - FLAT TOP HAS BEEN CLEANED AND THE DRAIN HAS BEEN WASHED AND REPLACED",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - LA PLANCHA SE LIMPIÓ Y EL DRAIN SE LAVÓ Y SE VOLVIÓ A PONER",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The flat top cleaned, its drain washed and back in place"
+            }
+          ]
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - OVEN INTERIOR HAS BEEN SCRUBBED WITH DEGREASER AND WIPED CLEAN.",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - EL INTERIOR DEL HORNO SE TALLÓ CON DESENGRASANTE Y SE LIMPIÓ."
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - ALL SURFACES HAVE BEEN SCRUBBED CLEAN AND WIPED DRY. FRONT AND SIDES. CLEAN KNOBS.",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - TODAS LAS SUPERFICIES SE TALLARON Y SE SECARON. FRENTE Y LADOS. LIMPIAR LAS PERILLAS."
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - GRATES HAVE BEEN SCRUBBED CLEAN WITH DEGREASER AND WIPED DRY.",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - LAS REJILLAS SE TALLARON CON DESENGRASANTE Y SE SECARON."
+        },
+        {
+          "title": "RANGE, GRILL & FLAT TOP - CRUMB TRAY HAS BEEN REMOVED, WASHED, AND LINED WITH FRESH ALUMINUM FOIL.",
+          "title_es": "ESTUFA, PARRILLA Y PLANCHA - LA CHAROLA DE MIGAJAS SE SACÓ, SE LAVÓ Y SE FORRÓ CON PAPEL ALUMINIO NUEVO."
+        },
+        {
+          "title": "RATIONAL - HAS BEEN TURNED OFF, AND INTERIOR DOOR HAS BEEN CLEANED.",
+          "title_es": "RATIONAL - ESTÁ APAGADO Y LA PUERTA SE LIMPIÓ POR DENTRO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The Rational turned off, door open, inside of the door clean"
+            }
+          ]
+        },
+        {
+          "title": "RATIONAL - HAS BEEN SET TO WASH CYCLE DEPENDING ON NEEDS.",
+          "title_es": "RATIONAL - SE PUSO EL CICLO DE LAVADO SEGÚN LO QUE NECESITE."
+        },
+        {
+          "title": "RATIONAL - ALL EXTERIOR SURFACES HAVE BEEN SCRUBBED CLEAN AND WIPED DRY. FRONT, SIDES, TOP.",
+          "title_es": "RATIONAL - TODO EL EXTERIOR SE TALLÓ Y SE SECÓ. FRENTE, LADOS, ARRIBA."
+        },
+        {
+          "title": "RATIONAL - SCRUB AND WIPE CUBBY UNDERNEATH, AND CLEAN FILTER.",
+          "title_es": "RATIONAL - TALLAR Y LIMPIAR EL CUBBY DE ABAJO, Y LIMPIAR EL FILTRO."
+        },
+        {
+          "title": "PASTA COOKER - SHUT OFF THE GAS",
+          "title_es": "COCEDOR DE PASTA - CERRAR EL GAS"
+        },
+        {
+          "title": "PASTA COOKER - DRAIN THE WASHER AND WASH THE WELL. THBASKETS HAVE BEEN WASHED",
+          "title_es": "COCEDOR DE PASTA - VACIAR EL AGUA Y LAVAR EL WELL. LAS CANASTAS YA SE LAVARON",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The pasta cooker drained, well washed, clean baskets beside it"
+            }
+          ]
+        },
+        {
+          "title": "REFRIGERATION - ALL GASKETS, RAILING, AND INTERIOR FLOORS HAVE BEEN CLEANED AND WIPED.",
+          "title_es": "REFRIGERACIÓN - SE LIMPIARON TODOS LOS EMPAQUES, LOS RIELES Y EL PISO DE ADENTRO."
+        },
+        {
+          "title": "REFRIGERATION - ALL THREE DOOR GASKETS AND INTERIOR FLOORS HAVE BEEN CLEANED AND WIPED",
+          "title_es": "REFRIGERACIÓN - SE LIMPIARON LOS EMPAQUES DE LAS TRES PUERTAS Y EL PISO DE ADENTRO"
+        },
+        {
+          "title": "COUNTER - SCRUB CLEAN, SQUEEGEE, AND WIPE DRY",
+          "title_es": "COUNTER - TALLAR, PASAR EL JALADOR Y SECAR"
+        },
+        {
+          "title": "COUNTER - SHUT OFF AND CLEAN THE DROP IN WELL",
+          "title_es": "COUNTER - APAGAR Y LIMPIAR EL DROP-IN WELL"
+        },
+        {
+          "title": "HEAT LAMPS HAVE BEEN TURNED OFF",
+          "title_es": "LAS LÁMPARAS DE CALOR ESTÁN APAGADAS"
+        },
+        {
+          "title": "ALL SCREENS HAVE BEEN WIPED CLEAN",
+          "title_es": "TODAS LAS PANTALLAS SE LIMPIARON"
+        },
+        {
+          "title": "HOOD - EXTERIOR OF HOOD AND INTERIOR EDGE HAS BEEN WIPED CLEAN",
+          "title_es": "CAMPANA - SE LIMPIÓ EL EXTERIOR DE LA CAMPANA Y LA ORILLA DE ADENTRO"
+        },
+        {
+          "title": "WALLS - ALL WALLS HAVE BEEN SCRUBBED AND WIPED CLEAN.",
+          "title_es": "PAREDES - SE TALLARON Y SE LIMPIARON TODAS LAS PAREDES."
+        },
+        {
+          "title": "FLOORS - HAVE BEEN SWEPT",
+          "title_es": "PISOS - YA SE BARRIERON"
+        },
+        {
+          "title": "ALL TRASH HAS BEEN TAKEN OUT USING THE DOLLYS AND THE BINS HAVE BEEN TAKEN TO THE DISH PIT.",
+          "title_es": "SE SACÓ TODA LA BASURA CON LOS DOLLYS Y LOS BOTES SE LLEVARON AL ÁREA DE DISH."
+        },
+        {
+          "title": "STATION PREP LIST HAS BEEN FILLED OUT BY CHECKING ALL INVENTORY IN HOUSE.",
+          "title_es": "LA LISTA DE PREP DE LA ESTACIÓN SE LLENÓ REVISANDO TODO EL INVENTARIO QUE HAY."
+        },
+        {
+          "title": "RECORD ALL REFRIGERATION AND FREEZER TEMPERATURES",
+          "title_es": "ANOTAR TODAS LAS TEMPERATURAS DE LOS REFRIS Y CONGELADORES",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Temperature of each hot line refrigerator and freezer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Grill",
+      "role_es": "Parrilla",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "ALL FOOD HAS BEEN FLIPPED INTO CLEAN CONTAINERS WITH LIDS AND LABELED PROPERLY.",
+          "title_es": "TODA LA COMIDA SE CAMBIÓ A CONTENEDORES LIMPIOS CON TAPA Y BIEN ETIQUETADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The grill cooler drawers open: every container clean, lidded and labeled"
+            }
+          ]
+        },
+        {
+          "title": "GRILL - REMOVE GRILL GRATES AND TAKE THEM TO THE THREE COMPARTMENT SINK. SPRAY THEM WITH DEGREASER.",
+          "title_es": "PARRILLA - QUITAR LAS REJILLAS DE LA PARRILLA Y LLEVARLAS AL FREGADERO DE TRES TARJAS. ROCIARLAS CON DESENGRASANTE."
+        },
+        {
+          "title": "GRILL - REPLACE THE CLEAN GRILL GRATES.",
+          "title_es": "PARRILLA - VOLVER A PONER LAS REJILLAS LIMPIAS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The clean grates back on the grill"
+            }
+          ]
+        },
+        {
+          "title": "GRILL - SCRUB AND WIPE DOWN CUBBY UNDERNEATH, INCLUDING THE METAL ORGANIZERS UNDERNEATH.",
+          "title_es": "PARRILLA - TALLAR Y LIMPIAR EL CUBBY DE ABAJO, INCLUYENDO LOS ORGANIZADORES DE METAL."
+        },
+        {
+          "title": "WIPE DOWN FIRE WOOD STORAGE CUBBY, AND ALL SURFACES AROUND FIRE PIT.",
+          "title_es": "LIMPIAR EL CUBBY DONDE SE GUARDA LA LEÑA Y TODAS LAS SUPERFICIES ALREDEDOR DEL FIRE PIT.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The firewood cubby and the surfaces around the fire pit, wiped down"
+            }
+          ]
+        },
+        {
+          "title": "WOOD OVEN - BRUSH THE FLOOR OF THE OVEN MAKING SURE ALL ASH AND COALS ARE PUSHED TO ONE SIDE.",
+          "title_es": "HORNO DE LEÑA - CEPILLAR EL PISO DEL HORNO Y DEJAR TODA LA CENIZA Y LAS BRASAS DE UN SOLO LADO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Inside the wood oven: floor brushed, ash and coals pushed to one side"
+            }
+          ]
+        },
+        {
+          "title": "WOOD OVEN - WIPE DOWN THE OUTSIDE. NO WET TOWEL.",
+          "title_es": "HORNO DE LEÑA - LIMPIAR POR FUERA. SIN TRAPO MOJADO."
+        },
+        {
+          "title": "WOOD OVEN - WIPE DOWN THE BACKSIDE WITH A DAMP TOWEL. ONLY THE WHITE PART.",
+          "title_es": "HORNO DE LEÑA - LIMPIAR LA PARTE DE ATRÁS CON UN TRAPO HÚMEDO. SOLO LA PARTE BLANCA."
+        },
+        {
+          "title": "WOOD OVEN - SCRUB AND WIPE THE CUBBY UNDERNEATH.",
+          "title_es": "HORNO DE LEÑA - TALLAR Y LIMPIAR EL CUBBY DE ABAJO."
+        },
+        {
+          "title": "COUNTER - SCRUB CLEAN, SQUEEGEE, AND WIPE DRY.",
+          "title_es": "COUNTER - TALLAR, PASAR EL JALADOR Y SECAR.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The grill counter scrubbed, squeegeed and dry"
+            }
+          ]
+        },
+        {
+          "title": "REFRIGERATION - CLEAN WIPE ALL FOUR DRAWER GASKETS, RAILING, AND INTERIOR FLOOR.",
+          "title_es": "REFRIGERACIÓN - LIMPIAR LOS EMPAQUES DE LOS CUATRO CAJONES, LOS RIELES Y EL PISO DE ADENTRO."
+        },
+        {
+          "title": "WIPE DOWN SHELVING WHERE PLATES ARE STORED BENEATH EXPO STATION.",
+          "title_es": "LIMPIAR LAS REPISAS DONDE SE GUARDAN LOS PLATOS DEBAJO DE LA ESTACIÓN DE EXPO."
+        },
+        {
+          "title": "FLOORS - HAVE BEEN SWEPT",
+          "title_es": "PISOS - YA SE BARRIERON"
+        },
+        {
+          "title": "TRASH - HAS BEEN TAKEN OUT USING DOLLYS AND THE BINS HAVE BEEN TAKEN TO THE DISH PIT.",
+          "title_es": "BASURA - SE SACÓ CON LOS DOLLYS Y LOS BOTES SE LLEVARON AL ÁREA DE DISH."
+        },
+        {
+          "title": "STATION PREP LIST HAS BEEN FILLED OUT BY CHECKING ALL INVENTORY IN HOUSE.",
+          "title_es": "LA LISTA DE PREP DE LA ESTACIÓN SE LLENÓ REVISANDO TODO EL INVENTARIO QUE HAY."
+        },
+        {
+          "title": "RECORD TEMP OF GRILL COOLER ON THE TEMP LOG.",
+          "title_es": "ANOTAR LA TEMPERATURA DEL COOLER DE LA PARRILLA EN EL REGISTRO DE TEMPERATURAS.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Temperature of the grill cooler"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "SANITIZER BUCKET IS FULL WITH SANITIZER LIQUID AND A CLEAN TOWEL. SANITIZING SOLUTION WILL BE REPLACED EVERY 2 HOURS OR SOONER IF NECESSARY.",
+          "title_es": "LA CUBETA DE SANITIZANTE ESTÁ LLENA CON SANITIZANTE Y UN TRAPO LIMPIO. EL SANITIZANTE SE CAMBIA CADA 2 HORAS O ANTES SI HACE FALTA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The sanitizer bucket full, with a clean towel in it"
+            }
+          ]
+        },
+        {
+          "title": "DISH MACHINE IS ON AND FUNCTIONING. HAS ENOUGH CHEMICALS TO FUNCTION AND WASH PROPERLY.",
+          "title_es": "LA MÁQUINA DE DISH ESTÁ PRENDIDA Y FUNCIONANDO. TIENE SUFICIENTES QUÍMICOS PARA FUNCIONAR Y LAVAR BIEN.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish machine on and running, and its chemical containers with product in them"
+            }
+          ]
+        },
+        {
+          "title": "3 COMPARTMENT SINK IS FILLED WITH HOT DETERGENT SOLUTION AND COOL SANITATION SOLUTION.",
+          "title_es": "EL FREGADERO DE 3 TARJAS ESTÁ LLENO CON AGUA CALIENTE CON JABÓN Y SANITIZANTE FRÍO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 3 compartment sink filled: hot detergent solution and cool sanitizer solution"
+            }
+          ]
+        },
+        {
+          "title": "LINEN - NEW LINEN BAG HAS BEEN PLACED IN THE LINEN BAG HOLDER.",
+          "title_es": "LINEN - SE PUSO UNA BOLSA NUEVA DE LINEN EN SU SOPORTE."
+        },
+        {
+          "title": "TRASH - LINERS HAVE BEEN PLACED IN ALL TRASH CANS AND A TRASH CAN HAS BEEN PLACED IN THE DISH AND PANTRY/PREP STATIONS. NO TRASH CANS ON THE HOT SIDE OF THE KITCHEN.",
+          "title_es": "BASURA - SE PUSIERON BOLSAS EN TODOS LOS BOTES Y HAY UN BOTE EN LAS ESTACIONES DE DISH Y DE PANTRY/PREP. NADA DE BOTES EN EL LADO CALIENTE DE LA COCINA.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Lined trash cans in place at the dish and pantry/prep stations"
+            }
+          ]
+        },
+        {
+          "title": "RECYCLING - BIN HAS BEEN PLACED IN THE DISH AREA. NO LINER.",
+          "title_es": "RECICLAJE - EL BOTE ESTÁ EN EL ÁREA DE DISH. SIN BOLSA."
+        },
+        {
+          "title": "WENT ON BREAK BEFORE THE 5TH HOUR",
+          "title_es": "SALÍ A MI BREAK ANTES DE LA QUINTA HORA"
+        },
+        {
+          "title": "ALL CUTTING BOARDS HAVE BEEN WASHED FROM BEING SOAKED IN BLEACH THE NIGHT PRIOR.",
+          "title_es": "SE LAVARON TODAS LAS TABLAS DE CORTAR QUE SE DEJARON REMOJANDO EN CLORO LA NOCHE ANTERIOR."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Dish",
+      "role_es": "Lavaplatos",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "ALL EQUIPMENT HAS BEEN WASHED AND PUT BACK WHERE IT BELONGS.",
+          "title_es": "TODO EL EQUIPO SE LAVÓ Y SE GUARDÓ EN SU LUGAR."
+        },
+        {
+          "title": "DISH MACHINE - MACHINE AND ALL DISH PIT SURFACES AND HAVE BEEN SCRUBBED CLEAN, SQUEEGEED AND DRIED.",
+          "title_es": "MÁQUINA DE DISH - LA MÁQUINA Y TODAS LAS SUPERFICIES DEL ÁREA DE DISH SE TALLARON, SE LES PASÓ EL JALADOR Y SE SECARON.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish machine and the dish pit surfaces scrubbed, squeegeed and dry"
+            }
+          ]
+        },
+        {
+          "title": "DISH MACHINE - HAS BEEN TURNED OFF, DRAINED OF WATER, AND THE CATCHES HAVE BEEN EMPTIED AND CLEANED.",
+          "title_es": "MÁQUINA DE DISH - ESTÁ APAGADA, SIN AGUA, Y LAS TRAMPAS SE VACIARON Y SE LIMPIARON.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish machine off, open and drained, catches emptied and clean"
+            }
+          ]
+        },
+        {
+          "title": "WIPE DOWN DRYING RACK UNDERNEATH DISH MACHINE.",
+          "title_es": "LIMPIAR EL RACK DE SECADO DEBAJO DE LA MÁQUINA DE DISH."
+        },
+        {
+          "title": "FLOOR DRAINS - DISH AREA DRAINS HAVE BEEN CLEANED AND RINSED.",
+          "title_es": "COLADERAS - LAS COLADERAS DEL ÁREA DE DISH SE LIMPIARON Y SE ENJUAGARON.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish area floor drains cleaned and rinsed, nothing left in them"
+            }
+          ]
+        },
+        {
+          "title": "PIPES - ALL DRAIN AND GAS PIPES HAVE BEEN WIPED CLEAN.",
+          "title_es": "TUBOS - SE LIMPIARON TODOS LOS TUBOS DE DRENAJE Y DE GAS."
+        },
+        {
+          "title": "WALLS - ALL WALLS HAVE BEEN SCRUBBED AND WIPED CLEAN. BEHIND DISH MACHINE, UNDER DISH MACHINE, UNDER SINKS, BEHIND SHELVES. ALL THE WALLS.",
+          "title_es": "PAREDES - SE TALLARON Y SE LIMPIARON TODAS LAS PAREDES. ATRÁS DE LA MÁQUINA DE DISH, DEBAJO DE LA MÁQUINA DE DISH, DEBAJO DE LOS FREGADEROS, ATRÁS DE LAS REPISAS. TODAS LAS PAREDES."
+        },
+        {
+          "title": "CLEAN HAND WASHING SINK IN CHEMICAL ROOM.",
+          "title_es": "LIMPIAR EL LAVAMANOS DEL CUARTO DE QUÍMICOS."
+        },
+        {
+          "title": "FLOORS - HAVE BEEN SWEPT",
+          "title_es": "PISOS - YA SE BARRIERON"
+        },
+        {
+          "title": "TRASH - TAKE ALL TRASH AND RECYCLING TO THE DUMPSTER. USE THE DOLLY TO NOT DRAG THE TRASH CANS.",
+          "title_es": "BASURA - LLEVAR TODA LA BASURA Y EL RECICLAJE AL DUMPSTER. USAR EL DOLLY PARA NO ARRASTRAR LOS BOTES."
+        },
+        {
+          "title": "TRASH - BINS HAVE BEEN EMPTIED, WASHED WITH HOT DETERGENT, RINSED, AND PLACED UPSIDE DOWN ON THE DISH AREA TO DRY OVERNIGHT.",
+          "title_es": "BASURA - LOS BOTES SE VACIARON, SE LAVARON CON AGUA CALIENTE CON JABÓN, SE ENJUAGARON Y SE DEJARON BOCA ABAJO EN EL ÁREA DE DISH PARA SECARSE EN LA NOCHE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The trash bins washed and upside down in the dish area to dry"
+            }
+          ]
+        },
+        {
+          "title": "LINEN - SOILED LINEN BAG HAS BEEN REMOVED AND TAKEN TO THE LINEN BIN OUTSIDE.",
+          "title_es": "LINEN - LA BOLSA DE LINEN SUCIO SE QUITÓ Y SE LLEVÓ AL CONTENEDOR DE LINEN DE AFUERA."
+        },
+        {
+          "title": "CHEMICALS - CHECK LEVELS AND REPLENISH AT THE END OF THE NIGHT. SIGN AND ADD \"N/A\" IF CHECKED BUT NOT NEEDED. SIGN IF REPLENISHED.",
+          "title_es": "QUÍMICOS - REVISAR LOS NIVELES Y RELLENAR AL FINAL DE LA NOCHE. FIRMAR Y PONER \"N/A\" SI SE REVISÓ Y NO HIZO FALTA. FIRMAR SI SE RELLENÓ.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What was replenished, or N/A if checked and nothing was needed"
+            }
+          ]
+        },
+        {
+          "title": "CHEMICALS - CHECK INVENTORY AND ALERT A MANAGER IF WE ARE RUNNING LOW ON ANYTHING. SIGN AND ADD \"N/A\" IF NOTHING IS NEEDED. SIGN IF SOMETHING WAS NEEDED.",
+          "title_es": "QUÍMICOS - REVISAR EL INVENTARIO Y AVISARLE A UN MANAGER SI NOS QUEDA POCO DE ALGO. FIRMAR Y PONER \"N/A\" SI NO HACE FALTA NADA. FIRMAR SI HIZO FALTA ALGO.",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "What we are running low on, or N/A if nothing is needed"
+            }
+          ]
+        },
+        {
+          "title": "ALL CUTTING BOARDS HAVE BEEN LEFT SOAKING IN BLEACH SOLUTION OVERNIGHT.",
+          "title_es": "TODAS LAS TABLAS DE CORTAR SE DEJARON REMOJANDO EN CLORO TODA LA NOCHE.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The cutting boards soaking in the bleach solution"
+            }
+          ]
+        },
+        {
+          "title": "DISH MACHINE HAS BEEN RAN IN THE DELIME CYCLE USING \"LIME AWAY\" ONCE PER WEEK.",
+          "title_es": "LA MÁQUINA DE DISH SE CORRIÓ EN EL CICLO DE DELIME CON \"LIME AWAY\", UNA VEZ POR SEMANA.",
+          "section": "THURSDAY"
+        },
+        {
+          "title": "CLEAN ICE MACHINE FILTERS ONCE A WEEK",
+          "title_es": "LIMPIAR LOS FILTROS DE LA MÁQUINA DE HIELO, UNA VEZ POR SEMANA",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The ice machine filters cleaned and back in place"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "AM lead",
+      "role_es": "Líder AM",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "EVERYONE IS IN UNIFORM, INCLUDING COAT AND APRONS",
+          "title_es": "TODOS ESTÁN EN UNIFORME, CON FILIPINA Y MANDIL",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "SET UP THE DISH PIT AND HAVE IT READY FOR WHEN THE DISHWASHER COMES IN",
+          "title_es": "ARMAR EL ÁREA DE DISH Y DEJARLA LISTA PARA CUANDO LLEGUE EL LAVAPLATOS",
+          "section": "OPENING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dish pit set up and ready for the dishwasher"
+            }
+          ]
+        },
+        {
+          "title": "RECYCLING - BIN HAS BEEN PLACED IN THE DISH AREA. NO LINER",
+          "title_es": "RECICLAJE - EL BOTE ESTÁ EN EL ÁREA DE DISH. SIN BOLSA",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "LINEN - NEW LINEN BAG HAS BEEN PLACED IN THE LINEN BAG HOLDER",
+          "title_es": "LINEN - SE PUSO UNA BOLSA NUEVA DE LINEN EN SU SOPORTE",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "TRASH - LINERS HAVE BEEN PLACED IN ALL TRASH CANS AND A TRASH CAN HAS BEEN PLACED IN THE DISH AND PANTRY/PREP STATIONS.",
+          "title_es": "BASURA - SE PUSIERON BOLSAS EN TODOS LOS BOTES Y HAY UN BOTE EN LAS ESTACIONES DE DISH Y DE PANTRY/PREP.",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "SANITIZE AND DRY ALL FOOD PREPARATION SURFACES",
+          "title_es": "SANITIZAR Y SECAR TODAS LAS SUPERFICIES DONDE SE PREPARA COMIDA",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "LOG REFRIGERATOR AND FREEZER TEMPERATURES",
+          "title_es": "ANOTAR LAS TEMPERATURAS DE LOS REFRIS Y CONGELADORES",
+          "section": "OPENING TASKS",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "Temperature of each refrigerator and freezer"
+            }
+          ]
+        },
+        {
+          "title": "SANITIZER BUCKET IS FULL WITH SANITIZER LIQUID AND A CLEAN TOWEL. SANITIZING SOLUTION WILL BE REPLACED EVERY 2 HOURS OR SOONER IF NECESSARY",
+          "title_es": "LA CUBETA DE SANITIZANTE ESTÁ LLENA CON SANITIZANTE Y UN TRAPO LIMPIO. EL SANITIZANTE SE CAMBIA CADA 2 HORAS O ANTES SI HACE FALTA",
+          "section": "OPENING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The sanitizer bucket full, with a clean towel in it"
+            }
+          ]
+        },
+        {
+          "title": "SOAK CHICKPEAS IF NEEDED.",
+          "title_es": "REMOJAR LOS GARBANZOS SI HACE FALTA.",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "EVERYONE ON BREAK AT 10AM",
+          "title_es": "TODOS A SU BREAK A LAS 10AM",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "ALL INVOICES ARE ON THE INVOICES CLIPBOARD",
+          "title_es": "TODAS LAS FACTURAS ESTÁN EN EL CLIPBOARD DE FACTURAS",
+          "section": "OPENING TASKS"
+        },
+        {
+          "title": "ALL SPICES ON THE SPICE SHELF HAVE BEEN REPLENISHED WITH THE BACKUP SPICES IN THE ICE ROOM. ANYTHING WE ARE LOW ON AS BEEN WRITTEN ON THE WHITE BOARD.",
+          "title_es": "TODAS LAS ESPECIAS DE LA REPISA SE RELLENARON CON LAS DE BACKUP DEL CUARTO DE HIELO. LO QUE NOS QUEDA POCO YA ESTÁ ANOTADO EN EL PIZARRÓN.",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The spice shelf replenished, every container full"
+            }
+          ]
+        },
+        {
+          "title": "ALL ORDERS HAVE BEEN PROPERLY STORED",
+          "title_es": "TODOS LOS PEDIDOS SE GUARDARON BIEN",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "AT 2:15 EVERYONE HAS BEGUN CLEANING TO MAKE SURE THEY ARE DONE BY 2:30.",
+          "title_es": "A LAS 2:15 TODOS EMPEZARON A LIMPIAR PARA TERMINAR A LAS 2:30.",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "MAKE SURE ALL PREP ITEMS ARE STORED PROPERLY. CHECK KITCHEN FOR ANY ITEMS LEFT OUT",
+          "title_es": "ASEGURARSE DE QUE TODO EL PREP ESTÉ BIEN GUARDADO. REVISAR LA COCINA POR SI QUEDÓ ALGO AFUERA",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "SCRUB AND SANITIZE ALL FOOD PREPARATION SURFACES",
+          "title_es": "TALLAR Y SANITIZAR TODAS LAS SUPERFICIES DONDE SE PREPARA COMIDA",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The food preparation surfaces scrubbed, sanitized and clear"
+            }
+          ]
+        },
+        {
+          "title": "SWEEP AND MOP FLOOR",
+          "title_es": "BARRER Y TRAPEAR EL PISO",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "TAKE OUT TRASH AND RECYCLING USING THE DOLLIES AND REPLACE THE LINERS",
+          "title_es": "SACAR LA BASURA Y EL RECICLAJE CON LOS DOLLIES Y PONER BOLSAS NUEVAS",
+          "section": "CLOSING TASKS"
+        },
+        {
+          "title": "2:30PM - 3 TRAYS OF DOUGH HAVE BEEN PULLED OUT OF THE WALK-IN AND PLACED ON THE BREAD STATION TO TEMPER. A LID HAS BEEN PLACED ON THE OPEN TRAY LEFT IN THE WALK IN.",
+          "title_es": "2:30PM - SE SACARON 3 CHAROLAS DE MASA DEL WALK-IN Y SE PUSIERON EN LA ESTACIÓN DE PAN PARA TEMPERAR. SE LE PUSO TAPA A LA CHAROLA ABIERTA QUE SE QUEDÓ EN EL WALK-IN.",
+          "section": "CLOSING TASKS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "3 trays of dough on the bread station to temper"
+            }
+          ]
+        },
+        {
+          "title": "CHECK OUT WITH THE MANAGER ON DUTY. COMMUNICATE ANY UNFINISHED ITEM FROM LIST",
+          "title_es": "HACER CHECK OUT CON EL MANAGER EN TURNO. AVISAR DE CUALQUIER COSA DE LA LISTA QUE NO SE TERMINÓ",
+          "section": "CLOSING TASKS"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Kitchen manager",
+      "role_es": "Gerente de cocina",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "CHECK IN WITH ALL STAFF IN HOUSE AND MAKE SURE EVERYTHING IS OK. THIS IS THE OPORTUNITY TO CATCH THINGS AS EARLY AS POSSIBLE.",
+          "title_es": "CHECAR CON TODO EL PERSONAL QUE YA LLEGÓ Y ASEGURARSE DE QUE TODO ESTÉ BIEN. ESTA ES LA OPORTUNIDAD DE DETECTAR LAS COSAS LO MÁS TEMPRANO POSIBLE."
+        },
+        {
+          "title": "CHECK AM LEAD CHECKLIST",
+          "title_es": "REVISAR EL CHECKLIST DEL LÍDER AM"
+        },
+        {
+          "title": "INPUT ALL OF THE DAY'S INVOICES INTO THE DCR",
+          "title_es": "CAPTURAR TODAS LAS FACTURAS DEL DÍA EN EL DCR"
+        },
+        {
+          "title": "REVIEW PREVIOUS DAYS TOAST FOR ANY MISSED BREAKS OR MISSED PUNCHES",
+          "title_es": "REVISAR EL TOAST DEL DÍA ANTERIOR POR BREAKS O PONCHADAS QUE FALTARON"
+        },
+        {
+          "title": "ORDERS ARE COMPLETE AND SUBMITTED",
+          "title_es": "LOS PEDIDOS ESTÁN COMPLETOS Y ENVIADOS"
+        },
+        {
+          "title": "3:30 GATHER COUNTS FOR ALL PRODUCTS USING THE SHEET AND HAD OFF THE SHEET TO THE FOH MOD",
+          "title_es": "3:30 JUNTAR LOS CONTEOS DE TODOS LOS PRODUCTOS CON LA HOJA Y ENTREGARLE LA HOJA AL MOD DE FOH",
+          "proof": [
+            {
+              "kind": "note",
+              "prompt": "The product counts from the count sheet"
+            }
+          ]
+        },
+        {
+          "title": "CHECK BREAD QUALITY",
+          "title_es": "REVISAR LA CALIDAD DEL PAN"
+        },
+        {
+          "title": "4:15 LINE CHECK TASTING ALL PRODUCT TO ENSURE QUALITY",
+          "title_es": "4:15 LINE CHECK PROBANDO TODO EL PRODUCTO PARA ASEGURAR LA CALIDAD"
+        },
+        {
+          "title": "ENSURE EXPO IS SET UP WITH NECESSARY TOOLS",
+          "title_es": "ASEGURARSE DE QUE EXPO ESTÉ ARMADO CON LAS HERRAMIENTAS NECESARIAS",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Expo set up with its tools in place"
+            }
+          ]
+        },
+        {
+          "title": "ALL COOKS TOOK THEIR BREAKS BEFORE THE 5TH HOUR",
+          "title_es": "TODOS LOS COCINEROS TOMARON SU BREAK ANTES DE LA QUINTA HORA"
+        },
+        {
+          "title": "REVIEW TEMP LOGS",
+          "title_es": "REVISAR LOS REGISTROS DE TEMPERATURA",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Today's temp logs, every line filled in"
+            }
+          ]
+        },
+        {
+          "title": "PREP LIST IS FILLED OUT AND WRITTEN ON THE WHITE BOARD",
+          "title_es": "LA LISTA DE PREP ESTÁ LLENA Y ESCRITA EN EL PIZARRÓN",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The white board with the prep list written on it"
+            }
+          ]
+        },
+        {
+          "title": "ENTER DAILY NOTES INTO THE MANAGER LOG",
+          "title_es": "METER LAS NOTAS DEL DÍA EN EL LOG DEL MANAGER"
+        },
+        {
+          "title": "UPDATED ANY NECESSARY ORDER GUIDES. PRINTED THEM AND REPLACED THE OLD ONES IN THE ORDER BINDER.",
+          "title_es": "ACTUALICÉ LAS GUÍAS DE PEDIDO QUE HACÍA FALTA. LAS IMPRIMÍ Y CAMBIÉ LAS VIEJAS EN LA CARPETA DE PEDIDOS.",
+          "section": "SUNDAY"
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Kitchen flip",
+      "role_es": "Cambio de cocina",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "PREP TEAM FINISHES ALL PREP TASKS AND CLEANS STATIONS AT 2PM",
+          "title_es": "EL EQUIPO DE PREP TERMINA TODO EL PREP Y LIMPIA LAS ESTACIONES A LAS 2PM"
+        },
+        {
+          "title": "ALL COUNTERS AND SURFACES WIPED DOWN WITH A SANITZED RAG, COUNTERTOPS, KDS SCREENS, PREP TABLES, WALLS, AND EQUIPMENT.",
+          "title_es": "TODOS LOS COUNTERS Y SUPERFICIES LIMPIADOS CON UN TRAPO CON SANITIZANTE: COUNTERS, PANTALLAS DEL KDS, MESAS DE PREP, PAREDES Y EQUIPO.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Counters, prep tables and KDS screens wiped down and clear"
+            }
+          ]
+        },
+        {
+          "title": "ORGANIZE DRY GOODS AREA, AND CONSOLIDATE ANY BOXES/CONTAINERS.",
+          "title_es": "ORGANIZAR EL ÁREA DE SECOS Y CONSOLIDAR CAJAS Y CONTENEDORES.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The dry goods area organized, boxes and containers consolidated"
+            }
+          ]
+        },
+        {
+          "title": "SWEEP ALL FLOORS, INCLUDING WALK IN.",
+          "title_es": "BARRER TODOS LOS PISOS, INCLUYENDO EL WALK-IN."
+        },
+        {
+          "title": "MAKE SURE ALL PRODUCT IS OFF THE FLOOR AND NO PREP IS LEFT OUT.",
+          "title_es": "ASEGURARSE DE QUE NO HAYA PRODUCTO EN EL PISO NI PREP AFUERA."
+        },
+        {
+          "title": "MAKE SURE DISHAWASHER REFILLS 3 COMPARTMENT SINK AND HAS NEW WATER ON BOTH SIDES.",
+          "title_es": "ASEGURARSE DE QUE EL LAVAPLATOS VUELVA A LLENAR EL FREGADERO DE 3 TARJAS Y TENGA AGUA NUEVA EN LOS DOS LADOS.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The 3 compartment sink refilled, new water on both sides"
+            }
+          ]
+        },
+        {
+          "title": "TAKE OUT ALL TRASH AND PUT NEW TRASH LINERS IN.",
+          "title_es": "SACAR TODA LA BASURA Y PONER BOLSAS NUEVAS."
+        },
+        {
+          "title": "ALL HAND SINKS WIPED DOWN AND POLISHED WITH STAINLESS STEEL SHINE.",
+          "title_es": "TODOS LOS LAVAMANOS LIMPIOS Y PULIDOS CON ABRILLANTADOR DE ACERO INOXIDABLE.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A hand sink wiped down and polished"
+            }
+          ]
+        },
+        {
+          "title": "CHECKOUT WITH SOUS CHEF, OR KITCHEN LEAD.",
+          "title_es": "HACER CHECK OUT CON EL SOUS CHEF O EL LÍDER DE COCINA."
+        }
+      ]
+    },
+    {
+      "house": "HOH",
+      "role": "Weekly deep clean",
+      "role_es": "Limpieza profunda semanal",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "DEEP CLEAN SALAMANDER, CLEAN ALL SURFACES INSIDE, ONTOP, AND UNDERNEATH.",
+          "title_es": "LIMPIEZA PROFUNDA DE LA SALAMANDRA, LIMPIAR TODAS LAS SUPERFICIES POR DENTRO, POR ARRIBA Y POR ABAJO.",
+          "section": "MONDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The salamander clean inside, on top and underneath"
+            }
+          ]
+        },
+        {
+          "title": "DEEP CLEAN ALL SPEEDRACKS. ALL SURFACES, AND WHEELS WIPED CLEAN. WIPE DOWN ALL SHELVES FOR PLATE STORAGE.",
+          "title_es": "LIMPIEZA PROFUNDA DE TODOS LOS SPEED RACKS. TODAS LAS SUPERFICIES Y LAS RUEDAS LIMPIAS. LIMPIAR TODAS LAS REPISAS DONDE SE GUARDAN LOS PLATOS.",
+          "section": "TUESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The speed racks wiped clean, wheels included, and the plate storage shelves wiped down"
+            }
+          ]
+        },
+        {
+          "title": "DEEP CLEAN WALK IN, USE BLEACH AND SCRUB UNDERNEATH SHELVES. LIFT OFF ANY SHELVING THAT IS DIRTY AND CLEAN THROUGH DISH. WIPE DOWN WALLS IN WALK IN.",
+          "title_es": "LIMPIEZA PROFUNDA DEL WALK-IN, USAR CLORO Y TALLAR DEBAJO DE LAS REPISAS. QUITAR CUALQUIER REPISA QUE ESTÉ SUCIA Y PASARLA POR DISH. LIMPIAR LAS PAREDES DEL WALK-IN.",
+          "section": "WEDNESDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The walk-in: scrubbed underneath the shelves, shelving and walls clean"
+            }
+          ]
+        },
+        {
+          "title": "REORGANIZE DRY STORAGE AREA. RESET SHEET TRAYS ON SHELVES. WIPE DOWN SHELVING AND MOP UNDERNEATH SHELVES WITH BLEACH. FLIP STORAGE CONTAINERS.",
+          "title_es": "REORGANIZAR EL ÁREA DE ALMACÉN SECO. REACOMODAR LAS CHAROLAS EN LAS REPISAS. LIMPIAR LAS REPISAS Y TRAPEAR DEBAJO CON CLORO. CAMBIAR LOS CONTENEDORES DE ALMACENAJE.",
+          "section": "THURSDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Dry storage reorganized: sheet trays reset, shelving wiped down, mopped underneath"
+            }
+          ]
+        },
+        {
+          "title": "CLEAN INTERIOR AND EXTERIOR OF ALL DOORS IN KITCHEN. WIPE DOWN ALL SHELVES FOR PLATE STORAGE.",
+          "title_es": "LIMPIAR TODAS LAS PUERTAS DE LA COCINA POR DENTRO Y POR FUERA. LIMPIAR TODAS LAS REPISAS DONDE SE GUARDAN LOS PLATOS.",
+          "section": "FRIDAY",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "A kitchen door clean inside and out, and the plate storage shelves wiped down"
+            }
+          ]
         }
       ]
     }
