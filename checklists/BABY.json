@@ -5155,6 +5155,169 @@
     },
     {
       "house": "FOH",
+      "role": "Somm",
+      "role_es": "Sommelier",
+      "phase": "open",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "Clock in on tablet"
+        },
+        {
+          "title": "Keep tablet on you at all times"
+        },
+        {
+          "title": "Check order sheet to confirm order",
+          "detail": [
+            "Put away any orders",
+            "On computer confirm in",
+            "Green for arrive, Yellow for Ordered",
+            "Orange for change of order vintage price, and bottling",
+            "Find invoice and put it in invoice dock. If no invoice, leave note on order guide"
+          ]
+        },
+        {
+          "title": "Restock BTG wines behind bar",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "BTG wines stocked behind the bar"
+            }
+          ]
+        },
+        {
+          "title": "If temperatures are high, place BTG red wines in ice chest with small bottom layer of big ice."
+        },
+        {
+          "title": "Polish as many glasses as possible to start service and continue throughout the evening"
+        },
+        {
+          "title": "Organize glasses & Cover with Linen. Check back storage for glassware levels.",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Glasses organized and covered with linen"
+            }
+          ]
+        },
+        {
+          "title": "Post 1 BTB wine in Group Chat, discuss again at Pre-Shift"
+        },
+        {
+          "title": "Pre-Shift at Fallen at 4:45"
+        },
+        {
+          "title": "Pre-Shift at NH 4PM"
+        },
+        {
+          "title": "Do inventories at least once a week on shelves upstairs and down to ensure all wine is stocked and in its place. Make note of inventory days in Somm Notes.",
+          "section": "WEEKLY"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Somm",
+      "role_es": "Sommelier",
+      "phase": "mid",
+      "room": "Night Hawk",
+      "phase_label": "IN SERVICE",
+      "items": [
+        {
+          "title": "Be stocking wine all throughout the shift (once 2 bottles are out restock to make sure wine is cold).",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Move back and forth between the bar and the floor",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Always communicate to the bar when leaving on break",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Help as much as possible with cocktail expo (when time allows).",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Check in with Fallen at least once every hour",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "When time allows, clear tables and assist the bar as much as possible.",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Be polishing through the entire night",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Make sure glassware is organized, in order and in presentable order",
+          "section": "FULL ATTENTION NO LATER THAN 2PM",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Glassware organized and presentable"
+            }
+          ]
+        },
+        {
+          "title": "Work with bar backs and continue to train as much as possible",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Use larger glasses for bottle service white or red",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        },
+        {
+          "title": "Use classic glasses for sparkling wine",
+          "section": "FULL ATTENTION NO LATER THAN 2PM"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Somm",
+      "role_es": "Sommelier",
+      "phase": "close",
+      "room": "Night Hawk",
+      "items": [
+        {
+          "title": "Check with Front Desk team about room service bottles for next day. Pull bottles for them when applicable.",
+          "section": "STAY UNTIL BEVERAGE LAST CALL"
+        },
+        {
+          "title": "Restock all wines taken from service",
+          "section": "STAY UNTIL BEVERAGE LAST CALL",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Wines restocked after service"
+            }
+          ]
+        },
+        {
+          "title": "Restock any wines to ensure office is clean.",
+          "section": "STAY UNTIL BEVERAGE LAST CALL"
+        },
+        {
+          "title": "Write Shift notes with accurate counts, summary of the night, and trainings done during the shift and training plans for the future.",
+          "section": "STAY UNTIL BEVERAGE LAST CALL"
+        },
+        {
+          "title": "Organize the wine shelves in the office always label outward. Remove any extra boxes, unpack as many wines as possible always.",
+          "section": "STAY UNTIL BEVERAGE LAST CALL",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Office wine shelves, labels facing out, no extra boxes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "house": "FOH",
       "role": "Support",
       "role_es": "Apoyo",
       "phase": "open",
@@ -6887,120 +7050,153 @@
       "room": "Fallen Empire",
       "items": [
         {
-          "title": "Bar Consumables",
-          "section": "FE Open: Consumables & Supplies",
+          "title": "Stock Bottles in Well",
           "detail": [
-            "Sanitizer bottle filled.",
-            "White and green towels stocked.",
-            "Missing glassware replenished.",
-            "Coasters stocked."
-          ]
-        },
-        {
-          "title": "Dish Station",
-          "section": "FE Open: Dish Station",
-          "detail": [
-            "Dishwasher started."
-          ]
-        },
-        {
-          "title": "Dish Machine - Enter Chlorine PPM Number",
-          "section": "FE Open: Dish Station",
-          "detail": [
-            "Take a photo of the wet strip against the color chart."
-          ],
-          "proof": [
-            {
-              "kind": "note",
-              "prompt": "The number"
-            }
-          ]
-        },
-        {
-          "title": "Take a photo of the machine the above strip came from.",
-          "section": "FE Open: Dish Station",
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Take a photo of the machine the above strip came from"
-            }
-          ]
-        },
-        {
-          "title": "Inventory & Stock",
-          "section": "FE Open: Inventory & Stock",
-          "detail": [
-            "Wine fully stocked, bottles pulled from storage as needed.",
-            "Batch bottles filled and arranged in order in the well.",
-            "Wine and batch bottles iced down, wine display neatly arranged.",
-            "Ice spheres stocked (3 bags minimum)."
+            "3 Blanc",
+            "3 Rose",
+            "3 Champagne",
+            "1 Cristal",
+            "1 Krug",
+            "1 of Each Billecart",
+            "1 Each Flight Champagne"
           ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Stocked bar showing wine display, batch bottles in well, ice spheres"
+              "prompt": "The well stocked with every bottle on the list"
             }
           ]
         },
         {
-          "title": "Pre-Service Polish",
-          "section": "FE Open: Pre-Service Polish",
+          "title": "Stock back bottles in the cooler",
           "detail": [
-            "Final sweep right before doors open.",
-            "All personal items removed from the room.",
-            "Floor spot-cleaned.",
-            "Tables wiped, chairs in proper position.",
-            "Marble wiped, front of bar presentable",
-            "Reflective surfaces wiped of smudges, extra attention to doors and contact points.",
-            "Candles on tables replaced and lit."
+            "3 Blanc",
+            "3 Rose",
+            "3 Champagne",
+            "1 Cristal",
+            "1 Krug",
+            "1 of Each Billecart"
+          ]
+        },
+        {
+          "title": "Stock Well and Ensure back up bottles are topped"
+        },
+        {
+          "title": "Stock at least 3 bags of Ice Spheres"
+        },
+        {
+          "title": "Re-Carbonate TBLH before service"
+        },
+        {
+          "title": "Place Garnishes",
+          "detail": [
+            "Rose Petals",
+            "Purple Micro Flowers",
+            "Lemons",
+            "Limes",
+            "Chai Tea",
+            "Orange bitter",
+            "Olive oil"
           ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Bar and dining room pre-service, the \"ready\" state"
+              "prompt": "All garnishes placed and ready"
             }
           ]
         },
         {
-          "title": "Red Speakers",
-          "section": "FE Open: Pre-Service Polish",
-          "detail": [
-            "Ensure they are wiped down and dust free"
+          "title": "Polish all Silverware & Plates"
+        },
+        {
+          "title": "Set fresh Candles on each table and 3 on the mantle",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Fresh candles on the tables and 3 on the mantle"
+            }
           ]
         },
         {
-          "title": "Ceiling AC Vents Above Speakers Area",
-          "section": "FE Open: Pre-Service Polish",
+          "title": "Ice the well",
           "detail": [
-            "Ensure it is wiped down and dust/lent free"
+            "For Wine: 2 buckets small ice/ 2 buckets big ice",
+            "1 bucket small ice for batched bottles"
+          ],
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "The well iced, wine and batched bottles in"
+            }
           ]
         },
         {
-          "title": "Bar Produce & Garnish",
-          "section": "FE Open: Produce & Garnish",
+          "title": "Ice the Dummy Cristal bottles in the center."
+        },
+        {
+          "title": "Stock Mocktails for the space",
           "detail": [
-            "Garnish FIFO, anything beyond use disposed.",
-            "Citrus pulled from display, citrus display replenished, anything beyond use thrown out."
+            "3 Zilich",
+            "6 Aplos"
           ]
         },
         {
-          "title": "Service Setups",
-          "section": "FE Open: Service Setups",
-          "detail": [
-            "Silver Plates polished for service"
-          ]
+          "title": "Ensure Dishwasher is set and ready with chemicals"
         },
         {
-          "title": "Pink Linens are folded until basket is full",
-          "section": "FE Open: Service Setups"
+          "title": "Ensure Sanitizer is refilled"
         },
         {
-          "title": "Silverware is polished and organised in caddy",
-          "section": "FE Open: Service Setups"
+          "title": "Grab 2 bus bins"
         },
         {
-          "title": "Chopsticks are stocked",
-          "section": "FE Open: Service Setups"
+          "title": "Grab Green micro fibers for service"
+        },
+        {
+          "title": "Ensure chopsticks are stocked"
+        },
+        {
+          "title": "Wipe tables with sanitizer and then glass cleaner."
+        },
+        {
+          "title": "Wipe all glass surfaces with glass cleaner."
+        },
+        {
+          "title": "Set up dump bucket in the sink."
+        },
+        {
+          "title": "Grab Opentable ipad and Toast Handheld"
+        },
+        {
+          "title": "Stock extra receipt paper"
+        },
+        {
+          "title": "Stock Fallen Empire coasters"
+        },
+        {
+          "title": "Dust the top of speakers"
+        }
+      ]
+    },
+    {
+      "house": "FOH",
+      "role": "Main",
+      "role_es": "Principal",
+      "phase": "mid",
+      "room": "Fallen Empire",
+      "phase_label": "FIRST CUT",
+      "items": [
+        {
+          "title": "Stock back up waters, beers & N/As"
+        },
+        {
+          "title": "Roll 100 Linens"
+        },
+        {
+          "title": "Polish all Silverware & Plates"
+        },
+        {
+          "title": "Get dish caught up on any dirty glassware"
         }
       ]
     },
@@ -7012,118 +7208,46 @@
       "room": "Fallen Empire",
       "items": [
         {
-          "title": "Candle Breakdown",
-          "section": "FE Close: Candle Breakdown",
-          "detail": [
-            "All candles blown out.",
-            "Candles near their end removed."
-          ]
+          "title": "Burn ice"
         },
         {
-          "title": "High Five & Clock Out",
-          "section": "FE Close: Clock Out",
-          "detail": [
-            "High five with the team.",
-            "Clocked out."
-          ]
+          "title": "Coravin seal premium bottles of wines"
         },
         {
-          "title": "Close-Out Report Cash",
-          "section": "FE Close: Close-Out Report",
-          "detail": [
-            "Close-out report printed.",
-            "Cash combined with report.",
-            "Cash sales and cash tips annotated on report.",
-            "Report and cash handed to closing manager."
-          ],
+          "title": "Wrap or dump garnishes"
+        },
+        {
+          "title": "Polish all glassware"
+        },
+        {
+          "title": "Clean and scrubbing bubbles the prep kitchen",
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Close-out report with cash combined and annotations visible (audit zone)"
+              "prompt": "The prep kitchen clean and scrubbed"
             }
           ]
         },
         {
-          "title": "Floor & Dining Spot Clean",
-          "section": "FE Close: Floor & Dining",
-          "detail": [
-            "Tables wiped including the base.",
-            "Wipe and dust all of the speakers.",
-            "Bar, prep, and dining area spot-swept (no full mop required).",
-            "Sticky spots on all floors wiped clean.",
-            "Drains checked for debris and cleaned.",
-            "Dump buckets dumped and cleaned.",
-            "Floors checked and dried at the source.",
-            "White bar towels pulled and swapped."
-          ]
+          "title": "Take out trashes"
         },
         {
-          "title": "Glassware & Dish Pit Breakdown",
-          "section": "FE Close: Glassware & Pit",
-          "detail": [
-            "All glassware cleaned, polished, and restocked.",
-            "Glassware rack cleaned as needed.",
-            "All buss tubs of dishes taken to dish pit in kitchen.",
-            "Dishwasher shut down, grate cleaned."
-          ]
-        },
-        {
-          "title": "Bar Production Breakdown",
-          "section": "FE Close: Production Breakdown",
-          "detail": [
-            "Batch bottles wiped, stowed in fridge.",
-            "Dashers and droppers wiped.",
-            "Spent fruit removed, consolidated with spent fruit in prep.",
-            "Garnish cups wiped, wrapped, stored.",
-            "Anything beyond use disposed.",
-            "All wine removed from ice tub, ice burned.",
-            "Ice tub wiped clear of debris, clean, and dry lose."
-          ],
+          "title": "Sanitize and polish the tables including the bases",
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Bar Production Breakdown"
+              "prompt": "Tables polished, bases included"
             }
           ]
         },
         {
-          "title": "Shellfish",
-          "section": "FE Close: Production Breakdown",
-          "detail": [
-            "One kind per container only. Clams with clams, oysters with oysters, never mixed, and that includes the ones used for display. The tag that came with the bag stays in that container until the last one is gone, then it goes in the binder, not the trash. Tags are kept ninety days."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "The containers side by side with a tag showing on each"
-            }
-          ]
+          "title": "Polish all walls and remove finger prints"
         },
         {
-          "title": "All Surfaces, Marble, Sink, & Prep Finish",
-          "section": "FE Close: Surfaces, Marble, & Sink",
-          "detail": [
-            "Every surface in FE wiped (FE standard, no exceptions).",
-            "All marble cleaned including undersides, no sticky spots.",
-            "Sink cleaned and dried.",
-            "Prep area clean and clear of clutter, any surface dirtied has been cleaned.",
-            "Refrigerators detailed, all inside and outside surfaces, door ledges, gaskets, wheels, grates, etc.",
-            "All product in refrigerators labeled [discard any past shelf-life]"
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Finished space showing wiped surfaces, marble, and sink"
-            }
-          ]
+          "title": "Write notes for Groupchat and prep list"
         },
         {
-          "title": "Waste & Linen",
-          "section": "FE Close: Waste & Linen",
-          "detail": [
-            "Trash taken out, trash bags replaced upon return.",
-            "Linen taken out, linen bag replaced."
-          ]
+          "title": "Write Guest notes on Chits"
         }
       ]
     },
