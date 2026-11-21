@@ -3025,7 +3025,8 @@
             "SUNDAY"
           ]
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
@@ -3112,7 +3113,8 @@
           "title": "I CLEANED IN AND AROUND THE WINE ICE BIN AND CLEANED THE BLACKSPLASH BEHIND IT",
           "section": "THIRD TUESDAY"
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
@@ -6521,7 +6523,8 @@
           "title": "CHECK OUT WITH TEAM AND MOD",
           "section": "OPENER UPON DEPARTURE"
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
@@ -6686,14 +6689,15 @@
           "title": "Burn ice and ensure stainless steel around ice is clean, dry and not sticky. USE RED SCRUBBER",
           "section": "THIRD WELL"
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
-      "role": "Service (well)",
-      "role_es": "Servicio (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Service well",
       "items": [
         {
           "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
@@ -6773,14 +6777,15 @@
             }
           ]
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
-      "role": "Guest (well)",
-      "role_es": "Invitados (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Guest well",
       "items": [
         {
           "title": "Break down well from top to bottom. Leaving them clean, dry and not sticky. Pay attention to underside of well and all stainless steel surfaces. USE RED SCRUBBER",
@@ -6864,14 +6869,15 @@
           "title": "Detail bottles. Restock backup bottles",
           "section": "THIRD WELL"
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
-      "role": "Support (well)",
-      "role_es": "Apoyo (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Support well",
       "items": [
         {
           "title": "Clean, polish, and restock glassware",
@@ -6948,7 +6954,8 @@
             }
           ]
         }
-      ]
+      ],
+      "menu_group": "Seneca Bar"
     },
     {
       "house": "FOH",
