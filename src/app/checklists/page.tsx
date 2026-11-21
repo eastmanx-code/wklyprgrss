@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { MissedList } from "@/components/checklists/MissedList";
 import { Sparkline } from "@/components/checklists/Sparkline";
@@ -36,9 +37,9 @@ export default async function ChecklistsPage() {
     redirect("/");
   }
 
-  const [name, report, chOpen] = await Promise.all([
+  // The report is not in this list on purpose. See the Suspense below.
+  const [name, chOpen] = await Promise.all([
     closeVenueName(venue),
-    venueRollup(venue),
     // CH Tasks are the MOD's, so this is for managers only. It rides at the very
     // top of the screen because an owner's walk-around flag has to be the first
     // thing seen, not a tap down inside the checklists.
@@ -87,27 +88,87 @@ export default async function ChecklistsPage() {
     </Link>
   ) : null;
 
-  // Nothing signed off yet. One honest line and the way in, not a page of
-  // confident zeroes.
+  // The way in comes first and waits on nothing. The thirty-night report
+  // streams in under it when it is ready.
+  //
+  // It used to be the other way round: the whole page, button included, waited
+  // for the report. On a slow night that was a blank wait with no sign the tap
+  // had landed, so people tapped again, and every tap started another report.
+  // On 2026-11-16 fourteen taps in ten seconds took the database away from
+  // every venue for six minutes. Tonight's work never depends on last month's
+  // arithmetic.
+  return (
+    <main className="close-flow mx-auto max-w-2xl pb-6">
+      <BackLink href={backHref}>{backLabel}</BackLink>
+
+      {/* CH Tasks on top of everything for a manager, then the one job: do the
+          list or see who didn't. */}
+      {ChBanner}
+      <div className="mt-4">{DoButton}</div>
+
+      <Suspense fallback={<ReportNote name={name} state="loading" />}>
+        <Report venue={venue} name={name} />
+      </Suspense>
+    </main>
+  );
+}
+
+/** One quiet panel where the report goes while it loads, or when it cannot. */
+function ReportNote({
+  name,
+  state,
+}: {
+  name: string | null;
+  state: "loading" | "down";
+}) {
+  return (
+    <section className="panel mt-4">
+      <p className="label">
+        {name ? `${name} · ` : ""}
+        <T en="last 30 nights" es="últimas 30 noches" />
+      </p>
+      <p className="note text-muted mt-3 leading-relaxed">
+        {state === "loading" ? (
+          <T en="Loading the report." es="Cargando el informe." />
+        ) : (
+          <T
+            en="The report did not load. Your lists are not affected. Use the button above."
+            es="El informe no cargó. Tus listas no se ven afectadas. Usa el botón de arriba."
+          />
+        )}
+      </p>
+    </section>
+  );
+}
+
+/**
+ * The thirty-night report, on its own. A failure here is one line in a panel,
+ * not a broken page: the button above it has already been sent.
+ */
+async function Report({ venue, name }: { venue: string; name: string | null }) {
+  let report: Awaited<ReturnType<typeof venueRollup>>;
+  try {
+    report = await venueRollup(venue);
+  } catch (error) {
+    console.error("store report failed", error);
+    return <ReportNote name={name} state="down" />;
+  }
+
+  // Nothing signed off yet. One honest line, not a page of confident zeroes.
   if (!report) {
     return (
-      <main className="close-flow mx-auto max-w-2xl pb-6">
-        <BackLink href={backHref}>{backLabel}</BackLink>
-        {ChBanner}
-        <div className="mt-4">{DoButton}</div>
-        <section className="panel mt-4">
-          <p className="label">{name}</p>
-          <h1 className="text-metric mt-2 font-medium">
-            <T en="Nothing recorded yet" es="Todavía nada registrado" />
-          </h1>
-          <p className="note text-muted mt-3 leading-relaxed">
-            <T
-              en="The report starts the night somebody signs a list."
-              es="El informe empieza la noche que alguien firma una lista."
-            />
-          </p>
-        </section>
-      </main>
+      <section className="panel mt-4">
+        <p className="label">{name}</p>
+        <h1 className="text-metric mt-2 font-medium">
+          <T en="Nothing recorded yet" es="Todavía nada registrado" />
+        </h1>
+        <p className="note text-muted mt-3 leading-relaxed">
+          <T
+            en="The report starts the night somebody signs a list."
+            es="El informe empieza la noche que alguien firma una lista."
+          />
+        </p>
+      </section>
     );
   }
 
@@ -145,14 +206,7 @@ export default async function ChecklistsPage() {
     neverOpened.length + neverSigned.length + itemsLeft.length;
 
   return (
-    <main className="close-flow mx-auto max-w-2xl pb-6">
-      <BackLink href={backHref}>{backLabel}</BackLink>
-
-      {/* CH Tasks on top of everything for a manager, then the one job: do the
-          list or see who didn't. */}
-      {ChBanner}
-      <div className="mt-4">{DoButton}</div>
-
+    <>
       {/* The standing: the number a leader opens with, the count under it, and
           the month as one line. */}
       <section className="panel mt-4">
@@ -404,6 +458,6 @@ export default async function ChecklistsPage() {
           )}
         </div>
       </section>
-    </main>
+    </>
   );
 }

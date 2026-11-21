@@ -6402,7 +6402,7 @@
       "role": "Bar (well)",
       "role_es": "Barra (pozo)",
       "phase": "open",
-      "room": "Seneca",
+      "room": "Bar",
       "menu_group": "Seneca Bar",
       "items": [
         {
@@ -6527,7 +6527,7 @@
       "role": "Bar (well)",
       "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Bar",
       "menu_group": "Seneca Bar",
       "items": [
         {
@@ -6690,10 +6690,10 @@
     },
     {
       "house": "FOH",
-      "role": "Service (well)",
-      "role_es": "Servicio (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Service well",
       "menu_group": "Seneca Bar",
       "items": [
         {
@@ -6778,10 +6778,10 @@
     },
     {
       "house": "FOH",
-      "role": "Guest (well)",
-      "role_es": "Invitados (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Guest well",
       "menu_group": "Seneca Bar",
       "items": [
         {
@@ -6870,10 +6870,10 @@
     },
     {
       "house": "FOH",
-      "role": "Support (well)",
-      "role_es": "Apoyo (pozo)",
+      "role": "Bar (well)",
+      "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Support well",
       "menu_group": "Seneca Bar",
       "items": [
         {

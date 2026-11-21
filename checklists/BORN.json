@@ -628,6 +628,10 @@
           "title_es": "APAGUÉ TODOS LOS CALENTADORES."
         },
         {
+          "title": "I WIPED DOWN THE UPSTAIRS CHAIRS AND APPLIED LEATHER FINISH TO THE CHAIRS DUE ON THE ROTATION.",
+          "title_es": "LIMPIÉ LAS SILLAS DE ARRIBA Y APLIQUÉ EL ACABADO PARA PIEL A LAS SILLAS QUE TOCAN EN LA ROTACIÓN."
+        },
+        {
           "title": "I LAID OUT ALL THE TARPS SO THE SA CAN TUCK IN THE BACKS.",
           "title_es": "EXTENDÍ TODAS LAS LONAS PARA QUE EL SA META LAS ORILLAS."
         },
@@ -638,6 +642,10 @@
         {
           "title": "I PUT THE BROWN TARP ON THE CREDENZA.",
           "title_es": "PUSE LA LONA CAFÉ SOBRE LA CREDENZA."
+        },
+        {
+          "title": "I CLEANED OUT THE GREY POCKETS SO THEY ARE FRESH FOR THE NEXT DAY.",
+          "title_es": "VACIÉ Y LIMPIÉ LAS BOLSAS GRISES PARA QUE ESTÉN LISTAS PARA MAÑANA."
         },
         {
           "title": "I RETURNED THE HANDHELD TO THE OFFICE AND PLUGGED IT IN.",
@@ -760,6 +768,11 @@
           "section": "CLOSER",
           "title": "I MADE SURE THE CREDENZA AND THE SPACE UNDER THE STAIRS ARE STOCKED WITH NAPKINS, AND CHECKED THE BAR TEAM IS RESTOCKED TOO.",
           "title_es": "ME ASEGURÉ DE QUE LA CREDENZA Y EL ESPACIO BAJO LAS ESCALERAS TUVIERAN SERVILLETAS, Y CONFIRMÉ QUE EL EQUIPO DE BARRA TAMBIÉN ESTUVIERA SURTIDO."
+        },
+        {
+          "title": "I CLEANED OUT THE GREY POCKETS SO THEY ARE FRESH FOR THE NEXT DAY.",
+          "title_es": "VACIÉ Y LIMPIÉ LAS BOLSAS GRISES PARA QUE ESTÉN LISTAS PARA MAÑANA.",
+          "section": "CLOSER"
         },
         {
           "section": "CLOSER",
@@ -989,6 +1002,11 @@
           "title": "I PREPARED 4 SANITIZED TOWELS, ROLLED, FOR EACH STATION, WITH A CRUMBING PLATE.",
           "title_es": "PREPARÉ 4 TOALLAS SANITIZED, ENROLLADAS, PARA CADA ESTACIÓN, CON UN PLATO PARA MIGAJAS.",
           "section": null
+        },
+        {
+          "title": "I HIGH DUSTED THE TOPS OF THE LANTERNS AND LIGHT FIXTURES.",
+          "title_es": "SACUDÍ LA PARTE DE ARRIBA DE LOS FAROLES Y LAS LÁMPARAS.",
+          "section": "WEEKLY"
         }
       ]
     },
@@ -1097,6 +1115,11 @@
           "section": "CLOSER · DINING ROOM",
           "title": "I COLLECTED ALL THE LIDS AND PLACED THEM ON THE DECANTERS OVERNIGHT.",
           "title_es": "JUNTÉ TODAS LAS TAPAS Y LAS PUSE EN LAS JARRAS TODA LA NOCHE."
+        },
+        {
+          "title": "I TIDIED THE SPEAKER WIRE AROUND AND UNDER THE BOOTHS AND WIPED DOWN THE POST STAND.",
+          "title_es": "ACOMODÉ EL CABLE DE LAS BOCINAS ALREDEDOR Y DEBAJO DE LOS BOOTHS Y LIMPIÉ LA BASE DEL POSTE.",
+          "section": "CLOSER · DINING ROOM"
         },
         {
           "section": "FINAL WALKTHROUGH",
@@ -1211,6 +1234,11 @@
           "section": "CLOSER · DINING ROOM",
           "title": "I REMOVED ALL THE BLACK LINEN LINERS FROM THE WATER STATION.",
           "title_es": "QUITÉ TODOS LOS LINERS DE LINEN NEGRO DE LA ESTACIÓN DE AGUA."
+        },
+        {
+          "title": "I TIDIED THE SPEAKER WIRE AROUND AND UNDER THE BOOTHS AND WIPED DOWN THE POST STAND.",
+          "title_es": "ACOMODÉ EL CABLE DE LAS BOCINAS ALREDEDOR Y DEBAJO DE LOS BOOTHS Y LIMPIÉ LA BASE DEL POSTE.",
+          "section": "CLOSER · DINING ROOM"
         },
         {
           "section": "FINAL WALKTHROUGH",
@@ -1530,6 +1558,11 @@
           "title_es": "LIMPIÉ LAS MACETAS POR FUERA Y ACOMODÉ LA PARTE MÁS LLENA DE CADA PLANTA HACIA AFUERA."
         },
         {
+          "title": "I SPOT SWEPT THE SIDE PATIOS AND CLEARED THE PLANTERS OF ANY LEAVES AND TRASH.",
+          "title_es": "BARRÍ POR PARTES LOS PATIOS DE LOS LADOS Y SAQUÉ LAS HOJAS Y LA BASURA DE LAS MACETAS.",
+          "section": "OUTSIDE · CLEAN"
+        },
+        {
           "section": "OUTSIDE · CLEAN",
           "title": "I WINDEXED AND CHECKED THE FRONT GLASS WINDOWS AND THE SLIDING GLASS DOOR BETWEEN TABLES 35/36.",
           "title_es": "LIMPIÉ CON WINDEX Y REVISÉ LAS VENTANAS DEL FRENTE Y LA PUERTA CORREDIZA ENTRE LAS MESAS 35/36."
@@ -1797,6 +1830,17 @@
         {
           "title": "I COMPLETED ANY SPECIAL CLEANING PROJECTS ASSIGNED BY LEADERSHIP.",
           "title_es": "COMPLETÉ LOS PROYECTOS DE LIMPIEZA ESPECIALES QUE ME ASIGNÓ EL LIDERAZGO."
+        },
+        {
+          "title": "I MOVED THE BAR CARTS OUT OF DIRECT SUNLIGHT FOR THE DAY.",
+          "title_es": "MOVÍ LOS CARRITOS DE BAR PARA QUE NO LES DÉ EL SOL DIRECTO DURANTE EL DÍA."
+        },
+        {
+          "title": "I CLEANED THE CURTAIN UNDER THE STAIRS.",
+          "title_es": "LIMPIÉ LA CORTINA DEBAJO DE LAS ESCALERAS.",
+          "days": [
+            "WEDNESDAY"
+          ]
         },
         {
           "title": "I SIGNED OFF WITH THE OPENING MANAGER.",
@@ -2109,6 +2153,10 @@
         {
           "title": "I TOOK THE TRASH TO THE DUMPSTER AND REPLACED THE LINER.",
           "title_es": "LLEVÉ LA BASURA AL DUMPSTER Y CAMBIÉ LA BOLSA."
+        },
+        {
+          "title": "I CLEANED THE STANCHIONS.",
+          "title_es": "LIMPIÉ LOS POSTES SEPARADORES (STANCHIONS)."
         },
         {
           "title": "I CHECKED IN WITH THE CLOSING FOOD RUNNER AND DID A WALKTHROUGH.",
@@ -2581,6 +2629,10 @@
         {
           "title": "I DEEP-CLEANED THE INSIDE OF THE BOTTOM CONVECTION OVEN.",
           "title_es": "HICE LIMPIEZA PROFUNDA POR DENTRO DEL HORNO DE CONVECCIÓN DE ABAJO."
+        },
+        {
+          "title": "I FILLED THE THREE COMPARTMENT SINK IN DISH.",
+          "title_es": "LLENÉ EL FREGADERO DE TRES COMPARTIMENTOS EN EL ÁREA DE LAVAPLATOS."
         }
       ]
     },
@@ -2647,26 +2699,22 @@
           "title_es": "REVISÉ QUE TODOS LOS DRENAJES DEL PISO ESTUVIERAN LIMPIOS Y CLORIFICADOS."
         },
         {
-          "title": "I CONFIRMED THE NIGHTLY STOCKS AGAINST THE WHITEBOARD AND THAT THEY'RE ON WITH THE PROPER WATER LEVEL.",
-          "title_es": "CONFIRMÉ LOS FONDOS DE LA NOCHE CONTRA EL PIZARRÓN Y QUE ESTUVIERAN PUESTOS CON EL NIVEL DE AGUA CORRECTO."
-        },
-        {
           "title": "I CHECKED OUT THE CLOSING FOOD RUNNERS AND VERIFIED THEIR CLOSING CHECKLIST IS COMPLETE.",
           "title_es": "REVISÉ A LOS FOOD RUNNERS DE CIERRE Y VERIFIQUÉ QUE SU LISTA DE CIERRE ESTUVIERA COMPLETA."
         },
         {
-          "title": "I CHECKED THE ORGANIZATION AND DEEP CLEANING OF THE WALK-IN, INCLUDING THE SPEED RACKS, HERB BINS, THE DOOR AND THRESHOLD AND THE PLASTIC CURTAIN.",
-          "title_es": "REVISÉ LA ORGANIZACIÓN Y LA LIMPIEZA PROFUNDA DEL WALK-IN, INCLUYENDO LOS SPEED RACKS, LOS BINS DE HIERBAS, LA PUERTA Y EL UMBRAL Y LA CORTINA DE PLÁSTICO.",
+          "title": "I HAVE CHECKED THE ORGANIZATION AND DEEP CLEANING OF THE WALK IN, INCLUDING THE SPEED RACKS, WIPING ALL SHELVING, HERB BINS, THE DOOR, AND THE THRESHOLD AND THE PLASTIC CURTAIN.",
+          "title_es": "REVISÉ LA ORGANIZACIÓN Y LA LIMPIEZA PROFUNDA DEL WALK-IN, INCLUYENDO LOS SPEED RACKS, LIMPIAR TODAS LAS REPISAS, LOS BINS DE HIERBAS, LA PUERTA, EL UMBRAL Y LA CORTINA DE PLÁSTICO.",
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Walk-in deep-cleaned: speed racks, door and threshold, plastic curtain"
+              "prompt": "Walk-in deep-cleaned: speed racks, shelving wiped, door and threshold, plastic curtain"
             }
           ]
         },
         {
-          "title": "I PRINTED NEW CHECKLISTS, ORDER GUIDES AND PREP LISTS FOR THE FOLLOWING WEEK AND PLACED THEM ON THE RIGHT CLIPBOARDS.",
-          "title_es": "IMPRIMÍ LISTAS, GUÍAS DE PEDIDO Y LISTAS DE PREP NUEVAS PARA LA SIGUIENTE SEMANA Y LAS PUSE EN LOS CLIPBOARDS CORRECTOS."
+          "title": "I COMPLETED THE TEMPERATURE LOGS.",
+          "title_es": "COMPLETÉ LOS REGISTROS DE TEMPERATURA."
         }
       ]
     },
@@ -2944,6 +2992,10 @@
         {
           "title": "I TOOK THE STOOLS OFF THE BAR TOP.",
           "title_es": "QUITÉ LOS BANCOS DEL BARTOP."
+        },
+        {
+          "title": "I CHECKED THE FEET ON ALL THE BAR STOOLS AND REPLACED ANY THAT WERE MISSING.",
+          "title_es": "REVISÉ LOS TAPONES DE LAS PATAS DE TODOS LOS BANCOS DE LA BARRA Y REPUSE LOS QUE FALTABAN."
         },
         {
           "title": "I GATHERED SUPPLIES FROM THE SHED: BLACK LINENS, WHITE TOWELS AND MICROFIBER TOWELS.",
@@ -3541,6 +3593,11 @@
           ]
         },
         {
+          "title": "BEFORE LEAVING FOR THE NIGHT, I CHECKED THE MID WELL FOR LEFTOVER GARNISH AT THE RINSE SINK.",
+          "title_es": "ANTES DE IRME, REVISÉ QUE NO QUEDARA GARNISH EN EL FREGADERO DE ENJUAGUE DEL MID WELL.",
+          "section": "CLOSER"
+        },
+        {
           "section": "CLOSER",
           "title": "AT THE END OF THE NIGHT, I CHECKED OUT WITH A LEAD.",
           "title_es": "AL FINAL DE LA NOCHE, ME REPORTÉ CON UN LEAD."
@@ -3798,6 +3855,11 @@
               "prompt": "Tonight's 86 list"
             }
           ]
+        },
+        {
+          "title": "BEFORE LEAVING FOR THE NIGHT, I CHECKED THE MID WELL FOR LEFTOVER GARNISH AT THE RINSE SINK.",
+          "title_es": "ANTES DE IRME, REVISÉ QUE NO QUEDARA GARNISH EN EL FREGADERO DE ENJUAGUE DEL MID WELL.",
+          "section": "CLOSER"
         },
         {
           "section": "CLOSER",
@@ -4194,6 +4256,11 @@
           "title": "I HUNG THE TRAY LINERS TO DRY ON THE BAR CART.",
           "title_es": "COLGUÉ LOS TRAY LINERS A SECAR EN EL BAR CART.",
           "section": null
+        },
+        {
+          "title": "AS MID BARBACK, I INSPECTED AND CLEANED THE BAR FANS SO DUST AND BUILDUP ARE NOT BEING BLOWN AROUND.",
+          "title_es": "COMO MID BARBACK, REVISÉ Y LIMPIÉ LOS VENTILADORES DE LA BARRA PARA QUE NO AVIENTEN POLVO NI SUCIEDAD.",
+          "section": "WEEKLY"
         }
       ],
       "room": "Upstairs"
@@ -4383,6 +4450,11 @@
           "section": null,
           "title": "I DETAILED THE CART, DUSTED THE BOTTLES, CLEANED THE BOTTLE HOLDERS AND PLACED THEM AT THE SOMM STATION.",
           "title_es": "DETALLÉ EL CARRITO, SACUDÍ LAS BOTELLAS, LIMPIÉ LOS PORTABOTELLAS Y LOS PUSE EN LA ESTACIÓN DE SOMM."
+        },
+        {
+          "title": "AS MID BARBACK, I INSPECTED AND CLEANED THE BAR FANS SO DUST AND BUILDUP ARE NOT BEING BLOWN AROUND.",
+          "title_es": "COMO MID BARBACK, REVISÉ Y LIMPIÉ LOS VENTILADORES DE LA BARRA PARA QUE NO AVIENTEN POLVO NI SUCIEDAD.",
+          "section": "WEEKLY"
         }
       ],
       "room": "Downstairs"
