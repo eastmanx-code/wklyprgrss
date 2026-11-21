@@ -6406,7 +6406,7 @@
       "role": "Bar (well)",
       "role_es": "Barra (pozo)",
       "phase": "open",
-      "room": "Seneca",
+      "room": "Bar",
       "items": [
         {
           "title": "CLOCK IN, RECIEVE PRODUCE ORDER"
@@ -6531,7 +6531,7 @@
       "role": "Bar (well)",
       "role_es": "Barra (pozo)",
       "phase": "close",
-      "room": "Seneca",
+      "room": "Bar",
       "items": [
         {
           "title": "RESTOCK SERVICE STATION (PLATES, SILVERWARE, LINEN)",
