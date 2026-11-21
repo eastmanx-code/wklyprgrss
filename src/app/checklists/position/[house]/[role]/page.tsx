@@ -197,7 +197,7 @@ export default async function PositionPage({
               className={`flex min-h-14 items-center justify-between gap-3 rounded px-4 py-3 ${
                 !built.has(list.id) ||
                 signedBy.has(list.id) ||
-                progress.get(list.id)?.standby
+                progress.get(list.id)?.empty
                   ? "bg-inset text-muted ring-divider ring-1 ring-inset"
                   : "bg-warn text-on-warn hover:bg-warn/90"
               }`}
@@ -247,6 +247,12 @@ export default async function PositionPage({
                 <span className="label">
                   <T en="Any night · not due tonight" es="Cualquier noche · hoy no toca" />
                   <span aria-hidden> →</span>
+                </span>
+              ) : progress.get(list.id)?.empty ? (
+                // Its rows all belong to other nights. Still a way in, to see
+                // what is on it, and unlit because tonight owes it nothing.
+                <span className="label">
+                  <T en="Not due tonight" es="Hoy no toca" />
                 </span>
               ) : listNote(list.id) ? (
                 <span className="label">

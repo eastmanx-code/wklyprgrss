@@ -96,7 +96,7 @@ Photos are not optional and are not something to add later.
 
 Fields per item: `title` (required), `title_es`, `section`, `days` (array of weekday names), `detail` (array of strings), `proof` (array of `{kind, prompt}`; kinds are `photo`, `video`, `note`), `reference` (array of `{caption, path}` showing what right looks like; a slot with `path: null` is a placeholder a manager fills in later, the way a station layout photo gets taped up once it exists).
 
-Fields per list: `house`, `role`, `role_es`, `phase`, `room`, `phase_label`, `items`.
+Fields per list: `house`, `role`, `role_es`, `phase`, `room`, `phase_label`, `menu_group`, `solo_signoff`, `items`.
 
 ## Day scheduling
 
@@ -108,6 +108,12 @@ Two ways to tie work to particular nights:
 ## Optional items
 
 `"section": "OPTIONAL"` marks work that is only done some nights by choice, not by the calendar: the lines a salaried manager does and an hourly MOD does not. The item stays on the page with an Optional tag and can be ticked, but it is never owed. It is out of the count, it is not an open box at signing, and no report calls it missed. The first word decides, so `"OPTIONAL: SALARIED MANAGER"` works too. Use it only when the venue asks for it; an item nobody is ever required to do usually does not belong on the list.
+
+## One position, several lists
+
+A position can own more than one list in the same phase by giving each a `room`. That is how a deep clean runs one list per bar, and how Stock's server close runs one list per section: role `Server`, phase `close`, rooms `Section 1`, `Section 2`, `Section 3`, `Inside`. The crew taps Server once and picks their section, and each section is ticked and signed on its own.
+
+A room is also the block a list sits under on the menu. When the room is a section and not a part of the building, set `menu_group` to the block it belongs in (`"Seneca"`), so the menu does not grow a block per section. `menu_group` only changes where the position is listed. Leave it out and the loader keeps whatever the venue has set.
 
 ## Phase label
 

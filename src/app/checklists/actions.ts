@@ -603,6 +603,67 @@ export async function verifyNight(
 }
 
 /**
+ * "Nobody else is here": the signer saying they closed alone.
+ *
+ * The second signature assumes a second person. Some nights there is not one.
+ * The last manager leaves at a quarter past twelve and the MOD finishes by
+ * herself, and the prompt for somebody else's name has nobody to answer it.
+ * What happened then was a second signature under a shortened name, which the
+ * report read as one person signing twice.
+ *
+ * This is the true thing to say instead. It is recorded against the night,
+ * with the phone it came from, and the report names every list it was said
+ * on. It is not a second signature and does not pretend to be: the list shows
+ * as closed alone, by the person who signed it.
+ *
+ * Only after the first signature, and not once somebody else has checked the
+ * work, because then there plainly was a second person.
+ */
+export async function markClosedAlone(
+  _prev: CloseState,
+  formData: FormData,
+): Promise<CloseState> {
+  const slug = String(formData.get("slug") ?? "");
+  const device = String(formData.get("device") ?? "").slice(0, 40);
+
+  const list = await checklistFor(slug);
+  if (!list) return { error: "That checklist is not available." };
+  const night = await activeNight(list.id);
+
+  const { data } = await db()
+    .from("close_nights")
+    .select("id, certified_at, verified_at, closed_alone_at")
+    .eq("checklist_id", list.id)
+    .eq("night", night)
+    .maybeSingle();
+  const row = data as {
+    id: string;
+    certified_at: string | null;
+    verified_at: string | null;
+    closed_alone_at: string | null;
+  } | null;
+
+  if (!row?.certified_at) {
+    return { error: "Nobody has signed this list yet." };
+  }
+  if (row.verified_at) return { error: "This list is already checked." };
+  if (row.closed_alone_at) return { error: null };
+
+  const { error } = await db()
+    .from("close_nights")
+    .update({
+      closed_alone_at: new Date().toISOString(),
+      closed_alone_device: device || null,
+    })
+    .eq("id", row.id);
+
+  if (error) return { error: "Could not save that. Try again." };
+
+  revalidatePath(`/checklists/${slug}`);
+  return { error: null };
+}
+
+/**
  * Unlocks a certified night, on a manager's PIN.
  *
  * Someone signs at 1am, then finds the back door was never actually checked.
@@ -694,6 +755,10 @@ export async function reopenNight(
       attestation: null,
       signature: null,
       open_at_signing: null,
+      // "I closed alone" was said about the signature being undone. Whoever
+      // signs it again says it again, if it is still true.
+      closed_alone_at: null,
+      closed_alone_device: null,
     })
     .eq("id", row.id)
     // Only unlock the night we just read. Two managers on the same PIN would

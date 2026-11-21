@@ -151,5 +151,62 @@ is(
   ].join("\n"),
 );
 
+// ------------------------------------------------------------- closed alone
+//
+// Stock, Thursday 11/12. The closing MOD finished after the last manager had
+// left, signed the bar lists, and then signed them again under a shortened
+// name because the screen would not stop asking for a second person. The
+// email said "one person twice". Now she can say she closed alone, and the
+// email says that.
+is(
+  "a solo close is named, and is not a miss",
+  nightRecap("2026-11-12", [
+    { ...done("Bar (well) close, Seneca", 30), signedBy: "Sindy Gomez", closedAlone: true },
+    done("Host close", 24),
+  ]),
+  [
+    "Thursday 11/12: 2 of 2 closed and signed.",
+    "",
+    "No misses.",
+    "",
+    "CLOSED ALONE",
+    "- Bar (well) close, Seneca: signed by Sindy Gomez, who said nobody else was in the building.",
+  ].join("\n"),
+);
+
+is(
+  "a solo close with items left is in both places",
+  nightRecap("2026-11-12", [
+    list("Service (well) close", "gaps", {
+      ticked: 17, owed: 18, signedBy: "Sindy Gomez", closedAlone: true,
+      openTitles: ["I LOCKED THE WALK-IN"], openReason: "No key.",
+    }),
+  ]),
+  [
+    "Thursday 11/12: 0 of 1 closed and signed.",
+    "",
+    "SIGNED WITH ITEMS LEFT",
+    "- Service (well) close: 17 of 18, signed by Sindy Gomez. Missed:",
+    "   - I LOCKED THE WALK-IN",
+    "   Why: No key.",
+    "",
+    "CLOSED ALONE",
+    "- Service (well) close: signed by Sindy Gomez, who said nobody else was in the building.",
+  ].join("\n"),
+);
+
+is(
+  "the flag on an unsigned list says nothing, because nobody signed",
+  nightRecap("2026-11-12", [
+    list("Dish close", "unsigned", { ticked: 0, owed: 8, untouched: true, closedAlone: true }),
+  ]),
+  [
+    "Thursday 11/12: 0 of 1 closed and signed.",
+    "",
+    "NEVER OPENED",
+    "- Dish close: 8 items, none checked off.",
+  ].join("\n"),
+);
+
 console.log(`check-recap: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
