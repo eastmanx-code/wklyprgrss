@@ -412,6 +412,8 @@ export type ListDetail = {
   verifiedBy: string | null;
   verifiedAt: string | null;
   sameDevice: boolean;
+  /** When the signer said they closed alone, in place of a second signature. */
+  closedAloneAt: string | null;
   certifiedAt: string | null;
   /** What was still open at the moment somebody signed, as stored then. */
   openAtSigning: number | null;
@@ -459,7 +461,7 @@ export async function listDetail(
     db()
       .from("close_nights")
       .select(
-        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, open_reason, history, list_at_signing",
+        "id, certified_at, certified_by, verified_at, verified_by, certified_device, verified_device, open_at_signing, open_reason, history, list_at_signing, closed_alone_at",
       )
       .eq("checklist_id", checklistId)
       .eq("night", night)
@@ -487,6 +489,7 @@ export async function listDetail(
     open_reason: string | null;
     history: unknown[] | null;
     list_at_signing: unknown;
+    closed_alone_at: string | null;
   } | null;
 
   let ticks: {
@@ -639,6 +642,10 @@ export async function listDetail(
     certifiedAt: stored?.certified_at ?? null,
     verifiedBy: stored?.verified_by ?? null,
     verifiedAt: stored?.verified_at ?? null,
+    closedAloneAt:
+      stored?.certified_at && !stored.verified_at
+        ? (stored.closed_alone_at ?? null)
+        : null,
     sameDevice: Boolean(
       stored?.certified_device &&
       stored.certified_device === stored.verified_device,

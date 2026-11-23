@@ -176,13 +176,23 @@ export default async function ListCompliancePage({
             <dd
               className={`text-body ${detail.verifiedBy ? "" : "text-muted"}`}
             >
-              {detail.verifiedBy?.trim() || "nobody"}
+              {detail.verifiedBy?.trim() ||
+                (detail.closedAloneAt ? "nobody · closed alone" : "nobody")}
               {detail.sameDevice ? (
                 <span className="label block">same phone as the signature</span>
               ) : null}
+              {detail.closedAloneAt ? (
+                <span className="label block">
+                  the signer said nobody else was in the building
+                </span>
+              ) : null}
             </dd>
             <dd className="label tabular-nums">
-              {detail.verifiedAt ? formatClock(detail.verifiedAt) : ""}
+              {detail.verifiedAt
+                ? formatClock(detail.verifiedAt)
+                : detail.closedAloneAt
+                  ? formatClock(detail.closedAloneAt)
+                  : ""}
             </dd>
           </dl>
           {detail.openReason ? (

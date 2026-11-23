@@ -64,6 +64,8 @@ function check() {
     if (!list.role?.trim()) throw new Error(`${where}: role is required`);
     if (list.phase_label !== undefined && list.phase_label !== null && !String(list.phase_label).trim())
       throw new Error(`${where}: phase_label is set but empty`);
+    if (list.menu_group !== undefined && list.menu_group !== null && !String(list.menu_group).trim())
+      throw new Error(`${where}: menu_group is set but empty`);
     if (list.solo_signoff !== undefined && typeof list.solo_signoff !== "boolean")
       throw new Error(`${where}: solo_signoff must be true or false`);
     const key = `${list.house}|${list.role.trim().toLowerCase()}|${list.phase}|${(list.room ?? "").trim().toLowerCase()}`;
@@ -112,13 +114,18 @@ function listSql(list) {
   const out = [];
   const phaseLabel = list.phase_label?.trim() || null;
   const solo = list.solo_signoff === true;
+  // The block a list sits under on the menu, where it is not its room: Stock's
+  // bar tabs under "Seneca Bar", its server closes (one per section) under
+  // "Seneca". Written only when the file names one, so a file that says
+  // nothing leaves whatever the venue has set.
+  const group = list.menu_group?.trim() || null;
   out.push(
-    `insert into close_checklists (venue_id, house, role, role_es, phase, phase_label, room, solo_signoff)
-select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(phaseLabel)}, ${qn(room)}, ${solo}
+    `insert into close_checklists (venue_id, house, role, role_es, phase, phase_label, room, solo_signoff, menu_group)
+select (select id from venues where code = ${q(code)}), ${q(list.house)}, ${q(list.role.trim())}, ${qn(list.role_es)}, ${q(list.phase)}, ${qn(phaseLabel)}, ${qn(room)}, ${solo}, ${qn(group)}
 where not exists (select 1 from close_checklists where ${match});`,
   );
   out.push(
-    `update close_checklists set role_es = ${qn(list.role_es)}, phase_label = ${qn(phaseLabel)}, solo_signoff = ${solo}, active = true where ${match};`,
+    `update close_checklists set role_es = ${qn(list.role_es)}, phase_label = ${qn(phaseLabel)}, solo_signoff = ${solo}${group ? `, menu_group = ${q(group)}` : ""}, active = true where ${match};`,
   );
   list.items.forEach((item, i) => {
     const title = item.title.trim();
@@ -199,10 +206,17 @@ for (const list of doc.lists) {
   );
   const phaseLabel = list.phase_label?.trim() || null;
   const solo = list.solo_signoff === true;
+  const group = list.menu_group?.trim() || null;
   if (found) {
     const { error } = await db
       .from("close_checklists")
-      .update({ role_es: list.role_es ?? null, phase_label: phaseLabel, solo_signoff: solo, active: true })
+      .update({
+        role_es: list.role_es ?? null,
+        phase_label: phaseLabel,
+        solo_signoff: solo,
+        active: true,
+        ...(group ? { menu_group: group } : {}),
+      })
       .eq("id", found.id);
     if (error) fail(where, error);
   } else {
@@ -216,6 +230,7 @@ for (const list of doc.lists) {
         phase: list.phase,
         phase_label: phaseLabel,
         solo_signoff: solo,
+        menu_group: group,
         room,
       })
       .select("id")

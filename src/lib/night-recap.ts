@@ -18,6 +18,11 @@
  * - signed with items left: a name over open work, with the items and the
  *   reason the signer gave.
  *
+ * After the piles, one more heading that is not a miss: closed alone. A signer
+ * who said nobody else was in the building is named there with the list, so a
+ * solo close reads as a solo close. It used to hide inside a second signature
+ * under a shortened name, and came out of the email as "one person twice".
+ *
  * Titles are the venue's own words, untouched. Plain text, so it pastes into
  * a mail client the same way everywhere.
  */
@@ -37,6 +42,8 @@ export type RecapList = {
   openTitles: string[];
   /** What the signer said about leaving them. */
   openReason: string | null;
+  /** The signer said nobody else was in the building. Signed lists only. */
+  closedAlone?: boolean;
 };
 
 const WEEKDAYS = [
@@ -148,6 +155,21 @@ export function nightRecap(night: string, lists: RecapList[]): string {
     out.push("", "STILL BEING WORKED");
     for (const list of going) {
       out.push(`- ${calmName(list.name)}: ${list.ticked} of ${list.owed}.`);
+    }
+  }
+
+  // Not a miss, so it sits under them and does not change the first line.
+  const alone = counted.filter(
+    (list) =>
+      list.closedAlone && (list.group === "done" || list.group === "gaps"),
+  );
+  if (alone.length > 0) {
+    out.push("", "CLOSED ALONE");
+    for (const list of alone) {
+      const signer = list.signedBy?.trim() || "no name";
+      out.push(
+        `- ${calmName(list.name)}: signed by ${signer}, who said nobody else was in the building.`,
+      );
     }
   }
 

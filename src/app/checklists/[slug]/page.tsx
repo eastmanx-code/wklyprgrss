@@ -120,7 +120,7 @@ export default async function ChecklistPage({
   const { data: nightRow } = await db()
     .from("close_nights")
     .select(
-      "id, certified_at, certified_by, open_reason, history, verified_at, verified_by",
+      "id, certified_at, certified_by, open_reason, history, verified_at, verified_by, closed_alone_at",
     )
     .eq("checklist_id", list.id)
     .eq("night", night)
@@ -132,6 +132,7 @@ export default async function ChecklistPage({
     open_reason: string | null;
     verified_at: string | null;
     verified_by: string | null;
+    closed_alone_at: string | null;
     history:
       | { certified_by?: string; certified_at?: string; reason?: string }[]
       | null;
@@ -275,6 +276,7 @@ export default async function ChecklistPage({
             openReason: tonight?.open_reason ?? null,
             verifiedBy: tonight?.verified_by ?? null,
             verifiedAt: tonight?.verified_at ?? null,
+            closedAloneAt: tonight?.closed_alone_at ?? null,
             // Every certification this night has already had. Usually empty; a
             // reopened night carries the signature it was reopened from, and
             // that is the whole reason reopening is an unlock and not a delete.
