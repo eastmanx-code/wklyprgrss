@@ -526,8 +526,9 @@ export async function certifyNight(
  *
  * Not a manager's signature, by decision. There is no manager guaranteed at
  * close, and the rule from the people who run the floor is that closers sign
- * off for one another. So this asks for a second person, whoever that is: a
- * lead if one is in the space, the other closer if not.
+ * off for one another. So this asks for a second person, whoever that is: the
+ * MOD or a leader in the space, and a second team member only when there is
+ * no leader.
  *
  * No PIN. A PIN would make this a permission, and it is not one, it is a
  * witness. Everybody who can work the list can also check somebody else's, and
