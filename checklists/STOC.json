@@ -623,6 +623,9 @@
           ]
         },
         {
+          "title": "I TOUCHED THE SUSHI COUNTER ON THE GUEST SIDE, TOP AND UNDERSIDE. IT IS CLEAN AND NOT STICKY."
+        },
+        {
           "title": "I ENSURED THE TRC FIREPLACE WAS ON, THE RC BOOK DOOR WAS SET TO THE APPROPRIATE SETTING, MR2'S DOOR WAS SHUT PROPERLY, AND RC'S MAIN DOOR WAS LATCHED. I TESTED EACH OF THE DOORS."
         },
         {
@@ -3726,6 +3729,18 @@
         },
         {
           "title": "I DID A WALKTHROUGH OF THE BACK HALLWAY AND USED THE SPRAY MOP TO CLEAN ANY DEBRIS AND MOP STICKY AREAS"
+        },
+        {
+          "title": "ensure underside of bar countertop is clean and not sticky",
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Clean underside of bar countertop"
+            }
+          ]
+        },
+        {
+          "title": "I WIPED THE SUSHI COUNTER ON THE GUEST SIDE, TOP AND UNDERSIDE, AFTER EVERY GUEST LEFT. NOTHING LEFT STICKY."
         }
       ]
     },
