@@ -1715,8 +1715,8 @@ export function CloseChecklist({
                   </p>
                   <p className="note text-muted mt-1.5 leading-relaxed">
                     {t(
-                      "Somebody else who worked tonight checks this and signs. Not the person who did it. A lead if one is in the space, the other closer if not.",
-                      "Otra persona que trabajó esta noche lo revisa y firma. No quien lo hizo. Un líder si hay uno, y si no, el otro que cierra.",
+                      "Somebody else who worked tonight checks this and signs. Not the person who did it. The MOD, or a leader in the space. If and only if there is no leader, a second team member signs.",
+                      "Otra persona que trabajó esta noche lo revisa y firma. No quien lo hizo. El MOD, o un líder en el espacio. Solo si no hay ningún líder, firma un segundo miembro del equipo.",
                     )}
                   </p>
                 </div>
