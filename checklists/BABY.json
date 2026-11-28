@@ -362,150 +362,94 @@
     },
     {
       "house": "FOH",
-      "role": "Deep clean",
-      "role_es": "Limpieza profunda",
+      "role": "Lobby daily deep clean",
+      "role_es": "Limpieza profunda diaria del lobby",
       "phase": "mid",
       "items": [
         {
-          "title": "Luggage Room & Lobby Tables",
-          "section": "MONTHLY",
-          "detail": [
-            "Luggage room clean, cleared of debris, and organized.",
-            "All lobby tables deep cleaned, checked for wobble, rims scrubbed with green sponge, and bases sanitized."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "clean luggage room and lobby tables"
-            }
-          ]
-        },
-        {
-          "title": "Cabinets Left & Right of Tap",
-          "section": "MONTHLY",
-          "detail": [
-            "All cabinets left of tap wiped down.",
-            "All cabinets right of tap wiped down."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "clean cabinets"
             }
-          ]
+          ],
+          "title": "Cabinets AND SHELVES DETAILED",
+          "detail": [
+            "ALL CABINETS AND SHELVES BEHIND DESK DETAILED"
+          ],
+          "section": "MONTHLY"
         },
         {
-          "title": "Shelves Left & Right of Tap",
-          "section": "MONTHLY",
-          "detail": [
-            "All shelves left of tap dusted.",
-            "All shelves right of tap dusted."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "clean shelves"
-            }
-          ]
-        },
-        {
-          "title": "Lobby Trash & Main Fridge",
-          "section": "MONTHLY",
-          "detail": [
-            "Lobby trashcans deep cleaned, including small countertop trashes.",
-            "Main fridge cleaned and all items checked for expiration."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "clean lobby trash and main fridge"
             }
-          ]
-        },
-        {
-          "title": "To-go sleeves and lid tower detailed.",
-          "section": "SATURDAY",
-          "detail": [
-            "Guest-facing cafe items detailed: napkin tray, sugar packet holders, and brown sugar cube containers."
           ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "cleaned guest-facing cafe items"
-            }
-          ]
+          "title": "REFRIGERATOR",
+          "detail": [
+            "REFRIGERATOR DETAILed [ALL SURFACES INSIDE / OUT, INCLUDING GASKETS, WHEELS, AND HANDLES] and all items checked for expiration."
+          ],
+          "section": "MONTHLY"
         },
         {
-          "title": "All floor drains behind cafe scrubbed with brush and bleach.",
-          "section": "MONDAY",
           "proof": [
             {
               "kind": "photo",
               "prompt": "cleaned floor drains"
             }
-          ]
+          ],
+          "title": "All floor drains behind cafe scrubbed with brush and bleach.",
+          "section": "MONDAY"
         },
         {
-          "title": "All cups and saucers removed from top of espresso machine.",
-          "section": "FRIDAY",
-          "detail": [
-            "Espresso machine deep cleaned."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "deep cleaned espresso machine"
             }
-          ]
+          ],
+          "title": "ESPRESSO MACHINE DETAILED",
+          "detail": [
+            "All cups and saucers removed from top of espresso machine - ALL SURFACES DETAILED"
+          ],
+          "section": "FRIDAY"
         },
         {
-          "title": "Rolling fridge pulled out and space behind cleaned.",
-          "section": "WEDNESDAY",
-          "detail": [
-            "Interior of both fridges deep cleaned."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "cleaned fridges"
             }
-          ]
+          ],
+          "title": "Rolling fridge pulled out and space behind cleaned.",
+          "detail": [
+            "Interior of both fridges deep cleaned."
+          ],
+          "section": "WEDNESDAY"
         },
         {
-          "title": "Two back cafe shelves, including tea container shelves, dusted.",
-          "section": "THURSDAY",
-          "detail": [
-            "All upper and lower cabinets deep cleaned, including cabinet knobs."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "cleaned shelves and cabinets"
-            }
-          ]
-        },
-        {
-          "title": "Hand washing sink deep cleaned with wire scrubby.",
-          "section": "TUESDAY",
-          "detail": [
-            "Cabinet underneath sink cleaned and replenished: 2 paper towels, 1 bag napkins, 1 case trash can liners, and 2 boxes coasters (no ice buckets)."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "cleaned sink and restocked cabinet"
             }
-          ]
+          ],
+          "title": "Hand washing sink deep cleaned.",
+          "detail": [
+            "Cabinet underneath sink cleaned and replenished: 2 paper towels, 1 bag napkins, 1 case trash can liners."
+          ],
+          "section": "TUESDAY"
         },
         {
-          "title": "All five cafe trash cans detailed, including 3 black and 2 gold.",
-          "section": "SUNDAY",
           "proof": [
             {
               "kind": "photo",
               "prompt": "cleaned trash cans"
             }
-          ]
+          ],
+          "title": "All LOBBY trash cans detailed.",
+          "section": "SUNDAY"
         }
       ]
     },
@@ -2045,128 +1989,93 @@
       "menu_group": "Housekeeping",
       "items": [
         {
-          "title": "Hallways",
-          "title_es": "Pasillos",
-          "detail": [
-            "Sweep hallway floors.",
-            "Ensure marble baseboards through the corridors are clean and polished."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Swept floors"
-            }
-          ]
-        },
-        {
-          "title": "Floors",
-          "title_es": "Pisos",
-          "detail": [
-            "Mop the floors in the public areas."
-          ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Mopped floors"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "house": "HOH",
-      "role": "Public areas",
-      "role_es": "Áreas públicas",
-      "phase": "mid",
-      "menu_group": "Housekeeping",
-      "items": [
-        {
           "title": "Preliminary Checks",
-          "title_es": "Revisiones preliminares",
           "detail": [
             "Clocked in, in uniform, earpiece and radio on and working properly.",
             "Checked in with all outlets, namely Night Hawk, Fallen Empire, and Café Bar, with the person in charge of each."
-          ]
+          ],
+          "title_es": "Revisiones preliminares"
         },
         {
-          "title": "Lobby Restrooms",
-          "title_es": "Baños del lobby",
-          "detail": [
-            "Lobby restrooms are clean and in good, presentable condition."
-          ],
           "proof": [
             {
               "kind": "photo",
               "prompt": "Clean and organized restrooms"
             }
-          ]
+          ],
+          "title": "GUEST Restrooms",
+          "detail": [
+            "Lobby restrooms are clean and in good, presentable condition."
+          ],
+          "title_es": "Baños del lobby"
         },
         {
-          "title": "Hallways",
-          "title_es": "Pasillos",
-          "detail": [
-            "Public hallways are clean and free of trash and dust."
-          ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Clean hallways"
+              "prompt": "Hallways swept, clean and free of trash"
             }
-          ]
+          ],
+          "title": "Hallways",
+          "detail": [
+            "Sweep hallway floors.",
+            "Ensure marble baseboards through the corridors are clean and polished.",
+            "Public hallways are clean and free of trash and dust."
+          ],
+          "title_es": "Pasillos"
         },
         {
-          "title": "Trash Bins",
-          "title_es": "Botes de basura",
-          "detail": [
-            "Replace liners when almost full."
+          "proof": [
+            {
+              "kind": "photo",
+              "prompt": "Mopped floors"
+            }
           ],
+          "title": "Floors",
+          "detail": [
+            "Mop the floors in the public areas."
+          ],
+          "title_es": "Pisos"
+        },
+        {
           "proof": [
             {
               "kind": "photo",
               "prompt": "Relined bins"
             }
-          ]
+          ],
+          "title": "Trash Bins",
+          "detail": [
+            "Replace liners when almost full."
+          ],
+          "title_es": "Botes de basura"
         },
         {
-          "title": "Lagoon",
-          "title_es": "Laguna",
-          "detail": [
-            "Lagoon area clean.",
-            "Towels are available at the lagoon upon guest request."
-          ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Cleaned lagoon area and stocked towels"
+              "prompt": "Cleaned BACK LOT and planters"
             }
-          ]
-        },
-        {
-          "title": "Front Driveway",
-          "title_es": "Entrada principal",
+          ],
+          "title": "BACK LOT",
           "detail": [
-            "Front drive free of trash.",
+            "BACK LOT free of trash.",
             "Check planters for cleanliness."
           ],
-          "proof": [
-            {
-              "kind": "photo",
-              "prompt": "Cleaned front drive and planters"
-            }
-          ]
+          "title_es": "ESTACIONAMIENTO TRASERO"
         },
         {
-          "title": "Wall Decor",
-          "title_es": "Decoración de pared",
-          "detail": [
-            "Pictures and mirrors are free of dust and fingerprints."
-          ],
           "proof": [
             {
               "kind": "photo",
-              "prompt": "Cleaned pictures and mirrors"
+              "prompt": "Cleaned TAPESTRIES"
             }
-          ]
+          ],
+          "title": "Wall Decor",
+          "detail": [
+            "HALL TAPESTRIES are free of dust and fingerprints."
+          ],
+          "title_es": "Decoración de pared"
         }
       ]
     },
