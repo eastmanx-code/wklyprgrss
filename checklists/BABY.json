@@ -4030,7 +4030,8 @@
           "detail": [
             "Music to evening playlist, volume set",
             "Lighting set to evening",
-            "At sunset: lanterns out/on, fireplaces on, tiki torches and waterfall fire lit",
+            "Before lighting any fire: fire pits empty and clear, all guests safely away",
+            "At sunset: lanterns out/on, fireplaces on, fire pits lit, tiki torches and waterfall fire lit",
             "Heaters on unless guest requests otherwise",
             "Landscape lighting on (PM settings)",
             "Umbrellas down; floor-mount stored in laundry room",
@@ -4200,6 +4201,7 @@
             "If in the day, before sun is setting, ensure fire features are off.",
             "If sun is setting, and after: ensure fire features are on.",
             "Reset if out.",
+            "Before relighting: fire pits empty and clear, all guests safely away.",
             "For Heaters",
             "If in the day, ensure heaters are off, unless otherwise asked by a guest, or if the temperature would make lit heaters more hospitable.",
             "If in the night, the heaters along the outskirts of dining area are to be lit at all times. All other heaters to be on, unless otherwise asked by a guest."
